@@ -1,0 +1,8 @@
+*.*~
+*.pyc
+*.log
+*.pdf
+*.png
+*tmp*
+#*#
+ttHtautauAnalyzer/test/*.root
