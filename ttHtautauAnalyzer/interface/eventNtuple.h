@@ -3,6 +3,7 @@
 
 #include "TTree.h"
 
+#include <iostream>
 #include <vector>
 
 class eventNtuple
@@ -133,7 +134,7 @@ class eventNtuple
 	std::vector<float> *mu_mediumID = 0;
 	std::vector<float> *mu_dpt_div_pt = 0;
 	std::vector<int>   *mu_mcMatchType = 0;
-	std::vector<int>   *mu_isPFMuon;
+	std::vector<int>   *mu_isPFMuon = 0;
 
 	// electrons
 	std::vector<float> *ele_pt = 0;
@@ -176,9 +177,9 @@ class eventNtuple
 	std::vector<int>   *tau_byLooseCombinedIsolationDeltaBetaCorr3Hits = 0;
 	std::vector<int>   *tau_byMediumCombinedIsolationDeltaBetaCorr3Hits = 0;
 	std::vector<int>   *tau_byTightCombinedIsolationDeltaBetaCorr3Hits = 0;
-	std::vector<int>   *tau_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03 = 0;
-	std::vector<int>   *tau_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03 = 0;
-	std::vector<int>   *tau_byTightCombinedIsolationDeltaBetaCorr3HitsdR03 = 0;
+	//std::vector<int>   *tau_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03 = 0;
+	//std::vector<int>   *tau_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03 = 0;
+	//std::vector<int>   *tau_byTightCombinedIsolationDeltaBetaCorr3HitsdR03 = 0;
 	std::vector<int>   *tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT = 0;
 	std::vector<int>   *tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT = 0;
 	std::vector<int>   *tau_byTightIsolationMVArun2v1DBdR03oldDMwLT = 0;

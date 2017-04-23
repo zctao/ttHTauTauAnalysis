@@ -197,9 +197,9 @@ void ttHtautauAnalyzer::write_ntuple_taus(const std::vector<pat::Tau>& taus)
 		evNtuple_.tau_byLooseCombinedIsolationDeltaBetaCorr3Hits->push_back(tau.tauID("byLooseCombinedIsolationDeltaBetaCorr3Hits"));
 		evNtuple_.tau_byMediumCombinedIsolationDeltaBetaCorr3Hits->push_back(tau.tauID("byMediumCombinedIsolationDeltaBetaCorr3Hits"));
 		evNtuple_.tau_byTightCombinedIsolationDeltaBetaCorr3Hits->push_back(tau.tauID("byTightCombinedIsolationDeltaBetaCorr3Hits"));
-		evNtuple_.tau_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03->push_back(tau.tauID("byLooseCombinedIsolationDeltaBetaCorr3HitsdR03"));
-		evNtuple_.tau_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03->push_back(tau.tauID("byMediumCombinedIsolationDeltaBetaCorr3HitsdR03"));
-		evNtuple_.tau_byTightCombinedIsolationDeltaBetaCorr3HitsdR03->push_back(tau.tauID("byTightCombinedIsolationDeltaBetaCorr3HitsdR03"));
+		//evNtuple_.tau_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03->push_back(tau.tauID("byLooseCombinedIsolationDeltaBetaCorr3HitsdR03"));
+		//evNtuple_.tau_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03->push_back(tau.tauID("byMediumCombinedIsolationDeltaBetaCorr3HitsdR03"));
+		//evNtuple_.tau_byTightCombinedIsolationDeltaBetaCorr3HitsdR03->push_back(tau.tauID("byTightCombinedIsolationDeltaBetaCorr3HitsdR03"));
 		evNtuple_.tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT->push_back(tau.tauID("byLooseIsolationMVArun2v1DBdR03oldDMwLT"));
 		evNtuple_.tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT->push_back(tau.tauID("byMediumIsolationMVArun2v1DBdR03oldDMwLT"));
 		evNtuple_.tau_byTightIsolationMVArun2v1DBdR03oldDMwLT->push_back(tau.tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT"));

@@ -51,7 +51,7 @@ ttHtautauAnalyzer::ttHtautauAnalyzer(const edm::ParameterSet& iConfig):
 	dumpHLT_ (iConfig.getParameter<bool>("print_HLT_event_path")),
 	//hltcut_off_ (iConfig.getParameter<bool>("turn_off_HLT_cut")),
 	hltTag_ (iConfig.getParameter<string>("HLT_config_tag")),
-	filterTag_ (iConfig.getParameter<string>("Filter_config_tag")),
+	filterTag_ (iConfig.getParameter<string>("filter_config_tag")),
 	// tauES
 	TESType_ (iConfig.getParameter<std::string>("TauESType")),
 	tauES_unc_ (iConfig.getParameter<double>("TauESUnc")),
@@ -84,7 +84,7 @@ ttHtautauAnalyzer::ttHtautauAnalyzer(const edm::ParameterSet& iConfig):
 	genparticle_token_ = consumes<reco::GenParticleCollection>(iConfig.getParameter<edm::InputTag>("prunedgen"));
 	genjets_token_ = consumes<reco::GenJetCollection>(edm::InputTag("slimmedGenJets"));
 
-	badMuons_token_ = consumes<edm::View<reco::Muon>>(iConfig.getParameter<edm::InputTag>("badmuon"));
+	badMuons_token_ = consumes<edm::View<reco::Muon>>(iConfig.getParameter<edm::InputTag>("badmu"));
 	clonedMuons_token_ = consumes<edm::View<reco::Muon>>(iConfig.getParameter<edm::InputTag>("clonemu"));
 
 	// Trigger and filter paths
@@ -456,10 +456,12 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	/////////////////////////////////////////
 	// Write ntuple
 	/////////////////////////////////////////
-	
+
+	//std::cout << "start writing ntuples" << std::endl;
 	/// initialize ntuple
 	evNtuple_.initialize();
-
+	//std::cout << "done initialization" << std::endl;
+	
 	/// event id
 	evNtuple_.run = iEvent.id().run();
 	evNtuple_.ls = iEvent.id().luminosityBlock();

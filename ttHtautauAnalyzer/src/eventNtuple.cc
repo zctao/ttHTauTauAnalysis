@@ -6,10 +6,12 @@
 void eventNtuple::initialize()
 {
 	// event variables
+	//std::cout << "eventNtuple::initialize(): event ids" << std::endl;
 	run = 0;
 	ls = 0;
     nEvent = 0;
 
+	//std::cout << "eventNtuple::initialize(): weights" << std::endl;
 	event_weight = -9999.;
 	PU_weight = -9999.;
 	MC_weight = -9999.;
@@ -95,6 +97,7 @@ void eventNtuple::initialize()
 	n_btag_loose = -9999;
 
 	// muons
+	//std::cout << "eventNtuple::initialize(): muons" << std::endl;
 	mu_pt->clear();
 	mu_conept->clear();
 	mu_eta->clear();
@@ -117,11 +120,11 @@ void eventNtuple::initialize()
 	mu_leptonMVA->clear();
 	mu_mediumID->clear();
 	mu_dpt_div_pt->clear();
-	mu_mediumID->clear();
 	mu_mcMatchType->clear();
 	mu_isPFMuon->clear();
 
 	// electrons
+	//std::cout << "eventNtuple::initialize(): electrons" << std::endl;
 	ele_pt->clear();
 	ele_conept->clear();
 	ele_eta->clear();
@@ -148,6 +151,7 @@ void eventNtuple::initialize()
 	ele_mcMatchType->clear();
 	
 	// taus
+	//std::cout << "eventNtuple::initialize(): taus" << std::endl;
 	tau_pt->clear();
 	tau_eta->clear();
 	tau_phi->clear();
@@ -162,9 +166,9 @@ void eventNtuple::initialize()
 	tau_byLooseCombinedIsolationDeltaBetaCorr3Hits->clear();
 	tau_byMediumCombinedIsolationDeltaBetaCorr3Hits->clear();
 	tau_byTightCombinedIsolationDeltaBetaCorr3Hits->clear();
-	tau_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03->clear();
-	tau_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03->clear();
-	tau_byTightCombinedIsolationDeltaBetaCorr3HitsdR03->clear();
+	//tau_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03->clear();
+	//tau_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03->clear();
+	//tau_byTightCombinedIsolationDeltaBetaCorr3HitsdR03->clear();
 	tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT->clear();
 	tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT->clear();
 	tau_byTightIsolationMVArun2v1DBdR03oldDMwLT->clear();
@@ -178,6 +182,7 @@ void eventNtuple::initialize()
 	tau_mcMatchType->clear();
 
 	// jets
+	//std::cout << "eventNtuple::initialize(): jets" << std::endl;
 	jet_pt->clear();
 	jet_eta->clear();
 	jet_phi->clear();
@@ -186,6 +191,7 @@ void eventNtuple::initialize()
 	jet_flavor->clear();
 
 	// met
+	//std::cout << "eventNtuple::initialize(): met" << std::endl;
 	PFMET = -9999.;
 	PFMETphi = -9999.;
 	MHT = -9999.;
@@ -325,9 +331,9 @@ void eventNtuple::setup_branches(TTree* tree)
 	tree->Branch("tau_byLooseCombinedIsolationDeltaBetaCorr3Hits", &tau_byLooseCombinedIsolationDeltaBetaCorr3Hits);
 	tree->Branch("tau_byMediumCombinedIsolationDeltaBetaCorr3Hits", &tau_byMediumCombinedIsolationDeltaBetaCorr3Hits);
 	tree->Branch("tau_byTightCombinedIsolationDeltaBetaCorr3Hits", &tau_byTightCombinedIsolationDeltaBetaCorr3Hits);
-	tree->Branch("tau_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03", &tau_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03);
-	tree->Branch("tau_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03", &tau_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03);
-	tree->Branch("tau_byTightCombinedIsolationDeltaBetaCorr3HitsdR03", &tau_byTightCombinedIsolationDeltaBetaCorr3HitsdR03);
+	//tree->Branch("tau_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03", &tau_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03);
+	//tree->Branch("tau_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03", &tau_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03);
+	//tree->Branch("tau_byTightCombinedIsolationDeltaBetaCorr3HitsdR03", &tau_byTightCombinedIsolationDeltaBetaCorr3HitsdR03);
 	tree->Branch("tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT", &tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT);
 	tree->Branch("tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT", &tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT);
 	tree->Branch("tau_byTightIsolationMVArun2v1DBdR03oldDMwLT", &tau_byTightIsolationMVArun2v1DBdR03oldDMwLT);
@@ -486,9 +492,9 @@ void eventNtuple::set_branch_address(TTree* tree)
 	tree->SetBranchAddress("tau_byLooseCombinedIsolationDeltaBetaCorr3Hits", &tau_byLooseCombinedIsolationDeltaBetaCorr3Hits);
 	tree->SetBranchAddress("tau_byMediumCombinedIsolationDeltaBetaCorr3Hits", &tau_byMediumCombinedIsolationDeltaBetaCorr3Hits);
 	tree->SetBranchAddress("tau_byTightCombinedIsolationDeltaBetaCorr3Hits", &tau_byTightCombinedIsolationDeltaBetaCorr3Hits);
-	tree->SetBranchAddress("tau_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03", &tau_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03);
-	tree->SetBranchAddress("tau_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03", &tau_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03);
-	tree->SetBranchAddress("tau_byTightCombinedIsolationDeltaBetaCorr3HitsdR03", &tau_byTightCombinedIsolationDeltaBetaCorr3HitsdR03);
+	//tree->SetBranchAddress("tau_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03", &tau_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03);
+	//tree->SetBranchAddress("tau_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03", &tau_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03);
+	//tree->SetBranchAddress("tau_byTightCombinedIsolationDeltaBetaCorr3HitsdR03", &tau_byTightCombinedIsolationDeltaBetaCorr3HitsdR03);
 	tree->SetBranchAddress("tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT", &tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT);
 	tree->SetBranchAddress("tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT", &tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT);
 	tree->SetBranchAddress("tau_byTightIsolationMVArun2v1DBdR03oldDMwLT", &tau_byTightIsolationMVArun2v1DBdR03oldDMwLT);
