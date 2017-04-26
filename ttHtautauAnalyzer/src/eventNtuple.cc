@@ -183,6 +183,8 @@ void eventNtuple::initialize()
 	tau_againstElectronLooseMVA6->clear();
 	tau_againstElectronMediumMVA6->clear();
 	tau_againstElectronTightMVA6->clear();
+	tau_idPreselection->clear();
+	tau_idSelection->clear();
 	tau_mcMatchType->clear();
 
 	// jets
@@ -351,6 +353,8 @@ void eventNtuple::setup_branches(TTree* tree)
 	tree->Branch("tau_againstElectronLooseMVA6", &tau_againstElectronLooseMVA6);
 	tree->Branch("tau_againstElectronMediumMVA6", &tau_againstElectronMediumMVA6);
 	tree->Branch("tau_againstElectronTightMVA6", &tau_againstElectronTightMVA6);
+	tree->Branch("tau_idPreselection", &tau_idPreselection);
+	tree->Branch("tau_idSelection", &tau_idSelection);
 	tree->Branch("tau_mcMatchType", &tau_mcMatchType);
 
 	tree->Branch("jet_pt",     &jet_pt);
@@ -515,6 +519,8 @@ void eventNtuple::set_branch_address(TTree* tree)
 	tree->SetBranchAddress("tau_againstElectronLooseMVA6", &tau_againstElectronLooseMVA6);
 	tree->SetBranchAddress("tau_againstElectronMediumMVA6", &tau_againstElectronMediumMVA6);
 	tree->SetBranchAddress("tau_againstElectronTightMVA6", &tau_againstElectronTightMVA6);
+	tree->SetBranchAddress("tau_idPreselection", &tau_idPreselection);
+	tree->SetBranchAddress("tau_idSelection", &tau_idSelection);
 	tree->SetBranchAddress("tau_mcMatchType", &tau_mcMatchType);
 
 	tree->SetBranchAddress("jet_pt",     &jet_pt);

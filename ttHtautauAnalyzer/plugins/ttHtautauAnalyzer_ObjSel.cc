@@ -62,7 +62,8 @@ template std::vector<pat::Muon> ttHtautauAnalyzer::getSelectedLeptons(const std:
 template std::vector<pat::Electron> ttHtautauAnalyzer::getSelectedLeptons(const std::vector<pat::Electron>&, const std::string&);
 
 // add ID related flags/variables
-template <typename T> void ttHtautauAnalyzer::addIDFlags(std::vector<T>& leptons)
+template <typename T> void ttHtautauAnalyzer::addIDFlags(std::vector<T>& leptons,
+														 edm::Handle<reco::GenParticleCollection> MC_particles)
 {
 	for (auto & lep : leptons) {
 		lep.addUserInt("isLoose", isLooseID(lep));
@@ -70,10 +71,15 @@ template <typename T> void ttHtautauAnalyzer::addIDFlags(std::vector<T>& leptons
 		lep.addUserInt("isTight", isTightID(lep));
 		lep.addUserInt("isTightCharge", isTightCharge(lep));
 		lep.addUserFloat("conePt", ConePt(lep));
+		// MC matching
+		if (not isdata_)
+			lep.addUserInt("MCMatchType", getMCMatchType(lep, *MC_particles));
 	}
 }
-template void ttHtautauAnalyzer::addIDFlags(std::vector<pat::Electron>&);
-template void ttHtautauAnalyzer::addIDFlags(std::vector<pat::Muon>&);
+template void ttHtautauAnalyzer::addIDFlags(std::vector<pat::Electron>&,
+											edm::Handle<reco::GenParticleCollection>);
+template void ttHtautauAnalyzer::addIDFlags(std::vector<pat::Muon>&,
+											edm::Handle<reco::GenParticleCollection>);
 
 ///////////////////
 // muons
@@ -145,8 +151,9 @@ std::vector<pat::Tau> ttHtautauAnalyzer::getPreselTaus(const std::vector<pat::Ta
 	std::vector<pat::Tau> preseltaus;
 	for (auto & tau : taus) {
 		bool passKinematic = tau.pt() > 20. and std::abs(tau.eta()) < 2.3;
-		if (passKinematic and tau.userFloat("idPreselection") > 0.5)
+		if (passKinematic and tau.userFloat("idPreselection") > 0.5) {
 			preseltaus.push_back(tau);
+		}
 	}
 	return preseltaus;
 }
@@ -155,8 +162,9 @@ std::vector<pat::Tau> ttHtautauAnalyzer::getSelectedTaus(const std::vector<pat::
 {
 	std::vector<pat::Tau> seltaus;
 	for (auto & tau : taus) {
-		if (tau.userFloat("idSelection") > 0.5)
+		if (tau.userFloat("idSelection") > 0.5) {
 			seltaus.push_back(tau);
+		}
 	}
 	return seltaus;
 }

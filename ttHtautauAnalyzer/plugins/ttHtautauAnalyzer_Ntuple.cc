@@ -144,7 +144,8 @@ void ttHtautauAnalyzer::write_ntuple_muons(const std::vector<pat::Muon>& muons)
 		//
 		evNtuple_.mu_dpt_div_pt->push_back(mu.muonBestTrack()->ptError()/
 								 mu.muonBestTrack()->pt());
-		evNtuple_.mu_mcMatchType->push_back(mu.userInt("MCMatchType"));
+		if (!isdata_)
+			evNtuple_.mu_mcMatchType->push_back(mu.userInt("MCMatchType"));
 		evNtuple_.mu_isPFMuon->push_back(mu.isPFMuon());
 	}
 }
@@ -176,7 +177,8 @@ void ttHtautauAnalyzer::write_ntuple_electrons(const std::vector<pat::Electron>&
 		evNtuple_.ele_isChargeConsistent->push_back(ele.isGsfCtfScPixChargeConsistent() + ele.isGsfScPixChargeConsistent() > 1);
 		evNtuple_.ele_passesConversionVeto->push_back(ele.passConversionVeto());
 		evNtuple_.ele_nMissingHits->push_back(ele.userFloat("numMissingHits"));
-		evNtuple_.ele_mcMatchType->push_back(ele.userInt("MCMatchType"));
+		if (!isdata_)
+			evNtuple_.ele_mcMatchType->push_back(ele.userInt("MCMatchType"));
 	}
 }
 
@@ -210,7 +212,10 @@ void ttHtautauAnalyzer::write_ntuple_taus(const std::vector<pat::Tau>& taus)
 		evNtuple_.tau_againstElectronLooseMVA6->push_back(tau.tauID("againstElectronLooseMVA6"));
 		evNtuple_.tau_againstElectronMediumMVA6->push_back(tau.tauID("againstElectronMediumMVA6"));
 		evNtuple_.tau_againstElectronTightMVA6->push_back(tau.tauID("againstElectronTightMVA6"));
-		evNtuple_.tau_mcMatchType->push_back(tau.userInt("MCMatchType"));
+		evNtuple_.tau_idPreselection->push_back(tau.userFloat("idPreselection"));
+		evNtuple_.tau_idSelection->push_back(tau.userFloat("idSelection"));
+		if (!isdata_)
+			evNtuple_.tau_mcMatchType->push_back(tau.userInt("MCMatchType"));
 	}
 }
 

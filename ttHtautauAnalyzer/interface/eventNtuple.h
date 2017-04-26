@@ -195,6 +195,8 @@ class eventNtuple
 	std::vector<int>   *tau_againstElectronLooseMVA6 = 0;
 	std::vector<int>   *tau_againstElectronMediumMVA6 = 0;
 	std::vector<int>   *tau_againstElectronTightMVA6 = 0;
+	std::vector<float> *tau_idPreselection = 0;
+	std::vector<float> *tau_idSelection = 0;
 	std::vector<int>   *tau_mcMatchType = 0;
 
 	// jets

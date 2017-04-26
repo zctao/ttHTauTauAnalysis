@@ -110,7 +110,8 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	template <typename T> float ConePt(const T&);
 	template <typename T> std::vector<T> getSelectedLeptons(const std::vector<T>&,
 															const std::string&);
-	template <typename T> void addIDFlags(std::vector<T>&);
+	template <typename T> void addIDFlags(std::vector<T>&,
+										  edm::Handle<reco::GenParticleCollection>);
 	bool isLooseID(const pat::Muon&) const;
 	bool isLooseID(const pat::Electron&) const;
 	bool isFakeableID(const pat::Muon&) const;

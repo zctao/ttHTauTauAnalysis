@@ -241,20 +241,15 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	// loose
 	std::vector<pat::Muon> mu_preselected =
 		getSelectedLeptons(*muons, std::string("isLoose"));
-	SortByPt(mu_preselected);  // sort by pt
+	//SortByPt(mu_preselected);  // sort by pt
 	// add ID flags to preselected muons
-	addIDFlags(mu_preselected);
+	addIDFlags(mu_preselected, MC_particles);
+	SortByConept(mu_preselected);  // sort by conept
 	
 	// fakeable
 	std::vector<pat::Muon> mu_fakeable
 		= getSelectedLeptons(mu_preselected, std::string("isFakeable"));
-	SortByConept(mu_fakeable);  // sort by conept
-	// add mc match type to fakeable muons if not data
-	if (not isdata_) {
-		for (auto & mu : mu_fakeable) {
-			mu.addUserInt("MCMatchType", getMCMatchType(mu, *MC_particles));
-		}
-	}
+	//SortByConept(mu_fakeable);  // sort by conept
 		
 	// tight
 	std::vector<pat::Muon> mu_tight
@@ -291,20 +286,15 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	// remove overlap with muons
 	ele_preselected = removeOverlapdR(ele_preselected, mu_preselected, 0.05);
 	// sort by pt
-	SortByPt(ele_preselected); 
+	//SortByPt(ele_preselected); 
 	// add ID flags to preselected electrons
-	addIDFlags(ele_preselected);
+	addIDFlags(ele_preselected, MC_particles);
+	SortByConept(ele_preselected);  // sort by conept
 	
 	// fakeable
 	std::vector<pat::Electron> ele_fakeable =
 		getSelectedLeptons(ele_preselected, std::string("isFakeable"));
-	SortByConept(ele_fakeable);  // sort by conept
-	// add mc match type to fakeable electrons if not data
-	if (not isdata_) {
-		for (auto & ele : ele_fakeable) {
-			ele.addUserInt("MCMatchType", getMCMatchType(ele, *MC_particles));
-		}
-	}
+	//SortByConept(ele_fakeable);  // sort by conept
 	
 	// tight
 	std::vector<pat::Electron> ele_tight =
@@ -359,13 +349,13 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	tau_preselected = removeOverlapdR(tau_preselected, ele_preselected, 0.3);
 	// sort by pt
 	SortByPt(tau_preselected);
-	// tight
-	std::vector<pat::Tau> tau_selected = getSelectedTaus(tau_preselected);
 	// add mc match type if not data
 	if (not isdata_) {
-		for (auto & tau : tau_selected)
+		for (auto & tau : tau_preselected)
 			tau.addUserInt("MCMatchType", getMCMatchType(tau, *MC_particles));
 	}
+	// tight
+	std::vector<pat::Tau> tau_selected = getSelectedTaus(tau_preselected);
 
 	if (debug_) {
 		std::cout << "n_tau_loose : " << tau_preselected.size() << std::endl;
@@ -557,13 +547,13 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		evNtuple_.event_weight = evNtuple_.FR_weight;
 	
 	/// muons
-	write_ntuple_muons(mu_fakeable);
+	write_ntuple_muons(mu_preselected);
 	
 	/// electrons
-	write_ntuple_electrons(ele_fakeable);
+	write_ntuple_electrons(ele_preselected);
 
 	/// taus
-	write_ntuple_taus(tau_selected);
+	write_ntuple_taus(tau_preselected);
 
 	/// jets
 	write_ntuple_jets(jet_selected);
