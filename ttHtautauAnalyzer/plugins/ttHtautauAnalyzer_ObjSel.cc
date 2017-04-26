@@ -457,4 +457,30 @@ int ttHtautauAnalyzer::HiggsDaughterPdgId(const std::vector<reco::GenParticle>& 
 	return -9999;
 }
 
+/////////////////////
+// Vertex
+bool ttHtautauAnalyzer::isGoodPV(const reco::Vertex& vertex)
+{
+    return (not vertex.isFake()) and (vertex.ndof() >= 4) and
+		(fabs(vertex.z()) <= 24.) and fabs(vertex.position().Rho() > 2.);
+}
+
+reco::Vertex ttHtautauAnalyzer::getPrimaryVertex(edm::Handle<reco::VertexCollection> vertices)
+{
+	assert(vertices.isValid());
+
+	reco::Vertex pv;
+
+	for (reco::VertexCollection::const_iterator vtx = vertices->begin();
+		 vtx != vertices->end(); ++vtx) {
+
+		if (not isGoodPV(*vtx)) continue;
+
+		pv = *vtx;
+		break;
+	}
+
+	return pv;
+}
+
 #endif

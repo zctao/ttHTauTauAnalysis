@@ -54,6 +54,10 @@ void eventNtuple::initialize()
 	npuTrue = -9999.;
 	npuInTime = -9999.;
 
+	pvx = -9999.;
+	pvy = -9999.;
+	pvz = -9999.;
+	
 	// triggers
 	// triggerBits_single_e = 0;
 	// triggerBits_single_mu = 0;
@@ -241,6 +245,9 @@ void eventNtuple::setup_branches(TTree* tree)
 	tree->Branch("btagCategory", &btagCategory);
 	tree->Branch("npuTrue", &npuTrue);
 	tree->Branch("npuInTime", &npuInTime);
+	tree->Branch("pvx", &pvx);
+	tree->Branch("pvy", &pvy);
+	tree->Branch("pvz", &pvz);
 	//tree->Branch("triggerBits_single_e", &triggerBits_single_e);
 	//tree->Branch("triggerBits_single_mu", &triggerBits_single_mu);
 	//tree->Branch("triggerBits_double_e", &triggerBits_double_e);
@@ -402,6 +409,9 @@ void eventNtuple::set_branch_address(TTree* tree)
 	tree->SetBranchAddress("btagCategory", &btagCategory);
 	tree->SetBranchAddress("npuTrue", &npuTrue);
 	tree->SetBranchAddress("npuInTime", &npuInTime);
+	tree->SetBranchAddress("pvx", &pvx);
+	tree->SetBranchAddress("pvy", &pvy);
+	tree->SetBranchAddress("pvz", &pvz);
 	//tree->SetBranchAddress("triggerBits_single_e", &triggerBits_single_e);
 	//tree->SetBranchAddress("triggerBits_single_mu", &triggerBits_single_mu);
 	//tree->SetBranchAddress("triggerBits_double_e", &triggerBits_double_e);

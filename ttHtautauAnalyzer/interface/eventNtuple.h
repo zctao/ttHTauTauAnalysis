@@ -68,6 +68,11 @@ class eventNtuple
 	float npuTrue = -9999.;
 	float npuInTime = -9999.;
 
+	// pv
+	float pvx = -9999.;
+	float pvy = -9999.;
+	float pvz = -9999.;
+			
 	// triggers
 	//unsigned int triggerBits_single_e = 0;
 	//unsigned int triggerBits_single_mu = 0;

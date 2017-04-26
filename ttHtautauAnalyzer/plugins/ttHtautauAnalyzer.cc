@@ -173,10 +173,6 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	iEvent.getByToken(clonedMuons_token_,clonedMuons);
 
 	/////////////////////////////////////////
-	// vertex
-
-
-	/////////////////////////////////////////
 	// Pile up
 	float npuTrue = -9999.;
 	float npuInTime = -9999.;
@@ -231,7 +227,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		h_SumGenWeight_->Fill(1, mc_weight);
 		h_SumGenWeightxPU_->Fill(1, mc_weight * pu_weight);
 	}
-
+	
 	/////////////////////////////////////////	
 	// leptons
 	std::vector<miniLepton> lep_loose;
@@ -485,6 +481,12 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 			evt_selector_->pass_tau_mc_match(tau_selected[0]);
 	}
 
+	/// primary vertex
+	reco::Vertex pv = getPrimaryVertex(vertices);
+	evNtuple_.pvx = pv.x();
+	evNtuple_.pvy = pv.y();
+	evNtuple_.pvz = pv.z();
+	
 	assert(tau_selected.size() > 0);
 	evNtuple_.passTauCharge =
 		evt_selector_->pass_tau_charge(tau_selected[0].charge(),

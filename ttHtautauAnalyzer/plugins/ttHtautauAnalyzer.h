@@ -134,6 +134,10 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	template <typename T> int getMCMatchType(const T&, const std::vector<reco::GenParticle>&);
 
 	int HiggsDaughterPdgId(const std::vector<reco::GenParticle>&);
+
+	// vertices
+	bool isGoodPV(const reco::Vertex&);
+	reco::Vertex getPrimaryVertex(edm::Handle<reco::VertexCollection>);
 	
 	// Event selection
 	EventSelector* evt_selector_;
