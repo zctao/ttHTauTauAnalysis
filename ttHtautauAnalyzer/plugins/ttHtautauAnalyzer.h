@@ -74,6 +74,8 @@
 #include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/eventNtuple.h"
 /// scale helper
 #include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/SFHelper.h"
+/// trigger helper
+#include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/TriggerHelper.h"
 /// event selector
 #include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/EventSelector.h"
 
@@ -103,13 +105,6 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	void Set_up_SelType(const std::string&);
 	void Set_up_histograms();
 	void Set_up_tree();
-
-	// Trigger
-	void Set_up_triggerNames();
-	void Set_up_filterNames();
-	void Add_trigger_versionNumber();
-	unsigned int getTriggerBits(edm::Handle<edm::TriggerResults>,
-								std::vector<std::string>&, HLTConfigProvider&);
 	
 	// Object ID
 	template <typename T> float ConePt(const T&);
@@ -195,6 +190,7 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	unsigned long long event_count_;
 	
 	// triggers
+	TriggerHelper* trig_helper_;
 	bool dumpHLT_;
 	std::string hltTag_;
 	std::string filterTag_;
@@ -202,10 +198,6 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	//bool hltcut_off_;
 	HLTConfigProvider hlt_config_;
 	HLTConfigProvider filter_config_;
-
-	std::vector<std::string> trigger_names_;
-	std::vector<std::string> trigger_names_no_ver_;
-	std::vector<std::string> filter_names_;
 	
 	// tauES
 	std::string TESType_;  // "tauESUp" or "tauESDown" or  "NA"

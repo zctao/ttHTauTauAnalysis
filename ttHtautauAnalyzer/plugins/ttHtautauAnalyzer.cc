@@ -87,9 +87,8 @@ ttHtautauAnalyzer::ttHtautauAnalyzer(const edm::ParameterSet& iConfig):
 	badMuons_token_ = consumes<edm::View<reco::Muon>>(iConfig.getParameter<edm::InputTag>("badmu"));
 	clonedMuons_token_ = consumes<edm::View<reco::Muon>>(iConfig.getParameter<edm::InputTag>("clonemu"));
 
-	// Trigger and filter paths
-	Set_up_triggerNames();
-	Set_up_filterNames();
+	// Trigger and filter
+	trig_helper_ = new TriggerHelper(verbosity_);
 	
 	// histograms
 	Set_up_histograms();
@@ -107,7 +106,8 @@ ttHtautauAnalyzer::~ttHtautauAnalyzer()
 	
 	// do anything here that needs to be done at desctruction time
 	// (e.g. close files, deallocate resources etc.)
-	
+
+	delete trig_helper_;
 	delete sf_helper_;
 	delete evt_selector_;
 }
@@ -516,9 +516,9 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	
 	/// triggers and filters
 	evNtuple_.triggerBits =
-		getTriggerBits(triggerResults,trigger_names_,hlt_config_);
+		trig_helper_->get_trigger_bits(triggerResults,hlt_config_);
 	evNtuple_.filterBits =
-		getTriggerBits(filterResults,filter_names_,filter_config_);
+		trig_helper_->get_filter_bits(filterResults,filter_config_);
 	
 	/// scale factors
 	if (not isdata_) {
@@ -619,7 +619,7 @@ void ttHtautauAnalyzer::beginRun(const edm::Run &iRun, const edm::EventSetup &iS
 
 	if (hlt_config_changed) {
 		std::cout << "New " << hltTag_ << " config has been loaded.\n";
-		Add_trigger_versionNumber();
+		trig_helper_->add_trigger_version_number(hlt_config_);
 	}
 
 	bool filter_config_changed = true; // init() updates this one
