@@ -463,12 +463,14 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		if (sample_name_.Contains("ttH") or doSync_)
 			evNtuple_.HiggsDecayType = HiggsDaughterPdgId(*MC_particles);
 
-		evNtuple_.isGenMatchedLep =
-			evt_selector_->pass_lep_mc_match(lep_fakeable);
-
-		assert(tau_selected.size() > 0);
-		evNtuple_.isGenMatchedTau =
-			evt_selector_->pass_tau_mc_match(tau_selected[0]);
+		if (not event_selection_off_) {
+			evNtuple_.isGenMatchedLep =
+				evt_selector_->pass_lep_mc_match(lep_fakeable);
+			
+			assert(tau_selected.size() > 0);
+			evNtuple_.isGenMatchedTau =
+				evt_selector_->pass_tau_mc_match(tau_selected[0]);
+		}
 	}
 
 	/// primary vertex
@@ -476,22 +478,23 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	evNtuple_.pvx = pv.x();
 	evNtuple_.pvy = pv.y();
 	evNtuple_.pvz = pv.z();
-	
-	assert(tau_selected.size() > 0);
-	evNtuple_.passTauCharge =
-		evt_selector_->pass_tau_charge(tau_selected[0].charge(),
-									   lep_fakeable);
 
-	assert(lep_fakeable.size() >= 2);
-	if (abs(lep_fakeable[0].pdgId())==13 and abs(lep_fakeable[1].pdgId())==13)
-		evNtuple_.lepCategory = 0;  // mumu
-	else if (abs(lep_fakeable[0].pdgId())==11 and abs(lep_fakeable[1].pdgId())==11)
-		evNtuple_.lepCategory = 1;  // ee
-	else
-		evNtuple_.lepCategory = 2;  // emu
+	if (not event_selection_off_) {
+		assert(tau_selected.size() > 0);
+		evNtuple_.passTauCharge =
+			evt_selector_->pass_tau_charge(tau_selected[0].charge(),lep_fakeable);
 
-	evNtuple_.btagCategory = n_btags_medium >= 2 ? 1 : 0;
-
+		assert(lep_fakeable.size() >= 2);
+		if (abs(lep_fakeable[0].pdgId())==13 and abs(lep_fakeable[1].pdgId())==13)
+			evNtuple_.lepCategory = 0;  // mumu
+		else if (abs(lep_fakeable[0].pdgId())==11 and abs(lep_fakeable[1].pdgId())==11)
+			evNtuple_.lepCategory = 1;  // ee
+		else
+			evNtuple_.lepCategory = 2;  // emu
+		
+		evNtuple_.btagCategory = n_btags_medium >= 2 ? 1 : 0;
+	}
+		
 	evNtuple_.nBadMuons = badMuons->size() + clonedMuons->size();
 	
 	evNtuple_.n_presel_mu = mu_preselected.size();
@@ -513,7 +516,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		trig_helper_->get_filter_bits(filterResults,filter_config_);
 	
 	/// scale factors
-	if (not isdata_) {
+	if (!isdata_ and !event_selection_off_) {
 		write_ntuple_bTagSF(jet_selected);
 		write_ntuple_leptonSF(lep_fakeable);
 		write_ntuple_tauSF(tau_selected[0], evNtuple_.isGenMatchedTau);
@@ -521,7 +524,8 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	}
 
 	/// fake rate weights
-	write_ntuple_frweight(lep_fakeable, tau_selected);
+	if (!event_selection_off_)
+		write_ntuple_frweight(lep_fakeable, tau_selected);
 	
 	/// event weights
 	if (not isdata_) {

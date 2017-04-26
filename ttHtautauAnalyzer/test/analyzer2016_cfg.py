@@ -20,50 +20,66 @@ options.register('Debug', False,
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.bool,
                  "Debug mode")
+
 options.register('isData', False,
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.bool,
                  "Run on collision data or not")
+
 options.register('SampleName','',  #'ttH_htt'
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
                  "Sample name")
+
 options.register('TauESType', 'NA',
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
                  "Tau energy scale: NA, tauESUp, tauESDown")
+
 options.register('JECType', 'NA',
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
                  "JEC type: NA, JESUp, JESDown, JERUp, JERDown")
+
 options.register("doJERSmearing", False,
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.bool,
                  "apply jet energy smearing for MC or not")
-options.register('evtSelOff', False, 
+
+options.register('TurnOffEvtSel', False, 
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.bool,
                  "Turn off event selection")
+
 options.register('TurnOffHLTCut', False,
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.bool,
                  "Turn off HLT path check in event selection")
+
 options.register('SelectionRegion', 'signal_2lss1tau',
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
                  "Which selection region to apply: signal_2lss1tau, control_2los1tau, control_1lfakeable, control_WZ")
+
 options.register('doSystematics', True,
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.bool,
                  "Include systematics or not")
+
 options.register('doCutFlow', False,
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.bool,
                  "Fill Cutflow histogram or not")
+options.register('doSync', False,
+                 VarParsing.VarParsing.multiplicity.singleton,
+                 VarParsing.VarParsing.varType.bool,
+                 "For Synchronization")
+
 options.register('Is2016H', False,
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.bool,
                  "If the processed dataset is 2016H or not")
+
 options.register("HIPSafeMediumMuon", True,
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.bool,
@@ -182,7 +198,7 @@ process.ttHtaus.jets = cms.InputTag("updatedPatJetsUpdatedJEC")
 process.ttHtaus.mets = cms.InputTag("slimmedMETs","","ttH")
 process.ttHtaus.rho = cms.InputTag("fixedGridRhoFastjetCentralNeutral")
 process.ttHtaus.do_systematics = cms.bool(options.doSystematics)
-process.ttHtaus.turn_off_event_sel = cms.bool(options.evtSelOff)
+process.ttHtaus.turn_off_event_sel = cms.bool(options.TurnOffEvtSel)
 process.ttHtaus.sampleName = cms.string(options.SampleName)
 process.ttHtaus.TauESType = cms.string(options.TauESType)
 process.ttHtaus.JECType = cms.string(options.JECType)
@@ -190,6 +206,7 @@ process.ttHtaus.using_real_data = cms.bool(options.isData)
 process.ttHtaus.selection_region = cms.string(options.SelectionRegion)
 process.ttHtaus.turn_off_HLT_cut = cms.bool(options.TurnOffHLTCut)
 process.ttHtaus.debug_mode = cms.bool(options.Debug)
+process.ttHtaus.do_sync_ = cms.bool(options.doSync)
 process.ttHtaus.doCutFlow = cms.bool(options.doCutFlow)
 process.ttHtaus.doJERsmear = cms.bool(options.doJERSmearing)
 # CSV WPs for Summer16 80X MC + ReReco Data
