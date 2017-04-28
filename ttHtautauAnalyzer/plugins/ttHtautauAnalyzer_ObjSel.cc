@@ -114,12 +114,11 @@ bool ttHtautauAnalyzer::isTightCharge(const pat::Muon& mu) const
 // electrons
 bool ttHtautauAnalyzer::isLooseID(const pat::Electron& ele) const 
 {
-	bool passKinematic = ele.pt() > 7. and std::abs(ele.eta()) < 2.5;
-	bool passPhotonVeto = (ele.passConversionVeto() and
-						   ele.userFloat("numMissingHits") == 0);
+	bool passKinematic = ele.pt() > 7. and fabs(ele.eta()) < 2.5;
+	//bool passPhotonVeto = (ele.passConversionVeto() and
+	//					   ele.userFloat("numMissingHits") <= 1);
 
-	return (passKinematic and passPhotonVeto and
-			ele.userFloat("idPreselection") > 0.5);
+	return (passKinematic and ele.userFloat("idPreselection") > 0.5);
 }
 
 bool ttHtautauAnalyzer::isFakeableID(const pat::Electron& ele) const
@@ -199,9 +198,9 @@ std::vector<pat::Jet> ttHtautauAnalyzer::getSelectedJets(const std::vector<pat::
 {
 	std::vector<pat::Jet> seljets;
 	for (auto & jet : jets) {
-		bool passKinematic = (jet.pt() < 25. and std::abs(jet.eta()) < 2.4);
-		/* 
-		   // miniAODHelper
+		bool passKinematic = (jet.pt() > 25. and fabs(jet.eta()) < 2.4);
+		
+		// miniAODHelper
 		bool looseID =
 		    jet.neutralHadronEnergyFraction() < 0.99 and
 		    jet.chargedEmEnergyFraction() < 0.99 and
@@ -209,7 +208,8 @@ std::vector<pat::Jet> ttHtautauAnalyzer::getSelectedJets(const std::vector<pat::
 			jet.numberOfDaughters() > 1 and
 			jet.chargedHadronEnergyFraction() > 0.0 and
 		    jet.chargedMultiplicity() > 0;
-		*/
+		
+		/*
 		bool looseID =
 			(jet.neutralHadronEnergyFraction()<0.99 and
 			 jet.neutralEmEnergyFraction()<0.99 and
@@ -221,7 +221,7 @@ std::vector<pat::Jet> ttHtautauAnalyzer::getSelectedJets(const std::vector<pat::
 			  jet.chargedMultiplicity()>0 && jet.chargedEmEnergyFraction()<0.99)
 			 or std::abs(jet.eta())>2.4
 			 ); 
-		
+		*/
 		if (passKinematic and looseID)
 			seljets.push_back(jet);
 	}

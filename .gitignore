@@ -6,3 +6,7 @@
 *tmp*
 #*#
 ttHtautauAnalyzer/test/*.root
+
+*.d
+*.so
+*.pcm
