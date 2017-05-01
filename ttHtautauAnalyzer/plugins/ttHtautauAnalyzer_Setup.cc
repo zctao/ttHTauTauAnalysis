@@ -50,7 +50,7 @@ void ttHtautauAnalyzer::Set_up_histograms()
 	h_SumGenWeightxPU_ = fs_->make<TH1D>("h_SumGenWeightxPU","",1,0.5,1.5);
 
 	// cut flow
-	h_CutFlow_ = fs_->make<TH1D>("h_CutFlow","",11,0,11);
+	h_CutFlow_ = fs_->make<TH1D>("h_CutFlow","",15,0,15);
 }
 
 void ttHtautauAnalyzer::Set_up_tree()
