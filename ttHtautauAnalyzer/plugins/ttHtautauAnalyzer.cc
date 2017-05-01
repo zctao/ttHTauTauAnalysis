@@ -97,7 +97,7 @@ ttHtautauAnalyzer::ttHtautauAnalyzer(const edm::ParameterSet& iConfig):
 	// scale factor helper
 	sf_helper_ = new SFHelper(anaType_, selType_, isdata_);
 	// event selection
-	evt_selector_ = new EventSelector(anaType_, selType_, isdata_);
+	evt_selector_ = new EventSelector(anaType_, selType_, debug_);
 }
 
 

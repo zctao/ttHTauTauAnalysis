@@ -9,14 +9,17 @@ bool EventSelector::pass_lepton_number(const std::vector<miniLepton>& lep_fakeab
 
 	// at least 2 fakeable leptons
 	// no more than 2 tight leptons
+
+	if (debug_) {
+		std::cout << "nLepFakeable : " << lep_fakeable.size() << std::endl;
+		std::cout << "nLepTight : " << lep_tight.size() << std::endl;
+	}
 	
 	if (lep_fakeable.size() >= 2 and lep_tight.size() <= 2)
 		return true;
 	
 	if (debug_) {
 		std::cout << "FAIL lepton number requirement" << std::endl;
-		std::cout << "nLepFakeable : " << lep_fakeable.size() << std::endl;
-		std::cout << "nLepTight : " << lep_tight.size() << std::endl;
 	}
 	return false;
 	
@@ -26,6 +29,10 @@ bool EventSelector::pass_tau_number(int ntaus)
 {
 	// 2lss1tau category only for now
 	assert(anaType_==Analyze_2lss1tau);
+
+	if (debug_) {
+		std::cout << "nTau : " << ntaus << std::endl;
+	}
 	
 	// at least 1 selected tau	
 	if (ntaus >= 1)
@@ -33,7 +40,6 @@ bool EventSelector::pass_tau_number(int ntaus)
 	
 	if (debug_) {
 		std::cout << "FAIL tau number requirement" << std::endl;
-		std::cout << "nTau : " << ntaus << std::endl;
 	}
 	return false;
 }
@@ -48,13 +54,16 @@ bool EventSelector::pass_lepton_pt(const std::vector<miniLepton>& leps)
 	float minpt_ldg = 25.;
 	float minpt_subldg = abs(leps[1].pdgId())==11 ? 15. : 10.;
 
+	if (debug_) {
+		std::cout << "lep0 pt id : " << leps[0].pt() << " " << leps[0].pdgId() << std::endl;
+		std::cout << "lep1 pt id : " << leps[1].pt() << " " << leps[1].pdgId() << std::endl;
+	}
+	
 	if (leps[0].pt() > minpt_ldg and leps[1].pt() > minpt_subldg)
 		return true;
 
 	if (debug_) {
 		std::cout << "FAIL lepton pT cut" << std::endl;
-		std::cout << "lep0 pt id : " << leps[0].pt() << " " << leps[0].pdgId() << std::endl;
-		std::cout << "lep1 pt id : " << leps[1].pt() << " " << leps[1].pdgId() << std::endl;
 	}
 	return false;
 }
@@ -89,15 +98,20 @@ bool EventSelector::pass_tight_charge(const std::vector<miniLepton>& leps)
 	assert(anaType_==Analyze_2lss1tau);
 
 	// tight charge
+	if (debug_) {
+		std::cout << "lep0 id tightCharge : " << leps[0].pdgId() << " "
+				  << leps[0].passTightCharge()
+				  << std::endl;
+		std::cout << "lep1 id tightCharge : " << leps[1].pdgId() << " "
+				  << leps[1].passTightCharge()
+				  << std::endl;
+	}
+	
 	if (leps[0].passTightCharge() and leps[1].passTightCharge())
 		return true;
 
 	if (debug_) {
 		std::cout << "FAIL tight charge" << std::endl;
-		std::cout << "lep0 " << leps[0].pdgId() << leps[0].passTightCharge()
-				  << std::endl;
-		std::cout << "lep1 " << leps[1].pdgId() << leps[1].passTightCharge()
-				  << std::endl;
 	}
 	return false;
 }
@@ -115,12 +129,15 @@ bool EventSelector::pass_Zmass_veto(const std::vector<miniLepton>& leps)
 
 	double eeInvMass = (leps[0].p4()+leps[1].p4()).M();
 
+	if (debug_) {
+		std::cout << "ee pair invariant mass : " << eeInvMass << std::endl;
+	}
+	
 	if (eeInvMass < (91.2 - 10.0) or eeInvMass > (91.2 + 10.0))
 		return true;
 
 	if (debug_) {
 		std::cout << "FAIL Z mass veto" << std::endl;
-		std::cout << "ee pair invariant mass : " << eeInvMass << std::endl;
 	}
 	return false;
 }
@@ -136,12 +153,14 @@ bool EventSelector::pass_metLD(float metLD, const std::vector<miniLepton>& leps)
 	if (not (abs(leps[0].pdgId())==11 and abs(leps[1].pdgId())==11) ) 
 		return true;
 
+	if (debug_)
+		std::cout << "metLD : " << metLD << std::endl;
+	
 	if (metLD > 0.2)
 		return true;
 
 	if (debug_) {
 		std::cout << "FAIL metLD cut" << std::endl;
-		std::cout << "metLD : " << metLD << std::endl;
 	}
 	return false;
 }
@@ -166,13 +185,16 @@ bool EventSelector::pass_btag_number(int nbtags_loose, int nbtags_medium)
 	// 2lss1tau category only for now
 	assert(anaType_==Analyze_2lss1tau);
 
+	if (debug_) {
+		std::cout << "loose btags : " << nbtags_loose << std::endl;
+		std::cout << "medium btags : " << nbtags_medium << std::endl;
+	}
+	
 	if (nbtags_loose >= 2 or nbtags_medium >= 1)
 		return true;
 
 	if (debug_) {
 		std::cout << "FAIL number of btags requirement" << std::endl;
-		std::cout << "loose btags : " << nbtags_loose << std::endl;
-		std::cout << "medium btags : " << nbtags_medium << std::endl;
 	}
 	return false;
 }
@@ -182,6 +204,11 @@ bool EventSelector::pass_lepton_charge(int lep0Charge, int lep1Charge)
 	// 2lss1tau category only
 	assert(anaType_==Analyze_2lss1tau);
 
+	if (debug_) {
+		std::cout << "lep charges : " << lep0Charge << " " << lep1Charge
+				  << std::endl;
+	}
+	
 	bool samesign = lep0Charge * lep1Charge > 0;
 	bool pass = (selType_==Control_2los1tau) ? (!samesign) : samesign;	
 	if (pass)
@@ -189,8 +216,6 @@ bool EventSelector::pass_lepton_charge(int lep0Charge, int lep1Charge)
 
 	if (debug_) {
 		std::cout << "FAIL lepton charge requirement" << std::endl;
-		std::cout << "lep charges : " << lep0Charge << " " << lep1Charge
-				  << std::endl;
 	}
 	return false;
 
@@ -204,6 +229,12 @@ bool EventSelector::pass_tau_charge(int tauCharge,
 
 	assert(leps.size() >= 2);
 
+	if (debug_) {
+		std::cout << "tau charge : " << tauCharge << std::endl;
+		std::cout << "lep charges : " << leps[0].charge() << " "
+				  << leps[1].charge() << std::endl;
+	}
+	
 	if (selType_==Control_2los1tau) {
 		assert(leps[0].charge()*leps[1].charge() < 0);
 		if (leps[0].charge()==tauCharge and abs(leps[0].pdgId())==11)
@@ -219,9 +250,6 @@ bool EventSelector::pass_tau_charge(int tauCharge,
 
 	if (debug_) {
 		std::cout << "FAIL tau charge requirement" << std::endl;
-		std::cout << "tau charge : " << tauCharge << std::endl;
-		std::cout << "lep charges : " << leps[0].charge() << " "
-				  << leps[1].charge() << std::endl;
 	}
 	return false;
 }
@@ -230,6 +258,11 @@ bool EventSelector::pass_lepton_ID(bool lep0IsTight, bool lep1IsTight)
 {
 	// 2lss1tau category only for now
 	assert(anaType_==Analyze_2lss1tau);
+
+	if (debug_) {
+		std::cout << "lepID passtight?  " << lep0IsTight << " " << lep1IsTight
+				  << std::endl;
+	}
 	
 	// signal region: two leading leptons are tight
 	bool passLepWP = lep0IsTight and lep1IsTight;
@@ -242,8 +275,6 @@ bool EventSelector::pass_lepton_ID(bool lep0IsTight, bool lep1IsTight)
 
 	if (debug_) {
 		std::cout << "FAIL lepton WP requirement" << std::endl;
-		std::cout << "passtight?  " << lep0IsTight << " " << lep1IsTight
-				  << std::endl;
 	}
 	return false;
 }
@@ -257,6 +288,11 @@ bool EventSelector::pass_lep_mc_match(const std::vector<miniLepton>& leps)
 
 	assert(leps.size() >= 2);
 
+	if (debug_) {
+		std::cout << "MC match type : " << leps[0].MCMatchType() << " "
+				  << leps[1].MCMatchType() << std::endl;
+	}
+	
 	bool matchGenLeps = true;
 	int lep_cnt = 0;
 	
@@ -277,8 +313,6 @@ bool EventSelector::pass_lep_mc_match(const std::vector<miniLepton>& leps)
 
 	if (debug_) {
 		std::cout << "FAIL lepton MC match" << std::endl;
-		std::cout << "MC match type : " << leps[0].MCMatchType() << " "
-				  << leps[1].MCMatchType() << std::endl;
 	}
 	return false;
 }
@@ -295,12 +329,15 @@ bool EventSelector::pass_tau_mc_match(const pat::Tau& tau)
 		return false;
 	}
 
+	if (debug_) {
+		std::cout << "MC match type : " << mtype << std::endl;
+	}
+	
 	if (mtype==1 or mtype==2 or mtype==3 or mtype==4 or mtype==5)
 		return true;
 
 	if (debug_) {
 		std::cout << "FAIL tau MC match" << std::endl;
-		std::cout << "MC match type : " << mtype << std::endl;
 	}
 	return false;
 	
