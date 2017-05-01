@@ -23,7 +23,7 @@ root -b '../macro/syncNtupleComparer.cc(
 
 echo 'Fake extrapolation region : '
 root -b '../macro/syncNtupleComparer.cc(
-"2lss1tau_Fake",
+"2lss1tau_Fake/",
 "~/nobackup/ttHTT_syncNtuple/80X/Test/syncNtuple_fake.root","eventTree",
 "~/nobackup/ttHTT_syncNtuple/80X/Summer16/syncNtuple_event.root", "syncTree_2lSS1tau_Fake",
 "","",
@@ -33,7 +33,7 @@ root -b '../macro/syncNtupleComparer.cc(
 
 echo 'Charge flip region : '
 root -b '../macro/syncNtupleComparer.cc(
-"2lss1tau_Flip",
+"2lss1tau_Flip/",
 "~/nobackup/ttHTT_syncNtuple/80X/Test/syncNtuple_flip.root","eventTree",
 "~/nobackup/ttHTT_syncNtuple/80X/Summer16/syncNtuple_event.root", "syncTree_2lSS1tau_Flip",
 "","",
