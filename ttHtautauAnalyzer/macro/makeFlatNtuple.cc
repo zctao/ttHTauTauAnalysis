@@ -9,7 +9,7 @@
 #include <iostream>
 #include <vector>
 
-void makeFlatNtuple(const TString input_file="../test/output_.root", const TString output_file="test.root", const bool evtSel = true)
+void makeFlatNtuple(const TString input_file="../test/output_.root", const TString output_file="test.root", const TString SelType="", const bool evtSel=true)
 {
 	using namespace std;
 
@@ -39,7 +39,7 @@ void makeFlatNtuple(const TString input_file="../test/output_.root", const TStri
 
 		// apply additional event selection
 		if (evtSel) {
-			if (not evNtuple.isGenMatchedLep) continue;
+			if (SelType=="SR" and (not evNtuple.isGenMatchedLep)) continue;
 			if (not evNtuple.passTauCharge) continue;
 		}
 		
