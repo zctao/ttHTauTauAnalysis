@@ -95,6 +95,11 @@ void syncNtupleComparer(TString Region="",
 	std::vector<int> nevt_jet;
 	std::vector<int> nevt;
 
+	std::vector<int> nevt_mu_fakeable;
+	std::vector<int> nevt_mu_tight;
+	std::vector<int> nevt_ele_fakeable;
+	std::vector<int> nevt_ele_tight;
+
 	for (const auto branch : *branches1) {
 		
 		TString bname = branch->GetName();
@@ -124,6 +129,15 @@ void syncNtupleComparer(TString Region="",
 					nevt_jet.push_back(trees[it]->GetEntries(bname+">0"));
 					nevt.push_back(trees[it]->GetEntries());
 				}
+
+				if (bname.EqualTo("n_fakeablesel_mu"))
+					nevt_mu_fakeable.push_back(trees[it]->GetEntries(bname+">0"));
+				if (bname.EqualTo("n_mvasel_mu"))
+					nevt_mu_tight.push_back(trees[it]->GetEntries(bname+">0"));
+				if (bname.EqualTo("n_fakeablesel_ele"))
+					nevt_ele_fakeable.push_back(trees[it]->GetEntries(bname+">0"));
+				if (bname.EqualTo("n_mvasel_ele"))
+					nevt_ele_tight.push_back(trees[it]->GetEntries(bname+">0"));
 			}
 		}
 
@@ -144,9 +158,29 @@ void syncNtupleComparer(TString Region="",
 	for (auto n: nevt_mu)
 		std::cout << "\t" << n;
 	std::cout << std::endl;
+
+	std::cout << "fakeable muon:";
+	for (auto n: nevt_mu_fakeable)
+		std::cout << "\t" << n;
+	std::cout << std::endl;
+
+	std::cout << "tight muon:";
+	for (auto n: nevt_mu_tight)
+		std::cout << "\t" << n;
+	std::cout << std::endl;
 	
 	std::cout << "presel ele:";
 	for (auto n: nevt_ele)
+		std::cout << "\t" << n;
+	std::cout << std::endl;
+
+	std::cout << "fakeable ele:";
+	for (auto n: nevt_ele_fakeable)
+		std::cout << "\t" << n;
+	std::cout << std::endl;
+
+	std::cout << "tight ele:";
+	for (auto n: nevt_ele_tight)
 		std::cout << "\t" << n;
 	std::cout << std::endl;
 	
@@ -159,7 +193,7 @@ void syncNtupleComparer(TString Region="",
 	for (auto n: nevt_jet)
 		std::cout << "\t" << n;
 	std::cout << std::endl;
-
+	
 	std::cout << "# events:";
 	for (auto n: nevt_jet)
 		std::cout << "\t" << n;
