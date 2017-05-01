@@ -51,7 +51,7 @@ options.register('TurnOffEvtSel', False,
                  VarParsing.VarParsing.varType.bool,
                  "Turn off event selection")
 
-options.register('TurnOffHLTCut', False,
+options.register('TurnOffHLTCut', True,
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.bool,
                  "Turn off HLT path check in event selection")
@@ -59,7 +59,7 @@ options.register('TurnOffHLTCut', False,
 options.register('SelectionRegion', 'signal_2lss1tau',
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
-                 "Which selection region to apply: signal_2lss1tau, control_2los1tau, control_1lfakeable, control_WZ")
+                 "Which selection region to apply: signal_2lss1tau, control_2los1tau, control_1lfakeable")
 
 options.register('doSystematics', True,
                  VarParsing.VarParsing.multiplicity.singleton,
@@ -70,6 +70,7 @@ options.register('doCutFlow', False,
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.bool,
                  "Fill Cutflow histogram or not")
+
 options.register('doSync', False,
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.bool,
