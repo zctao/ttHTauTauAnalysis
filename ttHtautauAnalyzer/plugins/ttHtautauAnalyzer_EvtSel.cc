@@ -128,13 +128,13 @@ bool ttHtautauAnalyzer::pass_event_sel_2lss1tau (
 	//////////////////////////
 	// MC truth matching
 	if (not isdata_) {
-		
+		/*
 		if (evt_selector_->pass_lep_mc_match(lep_fakeable)) {
 			if (doCutflow_) fill_CutFlow(ibin++,"lep MC");
 		}
 		else
 			return false;
-		
+		*/
 		/*
 		assert(taus.size() >= 1);
 		if (evt_selector_->pass_tau_mc_match(taus[0])) {
