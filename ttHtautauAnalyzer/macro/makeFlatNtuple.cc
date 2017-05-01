@@ -9,7 +9,7 @@
 #include <iostream>
 #include <vector>
 
-void makeFlatNtuple(const TString input_file="../test/output_.root", const TString output_file="test.root")
+void makeFlatNtuple(const TString input_file="../test/output_.root", const TString output_file="test.root", const bool evtSel = true)
 {
 	using namespace std;
 
@@ -37,6 +37,12 @@ void makeFlatNtuple(const TString input_file="../test/output_.root", const TStri
 	for (int i = 0; i < nEntries; ++i) {
 		tree_in->GetEntry(i);
 
+		// apply additional event selection
+		if (evtSel) {
+			if (not evNtuple.isGenMatchedLep) continue;
+			if (not evNtuple.passTauCharge) continue;
+		}
+		
 		flatNtuple.initialize();
 
 		flatNtuple.run = evNtuple.run;
