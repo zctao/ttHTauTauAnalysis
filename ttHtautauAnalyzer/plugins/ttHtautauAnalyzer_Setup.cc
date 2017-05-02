@@ -35,6 +35,9 @@ void ttHtautauAnalyzer::Set_up_SelType(const std::string& seltype)
 	else if (seltype == "control_1lfakeable") {
 		selType_ = Selection_types::Control_1lfakeable;
 	}
+	else if (seltype == "loose_2lss1tau") {
+		selType_ = Selection_types::Loose_2lss1tau;
+	}
 	else {
 		std::cerr << "Not valid selection region!" << std::endl;
 		assert(0);

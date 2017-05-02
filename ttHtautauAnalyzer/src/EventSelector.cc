@@ -270,6 +270,8 @@ bool EventSelector::pass_lepton_ID(bool lep0IsTight, bool lep1IsTight)
 	if (selType_==Control_1lfakeable)
 		passLepWP = not passLepWP;
 
+	if (selType_==Loose_2lss1tau) passLepWP = true;
+	
 	if (passLepWP)
 		return true;
 

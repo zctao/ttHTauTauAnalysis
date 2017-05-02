@@ -245,35 +245,29 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	// add ID flags to preselected muons
 	addIDFlags(mu_preselected, MC_particles);
 	SortByConept(mu_preselected);  // sort by conept
-	
-	// fakeable
-	std::vector<pat::Muon> mu_fakeable
-		= getSelectedLeptons(mu_preselected, std::string("isFakeable"));
-	//SortByConept(mu_fakeable);  // sort by conept
-		
-	// tight
-	std::vector<pat::Muon> mu_tight
-		= getSelectedLeptons(mu_fakeable, std::string("isTight"));
-	//SortByConept(mu_tight);  // sort by conept
 
-	if (debug_) {
-		std::cout << "n_muon_loose : " << mu_preselected.size() << std::endl;
-		std::cout << "n_muon_fakeable : " << mu_fakeable.size() << std::endl;
-		std::cout << "n_muon_tight : " << mu_tight.size() << std::endl;
-	}
+	unsigned int n_muon_fakeable = 0;
+	unsigned int n_muon_tight = 0;
 
 	for (const auto & mu : mu_preselected) {
 		miniLepton l(mu);
 		lep_loose.push_back(l);
+
+		if (l.passFakeableSel()) {
+			lep_fakeable.push_back(l);
+			++n_muon_fakeable;
+		}
+
+		if (l.passTightSel()) {
+			lep_tight.push_back(l);
+			++n_muon_tight;
+		}
 	}
 	
-	for (const auto & mu : mu_fakeable) {
-		miniLepton l(mu);
-		lep_fakeable.push_back(l);
-	}
-	for (const auto & mu : mu_tight) {
-		miniLepton l(mu);
-		lep_tight.push_back(l);
+	if (debug_) {
+		std::cout << "n_muon_loose : " << mu_preselected.size() << std::endl;
+		std::cout << "n_muon_fakeable : " << n_muon_fakeable << std::endl;
+		std::cout << "n_muon_tight : " << n_muon_tight << std::endl;
 	}
 	
 	/////////////////////////////////////////
@@ -285,45 +279,37 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		getSelectedLeptons(*electrons, std::string("isLoose"));
 	// remove overlap with muons
 	ele_preselected = removeOverlapdR(ele_preselected, mu_preselected, 0.05);
-	// sort by pt
-	//SortByPt(ele_preselected); 
+	//SortByPt(ele_preselected);   // sort by pt
 	// add ID flags to preselected electrons
 	addIDFlags(ele_preselected, MC_particles);
 	SortByConept(ele_preselected);  // sort by conept
-	
-	// fakeable
-	std::vector<pat::Electron> ele_fakeable =
-		getSelectedLeptons(ele_preselected, std::string("isFakeable"));
-	//SortByConept(ele_fakeable);  // sort by conept
-	
-	// tight
-	std::vector<pat::Electron> ele_tight =
-		getSelectedLeptons(ele_fakeable, std::string("isTight"));
-	//SortByConept(ele_tight);  // sort by conept
 
-	if (debug_) {
-		std::cout << "n_electrons_loose : " << ele_preselected.size() << std::endl;
-		std::cout << "n_electrons_fakeable : " << ele_fakeable.size() << std::endl;
-		std::cout << "n_electrons_tight : " << ele_tight.size() << std::endl;
-	}
-
+	unsigned int n_ele_fakeable = 0;
+	unsigned int n_ele_tight = 0;
+	
 	for (const auto & ele : ele_preselected) {
 		miniLepton l(ele);
 		lep_loose.push_back(l);
+
+		if (l.passFakeableSel()) {
+			lep_fakeable.push_back(l);
+			++n_ele_fakeable;
+		}
+
+		if (l.passTightSel()) {
+			lep_tight.push_back(l);
+			++n_ele_tight;
+		}
+	}	
+
+	if (debug_) {
+		std::cout << "n_electrons_loose : " << ele_preselected.size() << std::endl;
+		std::cout << "n_electrons_fakeable : " << n_ele_fakeable << std::endl;
+		std::cout << "n_electrons_tight : " << n_ele_tight << std::endl;
 	}
 	
-	for (const auto & ele : ele_fakeable) {
-		miniLepton l(ele);
-		lep_fakeable.push_back(l);
-	}
-
-	for (const auto & ele : ele_tight) {
-		miniLepton l(ele);
-		lep_tight.push_back(l);
-	}
-
 	//sort leptons by conept
-	SortByPt(lep_loose);
+	SortByConept(lep_loose);	
 	SortByConept(lep_fakeable);
 	SortByConept(lep_tight);
     //std::sort(lep_loose.begin(), lep_loose.end(), [] (miniLepton l1, miniLepton l2) {return ptr(l1)->conept() > ptr(l2)->conept();})
@@ -335,6 +321,12 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		std::cout << "n_lep_fakeable : " << lep_fakeable.size() << std::endl;
 		std::cout << "n_lep_tight : " << lep_tight.size() << std::endl;
 	}
+
+	// loose leptons for training
+	if (selType_==Loose_2lss1tau) {
+		lep_fakeable.clear();
+		lep_fakeable = lep_loose;
+	}
 	
 	/////////////////////////////////////////
 	// Taus
@@ -342,6 +334,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	
 	// tauES
 	std::vector<pat::Tau> tau_corrected = getCorrectedTaus(*taus, tauES_unc_, TESType_);
+	
 	// loose
 	std::vector<pat::Tau> tau_preselected = getPreselTaus(tau_corrected);
 	// remove overlap with muons and electrons
@@ -355,13 +348,17 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 			tau.addUserInt("MCMatchType", getMCMatchType(tau, *MC_particles));
 	}
 	// tight
-	std::vector<pat::Tau> tau_selected = getSelectedTaus(tau_preselected);
+	std::vector<pat::Tau> tau_selected;
+	if (selType_==Loose_2lss1tau)
+		tau_selected = tau_preselected;
+	else
+		tau_selected = getSelectedTaus(tau_preselected);
 
 	if (debug_) {
 		std::cout << "n_tau_loose : " << tau_preselected.size() << std::endl;
 		std::cout << "n_tau : " << tau_selected.size() << std::endl; 
 	}
-
+	
 	/////////////////////////////////////////
 	// Jets
 	if (debug_) std::cout << "jets" << std::endl;
@@ -382,9 +379,8 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	}
 
 	// remove overlap
-	std::vector<pat::Jet> jet_no_mu = removeOverlapdR(jet_raw, mu_fakeable, 0.4);
-	std::vector<pat::Jet> jet_no_mu_e = removeOverlapdR(jet_no_mu, ele_fakeable, 0.4);
-	std::vector<pat::Jet> jet_cleaned = removeOverlapdR(jet_no_mu_e, tau_preselected, 0.4);
+	std::vector<pat::Jet> jet_no_lep = removeOverlapdR(jet_raw, lep_fakeable, 0.4);
+	std::vector<pat::Jet> jet_cleaned = removeOverlapdR(jet_no_lep, tau_preselected, 0.4);
 
 	// selected jets
 	std::vector<pat::Jet> jet_selected = getSelectedJets(jet_cleaned);
@@ -419,7 +415,8 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	pat::MET pfMET = mets->front();
 	float MET = pfMET.pt();
 	// MHT
-	float MHT = getMHT(mu_fakeable, ele_fakeable, tau_selected, jet_selected);
+	//float MHT = getMHT(mu_fakeable, ele_fakeable, tau_selected, jet_selected);
+	float MHT = getMHT(lep_fakeable, tau_selected, jet_selected);
 	float metLD = 0.00397 * MET + 0.00265 * MHT;
 
 
@@ -463,6 +460,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		if (sample_name_.Contains("ttH") or doSync_)
 			evNtuple_.HiggsDecayType = HiggsDaughterPdgId(*MC_particles);
 
+		// event selection flags
 		if (not event_selection_off_) {
 			evNtuple_.isGenMatchedLep =
 				evt_selector_->pass_lep_mc_match(lep_fakeable);
@@ -498,11 +496,11 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	evNtuple_.nBadMuons = badMuons->size() + clonedMuons->size();
 	
 	evNtuple_.n_presel_mu = mu_preselected.size();
-	evNtuple_.n_fakeable_mu = mu_fakeable.size();
-	evNtuple_.n_mvasel_mu = mu_tight.size();
+	evNtuple_.n_fakeable_mu = n_muon_fakeable;
+	evNtuple_.n_mvasel_mu = n_muon_tight;
 	evNtuple_.n_presel_ele = ele_preselected.size();
-	evNtuple_.n_fakeable_ele = ele_fakeable.size();
-	evNtuple_.n_mvasel_ele = ele_tight.size();
+	evNtuple_.n_fakeable_ele = n_ele_fakeable;
+	evNtuple_.n_mvasel_ele = n_ele_tight;
 	evNtuple_.n_presel_tau = tau_preselected.size();
 	evNtuple_.n_tau = tau_selected.size();
 	evNtuple_.n_jet = jet_selected.size();
@@ -537,7 +535,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		evNtuple_.MC_weight_scale_muR2 = mc_weight_scale_muR2;
 	}
 	
-	if (selType_ == Signal_2lss1tau) {
+	if (selType_ == Signal_2lss1tau or selType_ == Loose_2lss1tau) {
 		if (isdata_) evNtuple_.event_weight = 1.;
 		else {
 			evNtuple_.event_weight =

@@ -173,6 +173,7 @@ void eventNtuple::initialize()
 	//tau_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03->clear();
 	//tau_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03->clear();
 	//tau_byTightCombinedIsolationDeltaBetaCorr3HitsdR03->clear();
+	tau_byVLooseIsolationMVArun2v1DBdR03oldDMwLT->clear();
 	tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT->clear();
 	tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT->clear();
 	tau_byTightIsolationMVArun2v1DBdR03oldDMwLT->clear();
@@ -343,6 +344,7 @@ void eventNtuple::setup_branches(TTree* tree)
 	//tree->Branch("tau_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03", &tau_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03);
 	//tree->Branch("tau_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03", &tau_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03);
 	//tree->Branch("tau_byTightCombinedIsolationDeltaBetaCorr3HitsdR03", &tau_byTightCombinedIsolationDeltaBetaCorr3HitsdR03);
+	tree->Branch("tau_byVLooseIsolationMVArun2v1DBdR03oldDMwLT", &tau_byVLooseIsolationMVArun2v1DBdR03oldDMwLT);
 	tree->Branch("tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT", &tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT);
 	tree->Branch("tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT", &tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT);
 	tree->Branch("tau_byTightIsolationMVArun2v1DBdR03oldDMwLT", &tau_byTightIsolationMVArun2v1DBdR03oldDMwLT);
@@ -509,6 +511,7 @@ void eventNtuple::set_branch_address(TTree* tree)
 	//tree->SetBranchAddress("tau_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03", &tau_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03);
 	//tree->SetBranchAddress("tau_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03", &tau_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03);
 	//tree->SetBranchAddress("tau_byTightCombinedIsolationDeltaBetaCorr3HitsdR03", &tau_byTightCombinedIsolationDeltaBetaCorr3HitsdR03);
+	tree->SetBranchAddress("tau_byVLooseIsolationMVArun2v1DBdR03oldDMwLT", &tau_byVLooseIsolationMVArun2v1DBdR03oldDMwLT);
 	tree->SetBranchAddress("tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT", &tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT);
 	tree->SetBranchAddress("tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT", &tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT);
 	tree->SetBranchAddress("tau_byTightIsolationMVArun2v1DBdR03oldDMwLT", &tau_byTightIsolationMVArun2v1DBdR03oldDMwLT);

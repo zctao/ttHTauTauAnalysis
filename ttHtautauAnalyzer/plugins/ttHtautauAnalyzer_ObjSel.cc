@@ -150,7 +150,19 @@ std::vector<pat::Tau> ttHtautauAnalyzer::getPreselTaus(const std::vector<pat::Ta
 	std::vector<pat::Tau> preseltaus;
 	for (auto & tau : taus) {
 		bool passKinematic = tau.pt() > 20. and std::abs(tau.eta()) < 2.3;
-		if (passKinematic and tau.userFloat("idPreselection") > 0.5) {
+		
+		bool passID = false;
+		//////////////////////////////////////
+		if (selType_==Loose_2lss1tau) { // VLoose 
+			passID = (tau.tauID("decayModeFinding")>0.5) and
+				(tau.tauID("byVLooseIsolationMVArun2v1DBdR03oldDMwLT")>0.5);
+		}
+		//////////////////////////////////////
+		else
+			passID = tau.userFloat("idPreselection") > 0.5;
+
+		
+		if (passKinematic and passID) {
 			preseltaus.push_back(tau);
 		}
 	}
@@ -283,6 +295,31 @@ float ttHtautauAnalyzer::getMHT(std::vector<pat::Muon>& muons,
 	for (const auto & ele : electrons) {
 		MHT_x -= ele.px();
 		MHT_y -= ele.py();
+	}
+
+	for (const auto & tau : taus) {
+		MHT_x -= tau.px();
+		MHT_y -= tau.py();
+	}
+
+	for (const auto & jet : jets) {
+		MHT_x -= jet.px();
+		MHT_y -= jet.py();
+	}
+
+	return sqrt(MHT_x * MHT_x + MHT_y * MHT_y);
+}
+
+float ttHtautauAnalyzer::getMHT(std::vector<miniLepton>& leptons,
+							    std::vector<pat::Tau>& taus,
+								std::vector<pat::Jet>& jets)
+{
+	float MHT_x = 0;
+	float MHT_y = 0;
+
+	for (const auto & lep : leptons) {
+		MHT_x -= lep.p4().Px();
+		MHT_y -= lep.p4().Py();
 	}
 
 	for (const auto & tau : taus) {

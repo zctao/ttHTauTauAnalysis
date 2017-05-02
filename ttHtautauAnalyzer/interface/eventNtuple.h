@@ -185,6 +185,7 @@ class eventNtuple
 	//std::vector<int>   *tau_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03 = 0;
 	//std::vector<int>   *tau_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03 = 0;
 	//std::vector<int>   *tau_byTightCombinedIsolationDeltaBetaCorr3HitsdR03 = 0;
+	std::vector<int>   *tau_byVLooseIsolationMVArun2v1DBdR03oldDMwLT = 0;
 	std::vector<int>   *tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT = 0;
 	std::vector<int>   *tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT = 0;
 	std::vector<int>   *tau_byTightIsolationMVArun2v1DBdR03oldDMwLT = 0;

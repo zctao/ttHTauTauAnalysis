@@ -26,7 +26,7 @@ options.register('isData', False,
                  VarParsing.VarParsing.varType.bool,
                  "Run on collision data or not")
 
-options.register('SampleName','',  #'ttH_htt'
+options.register('SampleName','',  #'ttH'
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
                  "Sample name")
@@ -59,7 +59,7 @@ options.register('TurnOffHLTCut', True,
 options.register('SelectionRegion', 'signal_2lss1tau',
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
-                 "Which selection region to apply: signal_2lss1tau, control_2los1tau, control_1lfakeable")
+                 "Which selection region to apply: signal_2lss1tau, control_2los1tau, control_1lfakeable, loose_2lss1tau")
 
 options.register('doSystematics', True,
                  VarParsing.VarParsing.multiplicity.singleton,

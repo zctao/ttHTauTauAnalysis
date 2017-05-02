@@ -69,8 +69,9 @@ void ttHtautauAnalyzer::write_ntuple_frweight(const std::vector<miniLepton>& lep
 											  const std::vector<pat::Tau>& taus)
 {
 	assert(leps.size() >= 2);
-	assert(leps[0].passFakeableSel() and leps[1].passFakeableSel());
 	assert(taus.size() >= 1);
+	if (not (selType_==Loose_2lss1tau))
+		assert(leps[0].passFakeableSel() and leps[1].passFakeableSel());
 	
 	if (selType_==Control_1lfakeable) {
 		float f1 = sf_helper_->Get_FakeRate(leps[0]);
@@ -202,6 +203,7 @@ void ttHtautauAnalyzer::write_ntuple_taus(const std::vector<pat::Tau>& taus)
 		//evNtuple_.tau_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03->push_back(tau.tauID("byLooseCombinedIsolationDeltaBetaCorr3HitsdR03"));
 		//evNtuple_.tau_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03->push_back(tau.tauID("byMediumCombinedIsolationDeltaBetaCorr3HitsdR03"));
 		//evNtuple_.tau_byTightCombinedIsolationDeltaBetaCorr3HitsdR03->push_back(tau.tauID("byTightCombinedIsolationDeltaBetaCorr3HitsdR03"));
+		evNtuple_.tau_byVLooseIsolationMVArun2v1DBdR03oldDMwLT->push_back(tau.tauID("byVLooseIsolationMVArun2v1DBdR03oldDMwLT"));
 		evNtuple_.tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT->push_back(tau.tauID("byLooseIsolationMVArun2v1DBdR03oldDMwLT"));
 		evNtuple_.tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT->push_back(tau.tauID("byMediumIsolationMVArun2v1DBdR03oldDMwLT"));
 		evNtuple_.tau_byTightIsolationMVArun2v1DBdR03oldDMwLT->push_back(tau.tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT"));

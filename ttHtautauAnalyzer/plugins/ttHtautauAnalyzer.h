@@ -128,6 +128,8 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	float getJetCSV(const pat::Jet&);
 	float getMHT(std::vector<pat::Muon>&, std::vector<pat::Electron>&,
 				 std::vector<pat::Tau>&, std::vector<pat::Jet>&);
+	float getMHT(std::vector<miniLepton>&, std::vector<pat::Tau>&,
+				 std::vector<pat::Jet>&);
 
 	const reco::GenParticle* getMatchedGenParticle(const pat::Muon&, const std::vector<reco::GenParticle>&);
 	const reco::GenParticle* getMatchedGenParticle(const pat::Electron&, const std::vector<reco::GenParticle>&);

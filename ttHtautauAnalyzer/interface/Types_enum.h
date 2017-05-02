@@ -24,7 +24,8 @@ enum Selection_types {
 	Signal_3l,
 	Control_2los1tau,
 	Control_1lfakeable,
-	Control_WZ
+	Control_WZ,
+	Loose_2lss1tau  // for training
 };
 
 
