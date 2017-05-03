@@ -5,7 +5,9 @@
 *.png
 *tmp*
 #*#
+
 ttHtautauAnalyzer/test/*.root
+ttHtautauAnalyzer/test/crab/
 
 *.d
 *.so
