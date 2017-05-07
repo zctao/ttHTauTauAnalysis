@@ -8,6 +8,7 @@
 
 ttHtautauAnalyzer/test/*.root
 ttHtautauAnalyzer/test/crab/
+ttHtautauAnalyzer/test/*.txt
 
 *.d
 *.so
