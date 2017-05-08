@@ -58,6 +58,43 @@ miniLepton::miniLepton(const pat::Muon& mu)
 }
 	
 #endif
+/*
+miniLepton::miniLepton(float pt, float eta, float phi, float mass, float conept,
+					   int charge, int pdgid, bool tightcharge, bool isloose,
+					   bool isfakeable, bool istight, int mcmatchtype)
+{
+	pt_ = pt;
+	eta_ = eta;
+	phi_ = phi;
+	mass_ = mass;
+	conept_ = conept;
+	charge_ = charge;
+	pdgid_ = pdgid;
+	tightcharge_ = tightcharge;
+	isloose_ = isloose;
+	isfakeable_ = isfakeable;
+	istight_ = istight;
+	mcmatchtype_ = mcmatchtype;
+}
+*/
+
+miniLepton::miniLepton(const TLorentzVector& l, float conept, int charge,
+					   int pdgid, bool tightcharge, bool isloose,
+					   bool isfakeable, bool istight, int mcmatchtype)
+{
+	pt_ = l.Pt();
+	eta_ = l.Eta();
+	phi_ = l.Phi();
+	mass_ = l.M();
+	conept_ = conept;
+	charge_ = charge;
+	pdgid_ = pdgid;
+	tightcharge_ = tightcharge;
+	isloose_ = isloose;
+	isfakeable_ = isfakeable;
+	istight_ = istight;
+	mcmatchtype_ = mcmatchtype;
+}
 
 TLorentzVector miniLepton::p4() const
 {
