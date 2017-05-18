@@ -4,14 +4,64 @@ import ROOT as r
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from root_numpy import fill_hist
-from sklearn.metrics import roc_curve, roc_auc_score
+from root_numpy import root2array, rec2array, fill_hist
+from sklearn.metrics import roc_curve, roc_auc_score, auc
 from sklearn.metrics import classification_report
+from sklearn.model_selection import learning_curve
+from sklearn.model_selection import GridSearchCV
 
-def plot_correlation(data,figname,**kwds):
+# mostly based on:
+# https://betatim.github.io/posts/sklearn-for-TMVA-users/
+# https://betatim.github.io/posts/advanced-sklearn-for-TMVA/
+
+def get_inputs(sample_name, variables, tree_name='mva'):
+    x = None
+    y = None
+    w = None
+
+    infiles = []
+    xsections = []
+    if ('ttH' in sample_name):
+        infiles = ["mvaVars_ttH_loose.root"]
+        xsections = [0.215]
+    elif ('ttV' in sample_name):
+        infiles = ["mvaVars_TTZ_loose.root", "mvaVars_TTW_loose.root"]
+        xsections = [0.253, 0.204]  # [TTZ, TTW]
+    elif ('ttbar' in sample_name):
+        infiles = ["mvaVars_TTSemilep_loose.root","mvaVars_TTDilep_loose.root"]
+        xsections = [182, 87.3]  # [semilep, dilep]
+    else:
+        print "Pick one sample name from 'ttH', 'ttV' or 'ttbar'"
+        return x, y, w
+
+    for fn, xs in zip(infiles, xsections):
+        xi = rec2array(root2array(fn, tree_name, variables))
+        wi = root2array(fn, tree_name, 'event_weight')
+
+        # scale weight and renormalize total weights to one
+        wi *= (xs / sum(xsections)) /np.sum(wi)
+
+        if x is not None:
+            x = np.concatenate((x,xi))
+            w = np.concatenate((w,wi))
+        else:
+            x = xi
+            w = wi
+
+    if ('ttH' in sample_name):
+        y = np.ones(x.shape[0])
+    else:
+        y = np.zeros(x.shape[0])
+        #y = -1*np.ones(x.shape[0])
+
+    return x, y, w
+
+
+def plot_correlation(x, variables, figname, **kwds):
+    df = pd.DataFrame(x, columns=variables)
+    
     """Calculate pairwise correlation between variables"""
-
-    corrmat = data.corr(**kwds)
+    corrmat = df.corr(**kwds)
 
     fig, ax1 = plt.subplots(ncols=1, figsize=(6,5))
 
@@ -32,10 +82,14 @@ def plot_correlation(data,figname,**kwds):
     plt.tight_layout()
     plt.savefig(figname)
     plt.close()
-
-def plot_roc(y_test, y_decision, figname):
-    fpr, tpr, thresholds = roc_curve(y_test, y_decision)
-    roc_auc = roc_auc_score(y_test, y_decision)
+    
+    
+def plot_roc(y_test, y_pred, w_test, figname):
+    fpr, tpr, thresholds = roc_curve(y_test, y_pred, sample_weight=w_test)
+    print max(thresholds)
+    print min(thresholds)
+    roc_auc = roc_auc_score(y_test, y_pred, sample_weight=w_test)
+    #roc_auc = auc(fpr, tpr,reorder=True)
     
     plt.plot(fpr, tpr, lw=1, label='ROC (area = %.02f)'%(roc_auc))
     plt.xlim([0.0, 1.0])
@@ -48,14 +102,18 @@ def plot_roc(y_test, y_decision, figname):
     plt.savefig(figname)
     plt.close()
 
+    
 def plot_clf_results(clf, x_train, y_train, w_train, x_test, y_test, w_test, nbins=30):
     decisions = []
     weights = []
     for x,y,w in ((x_train, y_train, w_train), (x_test, y_test, w_test)):
-        dsig = clf.decision_function(x[y>0])
-        wsig = w[y>0]
-        dbkg = clf.decision_function(x[y<0])
-        wbkg = w[y<0]
+        w *= 1./np.sum(w)
+        #dsig = clf.decision_function(x[y>0.5])
+        dsig = clf.predict_proba(x[y>0.5])[:,0]
+        wsig = w[y>0.5]
+        #dbkg = clf.decision_function(x[y<0.5])
+        dbkg = clf.predict_proba(x[y<0.5])[:,0]
+        wbkg = w[y<0.5]
         decisions += [dsig,dbkg]
         weights += [wsig, wbkg]
 
@@ -108,15 +166,96 @@ def plot_clf_results(clf, x_train, y_train, w_train, x_test, y_test, w_test, nbi
     l.Draw('SAME')
 
     tcanvas.SaveAs('BDTOutput.png')
+
     
-def evaluate_inputs(x, y, variables):
+def print_variable_rank(clf, variables):
+    print 'classifier variable ranking : '
+    for var, score in sorted(zip(variables, clf.feature_importances_),key=lambda x: x[1], reverse=True):
+        print var, score
+
+        
+def run_grid_search(clf, x_dev, y_dev, verbose=True):
+    param_grid = {"n_estimators": [50,200,400,1000],
+              "max_depth": [1, 3, 8],
+              'learning_rate': [0.1, 0.2, 1.]}
+    clfGS = GridSearchCV(clf, param_grid, cv=3, scoring='roc_auc',
+                                    n_jobs=8)
+    clfGS.fit(x_dev,y_dev)
+
+    print 'Best set of parameters : '
+    print clfGS.best_estimator_
+
+    if verbose:
+        print
+        print 'Grid scores on a subset of the development set:'
+        for params, mean_score, scores in clfGS.grid_scores_:
+            print "%0.4f (+/-%0.04f) for %r"%(mean_score, scores.std(), params)
+        
+        #y_true, y_pred = y_dev, clf.decision_function(x_dev)
+        #print "  It scores %0.4f on the full development set"%roc_auc_score(y_true, y_pred)
+        #y_true, y_pred = y_eval, clf.decision_function(x_eval)
+        #print "  It scores %0.4f on the full evaluation set"%roc_auc_score(y_true, y_pred)
+
+        
+def plot_validation_curve(clfs, x_train, y_train, x_test, y_test,
+                          figname="validation_curve.png"):
+    for n,clf in enumerate(clfs):
+        test_score = np.empty(len(clf.estimators_))
+        train_score = np.empty(len(clf.estimators_))
+        
+        for i, pred in enumerate(clf.staged_decision_function(x_test)):
+            test_score[i] = roc_auc_score(y_test, pred)
+
+        for i, pred in enumerate(clf.staged_decision_function(x_train)):
+            train_score[i] = roc_auc_score(y_train, pred)
+
+        best_iter = np.argmax(test_score)
+        rate = clf.get_params()['learning_rate']
+        depth = clf.get_params()['max_depth']
+        test_line = plt.plot(test_score,label='rate=%.1f depth=%i (%.2f)'%(rate,depth,test_score[best_iter]))
+        colour = test_line[-1].get_color()
+        plt.plot(train_score, '--', color=colour)
+        plt.xlabel("Number of boosting iterations")
+        plt.ylabel("Area under ROC")
+        plt.axvline(x=best_iter, color=colour)
+
+    plt.legend(loc='best')
+    return plt
+    #plt.savefig(figname)
+    #plt.close()
+
     
-    df = pd.DataFrame(np.hstack((x, y.reshape(y.shape[0], -1))),
-                  columns=variables+['y'])
+def plot_learning_curve(estimator, title, X, y, cv=None,
+                        n_jobs=1, train_sizes=np.linspace(.1, 1.0, 5),
+                        scoring=None, ax=None, xlabel=True):
+    if ax is None:
+        plt.figure()
+        ax.title(title)
     
-    sig = df.y > 0.
-    bkg = df.y < 0.
-    
-    plot_correlation(df[sig].drop('y',1),'correlations_sig.png')
-    plot_correlation(df[bkg].drop('y',1),'correlations_bkg.png')
-    
+    if xlabel:
+        ax.set_xlabel("Training examples")
+        
+    ax.set_ylabel("Score")
+    train_sizes, train_scores, test_scores = learning_curve(estimator,
+                                                            X, y,
+                                                            cv=cv,
+                                                            n_jobs=n_jobs,
+                                                            train_sizes=train_sizes,
+                                                            scoring=scoring)
+    train_scores_mean = np.mean(train_scores, axis=1)
+    train_scores_std = np.std(train_scores, axis=1)
+    test_scores_mean = np.mean(test_scores, axis=1)
+    test_scores_std = np.std(test_scores, axis=1)
+
+    ax.fill_between(train_sizes, train_scores_mean - train_scores_std,
+                     train_scores_mean + train_scores_std, alpha=0.1,
+                     color="r")
+    ax.fill_between(train_sizes, test_scores_mean - test_scores_std,
+                     test_scores_mean + test_scores_std, alpha=0.1, color="g")
+    ax.plot(train_sizes, train_scores_mean, 'o-', color="r",
+             label="Training score")
+    ax.plot(train_sizes, test_scores_mean, 'o-', color="g",
+             label="Cross-validation score")
+
+    ax.set_ylim([0.65, 1.0])
+    return plt
