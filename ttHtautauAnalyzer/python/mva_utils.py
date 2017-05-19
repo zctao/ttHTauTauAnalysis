@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 from root_numpy import root2array, rec2array, fill_hist
 from sklearn.metrics import roc_curve, roc_auc_score, auc
 from sklearn.metrics import classification_report
-from sklearn.model_selection import learning_curve
 from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import learning_curve
 
 # mostly based on:
 # https://betatim.github.io/posts/sklearn-for-TMVA-users/
@@ -53,7 +53,7 @@ def get_inputs(sample_name, variables, tree_name='mva'):
     else:
         y = np.zeros(x.shape[0])
         #y = -1*np.ones(x.shape[0])
-
+        
     return x, y, w
 
 
@@ -174,22 +174,26 @@ def print_variable_rank(clf, variables):
         print var, score
 
         
-def run_grid_search(clf, x_dev, y_dev, verbose=True):
-    param_grid = {"n_estimators": [50,200,400,1000],
-              "max_depth": [1, 3, 8],
-              'learning_rate': [0.1, 0.2, 1.]}
-    clfGS = GridSearchCV(clf, param_grid, cv=3, scoring='roc_auc',
-                                    n_jobs=8)
-    clfGS.fit(x_dev,y_dev)
+def run_grid_search(clf, x_dev, y_dev, w_dev,
+                    param_grid = {"n_estimators": [50,200,400],
+                                  "max_depth": [1, 3, 5],
+                                  'learning_rate': [0.1, 0.2, 1.]},
+                    verbose=True):
 
-    print 'Best set of parameters : '
+    clfGS = GridSearchCV(clf, param_grid, cv=3, scoring='roc_auc', n_jobs=8)
+    clfGS.fit(x_dev,y_dev, w_dev)
+
+    print 'Best parameters set found on development set: '
     print clfGS.best_estimator_
 
     if verbose:
         print
         print 'Grid scores on a subset of the development set:'
-        for params, mean_score, scores in clfGS.grid_scores_:
-            print "%0.4f (+/-%0.04f) for %r"%(mean_score, scores.std(), params)
+        means = clfGS.cv_results_['mean_test_score']
+        stds = clfGS.cv_results_['std_test_score']
+        params = clfGS.cv_results_['params']
+        for mean, std, params in zip(means, stds, params):
+            print "%0.4f (+/-%0.04f) for %r"%(mean, std * 2, params)
         
         #y_true, y_pred = y_dev, clf.decision_function(x_dev)
         #print "  It scores %0.4f on the full development set"%roc_auc_score(y_true, y_pred)
@@ -197,7 +201,7 @@ def run_grid_search(clf, x_dev, y_dev, verbose=True):
         #print "  It scores %0.4f on the full evaluation set"%roc_auc_score(y_true, y_pred)
 
         
-def plot_validation_curve(clfs, x_train, y_train, x_test, y_test,
+def plot_validation_curve(clfs, x_train, x_test, y_train, y_test,
                           figname="validation_curve.png"):
     for n,clf in enumerate(clfs):
         test_score = np.empty(len(clf.estimators_))
@@ -212,7 +216,7 @@ def plot_validation_curve(clfs, x_train, y_train, x_test, y_test,
         best_iter = np.argmax(test_score)
         rate = clf.get_params()['learning_rate']
         depth = clf.get_params()['max_depth']
-        test_line = plt.plot(test_score,label='rate=%.1f depth=%i (%.2f)'%(rate,depth,test_score[best_iter]))
+        test_line = plt.plot(test_score,label='rate=%.2f depth=%i (%.2f)'%(rate,depth,test_score[best_iter]))
         colour = test_line[-1].get_color()
         plt.plot(train_score, '--', color=colour)
         plt.xlabel("Number of boosting iterations")
@@ -220,42 +224,40 @@ def plot_validation_curve(clfs, x_train, y_train, x_test, y_test,
         plt.axvline(x=best_iter, color=colour)
 
     plt.legend(loc='best')
-    return plt
-    #plt.savefig(figname)
-    #plt.close()
+    #return plt
+    plt.savefig(figname)
+    plt.close()
 
     
-def plot_learning_curve(estimator, title, X, y, cv=None,
-                        n_jobs=1, train_sizes=np.linspace(.1, 1.0, 5),
-                        scoring=None, ax=None, xlabel=True):
-    if ax is None:
-        plt.figure()
-        ax.title(title)
-    
-    if xlabel:
-        ax.set_xlabel("Training examples")
-        
-    ax.set_ylabel("Score")
-    train_sizes, train_scores, test_scores = learning_curve(estimator,
-                                                            X, y,
-                                                            cv=cv,
-                                                            n_jobs=n_jobs,
-                                                            train_sizes=train_sizes,
-                                                            scoring=scoring)
+def plot_learning_curve(estimator, title, X, y, ylim=None,
+                        cv=None, n_jobs=1, train_sizes=np.linspace(.1, 1.0, 5),
+                        scoring=None, xlabel=True):
+    plt.figure()
+    plt.title(title)
+    if ylim is not None:
+        plt.ylim(*ylim)
+    plt.xlabel("Training examples")
+    plt.ylabel("Score")
+    train_sizes, train_scores, test_scores = learning_curve(
+        estimator, X, y, cv=cv, n_jobs=n_jobs, train_sizes=train_sizes)
     train_scores_mean = np.mean(train_scores, axis=1)
     train_scores_std = np.std(train_scores, axis=1)
     test_scores_mean = np.mean(test_scores, axis=1)
     test_scores_std = np.std(test_scores, axis=1)
+    plt.grid()
 
-    ax.fill_between(train_sizes, train_scores_mean - train_scores_std,
+    plt.fill_between(train_sizes, train_scores_mean - train_scores_std,
                      train_scores_mean + train_scores_std, alpha=0.1,
                      color="r")
-    ax.fill_between(train_sizes, test_scores_mean - test_scores_std,
+    plt.fill_between(train_sizes, test_scores_mean - test_scores_std,
                      test_scores_mean + test_scores_std, alpha=0.1, color="g")
-    ax.plot(train_sizes, train_scores_mean, 'o-', color="r",
+    plt.plot(train_sizes, train_scores_mean, 'o-', color="r",
              label="Training score")
-    ax.plot(train_sizes, test_scores_mean, 'o-', color="g",
+    plt.plot(train_sizes, test_scores_mean, 'o-', color="g",
              label="Cross-validation score")
 
-    ax.set_ylim([0.65, 1.0])
-    return plt
+    plt.legend(loc="best")
+    
+    figname = title.replace(' ','_')+'.png'
+    plt.savefig(figname)
+    plt.close()

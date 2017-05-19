@@ -31,10 +31,14 @@ x = np.concatenate((xsig, xbkg))
 y = np.concatenate((ysig, ybkg))
 w = np.concatenate((wsig, wbkg))
 
+# ????
+# negative weights due to NLO generator, for now not use weights in training
+w = np.ones(x.shape[0])
+
 x_train, x_test, y_train, y_test, w_train, w_test = train_test_split(x, y, w, test_size=0.2)
 
 bdt = GradientBoostingClassifier(n_estimators=100, learning_rate=0.2, max_depth=3, random_state=0)
-bdt.fit(x_train, y_train)#, w_train)
+bdt.fit(x_train, y_train, w_train)
 
 joblib.dump(bdt, 'bdt.pkl')
 #bdt=joblib.load('bdt.pkl')
