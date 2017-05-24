@@ -32,6 +32,8 @@ class MVAVars
 	float tau_pt() const {return tau_pt_;}
 	float dr_lep0_tau() const {return dr_lep0_tau_;}
 	float dr_lep1_tau() const {return dr_lep1_tau_;}
+	float mvis_lep0_tau() const {return mvis_lep0_tau_;}
+	float mvis_lep1_tau() const {return mvis_lep1_tau_;}
 	
  private:
 
@@ -50,6 +52,8 @@ class MVAVars
 	float tau_pt_;
 	float dr_lep0_tau_;
 	float dr_lep1_tau_;
+	float mvis_lep0_tau_;
+	float mvis_lep1_tau_;
 
 	float compute_mindr(const TLorentzVector&, const std::vector<TLorentzVector>&);
 	float compute_average_dr(const std::vector<TLorentzVector>&);
