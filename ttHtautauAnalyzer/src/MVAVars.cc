@@ -29,6 +29,9 @@ MVAVars::MVAVars(const std::vector<miniLepton>& leptons, const std::vector<TLore
 
 	dr_lep0_tau_ = leptons[0].p4().DeltaR(taus[0]);
 	dr_lep1_tau_ = (leptons.size()>1) ? leptons[1].p4().DeltaR(taus[0]) : -9999.;
+
+	mvis_lep0_tau_ = (leptons[0].p4()+taus[0]).M();
+	mvis_lep1_tau_ = (leptons.size()>1) ? (leptons[1].p4()+taus[0]).M() : -9999.;
 }
 
 float MVAVars::compute_mindr(const TLorentzVector& l, const std::vector<TLorentzVector>& vjs)

@@ -49,6 +49,8 @@ void makeMVANtuple(const TString input_file, const TString output_file,
 	float tau_pt;
 	float dr_lep0_tau;
 	float dr_lep1_tau;
+	float mvis_lep0_tau;
+	float mvis_lep1_tau;
 	
 	// set up branches
 	tree_mva->Branch("event_weight", &event_weight);
@@ -66,6 +68,8 @@ void makeMVANtuple(const TString input_file, const TString output_file,
 	tree_mva->Branch("tau_pt", &tau_pt);
 	tree_mva->Branch("dr_lep0_tau", &dr_lep0_tau);
 	tree_mva->Branch("dr_lep1_tau", &dr_lep1_tau);
+	tree_mva->Branch("mvis_lep0_tau", &mvis_lep0_tau);
+	tree_mva->Branch("mvis_lep1_tau", &mvis_lep1_tau);
 
 	// loop over trees
 	int nEntries = tree_in->GetEntries();
@@ -81,50 +85,18 @@ void makeMVANtuple(const TString input_file, const TString output_file,
 
 		/////////////////
 		// leptons
-		std::vector<miniLepton> leptons;
-		
-		for (unsigned int l = 0; l<evNtuple.mu_pt->size(); ++l) {
-			// requrie at least fakeable id if not for training
-			if (!looseSelection and !(evNtuple.mu_isfakeablesel->at(l))) continue;
-			TLorentzVector mu;
-			mu.SetPtEtaPhiE(evNtuple.mu_pt->at(l), evNtuple.mu_eta->at(l),
-							evNtuple.mu_phi->at(l), evNtuple.mu_E->at(l));
-			miniLepton lep(mu, evNtuple.mu_conept->at(l));
-			leptons.push_back(lep);
-		}
-
-		for (unsigned int l = 0; l<evNtuple.ele_pt->size(); ++l) {
-			// requrie at least fakeable id if not for training
-			if (!looseSelection and !(evNtuple.ele_isfakeablesel->at(l))) continue;
-			TLorentzVector ele;
-			ele.SetPtEtaPhiE(evNtuple.ele_pt->at(l), evNtuple.ele_eta->at(l),
-							 evNtuple.ele_phi->at(l), evNtuple.ele_E->at(l));
-			miniLepton lep(ele, evNtuple.ele_conept->at(l));
-			leptons.push_back(lep);
-		}
-
-		assert(leptons.size()>1);
-		// sort by conept
-		sort(leptons.begin(), leptons.end(), [] (miniLepton l1, miniLepton l2)
-			 {return l1.conept()>l2.conept();} );
+		std::vector<miniLepton> leptons = evNtuple.buildLeptons(looseSelection);
 
 		/////////////////
 		// taus
-		std::vector<TLorentzVector> taus;
-		
-		for (unsigned int t = 0; t<evNtuple.tau_pt->size(); ++t) {
-			// require tight tau if not for training
-			if (!looseSelection and !(evNtuple.tau_idSelection->at(t))) continue;
+		std::vector<TLorentzVector> taus
+			= evNtuple.buildFourVectorTaus(looseSelection);
 
-			TLorentzVector tau;
-			tau.SetPtEtaPhiE(evNtuple.tau_pt->at(t), evNtuple.tau_eta->at(t),
-							 evNtuple.tau_phi->at(t), evNtuple.tau_E->at(t));
-			taus.push_back(tau);
-		}
-		assert(taus.size()>0);
-		
 		/////////////////
 		// jets
+		//std::vector<TLorentzVector> jets
+		//	= evNtuple.buildFourVectorJets(looseSelection);
+		
 		std::vector<TLorentzVector> jets;
 
 		for (unsigned int j = 0; j<evNtuple.jet_pt->size(); ++j) {
@@ -133,7 +105,7 @@ void makeMVANtuple(const TString input_file, const TString output_file,
 							 evNtuple.jet_phi->at(j), evNtuple.jet_E->at(j));
 			jets.push_back(jet);
 		}
-
+		
 		MVAVars mvaVars(leptons, taus, jets, evNtuple.PFMET, evNtuple.PFMETphi,
 						evNtuple.MHT);
 
@@ -151,6 +123,8 @@ void makeMVANtuple(const TString input_file, const TString output_file,
 		tau_pt = mvaVars.tau_pt();
 		dr_lep0_tau = mvaVars.dr_lep0_tau();
 		dr_lep1_tau = mvaVars.dr_lep1_tau();
+		mvis_lep0_tau = mvaVars.mvis_lep0_tau();
+		mvis_lep1_tau = mvaVars.mvis_lep1_tau();
 
 		event_weight = evNtuple.event_weight;
 

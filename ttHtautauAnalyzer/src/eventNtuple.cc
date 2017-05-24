@@ -3,6 +3,108 @@
 
 #include "../interface/eventNtuple.h"
 
+std::vector<miniLepton> eventNtuple::buildLeptons(bool loose)
+{
+	std::vector<miniLepton> leptons;
+
+	for (unsigned int l = 0; l<mu_pt->size(); ++l) {
+		// if not loose selection require to at least pass fakeable id
+		if (!loose and !(mu_isfakeablesel->at(l))) continue;
+		TLorentzVector mu;
+		mu.SetPtEtaPhiE(mu_pt->at(l),mu_eta->at(l),mu_phi->at(l),mu_E->at(l));
+		miniLepton lep(mu, mu_conept->at(l), -13*mu_charge->at(l));
+		leptons.push_back(lep);
+	}
+
+	for (unsigned int l = 0; l<ele_pt->size(); ++l) {
+		// if not loose selection require to at least pass fakeable id
+		if (!loose and !(ele_isfakeablesel->at(l))) continue;
+		TLorentzVector ele;
+		ele.SetPtEtaPhiE(ele_pt->at(l),ele_eta->at(l),ele_phi->at(l),ele_E->at(l));
+		miniLepton lep(ele, ele_conept->at(l), -11*ele_charge->at(l));
+		leptons.push_back(lep);
+	}
+	// sort by conept
+	sort(leptons.begin(), leptons.end(), [] (miniLepton l1, miniLepton l2)
+		 {return l1.conept()>l2.conept();} );
+
+	return leptons;
+}
+
+std::vector<TLorentzVector> eventNtuple::buildFourVectorLeps(bool loose)
+{
+	auto leptons = buildLeptons(loose);
+	
+	std::vector<TLorentzVector> lepsP4;
+	for (const auto & lep : leptons)
+		lepsP4.push_back(lep.p4());
+
+	return lepsP4;
+}
+
+std::vector<TLorentzVector> eventNtuple::buildFourVectorTaus(bool loose)
+{
+	std::vector<TLorentzVector> tausP4;
+
+	for (unsigned int t = 0; t < tau_pt->size(); ++t) {
+		// require tight tau if not loose selection
+		if (!loose and !(tau_idSelection->at(t))) continue;
+
+		TLorentzVector tau;
+		tau.SetPtEtaPhiE(tau_pt->at(t),tau_eta->at(t),tau_phi->at(t),tau_E->at(t));
+		tausP4.push_back(tau);
+	}
+	// should be already sorted by pt
+	return tausP4;
+}
+
+std::vector<TLorentzVector> eventNtuple::buildFourVectorJets(bool loose)
+{
+	std::vector<TLorentzVector> jetsP4;
+	
+	for (unsigned int j = 0; j < jet_pt->size(); ++j) {
+		TLorentzVector jet;
+		jet.SetPtEtaPhiE(jet_pt->at(j),jet_eta->at(j),jet_phi->at(j),jet_E->at(j));
+		jetsP4.push_back(jet);
+	}
+	// should be already sorted by pt
+	return jetsP4;
+}
+
+std::vector<TLorentzVector> eventNtuple::buildFourVectorBtagJets(bool loose)
+{
+	std::vector<TLorentzVector> btagsP4;
+	btagsP4.reserve(2);
+
+	int icsv0 = -1; int icsv1 = -1;
+	float csv0 = -233.; float csv1 = -233;
+	
+	for (unsigned int j = 0; j < jet_pt->size(); ++j) {
+		if (jet_csv->at(j) > csv0) {
+			csv1 = csv0;
+			icsv1 = icsv0;
+			csv0 = jet_csv->at(j);
+			icsv0 = j;
+		}
+		else if (jet_csv->at(j) > csv1) {
+			csv1 = jet_csv->at(j);
+			icsv1 = j;
+		}
+	}
+	
+	TLorentzVector bj0, bj1;
+	bj0.SetPtEtaPhiE(jet_pt->at(icsv0),jet_eta->at(icsv0),jet_phi->at(icsv0),
+					 jet_E->at(icsv0));
+	assert(jet_csv->at(icsv0)==csv0);
+	bj1.SetPtEtaPhiE(jet_pt->at(icsv1),jet_eta->at(icsv1),jet_phi->at(icsv1),
+					 jet_E->at(icsv1));
+	assert(jet_csv->at(icsv1)==csv1);
+	btagsP4.push_back(bj0);
+	btagsP4.push_back(bj1);
+
+	return btagsP4;
+}
+
 void eventNtuple::initialize()
 {
 	// event variables

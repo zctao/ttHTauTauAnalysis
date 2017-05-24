@@ -2,6 +2,9 @@
 #define eventNtuple_h
 
 #include "TTree.h"
+#include "TLorentzVector.h"
+
+#include "../interface/miniLepton.h"
 
 #include <iostream>
 #include <vector>
@@ -16,6 +19,11 @@ class eventNtuple
 	void set_branch_address(TTree*);
 	void setup_branches(TTree*);
 	void initialize();
+	std::vector<miniLepton> buildLeptons(bool);
+	std::vector<TLorentzVector> buildFourVectorLeps(bool);
+	std::vector<TLorentzVector> buildFourVectorTaus(bool);
+	std::vector<TLorentzVector> buildFourVectorJets(bool);
+	std::vector<TLorentzVector> buildFourVectorBtagJets(bool);
 
 	////////////////////////
 	//// variables
@@ -99,7 +107,6 @@ class eventNtuple
 	//float lep0_conept;
 	//float lep1_conept;
 	//float avg_dr_jet;
-
 	//int ibin;  // bin index in 1D BDT shape template
 
     int n_presel_mu = -9999;
