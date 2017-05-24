@@ -9,6 +9,7 @@
 ttHtautauAnalyzer/test/*.root
 ttHtautauAnalyzer/test/crab/
 ttHtautauAnalyzer/test/*.txt
+ttHtautauAnalyzer/test/EventDump*.py
 
 *.d
 *.so
