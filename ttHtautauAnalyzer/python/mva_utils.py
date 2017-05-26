@@ -7,14 +7,46 @@ import matplotlib.pyplot as plt
 from root_numpy import root2array, rec2array, fill_hist
 from sklearn.metrics import roc_curve, roc_auc_score, auc
 from sklearn.metrics import classification_report
-from sklearn.model_selection import GridSearchCV
-from sklearn.model_selection import learning_curve
+#from sklearn.model_selection import GridSearchCV
+from sklearn.grid_search import GridSearchCV
+#from sklearn.model_selection import learning_curve
+from sklearn.learning_curve import learning_curve
+
+variables_tt = """
+nJet
+mindr_lep0_jet
+mindr_lep1_jet
+avg_dr_jet
+max_lep_eta
+met
+mht
+mT_met_lep0
+lep0_conept
+lep1_conept
+dr_leps
+dr_lep0_tau
+dr_lep1_tau
+""".split()
+
+variables_ttV = """
+mindr_lep0_jet
+mindr_lep1_jet
+avg_dr_jet
+lep0_conept
+lep1_conept
+max_lep_eta
+mT_met_lep0
+dr_leps
+mvis_lep0_tau
+mvis_lep1_tau
+""".split()
 
 # mostly based on:
 # https://betatim.github.io/posts/sklearn-for-TMVA-users/
 # https://betatim.github.io/posts/advanced-sklearn-for-TMVA/
 
-def get_inputs(sample_name, variables, tree_name='mva'):
+def get_inputs(sample_name,variables,tree_name='mva',dir='',
+               lumi=1.):
     x = None
     y = None
     w = None
@@ -22,13 +54,14 @@ def get_inputs(sample_name, variables, tree_name='mva'):
     infiles = []
     xsections = []
     if ('ttH' in sample_name):
-        infiles = ["mvaVars_ttH_loose.root"]
+        infiles = [dir+"mvaVars_ttH_loose.root"]
         xsections = [0.215]
     elif ('ttV' in sample_name):
-        infiles = ["mvaVars_TTZ_loose.root", "mvaVars_TTW_loose.root"]
+        infiles = [dir+"mvaVars_TTZ_loose.root", dir+"mvaVars_TTW_loose.root"]
         xsections = [0.253, 0.204]  # [TTZ, TTW]
     elif ('ttbar' in sample_name):
-        infiles = ["mvaVars_TTSemilep_loose.root","mvaVars_TTDilep_loose.root"]
+        infiles = [dir+"mvaVars_TTSemilep_loose.root",
+                   dir+"mvaVars_TTDilep_loose.root"]
         xsections = [182, 87.3]  # [semilep, dilep]
     else:
         print "Pick one sample name from 'ttH', 'ttV' or 'ttbar'"
@@ -39,7 +72,10 @@ def get_inputs(sample_name, variables, tree_name='mva'):
         wi = root2array(fn, tree_name, 'event_weight')
 
         # scale weight and renormalize total weights to one
-        wi *= (xs / sum(xsections)) /np.sum(wi)
+        #wi *= (xs / sum(xsections)) /np.sum(wi)
+        
+        # scale samples based on lumi and cross section
+        wi *= lumi * xs / np.sum(wi)
 
         if x is not None:
             x = np.concatenate((x,xi))
@@ -53,11 +89,29 @@ def get_inputs(sample_name, variables, tree_name='mva'):
     else:
         y = np.zeros(x.shape[0])
         #y = -1*np.ones(x.shape[0])
-        
+    
     return x, y, w
 
 
-def plot_correlation(x, variables, figname, **kwds):
+#def correct_negative_weight(weights):
+#    # based on the suggestion from @glouppe
+#    # https://github.com/scikit-learn/scikit-learn/issues/3774
+#    weights_corrected = []
+#    for w in weights:
+#        if w < 0:
+#
+#        else:
+#            weights_corrected.append(w)
+def flip_negative_weight(weights):
+    w_flip = []
+    for w in weights:
+        w_flip.append(abs(w))
+
+    return w_flip
+            
+
+
+def plot_correlation(x, variables, figname, verbose=False, **kwds):
     df = pd.DataFrame(x, columns=variables)
     
     """Calculate pairwise correlation between variables"""
@@ -82,12 +136,16 @@ def plot_correlation(x, variables, figname, **kwds):
     plt.tight_layout()
     plt.savefig(figname)
     plt.close()
+
+    if verbose:
+        print 'Generate plot : ',figname
     
     
-def plot_roc(y_test, y_pred, w_test, figname):
+def plot_roc(data, figname, verbose=False):
+    # data: tuple (test, pred, weights)
+    y_test, y_pred, w_test = data
     fpr, tpr, thresholds = roc_curve(y_test, y_pred, sample_weight=w_test)
-    print max(thresholds)
-    print min(thresholds)
+    #print max(thresholds) #print min(thresholds)
     roc_auc = roc_auc_score(y_test, y_pred, sample_weight=w_test)
     #roc_auc = auc(fpr, tpr,reorder=True)
     
@@ -102,17 +160,42 @@ def plot_roc(y_test, y_pred, w_test, figname):
     plt.savefig(figname)
     plt.close()
 
+    if verbose:
+        print 'Generate plot : ', figname
+
+
+def plot_rocs(data_list, figname, verbose=False):
+    # data_list is expected to be a list of tuple (y_test, y_pred, w_test, label)
+    plt.title('Receiver Operating Characteristic Curve')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.0])
+    plt.xlabel('Background efficiency')
+    plt.ylabel('Signal efficiency')
+    for data in data_list:
+        y_test, y_pred, w_test, label = data
+        fpr, tpr, thresholds = roc_curve(y_test, y_pred, sample_weight=w_test)
+        roc_auc = roc_auc_score(y_test, y_pred, sample_weight=w_test)
+        plt.plot(fpr, tpr, lw=1, label=label+' (area = %.02f)'%(roc_auc))
+
+    plt.legend(loc="lower right")
+    plt.grid()
+    plt.savefig(figname)
+    plt.close()
+
+    if verbose:
+        print 'Generate plot : ', figname
     
-def plot_clf_results(clf, x_train, y_train, w_train, x_test, y_test, w_test, nbins=30):
+    
+def plot_clf_results(clf, x_train, y_train, w_train, x_test, y_test, w_test, nbins=30, figname="BDTOutput.png", verbose="False"):
     decisions = []
     weights = []
     for x,y,w in ((x_train, y_train, w_train), (x_test, y_test, w_test)):
         w *= 1./np.sum(w)
         #dsig = clf.decision_function(x[y>0.5])
-        dsig = clf.predict_proba(x[y>0.5])[:,0]
+        dsig = clf.predict_proba(x[y>0.5])[:,1]
         wsig = w[y>0.5]
         #dbkg = clf.decision_function(x[y<0.5])
-        dbkg = clf.predict_proba(x[y<0.5])[:,0]
+        dbkg = clf.predict_proba(x[y<0.5])[:,1]
         wbkg = w[y<0.5]
         decisions += [dsig,dbkg]
         weights += [wsig, wbkg]
@@ -165,22 +248,40 @@ def plot_clf_results(clf, x_train, y_train, w_train, x_test, y_test, w_test, nbi
     h_test_bkg.Draw('SAME')
     l.Draw('SAME')
 
-    tcanvas.SaveAs('BDTOutput.png')
+    tcanvas.SaveAs(figname)
+
+    if verbose:
+        print 'Generate plot : ', figname
 
     
-def print_variable_rank(clf, variables):
-    print 'classifier variable ranking : '
+def print_variables_rank(clf, variables, outname=None, verbose=False):
+
+    out = None
+    if not outname==None:
+        out = open(outname, 'w')
+    elif verbose:
+        print 'classifier variable ranking : '
+        
     for var, score in sorted(zip(variables, clf.feature_importances_),key=lambda x: x[1], reverse=True):
-        print var, score
+        if out==None:
+            print var,'\t',score
+        else:
+            out.write(str(var)+'\t'+str(score)+'\n')
+
+    if not out==None:
+        out.close()
+        if verbose:
+            print 'Output : ', outname
 
         
 def run_grid_search(clf, x_dev, y_dev, w_dev,
                     param_grid = {"n_estimators": [50,200,400],
                                   "max_depth": [1, 3, 5],
                                   'learning_rate': [0.1, 0.2, 1.]},
-                    verbose=True):
+                    verbose=0):
 
-    clfGS = GridSearchCV(clf, param_grid, cv=3, scoring='roc_auc', n_jobs=8)
+    clfGS = GridSearchCV(clf, param_grid, cv=3, scoring='roc_auc', n_jobs=8,
+                         verbose=verbose-1)
     clfGS.fit(x_dev,y_dev, w_dev)
 
     print 'Best parameters set found on development set: '
