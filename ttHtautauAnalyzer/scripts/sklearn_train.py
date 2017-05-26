@@ -35,8 +35,8 @@ parser.add_argument('-o','--outdir',type=str, default='./',
                     help="output directory")
 parser.add_argument('-n','--normalize',action='store_true', #default=False,
                     help="normalize input sample weights")
-parser.add_argument('-w','--weights', choices=['u','o','f'], default='o',
-                    help="u: unweighted in training; o: use weights directly from inputs; f: flip all negative weights")
+parser.add_argument('-w','--weights', choices=['u','o','f','z'], default='o',
+                    help="u: unweighted in training; o: use weights directly from inputs; f: flip all negative weights; z: set all negative weights to zero")
 
 args = parser.parse_args()
 
@@ -74,20 +74,21 @@ if args.correlation:
                           verbose=(not args.quiet))
     util.plot_correlation(xsig, vars, args.outdir+'correlation_bkg.png',
                           verbose=(not args.quiet))
+
+if args.normalize:
+    wsig *= 1./np.sum(wsig)
+    wbkg *= 1./np.sum(wbkg)
     
 if args.weights=='u':
     wsig = np.ones(len(wsig))
     wbkg = np.ones(len(wbkg))
 elif args.weights=='f':
-    wsig = util.flip_negative_weight(wsig)
-    wbkg = util.flip_negative_weight(wbkg)
-    if args.normalize:
-        wsig *= 1./np.sum(wsig)
-        wbkg *= 1./np.sum(wbkg)
-elif args.weights=='o':
-    if args.normalize:
-        wsig *= 1./np.sum(wsig)
-        wbkg *= 1./np.sum(wbkg)
+    wsig = np.array(util.flip_negative_weight(wsig))
+    wbkg = np.array(util.flip_negative_weight(wbkg))  
+elif args.weights=='z':
+    wsig = np.array(util.ignore_negative_weight(wsig))
+    wbkg = np.array(util.ignore_negative_weight(wbkg))
+#elif args.weights=='o':
     
 x = np.concatenate((xsig, xbkg))
 y = np.concatenate((ysig, ybkg))
