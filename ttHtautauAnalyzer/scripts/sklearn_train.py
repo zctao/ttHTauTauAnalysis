@@ -95,9 +95,9 @@ y = np.concatenate((ysig, ybkg))
 w = np.concatenate((wsig, wbkg))
 
 x_train,x_test,y_train,y_test,w_train,w_test = train_test_split(x, y, w,
-                                                                #test_size=0.2,
-                                                                train_size=10000,
-                                                                test_size=5000,
+                                                                test_size=0.2,
+                                                                #train_size=10000,
+                                                                #test_size=5000,
                                                                 random_state=0)
 
 # Training
