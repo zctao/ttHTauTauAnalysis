@@ -106,9 +106,13 @@ def flip_negative_weight(weights):
     w_flip = []
     for w in weights:
         w_flip.append(abs(w))
-
     return w_flip
             
+def ignore_negative_weight(weights):
+    w_new = []
+    for w in weights:
+        w_new.append(w if w>0. else 0.)
+    return w_new
 
 
 def plot_correlation(x, variables, figname, verbose=False, **kwds):
