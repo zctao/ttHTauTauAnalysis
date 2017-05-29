@@ -35,8 +35,8 @@ parser.add_argument('-o','--outdir',type=str, default='./',
                     help="output directory")
 parser.add_argument('-n','--normalize',action='store_true', #default=False,
                     help="normalize input sample weights")
-parser.add_argument('-w','--weights', choices=['u','o','f','z'], default='o',
-                    help="u: unweighted in training; o: use weights directly from inputs; f: flip all negative weights; z: set all negative weights to zero")
+parser.add_argument('-w','--weights', choices=['u','o','f','z','a'], default='o',
+                    help="u: unweighted in training; o: use weights directly from inputs; f: flip all negative weights; z: set all negative weights to zero; a: annihilate pair of negative and positive weighted event (not implemented yet)")
 
 args = parser.parse_args()
 
@@ -113,6 +113,21 @@ bdt.fit(x_train, y_train, w_train)
 # save output
 outfile=args.outdir+'bdt.pkl'
 joblib.dump(bdt, outfile, compress=True)
+if not args.quiet:
+    print 'save classifier to ', outfile
+
+# save dataset
+outdata=args.outdir+'dataset'
+np.savez(outdata, x_train=x_train, y_train=y_train, w_train=w_train,
+         x_test=x_test, y_test=y_test, w_test=w_test)
+if not args.quiet:
+    print 'save datasets to ', outdata+'.npz'
+
+
+#util.dump_dataset((x_train, y_train, w_train), 'train', filename=outdata,
+#                  mode='recreate')
+#util.dump_dataset((x_test, y_test, w_test), 'test', filename=outdata,
+#                  mode='update')
 
 if args.timeit:
     stop = timer()
