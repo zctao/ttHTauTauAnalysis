@@ -4,13 +4,16 @@ import ROOT as r
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from root_numpy import root2array, rec2array, fill_hist
+from array import array
+from root_numpy import root2array, rec2array, array2root, fill_hist
+from root_numpy.tmva import evaluate_reader
 from sklearn.metrics import roc_curve, roc_auc_score, auc
 from sklearn.metrics import classification_report
 #from sklearn.model_selection import GridSearchCV
 from sklearn.grid_search import GridSearchCV
 #from sklearn.model_selection import learning_curve
 from sklearn.learning_curve import learning_curve
+from sklearn.externals import joblib
 
 variables_tt = """
 nJet
@@ -45,31 +48,34 @@ mvis_lep1_tau
 # https://betatim.github.io/posts/sklearn-for-TMVA-users/
 # https://betatim.github.io/posts/advanced-sklearn-for-TMVA/
 
-def get_inputs(sample_name,variables,tree_name='mva',dir='',
-               lumi=1.):
+def get_inputs(sample_name,variables,filename=None,tree_name='mva',dir='',
+               weight_name='event_weight', lumi=1.):
     x = None
     y = None
     w = None
 
     infiles = []
     xsections = []
-    if ('ttH' in sample_name):
-        infiles = [dir+"mvaVars_ttH_loose.root"]
-        xsections = [0.215]
-    elif ('ttV' in sample_name):
-        infiles = [dir+"mvaVars_TTZ_loose.root", dir+"mvaVars_TTW_loose.root"]
-        xsections = [0.253, 0.204]  # [TTZ, TTW]
-    elif ('ttbar' in sample_name):
-        infiles = [dir+"mvaVars_TTSemilep_loose.root",
-                   dir+"mvaVars_TTDilep_loose.root"]
-        xsections = [182, 87.3]  # [semilep, dilep]
+    if filename!=None:
+        infiles = [dir+filename]
     else:
-        print "Pick one sample name from 'ttH', 'ttV' or 'ttbar'"
-        return x, y, w
+        if ('ttH' in sample_name):
+            infiles = [dir+"mvaVars_ttH_loose.root"]
+            xsections = [0.215]
+        elif ('ttV' in sample_name):
+            infiles = [dir+"mvaVars_TTZ_loose.root", dir+"mvaVars_TTW_loose.root"]
+            xsections = [0.253, 0.204]  # [TTZ, TTW]
+        elif ('ttbar' in sample_name):
+            infiles = [dir+"mvaVars_TTSemilep_loose.root",
+                       dir+"mvaVars_TTDilep_loose.root"]
+            xsections = [182, 87.3]  # [semilep, dilep]
+        else:
+            print "Pick one sample name from 'ttH', 'ttV' or 'ttbar'"
+            return x, y, w
 
     for fn, xs in zip(infiles, xsections):
         xi = rec2array(root2array(fn, tree_name, variables))
-        wi = root2array(fn, tree_name, 'event_weight')
+        wi = root2array(fn, tree_name, weight_name)
 
         # scale weight and renormalize total weights to one
         #wi *= (xs / sum(xsections)) /np.sum(wi)
@@ -92,6 +98,14 @@ def get_inputs(sample_name,variables,tree_name='mva',dir='',
     
     return x, y, w
 
+
+#def dump_dataset(data,split,filename='dataset.root',dir='',mode='recreate'):
+#    x, y, w = data
+#    array2root(x[y>0.5],filename,treename=split+'/signal', mode=mode)
+#    array2root(w[y>0.5],filename,treename=split+'/signal', mode='update')
+#    array2root(x[y<0.5],filename,treename=split+'/background', mode='update')
+#    array2root(w[y<0.5],filename,treename=split+'/background', mode='update')
+    
 
 #def correct_negative_weight(weights):
 #    # based on the suggestion from @glouppe
@@ -366,3 +380,31 @@ def plot_learning_curve(estimator, title, X, y, ylim=None,
     figname = title.replace(' ','_')+'.png'
     plt.savefig(figname)
     plt.close()
+
+
+def get_sklearn_test_results(directory, name=''):
+    # load dataset and classifier
+    clf = joblib.load(directory+'bdt.pkl')
+    dataset = np.load(directory+'dataset.npz')
+
+    result = (dataset['y_test'], clf.predict_proba(dataset['x_test'])[:,1],
+              dataset['w_test'], name)
+    return result
+
+def get_tmva_test_results(directory, variables, name=''):
+    # TMVA reader 
+    reader = r.TMVA.Reader()
+    for var in variables:
+        vtype = 'i' if var=='nJet' else 'f'
+        reader.AddVariable(var, array(vtype, [0.]))
+
+    reader.BookMVA('BDT',directory+'weights/TMVA_BDT.weights.xml')
+
+    # Get testing dataset
+    filename = directory+'tmva_output.root'
+    x_test = rec2array(root2array(filename, 'TestTree', variables))
+    y_test = 1-root2array(filename, 'TestTree', 'classID')
+    w_test = root2array(filename, 'TestTree', 'weight')
+    
+    y_decision = evaluate_reader(reader, "BDT", x_test)
+    return (y_test, y_decision, w_test, name)
