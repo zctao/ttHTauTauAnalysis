@@ -74,10 +74,6 @@ if args.correlation:
                           verbose=(not args.quiet))
     util.plot_correlation(xsig, vars, args.outdir+'correlation_bkg.png',
                           verbose=(not args.quiet))
-
-if args.normalize:
-    wsig *= 1./np.sum(wsig)
-    wbkg *= 1./np.sum(wbkg)
     
 if args.weights=='u':
     wsig = np.ones(len(wsig))
@@ -89,7 +85,11 @@ elif args.weights=='z':
     wsig = np.array(util.ignore_negative_weight(wsig))
     wbkg = np.array(util.ignore_negative_weight(wbkg))
 #elif args.weights=='o':
-    
+
+if args.normalize:
+    wsig *= 1./np.sum(wsig)
+    wbkg *= 1./np.sum(wbkg)
+
 x = np.concatenate((xsig, xbkg))
 y = np.concatenate((ysig, ybkg))
 w = np.concatenate((wsig, wbkg))

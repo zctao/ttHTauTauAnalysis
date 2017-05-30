@@ -35,8 +35,8 @@ parser.add_argument('-o','--outdir',type=str, default='./',
                     help="output directory")
 parser.add_argument('-n','--normalize',action='store_true', #default=False,
                     help="normalize input sample weights")
-parser.add_argument('-w','--weights', choices=['u','o','f'], default='o',
-                    help="u: unweighted in training; o: use weights directly from inputs; f: flip all negative weights;")
+parser.add_argument('-w','--weights', choices=['u','o','f','z'], default='o',
+                    help="u: unweighted in training; o: use weights directly from inputs; f: flip all negative weights; z: set all negative weights to zero")
 parser.add_argument('--tmva_negweight', choices=['InverseBoostNegWeights','IgnoreNegWeightsInTraining','PairNegWeightsGlobal'], default='IgnoreNegWeightsInTraining',help="TMVA negative weight treatment")
 
 args = parser.parse_args()
@@ -75,10 +75,6 @@ if args.correlation:
                           verbose=(not args.quiet))
     util.plot_correlation(xsig, vars, args.outdir+'correlation_bkg.png',
                           verbose=(not args.quiet))
-
-if args.normalize:
-    wsig *= 1./np.sum(wsig)
-    wbkg *= 1./np.sum(wbkg)
         
 if args.weights=='u':
     wsig = np.ones(len(wsig))
@@ -86,8 +82,15 @@ if args.weights=='u':
 elif args.weights=='f':
     wsig = np.array(util.flip_negative_weight(wsig))
     wbkg = np.array(util.flip_negative_weight(wbkg))
+elif args.weights=='z':
+    wsig = np.array(util.ignore_negative_weight(wsig))
+    wbkg = np.array(util.ignore_negative_weight(wbkg))
 #elif args.weights=='o':
-    
+
+if args.normalize:
+    wsig *= 1./np.sum(wsig)
+    wbkg *= 1./np.sum(wbkg)
+
 x = np.concatenate((xsig, xbkg))
 y = np.concatenate((ysig, ybkg))
 w = np.concatenate((wsig, wbkg))
@@ -115,8 +118,8 @@ add_classification_events(factory, x_train, y_train, weights=w_train)
 add_classification_events(factory, x_test, y_test, weights=w_test, test=True)
 
 norm = 'None'
-if args.normalize:
-    norm = 'EqualNumEvents'
+#if args.normalize:
+#    norm = 'NumEvents'
 factory.PrepareTrainingAndTestTree(TCut('1'), 'NormMode={}'.format(norm))
 
 config="NTrees={}:MaxDepth={}:BoostType=Grad:SeparationType=GiniIndex:Shrinkage={}:NegWeightTreatment={}".format(args.ntree,args.depth,args.rate,args.tmva_negweight)
