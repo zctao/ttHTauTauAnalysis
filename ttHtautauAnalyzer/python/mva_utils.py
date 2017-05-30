@@ -167,7 +167,7 @@ def plot_roc(data, figname, verbose=False):
     roc_auc = roc_auc_score(y_test, y_pred, sample_weight=w_test)
     #roc_auc = auc(fpr, tpr,reorder=True)
     
-    plt.plot(fpr, tpr, lw=1, label='ROC (area = %.02f)'%(roc_auc))
+    plt.plot(fpr, tpr, lw=1, label='ROC (area = %.03f)'%(roc_auc))
     plt.xlim([0.0, 1.0])
     plt.ylim([0.0, 1.0])
     plt.xlabel('Background efficiency')
@@ -193,7 +193,7 @@ def plot_rocs(data_list, figname, verbose=False):
         y_test, y_pred, w_test, label = data
         fpr, tpr, thresholds = roc_curve(y_test, y_pred, sample_weight=w_test)
         roc_auc = roc_auc_score(y_test, y_pred, sample_weight=w_test)
-        plt.plot(fpr, tpr, lw=1, label=label+' (area = %.02f)'%(roc_auc))
+        plt.plot(fpr, tpr, lw=1, label=label+' (area = %.03f)'%(roc_auc))
 
     plt.legend(loc="lower right")
     plt.grid()
