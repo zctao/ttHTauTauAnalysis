@@ -19,11 +19,11 @@ class eventNtuple
 	void set_branch_address(TTree*);
 	void setup_branches(TTree*);
 	void initialize();
-	std::vector<miniLepton> buildLeptons(bool);
-	std::vector<TLorentzVector> buildFourVectorLeps(bool);
-	std::vector<TLorentzVector> buildFourVectorTaus(bool);
-	std::vector<TLorentzVector> buildFourVectorJets(bool);
-	std::vector<TLorentzVector> buildFourVectorBtagJets(bool);
+	std::vector<miniLepton> buildLeptons(bool loose=false);
+	std::vector<TLorentzVector> buildFourVectorLeps(bool loose=false);
+	std::vector<TLorentzVector> buildFourVectorTaus(bool loose=false);
+	std::vector<TLorentzVector> buildFourVectorJets(bool loose=false);
+	std::vector<TLorentzVector> buildFourVectorBtagJets(bool loose=false);
 
 	////////////////////////
 	//// variables
@@ -97,17 +97,6 @@ class eventNtuple
 	int passTauCharge = -9999;
 	int isGenMatchedLep = -9999;
 	int isGenMatchedTau  = -9999;
-	
-	// event level MVA variables
-	//float MVA_2lss_ttV;
-	//float MVA_2lss_ttbar;
-	//float MT_met_lep0;
-	//float mindr_lep0_jet;
-	//float mindr_lep1_jet;
-	//float lep0_conept;
-	//float lep1_conept;
-	//float avg_dr_jet;
-	//int ibin;  // bin index in 1D BDT shape template
 
     int n_presel_mu = -9999;
     int n_fakeable_mu = -9999;

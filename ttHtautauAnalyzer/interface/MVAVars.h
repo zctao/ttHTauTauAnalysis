@@ -4,6 +4,7 @@
 //#include "DataFormats/Math/interface/deltaR.h"
 #include "miniLepton.h"
 #include "TLorentzVector.h"
+#include "TMVA/Reader.h"
 
 #include <vector>
 #include <cmath>
@@ -15,9 +16,13 @@ class MVAVars
 
 	MVAVars(const std::vector<miniLepton>&, const std::vector<TLorentzVector>&,
 			const std::vector<TLorentzVector>&, float, float, float);
+	MVAVars(){};
 	~MVAVars(){};
 
-	int nJet() const {return nJet_;}
+	void set_up_tmva_reader();
+	
+	//int nJet() const {return nJet_;}
+	float nJet() const {return nJet_;}
 	float mindr_lep0_jet() const {return mindr_lep0_jet_;}
 	float mindr_lep1_jet() const {return mindr_lep1_jet_;}
 	float avg_dr_jet() const {return avg_dr_jet_;}
@@ -34,10 +39,17 @@ class MVAVars
 	float dr_lep1_tau() const {return dr_lep1_tau_;}
 	float mvis_lep0_tau() const {return mvis_lep0_tau_;}
 	float mvis_lep1_tau() const {return mvis_lep1_tau_;}
+	void compute_all_variables(const std::vector<miniLepton>&,
+							   const std::vector<TLorentzVector>&,
+							   const std::vector<TLorentzVector>&,
+							   float, float, float);
+	float BDT_2lss1tau_ttV();
+	float BDT_2lss1tau_ttbar();
 	
  private:
 
-	int nJet_;
+	//int nJet_;
+	float nJet_;
 	float mindr_lep0_jet_;
 	float mindr_lep1_jet_;
 	float avg_dr_jet_;
@@ -55,9 +67,11 @@ class MVAVars
 	float mvis_lep0_tau_;
 	float mvis_lep1_tau_;
 
-	float compute_mindr(const TLorentzVector&, const std::vector<TLorentzVector>&);
 	float compute_average_dr(const std::vector<TLorentzVector>&);
+	float compute_mindr(const TLorentzVector&, const std::vector<TLorentzVector>&);
 	
+	TMVA::Reader *reader_2lss1tau_ttV;
+	TMVA::Reader *reader_2lss1tau_ttbar;
 };
 
 #endif
