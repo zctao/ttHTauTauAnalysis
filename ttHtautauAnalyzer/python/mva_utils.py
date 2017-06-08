@@ -182,7 +182,7 @@ def plot_roc(data, figname, verbose=False):
         print 'Generate plot : ', figname
 
 
-def plot_rocs(data_list, figname, verbose=False):
+def plot_rocs(data_list, figname, verbose=False, weights=None):
     # data_list is expected to be a list of tuple (y_test, y_pred, w_test, label)
     plt.title('Receiver Operating Characteristic Curve')
     plt.xlim([0.0, 1.0])
@@ -191,6 +191,11 @@ def plot_rocs(data_list, figname, verbose=False):
     plt.ylabel('Signal efficiency')
     for data in data_list:
         y_test, y_pred, w_test, label = data
+
+        # use specified weights to plot roc curve if weights is provided
+        if not weights is None:
+            w_test = weights
+        
         fpr, tpr, thresholds = roc_curve(y_test, y_pred, sample_weight=w_test)
         roc_auc = roc_auc_score(y_test, y_pred, sample_weight=w_test)
         plt.plot(fpr, tpr, lw=1, label=label+' (area = %.03f)'%(roc_auc))

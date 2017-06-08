@@ -5,6 +5,8 @@ import ttHTauTauAnalysis.ttHtautauAnalyzer.mva_utils as util
 dir = '/uscms/home/ztao/nobackup/BDTs/sklearn/ttV/weighted/'
 name = 'sklearn_weighted'
 result_sklearn_weighted = util.get_sklearn_test_results(dir, name)
+# get event weights
+y_test, y_pred, event_weights, label = result_sklearn_weighted
 
 # sklearn unweighted
 dir = '/uscms/home/ztao/nobackup/BDTs/sklearn/ttV/unweighted/'
@@ -48,4 +50,4 @@ result_tmva_ignore = util.get_tmva_test_results(dir, util.variables_ttV, name)
 
 #util.plot_rocs([result_sklearn_weighted, result_sklearn_unweighted, result_sklearn_flip, result_sklearn_ignore], 'weights_sklearn_roc.png')
 #util.plot_rocs([result_tmva_weighted, result_tmva_unweighted, result_tmva_flip, result_tmva_ignore, result_tmva_pair], 'weights_tmva_roc.png')
-util.plot_rocs([result_sklearn_weighted, result_sklearn_unweighted, result_sklearn_flip, result_sklearn_ignore, result_tmva_weighted, result_tmva_unweighted, result_tmva_flip, result_tmva_ignore], 'compare_rocs.png')
+util.plot_rocs([result_sklearn_weighted, result_sklearn_unweighted, result_sklearn_flip, result_sklearn_ignore, result_tmva_weighted, result_tmva_unweighted, result_tmva_flip, result_tmva_ignore], 'compare_rocs.png', weights=event_weights)
