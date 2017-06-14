@@ -325,22 +325,32 @@ def run_grid_search(clf, x_dev, y_dev, w_dev,
         #print "  It scores %0.4f on the full evaluation set"%roc_auc_score(y_true, y_pred)
 
         
-def plot_validation_curve(clfs, x_train, x_test, y_train, y_test,
-                          figname="validation_curve.png"):
+def plot_validation_curve(clfs, x_train, x_test, y_train, y_test, w_train, w_test,
+                          labels=None, figname="validation_curve.png"):
     for n,clf in enumerate(clfs):
         test_score = np.empty(len(clf.estimators_))
         train_score = np.empty(len(clf.estimators_))
         
-        for i, pred in enumerate(clf.staged_decision_function(x_test)):
-            test_score[i] = roc_auc_score(y_test, pred)
+        #for i, pred in enumerate(clf.staged_decision_function(x_test)):
+        #    test_score[i] = roc_auc_score(y_test, pred, sample_weight=w_test)
+        for i, pred in enumerate(clf.staged_predict_proba(x_test)):
+            test_score[i] = roc_auc_score(y_test, pred[:,1], sample_weight=w_test)
 
-        for i, pred in enumerate(clf.staged_decision_function(x_train)):
-            train_score[i] = roc_auc_score(y_train, pred)
-
+        #for i, pred in enumerate(clf.staged_decision_function(x_train)):
+        #    train_score[i] = roc_auc_score(y_train, pred, sample_weight=w_train)
+        for i, pred in enumerate(clf.staged_predict_proba(x_train)):
+            train_score[i] = roc_auc_score(y_train, pred[:,1], sample_weight=w_train)
+        
         best_iter = np.argmax(test_score)
         rate = clf.get_params()['learning_rate']
         depth = clf.get_params()['max_depth']
-        test_line = plt.plot(test_score,label='rate=%.2f depth=%i (%.2f)'%(rate,depth,test_score[best_iter]))
+        
+        label='rate=%.2f depth=%i (%.2f)'%(rate,depth,test_score[best_iter])
+
+        if not labels is None:
+            label = labels[n]
+            
+        test_line = plt.plot(test_score,label=label)
         colour = test_line[-1].get_color()
         plt.plot(train_score, '--', color=colour)
         plt.xlabel("Number of boosting iterations")
@@ -385,8 +395,7 @@ def plot_learning_curve(estimator, title, X, y, ylim=None,
     figname = title.replace(' ','_')+'.png'
     plt.savefig(figname)
     plt.close()
-
-
+    
 def get_sklearn_test_results(directory, name=''):
     # load dataset and classifier
     clf = joblib.load(directory+'bdt.pkl')
