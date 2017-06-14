@@ -252,18 +252,18 @@ float SFHelper::Get_HLTSF(int lepCategory)
 {
 	// lepCategory: 0=mumu; 1=ee; 2=emu
 	if (lepCategory == 0)
-		return 1.01;
+		return 1.00;
 	else if (lepCategory == 1)
-		return 1.02;
+		return 1.01;
 	else if (lepCategory == 2)
-		return 1.02;
+		return 1.01;
 
 	std::cerr << "not valid lepton category !" << std::endl;
 	assert(0);
 	return 0.;
 }
 
-#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
+//#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
 float SFHelper::Get_LeptonIDSF(const miniLepton& lepton)
 {
 	assert(not _isdata);
@@ -278,7 +278,7 @@ float SFHelper::Get_LeptonIDSF(const miniLepton& lepton)
 
 	return sf;
 }
-#endif
+//#endif
 float SFHelper::Get_LeptonIDSF(float lepPt, float lepEta, bool isEle, bool isMu,
 							   bool isTight)
 {
@@ -292,14 +292,14 @@ float SFHelper::Get_LeptonIDSF(float lepPt, float lepEta, bool isEle, bool isMu,
 
 	return sf;
 }
-#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
+//#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
 float SFHelper::Get_LeptonSF_loose(const miniLepton& lepton)
 {
 	return Get_LeptonSF_loose(lepton.pt(), lepton.eta(),
 							  abs(lepton.pdgId())==11,
 							  abs(lepton.pdgId())==13);
 }
-#endif
+//#endif
 float SFHelper::Get_LeptonSF_loose(float lepPt, float lepEta,
 								   bool isEle, bool isMu)
 {
@@ -322,7 +322,7 @@ float SFHelper::Get_LeptonSF_loose(float lepPt, float lepEta,
 	return sf;
 }
 
-#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
+//#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
 float SFHelper::Get_LeptonSF_tight_vs_loose(const miniLepton& lepton)
 {
 	assert(lepton.passTightSel());
@@ -331,7 +331,7 @@ float SFHelper::Get_LeptonSF_tight_vs_loose(const miniLepton& lepton)
 									   abs(lepton.pdgId())==11,
 									   abs(lepton.pdgId())==13);
 }
-#endif
+//#endif
 float SFHelper::Get_LeptonSF_tight_vs_loose(float lepPt, float lepEta,
 											bool isEle, bool isMu)
 {
@@ -458,7 +458,7 @@ float SFHelper::Get_TauIDSF(float tauPt, float tauEta, bool isGenMatched, TStrin
 	assert(not _isdata);
 
 	// tau ID efficiency data/MC scale factor
-	float tauEff_sf = 1.0;
+	float tauEff_sf = 0.95;
 
 	// tau ID fake rate data/MC scale factor
 	float tauFR_sf = tauEta < 1.497 ?

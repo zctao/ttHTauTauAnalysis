@@ -239,7 +239,14 @@ class syncNtuple
 	float mindr_lep2_jet;
 	float mindr_tau_jet;
 	float MT_met_lep0;
-	float avg_dr_jet;		
+	float avg_dr_jet;
+
+	float dr_leps;
+	float mvis_lep0_tau;
+	float mvis_lep1_tau;
+	float max_lep_eta;
+	float dr_lep0_tau;
+
 	float MVA_2lss_ttV;
 	float MVA_2lss_ttbar;
 	float tt_deltaR;

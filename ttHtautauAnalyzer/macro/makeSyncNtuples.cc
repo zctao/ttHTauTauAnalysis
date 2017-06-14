@@ -3,16 +3,19 @@
 #include "TTree.h"
 #include "TString.h"
 
+#include "../interface/Types_enum.h"
 #include "../interface/eventNtuple.h"
 #include "../interface/syncNtuple.h"
 #include "../interface/MVAVars.h"
 #include "../interface/miniLepton.h"
+#include "../interface/SFHelper.h"
 
 #include <iostream>
 #include <vector>
 #include <algorithm>
 
-TTree* makeSyncTree(const TString, const TString, const bool, const bool);
+TTree* makeSyncTree(const TString, const TString, const bool, const bool,
+					Analysis_types, Selection_types);
 
 void makeSyncNtuples(const TString dir="~/nobackup/ttHTT_syncNtuple/80X/Test/",
 					 const TString output_file="syncNtuple_event.root")
@@ -23,15 +26,22 @@ void makeSyncNtuples(const TString dir="~/nobackup/ttHTT_syncNtuple/80X/Test/",
 	gROOT->ProcessLine(".L ../src/eventNtuple.cc+");
 	gROOT->ProcessLine(".L ../src/syncNtuple.cc+");
 	gROOT->ProcessLine(".L ../src/MVAVars.cc+");
+	gROOT->ProcessLine(".L ../src/SFHelper.cc+");
 	
 	cout << "Opening root files from directory " << dir << endl;
 	
 	TTree* synctree_sr = makeSyncTree(dir+"output_sync_event_sr.root",
-									"syncTree_2lSS1tau_SR", true, true);
+									  "syncTree_2lSS1tau_SR", true, true,
+									  Analysis_types::Analyze_2lss1tau,
+									  Selection_types::Signal_2lss1tau);
 	TTree* synctree_fake = makeSyncTree(dir+"output_sync_event_fake.root",
-									  "syncTree_2lSS1tau_Fake", false, true);
+										"syncTree_2lSS1tau_Fake", false, true,
+										Analysis_types::Analyze_2lss1tau,
+										Selection_types::Control_1lfakeable);
 	TTree* synctree_flip = makeSyncTree(dir+"output_sync_event_flip.root",
-									  "syncTree_2lSS1tau_Flip", false, true);
+										"syncTree_2lSS1tau_Flip", false, true,
+										Analysis_types::Analyze_2lss1tau,
+										Selection_types::Control_2los1tau);
 
 	// event count
 	cout << "SR : " << synctree_sr->GetEntries() << endl;
@@ -49,7 +59,8 @@ void makeSyncNtuples(const TString dir="~/nobackup/ttHTT_syncNtuple/80X/Test/",
 }
 
 TTree* makeSyncTree(const TString input_file, const TString treename,
-					const bool isSignalRegion, const bool evtSel=true)
+					const bool isSignalRegion, const bool evtSel,
+					Analysis_types anaType, Selection_types selType)
 {
 	using namespace std;
 
@@ -67,6 +78,10 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 	syncNtuple syncntuple;
 	syncntuple.set_up_branches(tree_out);
 
+	//////////////////////////////////////////////
+	// Set up SFHelper
+	SFHelper sf_helper(anaType, selType, false);
+	
 	//////////////////////////////////////////////
 	// Set up TMVA Reader
 	MVAVars mvaVars;
@@ -290,8 +305,22 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		// met
 		syncntuple.PFMET = evNtuple.PFMET;
 		syncntuple.PFMETphi = evNtuple.PFMETphi;
-		syncntuple.MHT = evNtuple.MHT;
-		syncntuple.metLD = evNtuple.metLD;
+		//
+		//syncntuple.MHT = evNtuple.MHT;
+		//syncntuple.metLD = evNtuple.metLD;
+		auto looseleptons = evNtuple.buildLeptons(true);
+	    auto loosetaus = evNtuple.buildFourVectorTaus(true);
+	    auto ljets = evNtuple.buildFourVectorJets(true);
+
+		TLorentzVector mht;
+		for (auto l : looseleptons)
+			mht -= l.p4();
+		for (auto t : loosetaus)
+			mht -= t;
+		for (auto j : ljets)
+			mht -= j;
+		syncntuple.MHT = mht.Pt();
+		syncntuple.metLD = 0.00397 * syncntuple.PFMET + 0.00265 * syncntuple.MHT;
 
 		// event-level MVA variables
 		syncntuple.isGenMatched =
@@ -305,6 +334,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		// build object four momentum
 		// loose muons and electrons, preselected taus, selected jets are stored
 		// in the ntuple
+		// by default, select only tight leptons and tight tau
 	    auto leptons = evNtuple.buildLeptons();
 	    auto taus = evNtuple.buildFourVectorTaus();
 	    auto jets = evNtuple.buildFourVectorJets();
@@ -318,18 +348,45 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		syncntuple.mindr_lep1_jet = mvaVars.mindr_lep1_jet();
 		syncntuple.MT_met_lep0 = mvaVars.mT_met_lep0();
 		syncntuple.avg_dr_jet = mvaVars.avg_dr_jet();
+		syncntuple.dr_leps = mvaVars.dr_leps();
+		syncntuple.mvis_lep0_tau = mvaVars.mvis_lep0_tau();
+		syncntuple.mvis_lep1_tau = mvaVars.mvis_lep1_tau();
+		syncntuple.max_lep_eta = mvaVars.max_lep_eta();
+		syncntuple.dr_lep0_tau = mvaVars.dr_lep0_tau();
 
 		syncntuple.MVA_2lss_ttV = mvaVars.BDT_2lss1tau_ttV();
 		syncntuple.MVA_2lss_ttbar = mvaVars.BDT_2lss1tau_ttbar();
-
+		syncntuple.MVA_2lSS1tau_noMEM_ttV = mvaVars.BDT_2lss1tau_ttV();
+		syncntuple.MVA_2lSS1tau_noMEM_ttbar = mvaVars.BDT_2lss1tau_ttbar();
+		
 		// weights
 		syncntuple.PU_weight = evNtuple.PU_weight;
 		syncntuple.MC_weight = evNtuple.MC_weight;
 		syncntuple.bTagSF_weight = evNtuple.bTagSF_weight;
-		syncntuple.leptonSF_weight = evNtuple.leptonSF_weight;
-		syncntuple.tauSF_weight = evNtuple.tauSF_weight;
-		syncntuple.triggerSF_weight = evNtuple.triggerSF_weight;
 		syncntuple.FR_weight = evNtuple.FR_weight;
+		// update weights
+		//syncntuple.leptonSF_weight = evNtuple.leptonSF_weight;
+		syncntuple.leptonSF_weight =
+			sf_helper.Get_LeptonIDSF(leptons[0]) *
+			sf_helper.Get_LeptonIDSF(leptons[1]);
+		/*
+		cout << "event# " << evNtuple.nEvent << endl;
+		cout << "leptonSF_weight : " << syncntuple.leptonSF_weight << endl;
+		cout << "lep0 (loose_to_reco tight_to_loose) : ";
+		cout << sf_helper.Get_LeptonIDSF(leptons[0]) << " (";
+		cout << sf_helper.Get_LeptonSF_loose(leptons[0]) << "  ";
+		cout << sf_helper.Get_LeptonSF_tight_vs_loose(leptons[0]) <<")" << endl;
+		cout << "lep1 (loose_to_reco tight_to_loose) : ";
+		cout << sf_helper.Get_LeptonIDSF(leptons[1]) << " (";
+		cout << sf_helper.Get_LeptonSF_loose(leptons[1]) << "  ";
+		cout << sf_helper.Get_LeptonSF_tight_vs_loose(leptons[1]) <<")" << endl;
+		*/
+		//syncntuple.tauSF_weight = evNtuple.tauSF_weight;
+		syncntuple.tauSF_weight =
+			sf_helper.Get_TauIDSF(taus[0].Pt(), taus[0].Eta(),
+								  evNtuple.isGenMatchedTau);
+		//syncntuple.triggerSF_weight = evNtuple.triggerSF_weight;
+		syncntuple.triggerSF_weight	= sf_helper.Get_HLTSF(evNtuple.lepCategory);
 		
 		tree_out->Fill();
 		

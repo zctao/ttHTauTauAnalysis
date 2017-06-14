@@ -6,8 +6,8 @@
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "CondFormats/BTauObjects/interface/BTagCalibration.h"
 #include "CondTools/BTau/interface/BTagCalibrationReader.h"
-#include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/miniLepton.h"
 #endif
+#include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/miniLepton.h"
 
 #include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/Types_enum.h"
 // Root
@@ -39,16 +39,21 @@ class SFHelper
 						TString syst="NA");
 	//float Get_ChargeFlipWeight();
 	float Get_EleChargeMisIDProb(float,float,int,int);
-	
-#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
 	float Get_LeptonIDSF(const miniLepton&);
+
+	float Get_LeptonSF_loose(float,float,bool,bool);
+	float Get_LeptonSF_tight_vs_loose(float,float,bool,bool);
+	float Get_LeptonSF_loose(const miniLepton&);
+	float Get_LeptonSF_tight_vs_loose(const miniLepton&);
+	
+#if !defined(__ACLIC__) && !defined(__ROOTCLING__)	
 	float Get_EvtCSVWeight(const std::vector<pat::Jet> &, const std::string &);
 	float Get_TauIDSF(const pat::Tau&, bool, TString syst="NA");
 	float Get_FakeRate(const miniLepton&, TString syst="NA");
 	float Get_FakeRate(const pat::Tau&);
+#endif
 	float Get_FR_weight(const miniLepton&, const miniLepton&, TString syst="NA");
 	float Get_EleChargeMisIDProb(const miniLepton&, int);
-#endif
 		
 	// utilities
 	float read2DHist(TH2*, float, float);
@@ -168,11 +173,12 @@ class SFHelper
 	void Delete_LeptonSF_Lut();
 
 
-	float Get_LeptonSF_loose(float,float,bool,bool);
-	float Get_LeptonSF_tight_vs_loose(float,float,bool,bool);
+	//float Get_LeptonSF_loose(float,float,bool,bool);
+	//float Get_LeptonSF_tight_vs_loose(float,float,bool,bool);
+	//float Get_LeptonSF_loose(const miniLepton&);
+	//float Get_LeptonSF_tight_vs_loose(const miniLepton&);
+	
 #if !defined(__ACLIC__) && !defined(__ROOTCLING__)
-	float Get_LeptonSF_loose(const miniLepton&);
-	float Get_LeptonSF_tight_vs_loose(const miniLepton&);
 	float Get_JetCSVWeight(const pat::Jet&, std::string);
 #endif
 	

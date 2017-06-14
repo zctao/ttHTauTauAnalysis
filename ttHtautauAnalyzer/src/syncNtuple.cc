@@ -225,7 +225,14 @@ void syncNtuple::initialize()
 	mindr_lep2_jet = -9999.;
 	mindr_tau_jet = -9999.;
 	MT_met_lep0 = -9999.;
-	avg_dr_jet = -9999.;	
+	avg_dr_jet = -9999.;
+
+	dr_leps = -9999.;
+	mvis_lep0_tau = -9999.;
+	mvis_lep1_tau = -9999.;
+	max_lep_eta = -9999.;
+	dr_lep0_tau = -9999.;
+	
 	MVA_2lss_ttV = -9999.;
 	MVA_2lss_ttbar = -9999.;
 	tt_deltaR = -9999.;
@@ -541,6 +548,13 @@ void syncNtuple::set_up_branches(TTree *tree)
 	tree->Branch("mindr_tau_jet", &mindr_tau_jet);
 	tree->Branch("MT_met_lep0", &MT_met_lep0);
 	tree->Branch("avg_dr_jet", &avg_dr_jet);
+
+	tree->Branch("dr_leps", &dr_leps);
+	tree->Branch("mvis_lep0_tau", &mvis_lep0_tau);
+	tree->Branch("mvis_lep1_tau", &mvis_lep1_tau);
+	tree->Branch("max_lep_eta", &max_lep_eta);
+	tree->Branch("dr_lep0_tau", &dr_lep0_tau);
+	
 	tree->Branch("MVA_2lss_ttV", &MVA_2lss_ttV);
 	tree->Branch("MVA_2lss_ttbar", &MVA_2lss_ttbar);
 	tree->Branch("tt_deltaR", &tt_deltaR);

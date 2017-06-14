@@ -17,8 +17,8 @@ class miniLepton
 	miniLepton(const pat::Muon&);
 #endif
 	miniLepton(const TLorentzVector&, float, int pdgid=-9999, int charge=-9999, 
-			   bool tightcharge=false, bool isloose=false, bool isfakeable=false,
-			   bool istight=false, int mcmatchtype=-9999);
+			   bool isloose=false, bool isfakeable=false, bool istight=false,
+			   bool tightcharge=false, int mcmatchtype=-9999);
 	//miniLepton(float, float);
 	
 	~miniLepton(){};

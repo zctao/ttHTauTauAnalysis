@@ -79,8 +79,8 @@ miniLepton::miniLepton(float pt, float eta, float phi, float mass, float conept,
 */
 
 miniLepton::miniLepton(const TLorentzVector& l, float conept, int pdgid,
-					   int charge, bool tightcharge, bool isloose,
-					   bool isfakeable, bool istight, int mcmatchtype)
+					   int charge, bool isloose, bool isfakeable, bool istight,
+					   bool tightcharge, int mcmatchtype)
 {
 	pt_ = l.Pt();
 	eta_ = l.Eta();

@@ -74,13 +74,15 @@ void MVAVars::set_up_tmva_reader()
 {
 	/////////
 	// ttV
-	const TString weights_ttV = (std::string(getenv("CMSSW_BASE"))+"/src/ttHTauTauAnalysis/ttHtautauAnalyzer/data/mvaTTHvsTTV2lss1tau_BDTG.weights.xml").c_str();
+	//const TString weights_ttV = (std::string(getenv("CMSSW_BASE"))+"/src/ttHTauTauAnalysis/ttHtautauAnalyzer/data/mvaTTHvsTTV2lss1tau_BDTG.weights.xml").c_str();
+	const TString weights_ttV = (std::string(getenv("CMSSW_BASE"))+"/src/ttHTauTauAnalysis/ttHtautauAnalyzer/data/TMVABDT_2lss_1tau_ttV_maxDepth3_10Var.xml").c_str();
 	reader_2lss1tau_ttV = new TMVA::Reader("!Color:!Silent");
 
 	reader_2lss1tau_ttV->AddVariable("mindr_lep1_jet", &mindr_lep0_jet_);
 	reader_2lss1tau_ttV->AddVariable("mindr_lep2_jet", &mindr_lep1_jet_);
 	reader_2lss1tau_ttV->AddVariable("avg_dr_jet", &avg_dr_jet_);
-	reader_2lss1tau_ttV->AddVariable("TMath::Max(TMath::Abs(lep1_eta), TMath::Abs(lep2_eta))", &max_lep_eta_);
+	//reader_2lss1tau_ttV->AddVariable("TMath::Max(TMath::Abs(lep1_eta), TMath::Abs(lep2_eta))", &max_lep_eta_);
+	reader_2lss1tau_ttV->AddVariable("max_lep_eta", &max_lep_eta_);
 	reader_2lss1tau_ttV->AddVariable("lep1_conePt", &lep0_conept_);
 	reader_2lss1tau_ttV->AddVariable("lep2_conePt", &lep1_conept_);
 	reader_2lss1tau_ttV->AddVariable("mT_lep1", &mT_met_lep0_);
@@ -92,14 +94,20 @@ void MVAVars::set_up_tmva_reader()
 
 	/////////
 	// ttbar
-	const TString weights_ttbar = (std::string(getenv("CMSSW_BASE"))+"/src/ttHTauTauAnalysis/ttHtautauAnalyzer/data/mvaTTHvsTTbar2lss1tau_BDTG.weights.xml").c_str();
+	//const TString weights_ttbar = (std::string(getenv("CMSSW_BASE"))+"/src/ttHTauTauAnalysis/ttHtautauAnalyzer/data/mvaTTHvsTTbar2lss1tau_BDTG.weights.xml").c_str();
+	const TString weights_ttbar = (std::string(getenv("CMSSW_BASE"))+"/src/ttHTauTauAnalysis/ttHtautauAnalyzer/data/TMVABDT_2lss_1tau_maxDepth3_11Var.xml").c_str();
 	reader_2lss1tau_ttbar = new TMVA::Reader("!Color:!Silent");
 
 	reader_2lss1tau_ttbar->AddVariable("nJet", &nJet_);
 	reader_2lss1tau_ttbar->AddVariable("mindr_lep1_jet", &mindr_lep0_jet_);
+	reader_2lss1tau_ttbar->AddVariable("mindr_lep2_jet", &mindr_lep1_jet_);
 	reader_2lss1tau_ttbar->AddVariable("avg_dr_jet", &avg_dr_jet_);
-	reader_2lss1tau_ttbar->AddVariable("TMath::Max(TMath::Abs(lep1_eta), TMath::Abs(lep2_eta))", &max_lep_eta_);
-	reader_2lss1tau_ttbar->AddVariable("lep2_conePt", &lep1_conept_);
+	//reader_2lss1tau_ttbar->AddVariable("TMath::Max(TMath::Abs(lep1_eta), TMath::Abs(lep2_eta))", &max_lep_eta_);
+	reader_2lss1tau_ttbar->AddVariable("max_lep_eta", &max_lep_eta_);
+	reader_2lss1tau_ttbar->AddVariable("lep1_conePt", &lep0_conept_);
+	//reader_2lss1tau_ttbar->AddVariable("lep2_conePt", &lep1_conept_);
+	reader_2lss1tau_ttbar->AddVariable("ptmiss", &met_);
+	reader_2lss1tau_ttbar->AddVariable("htmiss", &mht_);
 	reader_2lss1tau_ttbar->AddVariable("dr_leps", &dr_leps_);
 	reader_2lss1tau_ttbar->AddVariable("tau_pt", &tau_pt_);
 	reader_2lss1tau_ttbar->AddVariable("dr_lep1_tau", &dr_lep0_tau_);

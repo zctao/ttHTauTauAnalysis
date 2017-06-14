@@ -12,7 +12,9 @@ std::vector<miniLepton> eventNtuple::buildLeptons(bool loose)
 		if (!loose and !(mu_isfakeablesel->at(l))) continue;
 		TLorentzVector mu;
 		mu.SetPtEtaPhiE(mu_pt->at(l),mu_eta->at(l),mu_phi->at(l),mu_E->at(l));
-		miniLepton lep(mu, mu_conept->at(l), -13*mu_charge->at(l));
+		miniLepton lep(mu, mu_conept->at(l), -13*mu_charge->at(l),
+					   mu_charge->at(l), true, mu_isfakeablesel->at(l),
+					   mu_ismvasel->at(l));
 		leptons.push_back(lep);
 	}
 
@@ -21,7 +23,9 @@ std::vector<miniLepton> eventNtuple::buildLeptons(bool loose)
 		if (!loose and !(ele_isfakeablesel->at(l))) continue;
 		TLorentzVector ele;
 		ele.SetPtEtaPhiE(ele_pt->at(l),ele_eta->at(l),ele_phi->at(l),ele_E->at(l));
-		miniLepton lep(ele, ele_conept->at(l), -11*ele_charge->at(l));
+		miniLepton lep(ele, ele_conept->at(l), -11*ele_charge->at(l),
+					   ele_charge->at(l), true, ele_isfakeablesel->at(l),
+					   ele_ismvasel->at(l));
 		leptons.push_back(lep);
 	}
 	// sort by conept
