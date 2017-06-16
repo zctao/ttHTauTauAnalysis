@@ -18,6 +18,9 @@ cmsRun analyzer2016_cfg.py doSync=True SampleName=sync_event_flip doCutFlow=True
 mv output_sync_event_flip.root ~/nobackup/ttHTT_syncNtuple/80X/Test/.
 
 cd ../macro/
-root -b 'makeSyncNtuples.cc+("~/nobackup/ttHTT_syncNtuple/80X/Test/","syncNtuple_event.root")'
+root -b <<EOF
+.x makeSyncNtuples.cc+("~/nobackup/ttHTT_syncNtuple/80X/Test/","syncNtuple_event.root")
+.q
+EOF
 mv syncNtuple_event.root ~/nobackup/ttHTT_syncNtuple/80X/Test/.
 cd -
