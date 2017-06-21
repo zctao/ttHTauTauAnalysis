@@ -1,10 +1,14 @@
 // based mostly on https://github.com/tstreble/ttH_Htautau_MEM_Analysis/blob/master/MEM/bin/test.cpp
 
-#include "ttH_Htautau_MEM_Analysis/MEM/interface/PyRun2EventData_t.h"
-#include "ttH_Htautau_MEM_Analysis/MEM/interface/EventReader.h"
+//#include "ttH_Htautau_MEM_Analysis/MEM/interface/PyRun2EventData_t.h"
+//#include "ttH_Htautau_MEM_Analysis/MEM/interface/EventReader.h"
 
 #include "ttH_Htautau_MEM_Analysis/MEMAlgo/interface/Processes.h"
 #include "ttH_Htautau_MEM_Analysis/MEMAlgo/interface/ThreadScheduler.h"
+#include "ttH_Htautau_MEM_Analysis/MEMAlgo/interface/RunConfig.h"
+#include "ttH_Htautau_MEM_Analysis/MEMAlgo/interface/NodeScheduler.h"
+
+#include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/EventReader_MEM.h"
 
 #include <iostream>
 
@@ -23,8 +27,8 @@ int main(const int argc, const char** argv)
 	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	//
 	if (argc!=6) {
-		cerr << "Usage : " << argv[0] << " config.py input.py "
-			 << "<maxevents> <skipevents> output.root" << endl;
+		cerr << "Usage : " << argv[0] << " config.py <input.root "
+			 << "<maxevents> <startevents> <output.root>" << endl;
 		return 1;
 	}
 	
@@ -35,23 +39,24 @@ int main(const int argc, const char** argv)
 		configName.resize( configName.length()-3 );
 	//if (argc == 1) configName = "defaultConfig";
 
-	vector<string> inputFileNames = {argv[2]};
+	string inputFileName = argv[2];
 	const int maxNbrOfEventsToRead = atoi(argv[3]);
-	const int skipEvents = atoi(argv[4]);
+	const int startEvents = atoi(argv[4]);
 	const char* outputName = argv[5];
 	
 	//
 	const RunConfig* runConfig = new RunConfig(configName.c_str());  
 	scheduler = new ThreadScheduler();
 
-
-	PyRun2EventData_t eventFields;
-	//EventReader<PyRun2EventData_t> evRead(runConfig->inputFileNames_,runConfig->skipEvents_,runConfig->maxNbrOfEventsToRead_);
-	EventReader<PyRun2EventData_t> evRead(inputFileNames,skipEvents,maxNbrOfEventsToRead);
-
+	EventReader_MEM* evtRead =
+		new EventReader_MEM(inputFileName,startEvents,maxNbrOfEventsToRead,true,
+							"ttHtaus/eventTree");
+	
 	eventList_t eventList;
-	evRead.fillEvent( eventList, maxNbrOfEventsToRead  );
+	evtRead->fillEventList(eventList, maxNbrOfEventsToRead);
 
+	delete evtRead;
+	
 	scheduler->initNodeScheduler( runConfig, 0 );
 	scheduler->runNodeScheduler ( eventList, maxNbrOfEventsToRead );
 

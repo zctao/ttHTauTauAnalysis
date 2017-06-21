@@ -109,6 +109,13 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorBtagJets(bool loose)
 	return btagsP4;
 }
 
+TLorentzVector eventNtuple::buildFourVectorMET()
+{
+	TLorentzVector met;
+	met.SetPtEtaPhiM(PFMET, 0, PFMETphi, 0);
+	return met;
+}
+
 void eventNtuple::initialize()
 {
 	// event variables
