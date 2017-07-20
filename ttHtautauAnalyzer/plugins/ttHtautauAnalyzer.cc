@@ -88,7 +88,7 @@ ttHtautauAnalyzer::ttHtautauAnalyzer(const edm::ParameterSet& iConfig):
 	clonedMuons_token_ = consumes<edm::View<reco::Muon>>(iConfig.getParameter<edm::InputTag>("clonemu"));
 
 	// Trigger and filter
-	trig_helper_ = new TriggerHelper(verbosity_);
+	trig_helper_ = new TriggerHelper(anaType_, verbosity_);
 	
 	// histograms
 	Set_up_histograms();

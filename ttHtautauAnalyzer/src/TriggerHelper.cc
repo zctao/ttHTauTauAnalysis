@@ -1,6 +1,6 @@
 #include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/TriggerHelper.h"
 
-const std::vector<std::string> TriggerHelper::hlt_paths_ = {
+const std::vector<std::string> TriggerHelper::hlt_paths_2l1tau_ = {
 	// single electron triggers
 	"HLT_Ele27_WPTight_Gsf_v",
 	"HLT_Ele27_eta2p1_WPLoose_Gsf_v",
@@ -21,6 +21,20 @@ const std::vector<std::string> TriggerHelper::hlt_paths_ = {
 	"HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v"
 };
 
+const std::vector<std::string> TriggerHelper::hlt_paths_1l2tau_ = {
+	// single lepton triggers
+	"HLT_Ele25_eta2p1_WPTight_Gsf_v",
+	"HLT_IsoMu22_eta2p1_v",
+	"HLT_IsoTkMu22_eta2p1_v",
+	"HLT_IsoMu22_v",
+	"HLT_IsoTkMu22_v",
+	// lepton+tau cross triggers
+	"HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_v",
+	"HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1_v",
+	"HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30_v",
+	"HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1_v"
+};
+
 const std::vector<std::string> TriggerHelper::filter_paths_ = {
 	"Flag_HBHENoiseFilter",
 	"Flag_HBHENoiseIsoFilter",
@@ -32,17 +46,29 @@ const std::vector<std::string> TriggerHelper::filter_paths_ = {
 	"Flag_chargedHadronTrackResolutionFilter"
 };
 
-TriggerHelper::TriggerHelper(bool verbose)
+TriggerHelper::TriggerHelper(Analysis_types analysis, bool verbose)
 {
+	anaType_ = analysis;
 	verbose_ = verbose;
 }
 
 void TriggerHelper::add_trigger_version_number(HLTConfigProvider& hlt_config)
 {
+	if (anaType_ == Analyze_2lss1tau)
+		add_trigger_version_number(hlt_config, hlt_paths_2l1tau_);
+	else if (anaType_ == Analyze_1l2tau)
+		add_trigger_version_number(hlt_config, hlt_paths_1l2tau_);
+	//else if (anaType_ == Analyze_3l1tau)
+	//	add_trigger_version_number();
+}											   
+// overload
+void TriggerHelper::add_trigger_version_number(
+	     HLTConfigProvider& hlt_config, const std::vector<std::string>& hlt_paths)
+{
 	hlt_paths_version_.clear();
-	hlt_paths_version_.reserve(hlt_paths_.size());
+	hlt_paths_version_.reserve(hlt_paths.size());
 	
-	for (const auto & name : hlt_paths_) {
+	for (const auto & name : hlt_paths) {
 		
 		bool foundPath = false;
 
@@ -62,7 +88,7 @@ void TriggerHelper::add_trigger_version_number(HLTConfigProvider& hlt_config)
 
 unsigned int TriggerHelper::get_trigger_bits(edm::Handle<edm::TriggerResults> triggerResults, HLTConfigProvider& config)
 {
-	assert(hlt_paths_version_.size()==hlt_paths_.size());
+	//assert(hlt_paths_version_.size()==hlt_paths_.size());
 	return encode_bits(triggerResults, config, hlt_paths_version_);
 }
 

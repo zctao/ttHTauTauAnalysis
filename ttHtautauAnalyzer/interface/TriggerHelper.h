@@ -3,6 +3,7 @@
 
 #include "DataFormats/Common/interface/TriggerResults.h"
 #include "HLTrigger/HLTcore/interface/HLTConfigProvider.h"
+#include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/Types_enum.h"
 
 #include <vector>
 #include <string>
@@ -13,7 +14,7 @@ class TriggerHelper
  public:
 	
 	// constructor and destructor
-	TriggerHelper(bool verbose = true);
+	TriggerHelper(Analysis_types, bool verbose = true);
 	~TriggerHelper(){};
 
 	// member functions
@@ -30,12 +31,17 @@ class TriggerHelper
 
 	unsigned int encode_bits(edm::Handle<edm::TriggerResults>,
 							 HLTConfigProvider&, const std::vector<std::string>&);
+	// overload
+	void add_trigger_version_number(HLTConfigProvider&,
+									const std::vector<std::string>&);
 	
-	static const std::vector<std::string> hlt_paths_;
-	static const std::vector<std::string> filter_paths_;
-
+	static const std::vector<std::string> hlt_paths_2l1tau_;
+	static const std::vector<std::string> hlt_paths_1l2tau_;
 	std::vector<std::string> hlt_paths_version_;
 
+	static const std::vector<std::string> filter_paths_;
+
+	Analysis_types anaType_;
 	bool verbose_;
 };
 
