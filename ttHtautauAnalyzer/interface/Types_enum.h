@@ -10,7 +10,7 @@ enum Analysis_types {
 	Analyze_dilepton,
 	Analyze_1l2tau,
 	Analyze_2lss1tau,
-	Analyze_3l
+	Analyze_3l1tau
 };
 
 /*
@@ -21,9 +21,11 @@ enum Analysis_types {
 enum Selection_types {
 	Signal_2lss1tau,
 	Signal_1l2tau,
-	Signal_3l,
+	Signal_3l1tau,
 	Control_2los1tau,
-	Control_1lfakeable,
+	Control_fake_2lss1tau,
+	Control_fake_1l2tau,
+	Control_fake_3l1tau,
 	Control_WZ,
 	Loose_2lss1tau  // for training
 };

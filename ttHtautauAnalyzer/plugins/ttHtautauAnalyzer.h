@@ -149,6 +149,12 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 								 const std::vector<miniLepton>&,
 								 const std::vector<pat::Tau>&,
 								 const int, const int, const int, const float);
+	bool pass_event_sel_1l2tau(const std::vector<miniLepton>&,
+							   const std::vector<miniLepton>&,
+							   const std::vector<miniLepton>&,
+							   const std::vector<pat::Tau>&,
+							   const std::vector<pat::Tau>&,
+							   const int, const int, const int);
 	void fill_CutFlow(int, const char*);
 
 	// Write ntuple

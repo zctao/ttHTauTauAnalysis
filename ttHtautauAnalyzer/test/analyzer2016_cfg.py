@@ -59,7 +59,7 @@ options.register('TurnOffHLTCut', True,
 options.register('SelectionRegion', 'signal_2lss1tau',
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
-                 "Which selection region to apply: signal_2lss1tau, control_2los1tau, control_1lfakeable, loose_2lss1tau")
+                 "Which selection region to apply: signal_2lss1tau, control_2los1tau, control_fake_2lss1tau, control_fake_1l2tau, control_fake_3l1au, loose_2lss1tau")
 
 options.register('doSystematics', True,
                  VarParsing.VarParsing.multiplicity.singleton,

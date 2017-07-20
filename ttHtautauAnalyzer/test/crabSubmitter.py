@@ -75,7 +75,7 @@ for ch in channels:
                     if 'fakes_' in ch:
                         pset=pset.replace("SampleName=","SampleName=fakes_data")
                         pset=pset.replace("SelectionRegion=",
-                                          "SelectionRegion=control_1lfakeable")
+                                          "SelectionRegion=control_fake_2lss1tau")
                     elif 'flips_' in ch:
                         pset=pset.replace("SampleName=","SampleName=flips_data")
                         pset=pset.replace("SelectionRegion=",

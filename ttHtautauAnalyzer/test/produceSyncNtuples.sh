@@ -10,7 +10,7 @@ cmsRun analyzer2016_cfg.py doSync=True SampleName=sync_event_sr doCutFlow=True
 mv output_sync_event_sr.root ~/nobackup/ttHTT_syncNtuple/80X/Test/.
 
 echo 'producing sync ntuple for fake extrapolation region'
-cmsRun analyzer2016_cfg.py doSync=True SampleName=sync_event_fake doCutFlow=True doSystematics=False SelectionRegion=control_1lfakeable
+cmsRun analyzer2016_cfg.py doSync=True SampleName=sync_event_fake doCutFlow=True doSystematics=False SelectionRegion=control_fake_2lss1tau
 mv output_sync_event_fake.root ~/nobackup/ttHTT_syncNtuple/80X/Test/.
 
 echo 'producing sync ntuple for charge flip control region'

@@ -37,7 +37,7 @@ void makeSyncNtuples(const TString dir="~/nobackup/ttHTT_syncNtuple/80X/Test/",
 	TTree* synctree_fake = makeSyncTree(dir+"output_sync_event_fake.root",
 										"syncTree_2lSS1tau_Fake", false, true,
 										Analysis_types::Analyze_2lss1tau,
-										Selection_types::Control_1lfakeable);
+										Selection_types::Control_fake_2lss1tau);
 	TTree* synctree_flip = makeSyncTree(dir+"output_sync_event_flip.root",
 										"syncTree_2lSS1tau_Flip", false, true,
 										Analysis_types::Analyze_2lss1tau,

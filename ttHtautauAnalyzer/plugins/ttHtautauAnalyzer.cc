@@ -432,6 +432,12 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 									tau_selected, jet_selected.size(),
 									n_btags_loose, n_btags_medium, metLD);
 	}
+	else if (anaType_==Analyze_1l2tau) {
+		pass_event_sel =
+			pass_event_sel_1l2tau(lep_loose, lep_fakeable, lep_tight,
+								  tau_preselected, tau_selected, jet_selected.size(),
+								  n_btags_loose, n_btags_medium);
+	}
 
 	if (not (pass_event_sel or event_selection_off_))
 		return;
@@ -460,14 +466,24 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		if (sample_name_.Contains("ttH") or doSync_)
 			evNtuple_.HiggsDecayType = HiggsDaughterPdgId(*MC_particles);
 
-		// event selection flags
+		// mc matching flags
 		if (not event_selection_off_) {
-			evNtuple_.isGenMatchedLep =
-				evt_selector_->pass_lep_mc_match(lep_fakeable);
-			
-			assert(tau_selected.size() > 0);
-			evNtuple_.isGenMatchedTau =
-				evt_selector_->pass_tau_mc_match(tau_selected[0]);
+			if (anaType_==Analyze_2lss1tau) {
+				evNtuple_.isGenMatchedLep =
+					evt_selector_->pass_lep_mc_match(lep_fakeable);
+				
+				assert(tau_selected.size() > 0);
+				evNtuple_.isGenMatchedTau =
+					evt_selector_->pass_tau_mc_match(tau_selected[0]);
+			}
+			else if (anaType_==Analyze_1l2tau) {
+				assert(lep_fakeable.size() > 0);
+				evNtuple_.isGenMatchedLep =
+					evt_selector_->pass_lep_mc_match(lep_fakeable[0]);
+
+				evNtuple_.isGenMatchedTau =
+					evt_selector_->pass_tau_mc_match(tau_selected);
+			}
 		}
 	}
 
@@ -479,16 +495,32 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 
 	if (not event_selection_off_) {
 		assert(tau_selected.size() > 0);
-		evNtuple_.passTauCharge =
-			evt_selector_->pass_tau_charge(tau_selected[0].charge(),lep_fakeable);
-
-		assert(lep_fakeable.size() >= 2);
-		if (abs(lep_fakeable[0].pdgId())==13 and abs(lep_fakeable[1].pdgId())==13)
-			evNtuple_.lepCategory = 0;  // mumu
-		else if (abs(lep_fakeable[0].pdgId())==11 and abs(lep_fakeable[1].pdgId())==11)
-			evNtuple_.lepCategory = 1;  // ee
-		else
-			evNtuple_.lepCategory = 2;  // emu
+		if (anaType_==Analyze_2lss1tau) {
+			evNtuple_.passTauCharge = evt_selector_->pass_tau_charge(
+									  tau_selected[0].charge(),lep_fakeable);
+			assert(lep_fakeable.size() >= 2);
+			if (abs(lep_fakeable[0].pdgId())==13 and
+				abs(lep_fakeable[1].pdgId())==13)
+				evNtuple_.lepCategory = 0;  // mumu
+			else if (abs(lep_fakeable[0].pdgId())==11 and
+					 abs(lep_fakeable[1].pdgId())==11)
+				evNtuple_.lepCategory = 1;  // ee
+			else
+				evNtuple_.lepCategory = 2;  // emu
+		}
+		else if (anaType_==Analyze_1l2tau) {
+			if (selType_==Signal_1l2tau) {
+				assert(tau_selected.size() > 1);
+				evNtuple_.passTauCharge =
+					evt_selector_->pass_taupair_charge(tau_selected[0].charge(),
+													   tau_selected[1].charge());
+			}
+			else if (selType_==Control_fake_1l2tau) {
+				evNtuple_.passTauCharge =
+					evt_selector_->pass_taupair_charge(tau_preselected[0].charge(),
+													   tau_preselected[1].charge());
+			}
+		}
 		
 		evNtuple_.btagCategory = n_btags_medium >= 2 ? 1 : 0;
 	}
@@ -535,7 +567,8 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		evNtuple_.MC_weight_scale_muR2 = mc_weight_scale_muR2;
 	}
 	
-	if (selType_ == Signal_2lss1tau or selType_ == Loose_2lss1tau) {
+	if (selType_ == Signal_2lss1tau or selType_ == Loose_2lss1tau or
+		selType_ == Signal_1l2tau) {
 		if (isdata_) evNtuple_.event_weight = 1.;
 		else {
 			evNtuple_.event_weight =
@@ -545,7 +578,8 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 				
 		}
 	}
-	else if (selType_==Control_1lfakeable or selType_==Control_2los1tau)
+	else if (selType_==Control_fake_2lss1tau or selType_==Control_2los1tau or
+			 selType_==Control_fake_1l2tau)
 		evNtuple_.event_weight = evNtuple_.FR_weight;
 	
 	/// muons

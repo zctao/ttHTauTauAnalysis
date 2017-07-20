@@ -12,7 +12,7 @@ void ttHtautauAnalyzer::Set_up_AnaType(const std::string& anatype)
 		anaType_ = Analysis_types::Analyze_2lss1tau;
 	}
 	else if (anatype == "3l1tau") {
-		anaType_ = Analysis_types::Analyze_3l;
+		anaType_ = Analysis_types::Analyze_3l1tau;
 	}
 
 	return;
@@ -26,14 +26,14 @@ void ttHtautauAnalyzer::Set_up_SelType(const std::string& seltype)
 	else if (seltype == "signal_1l2tau") {
 		selType_ = Selection_types::Signal_1l2tau;
 	}
-	else if (seltype == "signal_3l") {
-		selType_ = Selection_types::Signal_3l;
+	else if (seltype == "signal_3l1tau") {
+		selType_ = Selection_types::Signal_3l1tau;
 	}
 	else if (seltype == "control_2los1tau") {
 		selType_ = Selection_types::Control_2los1tau;
 	}
-	else if (seltype == "control_1lfakeable") {
-		selType_ = Selection_types::Control_1lfakeable;
+	else if (seltype == "control_fake_2lss1tau") {
+		selType_ = Selection_types::Control_fake_2lss1tau;
 	}
 	else if (seltype == "loose_2lss1tau") {
 		selType_ = Selection_types::Loose_2lss1tau;

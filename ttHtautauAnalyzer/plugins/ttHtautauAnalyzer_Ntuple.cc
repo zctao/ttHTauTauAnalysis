@@ -73,7 +73,7 @@ void ttHtautauAnalyzer::write_ntuple_frweight(const std::vector<miniLepton>& lep
 	if (not (selType_==Loose_2lss1tau))
 		assert(leps[0].passFakeableSel() and leps[1].passFakeableSel());
 	
-	if (selType_==Control_1lfakeable) {
+	if (selType_==Control_fake_2lss1tau) {
 		float f1 = sf_helper_->Get_FakeRate(leps[0]);
 		float f2 = sf_helper_->Get_FakeRate(leps[1]);
 

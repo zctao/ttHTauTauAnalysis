@@ -159,8 +159,8 @@ std::vector<pat::Tau> ttHtautauAnalyzer::getPreselTaus(const std::vector<pat::Ta
 		}
 		//////////////////////////////////////
 		else
+			// tauID("byLooseIsolationMVArun2v1DBdR03oldDMwLT")
 			passID = tau.userFloat("idPreselection") > 0.5;
-
 		
 		if (passKinematic and passID) {
 			preseltaus.push_back(tau);
@@ -173,8 +173,15 @@ std::vector<pat::Tau> ttHtautauAnalyzer::getSelectedTaus(const std::vector<pat::
 {
 	std::vector<pat::Tau> seltaus;
 	for (auto & tau : taus) {
-		if (tau.userFloat("idSelection") > 0.5) {
-			seltaus.push_back(tau);
+		if (anaType_==Analyze_1l2tau) {
+			// tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT")
+			if (tau.tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT")>0.5)
+				seltaus.push_back(tau);
+		}
+		else {
+			// tauID("byMediumIsolationMVArun2v1DBdR03oldDMwLT")
+			if (tau.userFloat("idSelection") > 0.5)
+				seltaus.push_back(tau);
 		}
 	}
 	return seltaus;

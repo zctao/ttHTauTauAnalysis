@@ -16,7 +16,7 @@ SFHelper::SFHelper(Analysis_types analysis, Selection_types selection, bool isda
 #endif
 	}
 
-	if (_selection == Control_1lfakeable) {
+	if (_selection == Control_fake_2lss1tau) {
 		Set_up_FakeRate_Lut();
 	}
 
@@ -36,7 +36,7 @@ SFHelper::~SFHelper()
 #endif
 	}
 
-	if (_selection == Control_1lfakeable) {
+	if (_selection == Control_fake_2lss1tau) {
 		Delete_FakeRate_Lut();
 	}
 
@@ -173,7 +173,7 @@ void SFHelper::Set_up_LeptonSF_Lut()
 		h_looseToTight_leptonSF_el_2lss = (TH2F*)(file_looseToTight_leptonSF_el_2lss->Get("sf"));
 	}
 	
-	if (_analysis == Analyze_3l) {
+	if (_analysis == Analyze_3l1tau) {
 		/// for muon
 		file_looseToTight_leptonSF_mu_3l = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/data/leptonSF/lepMVAEffSF_m_3l.root").c_str(),"read");
 		h_looseToTight_leptonSF_mu_3l = (TH2F*)(file_looseToTight_leptonSF_mu_3l->Get("sf"));
@@ -233,7 +233,7 @@ void SFHelper::Delete_LeptonSF_Lut()
 		delete file_looseToTight_leptonSF_mu_2lss;
 		delete file_looseToTight_leptonSF_el_2lss;
 	}
-	if (_analysis == Analyze_3l) {
+	if (_analysis == Analyze_3l1tau) {
 		file_looseToTight_leptonSF_mu_3l->Close();
 		file_looseToTight_leptonSF_el_3l->Close();
 		
@@ -347,7 +347,7 @@ float SFHelper::Get_LeptonSF_tight_vs_loose(float lepPt, float lepEta,
 							lepPt, std::abs(lepEta));
 		}
 	}
-	else if (_analysis == Analyze_3l) {
+	else if (_analysis == Analyze_3l1tau) {
 		if (isMu) {
 			sf = read2DHist(h_looseToTight_leptonSF_mu_3l,
 							lepPt, std::abs(lepEta));
