@@ -181,6 +181,15 @@ bool ttHtautauAnalyzer::pass_event_sel_1l2tau (
 		return false;
 
 	//////////////////////////
+	// lepton eta cut (to match trigger)
+	assert(lep_fakeable.size()>0);
+	if (abs(lep_fakeable[0].eta())<2.1) {
+		if (doCutflow_) fill_CutFlow(ibin++,"lep eta");
+	}
+	else
+		return false;
+
+	//////////////////////////
 	// veto two loose leptons with invariant mass < 12 GeV
 	if (evt_selector_->pass_pairMass_veto(lep_loose)) {
 		if (doCutflow_) fill_CutFlow(ibin++,"Mll<12GeV");
