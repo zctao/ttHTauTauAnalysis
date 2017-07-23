@@ -549,7 +549,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	if (!isdata_ and !event_selection_off_) {
 		write_ntuple_bTagSF(jet_selected);
 		write_ntuple_leptonSF(lep_fakeable);
-		write_ntuple_tauSF(tau_selected[0], evNtuple_.isGenMatchedTau);
+		write_ntuple_tauSF(tau_selected); //only actually useful for signal region
 		write_ntuple_triggerSF(evNtuple_.lepCategory);
 	}
 
