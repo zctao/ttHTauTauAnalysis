@@ -1,18 +1,23 @@
 #include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/TriggerHelper.h"
 
-const std::vector<std::string> TriggerHelper::hlt_paths_2l1tau_ = {
-	// single electron triggers
+// HLT paths for 2l1tau
+// single electron triggers
+const std::vector<std::string> TriggerHelper::hlt_paths_e_2l1tau_ = {
 	"HLT_Ele27_WPTight_Gsf_v",
 	"HLT_Ele27_eta2p1_WPLoose_Gsf_v",
-	"HLT_Ele25_eta2p1_WPTight_Gsf_v",
-	// single muon triggers
+	"HLT_Ele25_eta2p1_WPTight_Gsf_v"
+};
+// single muon triggers
+const std::vector<std::string> TriggerHelper::hlt_paths_m_2l1tau_ = {
 	"HLT_IsoMu24_v",
 	"HLT_IsoTkMu24_v",
 	"HLT_IsoMu22_eta2p1_v",
 	"HLT_IsoTkMu22_eta2p1_v",
 	"HLT_IsoMu22_v",
-	"HLT_IsoTkMu22_v",
-	// di-lepton triggers
+	"HLT_IsoTkMu22_v"
+};
+// di-lepton triggers
+const std::vector<std::string> TriggerHelper::hlt_paths_2l_2l1tau_ = {
 	"HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v",
 	//
 	"HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v",
@@ -21,20 +26,24 @@ const std::vector<std::string> TriggerHelper::hlt_paths_2l1tau_ = {
 	"HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v"
 };
 
-const std::vector<std::string> TriggerHelper::hlt_paths_1l2tau_ = {
-	// single lepton triggers
+// HLT paths for 1l2tau
+// single lepton triggers
+const std::vector<std::string> TriggerHelper::hlt_paths_l_1l2tau_ = {
 	"HLT_Ele25_eta2p1_WPTight_Gsf_v",
 	"HLT_IsoMu22_eta2p1_v",
 	"HLT_IsoTkMu22_eta2p1_v",
 	"HLT_IsoMu22_v",
-	"HLT_IsoTkMu22_v",
-	// lepton+tau cross triggers
+	"HLT_IsoTkMu22_v"
+};
+// lepton+tau cross triggers
+const std::vector<std::string> TriggerHelper::hlt_paths_x_1l2tau_ = {
 	"HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_v",
 	"HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1_v",
 	"HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30_v",
 	"HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1_v"
 };
 
+// Filters
 const std::vector<std::string> TriggerHelper::filter_paths_ = {
 	"Flag_HBHENoiseFilter",
 	"Flag_HBHENoiseIsoFilter",
@@ -50,25 +59,38 @@ TriggerHelper::TriggerHelper(Analysis_types analysis, bool verbose)
 {
 	anaType_ = analysis;
 	verbose_ = verbose;
+
+	hlt_paths_.clear();
+	if (anaType_ == Analyze_2lss1tau) {
+		hlt_paths_.reserve(hlt_paths_e_2l1tau_.size()+hlt_paths_m_2l1tau_.size()+
+						   hlt_paths_2l_2l1tau_.size());
+		hlt_paths_.insert(hlt_paths_.end(), hlt_paths_e_2l1tau_.begin(),
+						  hlt_paths_e_2l1tau_.end());
+		hlt_paths_.insert(hlt_paths_.end(), hlt_paths_m_2l1tau_.begin(),
+						  hlt_paths_m_2l1tau_.end());
+		hlt_paths_.insert(hlt_paths_.end(), hlt_paths_2l_2l1tau_.begin(),
+						  hlt_paths_2l_2l1tau_.end());
+		bitmask_e_2l1tau_ = ((1<<hlt_paths_e_2l1tau_.size())-1) << (hlt_paths_m_2l1tau_.size()+hlt_paths_2l_2l1tau_.size());
+		bitmask_m_2l1tau_ = ((1<<hlt_paths_m_2l1tau_.size())-1) << hlt_paths_2l_2l1tau_.size();
+		bitmask_2l_2l1tau_ = (1<<hlt_paths_2l_2l1tau_.size())-1;
+	}
+	if (anaType_ == Analyze_1l2tau) {
+		hlt_paths_.reserve(hlt_paths_l_1l2tau_.size()+hlt_paths_x_1l2tau_.size());
+		hlt_paths_.insert(hlt_paths_.end(), hlt_paths_l_1l2tau_.begin(),
+						  hlt_paths_l_1l2tau_.end());
+		hlt_paths_.insert(hlt_paths_.end(), hlt_paths_x_1l2tau_.begin(),
+						  hlt_paths_x_1l2tau_.end());
+		bitmask_l_1l2tau_ = ((1<<hlt_paths_l_1l2tau_.size())-1)<<hlt_paths_x_1l2tau_.size();
+		bitmask_x_1l2tau_ = (1<<hlt_paths_x_1l2tau_.size())-1;
+	}
 }
 
 void TriggerHelper::add_trigger_version_number(HLTConfigProvider& hlt_config)
 {
-	if (anaType_ == Analyze_2lss1tau)
-		add_trigger_version_number(hlt_config, hlt_paths_2l1tau_);
-	else if (anaType_ == Analyze_1l2tau)
-		add_trigger_version_number(hlt_config, hlt_paths_1l2tau_);
-	//else if (anaType_ == Analyze_3l1tau)
-	//	add_trigger_version_number();
-}											   
-// overload
-void TriggerHelper::add_trigger_version_number(
-	     HLTConfigProvider& hlt_config, const std::vector<std::string>& hlt_paths)
-{
 	hlt_paths_version_.clear();
-	hlt_paths_version_.reserve(hlt_paths.size());
+	hlt_paths_version_.reserve(hlt_paths_.size());
 	
-	for (const auto & name : hlt_paths) {
+	for (const auto & name : hlt_paths_) {
 		
 		bool foundPath = false;
 
@@ -116,4 +138,34 @@ unsigned int TriggerHelper::encode_bits(edm::Handle<edm::TriggerResults> results
 	}
 
 	return bits;
+}
+
+bool TriggerHelper::pass_leptau_cross_triggers(unsigned int triggerBits)
+{
+	assert(anaType_==Analyze_1l2tau);
+	return triggerBits & bitmask_x_1l2tau_;
+}
+
+bool TriggerHelper::pass_single_lep_triggers(unsigned int triggerBits)
+{
+	assert(anaType_==Analyze_1l2tau);
+	return triggerBits & bitmask_l_1l2tau_;
+}
+
+bool TriggerHelper::pass_single_e_triggers(unsigned int triggerBits)
+{
+	assert(anaType_==Analyze_2lss1tau);
+	return triggerBits & bitmask_e_2l1tau_;
+}
+
+bool TriggerHelper::pass_single_m_triggers(unsigned int triggerBits)
+{
+	assert(anaType_==Analyze_2lss1tau);
+	return triggerBits & bitmask_m_2l1tau_;
+}
+
+bool TriggerHelper::pass_dilep_triggers(unsigned int triggerBits)
+{
+	assert(anaType_==Analyze_2lss1tau);
+	return triggerBits & bitmask_2l_2l1tau_;
 }
