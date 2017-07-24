@@ -18,6 +18,7 @@
 #include "TGraphAsymmErrors.h"
 
 #include <iostream>
+#include <algorithm>
 #include <assert.h>
 
 class SFHelper
@@ -28,7 +29,13 @@ class SFHelper
 	~SFHelper();
 
 	// member functions
-	float Get_HLTSF(int);
+	float Get_HLTSF_2l1tau(int);
+	float Get_HLTSF_1l2tau(float, float, int, float, float, int, float, float,
+						   int, bool, bool);
+	float Compute_trig_eff_OR_1l2tau(float, float, float, float, bool, bool);
+	float Get_trig_eff_lepLeg_crossTrigger(float, float, int, bool);
+	float Get_trig_eff_tauLeg_crossTrigger(float, float, int, int, bool);
+	float Get_trig_eff_singleLep(float, float, int, bool);
 	float Get_LeptonIDSF(float,float,bool,bool,bool);	
 	float Get_PUWeight(int);	
 	float Get_TauIDSF(float,float,bool,TString syst="NA");
@@ -46,7 +53,9 @@ class SFHelper
 	float Get_LeptonSF_loose(const miniLepton&);
 	float Get_LeptonSF_tight_vs_loose(const miniLepton&);
 	
-#if !defined(__ACLIC__) && !defined(__ROOTCLING__)	
+#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
+	float Get_HLTSF_1l2tau(const miniLepton&, const std::vector<pat::Tau>&, bool,
+						   bool);
 	float Get_EvtCSVWeight(const std::vector<pat::Jet> &, const std::string &);
 	float Get_TauIDSF(const pat::Tau&, bool, TString syst="NA");
 	float Get_FakeRate(const miniLepton&, TString syst="NA");
@@ -147,6 +156,56 @@ class SFHelper
 	// Electron Charge MisID
 	TFile *file_eleMisCharge;
 	TH2F *h_chargeMisId;
+
+	// trigger scale factors
+	// 1l2tau
+	TFile *file_Mu22OR_eff;
+	TGraphAsymmErrors* g_Mu_ZMassEtaLt0p9_MC;
+	TGraphAsymmErrors* g_Mu_ZMassEta0p9to1p2_MC;
+	TGraphAsymmErrors* g_Mu_ZMassEta1p2to2p1_MC;
+	TGraphAsymmErrors* g_Mu_ZMassEtaLt0p9_Data;
+	TGraphAsymmErrors* g_Mu_ZMassEta0p9to1p2_Data;
+	TGraphAsymmErrors* g_Mu_ZMassEta1p2to2p1_Data;	
+
+	TFile *file_Ele25WPTight_eff;
+	TGraphAsymmErrors* g_Ele_ZMassEtaLt1p48_MC;
+	TGraphAsymmErrors* g_Ele_ZMassEta1p48to2p1_MC;
+	TGraphAsymmErrors* g_Ele_ZMassEtaGt2p1_MC;
+	TGraphAsymmErrors* g_Ele_ZMassEtaLt1p48_Data;
+	TGraphAsymmErrors* g_Ele_ZMassEta1p48to2p1_Data;
+	TGraphAsymmErrors* g_Ele_ZMassEtaGt2p1_Data;
+
+	TFile *file_Mu19leg_eff;
+	TGraphAsymmErrors* g_Muleg_ZMassEtaLt0p9_MC;
+	TGraphAsymmErrors* g_Muleg_ZMassEta0p9to1p2_MC;
+	TGraphAsymmErrors* g_Muleg_ZMassEta1p2to2p1_MC;
+	TGraphAsymmErrors* g_Muleg_ZMassEtaLt0p9_Data;
+	TGraphAsymmErrors* g_Muleg_ZMassEta0p9to1p2_Data;
+	TGraphAsymmErrors* g_Muleg_ZMassEta1p2to2p1_Data;
+
+	TFile *file_Ele24leg_eff;
+	TGraphAsymmErrors* g_Eleleg_ZMassEtaLt1p48_MC;
+	TGraphAsymmErrors* g_Eleleg_ZMassEta1p48to2p1_MC;
+	TGraphAsymmErrors* g_Eleleg_ZMassEtaGt2p1_MC;
+	TGraphAsymmErrors* g_Eleleg_ZMassEtaLt1p48_Data;
+	TGraphAsymmErrors* g_Eleleg_ZMassEta1p48to2p1_Data;
+	TGraphAsymmErrors* g_Eleleg_ZMassEtaGt2p1_Data;
+
+	TFile *file_mt_Tauleg_eff;
+	TGraphAsymmErrors* g_mt_mc_genuine_barrel_TightIso;
+	TGraphAsymmErrors* g_mt_mc_genuine_endcap_TightIso;
+	TGraphAsymmErrors* g_mt_data_genuine_barrel_TightIso;
+	TGraphAsymmErrors* g_mt_data_genuine_endcap_TightIso;
+	
+	TFile *file_et_Tauleg_eff;
+	TGraphAsymmErrors* g_et_mc_genuine_barrel_TightIso;
+	TGraphAsymmErrors* g_et_mc_genuine_endcap_TightIso;
+	TGraphAsymmErrors* g_et_data_genuine_barrel_TightIso_dm0;
+	TGraphAsymmErrors* g_et_data_genuine_barrel_TightIso_dm1;
+	TGraphAsymmErrors* g_et_data_genuine_barrel_TightIso_dm10;
+	TGraphAsymmErrors* g_et_data_genuine_endcap_TightIso_dm0;
+	TGraphAsymmErrors* g_et_data_genuine_endcap_TightIso_dm1;
+	TGraphAsymmErrors* g_et_data_genuine_endcap_TightIso_dm10;
 	
 	// CSV
 #if !defined(__ACLIC__) && !defined(__ROOTCLING__)
@@ -165,12 +224,14 @@ class SFHelper
 	void Set_up_ChargeMisID_Lut();
 	void Set_up_PUWeight_hist();
 	void Set_up_LeptonSF_Lut();
+	void Set_up_triggerSF_Lut();
 
 	void Delete_FakeRate_Lut();
 	void Delete_TauSF_Lut();
 	void Delete_ChargeMisID_Lut();
 	void Delete_PUWeight_hist();
 	void Delete_LeptonSF_Lut();
+	void Delete_triggerSF_Lut();
 
 
 	//float Get_LeptonSF_loose(float,float,bool,bool);

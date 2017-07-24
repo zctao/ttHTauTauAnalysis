@@ -550,7 +550,17 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		write_ntuple_bTagSF(jet_selected);
 		write_ntuple_leptonSF(lep_fakeable);
 		write_ntuple_tauSF(tau_selected); //only actually useful for signal region
-		write_ntuple_triggerSF(evNtuple_.lepCategory);
+		
+		if (anaType_==Analyze_2lss1tau)
+			write_ntuple_triggerSF(evNtuple_.lepCategory);
+		else if (anaType_==Analyze_1l2tau) {
+			bool hlt1LTriggered =
+				trig_helper_->pass_single_lep_triggers(evNtuple_.triggerBits);
+			bool hltXTriggered =
+				trig_helper_->pass_leptau_cross_triggers(evNtuple_.triggerBits);
+			write_ntuple_triggerSF(lep_fakeable[0], tau_selected, hlt1LTriggered,
+								   hltXTriggered);
+		}
 	}
 
 	/// fake rate weights

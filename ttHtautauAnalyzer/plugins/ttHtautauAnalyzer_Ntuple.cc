@@ -86,7 +86,17 @@ void ttHtautauAnalyzer::write_ntuple_tauSF(const std::vector<pat::Tau>& taus)
 
 void ttHtautauAnalyzer::write_ntuple_triggerSF(int lepCategory)
 {
-	evNtuple_.triggerSF_weight = sf_helper_->Get_HLTSF(lepCategory);
+	assert(anaType_==Analyze_2lss1tau);
+	evNtuple_.triggerSF_weight = sf_helper_->Get_HLTSF_2l1tau(lepCategory);
+}
+
+void ttHtautauAnalyzer::write_ntuple_triggerSF(const miniLepton& lep,
+											   const std::vector<pat::Tau>& taus,
+											   bool LTriggered, bool XTriggered)
+{
+	assert(anaType_==Analyze_1l2tau);
+	evNtuple_.triggerSF_weight =
+		sf_helper_->Get_HLTSF_1l2tau(lep, taus, LTriggered, XTriggered);
 }
 
 void ttHtautauAnalyzer::write_ntuple_frweight(const std::vector<miniLepton>& leps,

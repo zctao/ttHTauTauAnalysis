@@ -162,6 +162,8 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	void write_ntuple_leptonSF(const std::vector<miniLepton>&);
 	void write_ntuple_tauSF(const std::vector<pat::Tau>&);
 	void write_ntuple_triggerSF(int);
+	void write_ntuple_triggerSF(const miniLepton&, const std::vector<pat::Tau>&,
+								bool, bool);
 	void write_ntuple_frweight(const std::vector<miniLepton>&,
 							   const std::vector<pat::Tau>&);
 	void write_ntuple_muons(const std::vector<pat::Muon>&);
