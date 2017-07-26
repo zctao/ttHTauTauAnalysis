@@ -564,8 +564,12 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	}
 
 	/// fake rate weights
-	if (!event_selection_off_)
-		write_ntuple_frweight(lep_fakeable, tau_selected);
+	if (!event_selection_off_) {
+		if (anaType_==Analyze_1l2tau)
+			write_ntuple_frweight(lep_fakeable, tau_preselected);
+		else
+			write_ntuple_frweight(lep_fakeable, tau_selected);
+	}
 	
 	/// event weights
 	if (not isdata_) {

@@ -101,13 +101,36 @@ void ttHtautauAnalyzer::write_ntuple_triggerSF(const miniLepton& lep,
 
 void ttHtautauAnalyzer::write_ntuple_frweight(const std::vector<miniLepton>& leps,
 											  const std::vector<pat::Tau>& taus)
-{
-	assert(leps.size() >= 2);
-	assert(taus.size() >= 1);
-	if (not (selType_==Loose_2lss1tau))
+{	
+	if (selType_==Control_fake_1l2tau) {
+		assert(leps.size() >= 1);
+		assert(taus.size() >= 2);
+
+		float f1 = sf_helper_->Get_FakeRate(leps[0]);
+		float f2 = sf_helper_->Get_FakeRate(taus[0]);
+		float f3 = sf_helper_->Get_FakeRate(taus[1]);
+
+		float F1 = leps[0].passTightSel() ? -1. : f1/(1-f1);
+		float F2 = (taus[0].tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT")>0.5) ? -1. : f2/(1-f2);
+		float F3 = (taus[1].tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT")>0.5) ? -1. : f3/(1-f3);
+
+		if (debug_) {
+			std::cout << "lep pdgid passTight? : " << leps[0].pdgId() << " "
+					  << leps[0].passTightSel() << std::endl;
+			std::cout << "f1 F1 : " << f1 << " " << F1 << std::endl;
+			std::cout << "tau0 passTight? : " << (taus[0].tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT")>0.5) << std::endl;
+			std::cout << "f2 F2 : " << f2 << " " << F2 << std::endl;
+			std::cout << "tau1 passTight? : " << (taus[1].tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT")>0.5) << std::endl;
+			std::cout << "f3 F3 : " << f3 << " " << F3 << std::endl;
+		}
+
+		evNtuple_.FR_weight = F1 * F2 * F3;
+		if (debug_) std::cout << "FR_weight : " << -1. * F1 * F2 << std::endl;
+	}
+	else if (selType_==Control_fake_2lss1tau) {
+		assert(leps.size() >= 2);
 		assert(leps[0].passFakeableSel() and leps[1].passFakeableSel());
-	
-	if (selType_==Control_fake_2lss1tau) {
+		
 		float f1 = sf_helper_->Get_FakeRate(leps[0]);
 		float f2 = sf_helper_->Get_FakeRate(leps[1]);
 
@@ -128,7 +151,10 @@ void ttHtautauAnalyzer::write_ntuple_frweight(const std::vector<miniLepton>& lep
 		
 	}
 	else if (selType_==Control_2los1tau) {
-		assert(anaType_==Analyze_2lss1tau);
+		assert(leps.size() >= 2);
+		assert(leps[0].passFakeableSel() and leps[1].passFakeableSel());
+		assert(taus.size() >= 1);
+		
 		float P1_misCharge =
 			sf_helper_->Get_EleChargeMisIDProb(leps[0], taus[0].charge());
 		float P2_misCharge =
