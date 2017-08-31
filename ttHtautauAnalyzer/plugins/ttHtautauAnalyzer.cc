@@ -438,6 +438,12 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 								  tau_preselected, tau_selected, jet_selected.size(),
 								  n_btags_loose, n_btags_medium);
 	}
+	else if (anaType_==Analyze_3l1tau) {
+		pass_event_sel =
+			pass_event_sel_3l1tau(lep_loose, lep_fakeable, lep_tight,
+								  tau_selected, jet_selected.size(),
+								  n_btags_loose, n_btags_medium, metLD);
+	}
 
 	if (not (pass_event_sel or event_selection_off_))
 		return;
@@ -484,6 +490,14 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 				evNtuple_.isGenMatchedTau =
 					evt_selector_->pass_tau_mc_match(tau_selected);
 			}
+			else if (anaType_==Analyze_3l1tau) {
+				evNtuple_.isGenMatchedLep =
+					evt_selector_->pass_lep_mc_match(lep_fakeable, 3);
+
+				assert(tau_selected.size() > 0);
+				evNtuple_.isGenMatchedTau =
+					evt_selector_->pass_tau_mc_match(tau_selected[0]);
+			}
 		}
 	}
 
@@ -520,6 +534,10 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 					evt_selector_->pass_taupair_charge(tau_preselected[0].charge(),
 													   tau_preselected[1].charge());
 			}
+		}
+		else if (anaType_==Analyze_3l1tau) {
+			evNtuple_.passTauCharge = evt_selector_->pass_charge_sum(
+								      tau_selected[0].charge(), lep_fakeable);
 		}
 		
 		evNtuple_.btagCategory = n_btags_medium >= 2 ? 1 : 0;

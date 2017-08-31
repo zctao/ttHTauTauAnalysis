@@ -288,6 +288,119 @@ bool ttHtautauAnalyzer::pass_event_sel_1l2tau (
 	return true;
 }											  
 
+bool ttHtautauAnalyzer::pass_event_sel_3l1tau (
+    const std::vector<miniLepton>& lep_loose,
+    const std::vector<miniLepton>& lep_fakeable,
+	const std::vector<miniLepton>& lep_tight,
+	const std::vector<pat::Tau>& taus,
+    const int njets, const int nbtags_loose, const int nbtags_medium,
+    const float metLD)
+{
+	if (debug_) std::cout << "start event selection: 3l1tau" << std::endl;
+
+	int ibin = 1;
+	if (doCutflow_) fill_CutFlow(ibin++,"total");
+
+	//////////////////////////
+	// at least 3 fakeable leptons
+	if (evt_selector_->pass_lepton_number(lep_fakeable, lep_tight)) {
+		if (doCutflow_) fill_CutFlow(ibin++,"lep num");
+	}
+	else
+		return false;
+
+	//////////////////////////
+	// lepton pt
+	if (evt_selector_->pass_lepton_pt(lep_fakeable)) {
+		if (doCutflow_) fill_CutFlow(ibin++,"lep pt");
+	}
+	else
+		return false;
+
+	//////////////////////////
+	// veto two loose leptons with invariant mass < 12 GeV
+	if (evt_selector_->pass_pairMass_veto(lep_loose)) {
+		if (doCutflow_) fill_CutFlow(ibin++,"Mll<12GeV");
+	}
+	else
+		return false;
+
+	//////////////////////////
+	// Z mass veto: 91.2 +/- 10 (SFOS)
+	if (evt_selector_->pass_Zmass_veto(lep_fakeable)) {
+		if (doCutflow_) fill_CutFlow(ibin++,"Zmass veto");
+	}
+	else
+		return false;
+
+	//////////////////////////
+	// lepton WP
+	if (evt_selector_->pass_lepton_ID(lep_fakeable[0].passTightSel(),
+									  lep_fakeable[1].passTightSel(),
+									  lep_fakeable[2].passTightSel())) {
+		if (doCutflow_) fill_CutFlow(ibin++,"lep WP");
+	}
+	else
+		return false;
+	
+	//////////////////////////
+	// at least 1 selected tau
+	// "byMediumIsolationMVArun2v1DBdR03oldDMwLT"
+	if (evt_selector_->pass_tau_number(taus.size())) {
+		if (doCutflow_) fill_CutFlow(ibin++,"tau num");
+	}
+	else
+		return false;
+
+	//////////////////////////
+	// number of jets
+	if (evt_selector_->pass_jet_number(njets)) {
+		if (doCutflow_) fill_CutFlow(ibin++,"jet num");
+	}
+	else
+		return false;
+
+	//////////////////////////
+	// number of btags
+	if (evt_selector_->pass_btag_number(nbtags_loose, nbtags_medium)) {
+		fill_CutFlow(ibin++,"btag num");
+	}
+	else
+		return false;
+
+	//////////////////////////
+	// metLD cut
+	if (evt_selector_->pass_metLD(metLD, lep_fakeable, njets)) {
+		if (doCutflow_) fill_CutFlow(ibin++,"metLD");
+	}
+	else
+		return false;
+	
+	//////////////////////////
+	// Charge sum
+	// do not apply cut here
+	// save the charge sum in ntuple
+	/*
+	if (evt_selector_->pass_charge_sum(taus[0].charge(), lep_fakeable)) {
+		if (doCutflow_) fill_CutFlow(ibin++,"charge sum");
+	}
+	else
+		return false;
+	*/
+	
+	//////////////////////////
+	// MC truth matching
+	if (not isdata_) {
+		// do not apply cut here
+		// save the MC truth matching info in ntuple
+	}
+
+	//////////////////////////
+	if (debug_) std::cout << "PASSED event selection!" << std::endl;
+
+	return true;
+}
+
 void ttHtautauAnalyzer::fill_CutFlow(int ibin, const char* name)
 {
 	assert(h_CutFlow_);

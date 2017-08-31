@@ -19,9 +19,11 @@ bool EventSelector::pass_lepton_number(const std::vector<miniLepton>& lep_fakeab
 		if (lep_fakeable.size() >= 1 and lep_tight.size() <= 1)
 			return true;
 	}
-	//else if (anaType_==Analyze_3l1tau) {
-	//
-	//}
+	else if (anaType_==Analyze_3l1tau) {
+		// at least 3 fakeable leptons
+		if (lep_fakeable.size() >= 3)
+			return true;
+	}
 	else
 		std::cout << "Analysis type not available!!" << std::endl;
 	
@@ -56,9 +58,12 @@ bool EventSelector::pass_lepton_pt(const std::vector<miniLepton>& leps)
 		if (leps[0].pt() > minpt)
 			return true;
 	}
-	//else if (anaType_==Analyze_3l1tau) {
-	//
-	//}
+	else if (anaType_==Analyze_3l1tau) {
+		assert(leps.size() >= 3);
+		// lepton pt
+		if (leps[0].pt() > 20. and leps[1].pt() > 10. and leps[2].pt() > 10.)
+			return true;
+	}
 	else
 		std::cout << "Analysis type not available!!" << std::endl;
 
@@ -139,31 +144,79 @@ bool EventSelector::pass_pairMass_veto(const std::vector<miniLepton>& leps)
 
 bool EventSelector::pass_Zmass_veto(const std::vector<miniLepton>& leps)
 {
-	// 2lss1tau category only for now
-	assert(anaType_==Analyze_2lss1tau);
+	// Zmass veto: 91.2 +/- 10	
+	if (leps.size() < 2) return true;
 
-	// Zmass veto: 91.2 +/- 10
-	// ee only
-	assert(leps.size() >= 2);
-	if (not (abs(leps[0].pdgId())==11 and abs(leps[1].pdgId())==11) ) 
-		return true;
+	for (auto it = leps.begin(); it != leps.end()-1; ++it) {
+		for (auto it2 = it+1; it2 != leps.end(); ++it2) {
+			bool skip = false;
+			if (anaType_==Analyze_2lss1tau) { // ee only
+				if (not (abs(it->pdgId())==11 and abs(it2->pdgId())==11) )
+					skip = true;
+			}
+			else if (anaType_==Analyze_3l1tau) {  // SFOS
+				if (it->pdgId() + it2->pdgId() != 0)
+					skip = true;
+			}
 
-	double eeInvMass = (leps[0].p4()+leps[1].p4()).M();
-
-	if (debug_) {
-		std::cout << "ee pair invariant mass : " << eeInvMass << std::endl;
+			if (skip) continue;
+			
+			double invMass = (it->p4() + it2->p4()).M();
+			if (invMass > (91.2 - 10.0) and invMass < (91.2 + 10.0)) {
+				if (debug_) {
+					std::cout << "FAIL Z mass veto" << std::endl;
+					std::cout << "lepton pair invariant mass : " << invMass
+							  << std::endl;
+				}
+				return false;
+			}
+		}
 	}
+
+	return true;
+}
+
+bool EventSelector::pass_metLD(float metLD, const std::vector<miniLepton>& leps,
+							   int njets)
+{
+	// metLD cut
+	assert(leps.size() >= 2);
+
+	if (debug_)
+		std::cout << "metLD : " << metLD << std::endl;
 	
-	if (eeInvMass < (91.2 - 10.0) or eeInvMass > (91.2 + 10.0))
-		return true;
+	if (anaType_==Analyze_2lss1tau) {  //ee only
+		if (not (abs(leps[0].pdgId())==11 and abs(leps[1].pdgId())==11) )
+			return true;
+
+		if (metLD > 0.2) return true;
+	}
+	else if (anaType_==Analyze_3l1tau) {
+		if (njets >= 4)
+			return true;
+		else { // njets < 4
+			bool sfos = false;
+			for (auto it = leps.begin(); it != leps.end()-1; ++it) {
+				for (auto it2 = it+1; it2 != leps.end(); ++it2) {
+					if (it->pdgId() + it2->pdgId() == 0) sfos = true;
+				}
+			}
+			
+			double cut = sfos ? 0.3 : 0.2;
+			if (metLD > cut) return true;
+
+			if (debug_)
+				std::cout << "njets: " << njets << " sfos: " << sfos << std::endl;
+		}
+	}
 
 	if (debug_) {
-		std::cout << "FAIL Z mass veto" << std::endl;
+		std::cout << "FAIL metLD cut" << std::endl;
 	}
 	return false;
 }
 
-bool EventSelector::pass_metLD(float metLD, const std::vector<miniLepton>& leps)
+/*
 {
 	// 2lss1tau category only for now
 	assert(anaType_==Analyze_2lss1tau);
@@ -184,7 +237,7 @@ bool EventSelector::pass_metLD(float metLD, const std::vector<miniLepton>& leps)
 		std::cout << "FAIL metLD cut" << std::endl;
 	}
 	return false;
-}
+}*/
 
 bool EventSelector::pass_lepton_ID(bool lep0IsTight, bool lep1IsTight,
 								   bool lep2IsTight)
@@ -215,9 +268,14 @@ bool EventSelector::pass_lepton_ID(bool lep0IsTight, bool lep1IsTight,
 
 		if (passLepWP) return true;
 	}
-	//else if (anaType_==Analyze_3l1tau) {
-	//
-	//}
+	else if (anaType_==Analyze_3l1tau) {
+		// signal region: the three leading leptons are tight
+		bool passLepWP = lep0IsTight and lep1IsTight and lep2IsTight;
+
+		if (selType_==Control_fake_3l1tau) passLepWP = not passLepWP;
+
+		if (passLepWP) return true;
+	}
 	else
 		std::cout << "Analysis type not available!!" << std::endl;	
 
@@ -233,21 +291,42 @@ bool EventSelector::pass_tau_number(int ntaus)
 		std::cout << "nTau : " << ntaus << std::endl;
 	}
 
-	if (anaType_==Analyze_2lss1tau) {
+	if (anaType_==Analyze_2lss1tau or anaType_==Analyze_3l1tau) {
 		// at least 1 selected tau
 		if (ntaus >= 1) return true;
 	}
 	else if (anaType_==Analyze_1l2tau) {
 		if (ntaus >= 2) return true;
 	}
-	//else if (anaType_==Analyze_3l1tau) {
-	//
-	//}
 	else
 		std::cout << "Analysis type not available!!" << std::endl;	
 	
 	if (debug_) {
 		std::cout << "FAIL tau number requirement" << std::endl;
+	}
+	return false;
+}
+
+bool EventSelector::pass_charge_sum(int tauCharge,
+									const std::vector<miniLepton>& leps)
+{
+	// 3l1tau category only
+	assert(anaType_==Analyze_3l1tau);
+	assert(leps.size() >= 3);
+
+	if (debug_) {
+		std::cout << "tau charge : " << tauCharge << std::endl;
+		std::cout << "lepton charges : " << leps[0].charge() << " "
+				  << leps[1].charge() << " " << leps[2].charge() << std::endl;
+	}
+
+	int chargesum = tauCharge + leps[0].charge() + leps[1].charge()
+		+leps[2].charge();
+
+	if (chargesum == 0) return true;
+
+	if (debug_) {
+		std::cout << "FAIL charge sum requirement" << std::endl;
 	}
 	return false;
 }
@@ -287,6 +366,7 @@ bool EventSelector::pass_tau_charge(int tauCharge,
 
 bool EventSelector::pass_taupair_charge(int tau0charge, int tau1charge)
 {
+	// 1l2tau category only
 	assert(anaType_==Analyze_1l2tau);
 	assert(selType_==Signal_1l2tau or selType_==Control_fake_1l2tau);
 	
@@ -342,8 +422,12 @@ bool EventSelector::pass_lep_tau_ID(bool lepIsTight, int ntau_tight)
 
 bool EventSelector::pass_jet_number(int njets)
 {
-	if (njets >= 3)
-		return true;
+	if (anaType_==Analyze_3l1tau) {
+		if (njets >= 2) return true;
+	}
+	else {
+		if (njets >= 3) return true;
+	}
 
 	if (debug_) {
 		std::cout << "FAIL number of jets requirement" << std::endl;
