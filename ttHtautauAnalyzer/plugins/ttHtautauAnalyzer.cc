@@ -571,6 +571,8 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		
 		if (anaType_==Analyze_2lss1tau)
 			write_ntuple_triggerSF(evNtuple_.lepCategory);
+		else if (anaType_==Analyze_3l1tau)
+			write_ntuple_triggerSF();
 		else if (anaType_==Analyze_1l2tau) {
 			bool hlt1LTriggered =
 				trig_helper_->pass_single_lep_triggers(evNtuple_.triggerBits);
@@ -580,7 +582,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 								   hltXTriggered);
 		}
 	}
-
+	
 	/// fake rate weights
 	if (!event_selection_off_) {
 		if (anaType_==Analyze_1l2tau)
@@ -600,7 +602,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	}
 	
 	if (selType_ == Signal_2lss1tau or selType_ == Loose_2lss1tau or
-		selType_ == Signal_1l2tau) {
+		selType_ == Signal_1l2tau or selType_ == Signal_3l1tau) {
 		if (isdata_) evNtuple_.event_weight = 1.;
 		else {
 			evNtuple_.event_weight =
@@ -611,7 +613,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		}
 	}
 	else if (selType_==Control_fake_2lss1tau or selType_==Control_2los1tau or
-			 selType_==Control_fake_1l2tau)
+			 selType_==Control_fake_1l2tau or selType_==Control_fake_3l1tau)
 		evNtuple_.event_weight = evNtuple_.FR_weight;
 	
 	/// muons

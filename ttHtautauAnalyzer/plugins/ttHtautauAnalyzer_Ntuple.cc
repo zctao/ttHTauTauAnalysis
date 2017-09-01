@@ -86,8 +86,10 @@ void ttHtautauAnalyzer::write_ntuple_tauSF(const std::vector<pat::Tau>& taus)
 
 void ttHtautauAnalyzer::write_ntuple_triggerSF(int lepCategory)
 {
-	assert(anaType_==Analyze_2lss1tau);
-	evNtuple_.triggerSF_weight = sf_helper_->Get_HLTSF_2l1tau(lepCategory);
+	if (anaType_==Analyze_2lss1tau)
+		evNtuple_.triggerSF_weight = sf_helper_->Get_HLTSF_2l1tau(lepCategory);
+	else if (anaType_==Analyze_3l1tau)
+		evNtuple_.triggerSF_weight = sf_helper_->Get_HLTSF_3l1tau();
 }
 
 void ttHtautauAnalyzer::write_ntuple_triggerSF(const miniLepton& lep,
@@ -101,18 +103,21 @@ void ttHtautauAnalyzer::write_ntuple_triggerSF(const miniLepton& lep,
 
 void ttHtautauAnalyzer::write_ntuple_frweight(const std::vector<miniLepton>& leps,
 											  const std::vector<pat::Tau>& taus)
-{	
+{
+	float F1, F2, F3 = -1.;
+	float f1, f2, f3 = 0.;
+
 	if (selType_==Control_fake_1l2tau) {
 		assert(leps.size() >= 1);
 		assert(taus.size() >= 2);
 
-		float f1 = sf_helper_->Get_FakeRate(leps[0]);
-		float f2 = sf_helper_->Get_FakeRate(taus[0]);
-		float f3 = sf_helper_->Get_FakeRate(taus[1]);
+	    f1 = sf_helper_->Get_FakeRate(leps[0]);
+	    f2 = sf_helper_->Get_FakeRate(taus[0]);
+	    f3 = sf_helper_->Get_FakeRate(taus[1]);
 
-		float F1 = leps[0].passTightSel() ? -1. : f1/(1-f1);
-		float F2 = (taus[0].tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT")>0.5) ? -1. : f2/(1-f2);
-		float F3 = (taus[1].tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT")>0.5) ? -1. : f3/(1-f3);
+		F1 = leps[0].passTightSel() ? -1. : f1/(1-f1);
+		F2 = (taus[0].tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT")>0.5) ? -1. : f2/(1-f2);
+	    F3 = (taus[1].tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT")>0.5) ? -1. : f3/(1-f3);
 
 		if (debug_) {
 			std::cout << "lep pdgid passTight? : " << leps[0].pdgId() << " "
@@ -125,17 +130,17 @@ void ttHtautauAnalyzer::write_ntuple_frweight(const std::vector<miniLepton>& lep
 		}
 
 		evNtuple_.FR_weight = F1 * F2 * F3;
-		if (debug_) std::cout << "FR_weight : " << -1. * F1 * F2 << std::endl;
+		if (debug_) std::cout << "FR_weight : " << F1 * F2 * F3 << std::endl;
 	}
 	else if (selType_==Control_fake_2lss1tau) {
 		assert(leps.size() >= 2);
 		assert(leps[0].passFakeableSel() and leps[1].passFakeableSel());
-		
-		float f1 = sf_helper_->Get_FakeRate(leps[0]);
-		float f2 = sf_helper_->Get_FakeRate(leps[1]);
+			
+		f1 = sf_helper_->Get_FakeRate(leps[0]);
+		f2 = sf_helper_->Get_FakeRate(leps[1]);
 
-		float F1 = leps[0].passTightSel() ? -1. : f1/(1-f1);
-		float F2 = leps[1].passTightSel() ? -1. : f2/(1-f2);
+		F1 = leps[0].passTightSel() ? -1. : f1/(1-f1);
+		F2 = leps[1].passTightSel() ? -1. : f2/(1-f2);
 
 		if (debug_) {
 			std::cout << "lep0 pdgid passTight? : " << leps[0].pdgId() << " "
@@ -147,8 +152,35 @@ void ttHtautauAnalyzer::write_ntuple_frweight(const std::vector<miniLepton>& lep
 		}
 
 		evNtuple_.FR_weight = -1. * F1 * F2;
-		if (debug_) std::cout << "FR_weight : " << -1. * F1 * F2 << std::endl;
-		
+		if (debug_) std::cout << "FR_weight : " << -1 * F1 * F2 << std::endl;
+	}
+	else if (selType_==Control_fake_3l1tau) {
+		assert(leps.size() >= 2);
+		assert(leps[0].passFakeableSel() and leps[1].passFakeableSel() and
+			   leps[2].passFakeableSel());
+
+		f1 = sf_helper_->Get_FakeRate(leps[0]);
+		f2 = sf_helper_->Get_FakeRate(leps[1]);
+		f3 = sf_helper_->Get_FakeRate(leps[2]);
+
+		F1 = leps[0].passTightSel() ? -1. : f1/(1-f1);
+		F2 = leps[1].passTightSel() ? -1. : f2/(1-f2);
+		F3 = leps[2].passTightSel() ? -1. : f3/(1-f3);
+
+		if (debug_) {
+			std::cout << "lep0 pdgid passTight? : " << leps[0].pdgId() << " "
+					  << leps[0].passTightSel() << std::endl;
+			std::cout << "f1 F1 : " << f1 << " " << F1 << std::endl;
+			std::cout << "lep1 pdgid passTight? : " << leps[1].pdgId() << " "
+					  << leps[1].passTightSel() << std::endl;
+			std::cout << "f2 F2 : " << f2 << " " << F2 << std::endl;
+			std::cout << "lep2 pdgid passTight? : " << leps[2].pdgId() << " "
+					  << leps[2].passTightSel() << std::endl;
+			std::cout << "f3 F3 : " << f3 << " " << F3 << std::endl;
+		}
+
+		evNtuple_.FR_weight = F1 * F2 * F3;
+		if (debug_) std::cout << "FR_weight : " << F1 * F2 * F3 << std::endl;
 	}
 	else if (selType_==Control_2los1tau) {
 		assert(leps.size() >= 2);

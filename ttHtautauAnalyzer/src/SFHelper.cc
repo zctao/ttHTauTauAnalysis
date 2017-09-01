@@ -343,6 +343,13 @@ float SFHelper::Get_HLTSF_2l1tau(int lepCategory)
 	return 0.;
 }
 
+float SFHelper::Get_HLTSF_3l1tau()
+{
+	assert(_analysis==Analyze_3l1tau);
+
+	return 1.;
+}
+
 #if !defined(__ACLIC__) && !defined(__ROOTCLING__)
 float SFHelper::Get_HLTSF_1l2tau(const miniLepton& lepton,
 								 const std::vector<pat::Tau>& taus,

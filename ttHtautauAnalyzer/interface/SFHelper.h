@@ -30,6 +30,7 @@ class SFHelper
 
 	// member functions
 	float Get_HLTSF_2l1tau(int);
+	float Get_HLTSF_3l1tau();
 	float Get_HLTSF_1l2tau(float, float, int, float, float, int, float, float,
 						   int, bool, bool);
 	float Compute_trig_eff_OR_1l2tau(float, float, float, float, bool, bool);
