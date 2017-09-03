@@ -2,7 +2,6 @@
 <use name="CondTools/BTau"/>
 <use name="CondFormats/BTauObjects"/>
 <use name = "HLTrigger/HLTcore" />
-<use name="ttH_Htautau_MEM_Analysis/MEMAlgo"/>
 <use name="root"/>
 <export>
   <use name="root"/>
