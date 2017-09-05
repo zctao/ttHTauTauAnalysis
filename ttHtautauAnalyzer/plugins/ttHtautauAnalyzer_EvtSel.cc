@@ -213,9 +213,20 @@ bool ttHtautauAnalyzer::pass_event_sel_1l2tau (
 	}
 	else
 		return false;
-	
+
+	//////////////////////////
+	// lepton and taus WP
+	assert(lep_fakeable.size()>0);
+	if (evt_selector_->pass_lep_tau_ID(lep_fakeable[0].passTightSel(),
+									   taus.size())) {
+		if (doCutflow_) fill_CutFlow(ibin++,"lep&tau WP");
+	}
+	else
+		return false;
+
 	//////////////////////////
 	// tau charge
+	/*
 	bool pass_taupair_charge = false;
 	if (selType_==Signal_1l2tau) {
 		assert(taus.size()>1);
@@ -238,17 +249,9 @@ bool ttHtautauAnalyzer::pass_event_sel_1l2tau (
 	}
 	else
 		return false;
-
-	//////////////////////////
-	// lepton and taus WP
-	assert(lep_fakeable.size()>0);
-	if (evt_selector_->pass_lep_tau_ID(lep_fakeable[0].passTightSel(),
-									   taus.size())) {
-		if (doCutflow_) fill_CutFlow(ibin++,"lep&tau WP");
-	}
-	else
-		return false;
-
+	*/
+	// Requirement on tau charge is applied after ntuple production for signal or control region
+	
 	//////////////////////////
 	// number of jets
 	if (evt_selector_->pass_jet_number(njets)) {

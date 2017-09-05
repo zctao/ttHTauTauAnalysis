@@ -56,10 +56,15 @@ options.register('TurnOffHLTCut', True,
                  VarParsing.VarParsing.varType.bool,
                  "Turn off HLT path check in event selection")
 
+options.register('AnalysisType', '2lss1tau',
+                 VarParsing.VarParsing.multiplicity.singleton,
+                 VarParsing.VarParsing.varType.string,
+                 "Analysis type currently supported: 1l2tau, 2lss1tau, 3l1tau")
+
 options.register('SelectionRegion', 'signal_2lss1tau',
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
-                 "Which selection region to apply: signal_2lss1tau, control_2los1tau, control_fake_2lss1tau, control_fake_1l2tau, control_fake_3l1au, loose_2lss1tau")
+                 "Which selection region to apply: signal_2lss1tau, control_2los1tau, control_fake_2lss1tau, signal_1l2tau, control_fake_1l2tau, signal_3l1tau, control_fake_3l1au, loose_2lss1tau")
 
 options.register('doSystematics', True,
                  VarParsing.VarParsing.multiplicity.singleton,
@@ -88,8 +93,8 @@ options.register("HIPSafeMediumMuon", True,
 
 ###
 options.maxEvents = -1
-#options.inputFiles='file:/uscms/home/ztao/nobackup/datasample/ttH_80X/ttHnonbb.root'
-options.inputFiles='/store/mc/RunIISummer16MiniAODv2/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/00D10AF2-76BE-E611-8EFB-001E67457DFA.root'
+options.inputFiles='file:/uscms/home/ztao/nobackup/datasample/ttH_80X/ttHnonbb.root'
+#options.inputFiles='/store/mc/RunIISummer16MiniAODv2/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/00D10AF2-76BE-E611-8EFB-001E67457DFA.root'
 
 # get and parse the command line arguments
 options.parseArguments()
@@ -205,10 +210,11 @@ process.ttHtaus.sampleName = cms.string(options.SampleName)
 process.ttHtaus.TauESType = cms.string(options.TauESType)
 process.ttHtaus.JECType = cms.string(options.JECType)
 process.ttHtaus.using_real_data = cms.bool(options.isData)
+process.ttHtaus.analysis_type = cms.string(options.AnalysisType)
 process.ttHtaus.selection_region = cms.string(options.SelectionRegion)
 process.ttHtaus.turn_off_HLT_cut = cms.bool(options.TurnOffHLTCut)
 process.ttHtaus.debug_mode = cms.bool(options.Debug)
-process.ttHtaus.do_sync_ = cms.bool(options.doSync)
+process.ttHtaus.do_sync = cms.bool(options.doSync)
 process.ttHtaus.doCutFlow = cms.bool(options.doCutFlow)
 process.ttHtaus.doJERsmear = cms.bool(options.doJERSmearing)
 # CSV WPs for Summer16 80X MC + ReReco Data

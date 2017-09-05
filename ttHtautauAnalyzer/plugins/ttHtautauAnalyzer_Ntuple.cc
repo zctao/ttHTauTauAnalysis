@@ -97,8 +97,9 @@ void ttHtautauAnalyzer::write_ntuple_triggerSF(const miniLepton& lep,
 											   bool LTriggered, bool XTriggered)
 {
 	assert(anaType_==Analyze_1l2tau);
-	evNtuple_.triggerSF_weight =
-		sf_helper_->Get_HLTSF_1l2tau(lep, taus, LTriggered, XTriggered);
+	if (selType_==Signal_1l2tau)
+		evNtuple_.triggerSF_weight =
+			sf_helper_->Get_HLTSF_1l2tau(lep, taus, LTriggered, XTriggered);
 }
 
 void ttHtautauAnalyzer::write_ntuple_frweight(const std::vector<miniLepton>& leps,

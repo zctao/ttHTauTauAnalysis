@@ -508,8 +508,8 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	evNtuple_.pvz = pv.z();
 
 	if (not event_selection_off_) {
-		assert(tau_selected.size() > 0);
 		if (anaType_==Analyze_2lss1tau) {
+			assert(tau_selected.size() > 0);
 			evNtuple_.passTauCharge = evt_selector_->pass_tau_charge(
 									  tau_selected[0].charge(),lep_fakeable);
 			assert(lep_fakeable.size() >= 2);
@@ -530,12 +530,14 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 													   tau_selected[1].charge());
 			}
 			else if (selType_==Control_fake_1l2tau) {
+				assert(tau_preselected.size() > 1);
 				evNtuple_.passTauCharge =
 					evt_selector_->pass_taupair_charge(tau_preselected[0].charge(),
 													   tau_preselected[1].charge());
 			}
 		}
 		else if (anaType_==Analyze_3l1tau) {
+			assert(tau_selected.size() > 0);
 			evNtuple_.passTauCharge = evt_selector_->pass_charge_sum(
 								      tau_selected[0].charge(), lep_fakeable);
 		}
@@ -567,7 +569,9 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	if (!isdata_ and !event_selection_off_) {
 		write_ntuple_bTagSF(jet_selected);
 		write_ntuple_leptonSF(lep_fakeable);
-		write_ntuple_tauSF(tau_selected); //only actually useful for signal region
+		if (selType_ == Signal_2lss1tau or selType_ == Loose_2lss1tau or
+		selType_ == Signal_1l2tau or selType_ == Signal_3l1tau)
+			write_ntuple_tauSF(tau_selected); //only actually useful for signal region
 		
 		if (anaType_==Analyze_2lss1tau)
 			write_ntuple_triggerSF(evNtuple_.lepCategory);
