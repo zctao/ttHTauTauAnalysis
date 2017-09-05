@@ -44,4 +44,10 @@ Add the area containing the Electron MVA weights:
 	git checkout egm_id_80X_v1
 	cd $CMSSW_BASE/src
 
+Get data files before running analyzer:
+
+	cd ttHTauTauAnalysis/ttHtautauAnalyzer/data
+	./fetchDataFiles.sh
+	cd -
+
 When running with CRAB one needs to add the following option to the crab config file: config.JobType.sendExternalFolder = True This is needed until the PR including this ID will be integrated in CMSSW/cms-data.

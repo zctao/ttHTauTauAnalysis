@@ -28,3 +28,28 @@ cp /afs/cern.ch/work/t/tstreble/public/triggerSF_weights/trigger_sf_*.root trigg
 ### pile up
 
 ### event BDT weights
+if [ ! -d "evtMVAWeights" ]; then
+	mkdir evtMVAWeights
+fi
+cd evtMVAWeights
+
+# 1l2tau
+if [ ! -d "1l2tau" ]; then
+	mkdir 1l2tau
+fi
+wget hwget https://raw.githubusercontent.com/cms-ttH/ttH-TauRoast/master/data/bdt.vvt/sklearn_tt.xml -O 1l2tau/sklearn_tt.xml
+wget https://raw.githubusercontent.com/cms-ttH/ttH-TauRoast/master/data/bdt.vvt/sklearn_ttZ.xml -O 1l2tau/sklearn_ttZ.xml
+
+# 2lss1tau
+#if [ ! -d "2lss1tau" ]; then
+#	mkdir 2lss1tau
+#fi
+
+# 3l1tau
+if [ ! -d "3l1tau" ]; then
+	mkdir 3l1tau
+fi
+wget https://raw.githubusercontent.com/CERN-PH-CMG/cmgtools-lite/80X/TTHAnalysis/data/kinMVA/tth/3l_ttbar_BDTG.weights.xml -O 3l1tau/3l_ttbar_BDTG.weights.xml
+wget https://raw.githubusercontent.com/CERN-PH-CMG/cmgtools-lite/80X/TTHAnalysis/data/kinMVA/tth/3l_ttV_BDTG.weights.xml -O 3l1tau/3l_ttV_BDTG.weights.xml
+
+cd -
