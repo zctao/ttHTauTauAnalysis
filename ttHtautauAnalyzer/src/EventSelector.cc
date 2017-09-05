@@ -38,7 +38,7 @@ bool EventSelector::pass_lepton_pt(const std::vector<miniLepton>& leps)
 {
 	if (debug_) {
 		for (const auto& lep : leps)
-			std::cout << "lep pt id" << lep.pt()<<" "<< lep.pdgId() << std::endl;
+			std::cout << "lep pt id " << lep.pt()<<" "<< lep.pdgId() << std::endl;
 	}
 	
 	if (anaType_==Analyze_2lss1tau) {
@@ -53,7 +53,7 @@ bool EventSelector::pass_lepton_pt(const std::vector<miniLepton>& leps)
 	else if (anaType_==Analyze_1l2tau) {
 		assert(leps.size() >= 1);
 		// lepton pt
-		float minpt = abs(leps[0].pdgId())==11 ? 30. : 25.;
+		float minpt = abs(leps[0].pdgId())==11 ? 25. : 20.;
 
 		if (leps[0].pt() > minpt)
 			return true;

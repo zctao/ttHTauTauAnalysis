@@ -263,6 +263,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 			++n_muon_tight;
 		}
 	}
+	assert(n_muon_tight<=n_muon_fakeable);
 	
 	if (debug_) {
 		std::cout << "n_muon_loose : " << mu_preselected.size() << std::endl;
@@ -301,7 +302,8 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 			++n_ele_tight;
 		}
 	}	
-
+	assert(n_ele_tight<=n_ele_fakeable);
+	
 	if (debug_) {
 		std::cout << "n_electrons_loose : " << ele_preselected.size() << std::endl;
 		std::cout << "n_electrons_fakeable : " << n_ele_fakeable << std::endl;

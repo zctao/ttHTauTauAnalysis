@@ -131,7 +131,10 @@ bool ttHtautauAnalyzer::isFakeableID(const pat::Electron& ele) const
 
 bool ttHtautauAnalyzer::isTightID(const pat::Electron& ele) const
 {
-	return ele.userFloat("idMVABased") > 0.5;
+	return (ele.userFloat("idMVABased") > 0.5 and
+			ele.userFloat("numMissingHits") == 0 and
+			ele.passConversionVeto()
+			);
 }
 
 bool ttHtautauAnalyzer::isTightCharge(const pat::Electron& ele) const
