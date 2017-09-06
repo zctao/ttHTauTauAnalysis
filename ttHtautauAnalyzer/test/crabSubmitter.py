@@ -2,11 +2,30 @@
 # modified from Jorge's script
 
 import os, sys
-import crab_channels
 
-channels = crab_channels.channels_train
-#samplelist = "../data/SampleList_Moriond17.txt"
-samplelist = "../data/SampleList_Training.txt"
+import argparse
+parser = argparse.ArgumentParser(description='Submit multiple crab jobs for ntuple making')
+
+parser.add_argument('-s', '--samples', type=str,
+                    default='../data/SampleList_Training.txt',
+                    #SampleList_Moriond17
+                    help="List of MC/data samples to run crab jobs")
+parser.add_argument('-c', '--channels', choices=['train','2016','2017'],
+                    default='train',
+                    help="Lists of job names: saved in crab_channels.py. Edit this module if need to add/change channels to run.")
+
+args = parser.parse_args()
+
+import crab_channels
+channels = []
+if args.channels=='train':
+    channels = crab_channels.channels_train
+elif args.channels=='2016':
+    channels = crab_channels.channels_2016
+elif args.channels=='2017':
+    channels = crab_channels.channels_2017
+
+samplelist = args.samples
 
 string = '''from CRABClient.UserUtilities import config
 config = config()

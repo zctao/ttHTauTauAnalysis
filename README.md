@@ -51,3 +51,15 @@ Get data files before running analyzer:
 	cd -
 
 When running with CRAB one needs to add the following option to the crab config file: config.JobType.sendExternalFolder = True This is needed until the PR including this ID will be integrated in CMSSW/cms-data.
+
+## Usage
+
+Produce sync ntuples:
+
+	./ttHtautauAnalyzer/test/produceSyncNtuples.sh
+
+Submit CRAB jobs:
+
+	python crabSubmitter.py --samples='<SampleLists>' --channels='<channels>'
+
+	python crabSubmitter.py -h for help
