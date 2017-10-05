@@ -52,6 +52,18 @@ void ttHtautauAnalyzer::Set_up_SelType(const std::string& seltype)
 	else if (seltype == "loose_2lss1tau") {
 		selType_ = Selection_types::Loose_2lss1tau;
 	}
+	else if (seltype == "loose_1l2tau") {
+		selType_ = Selection_types::Loose_1l2tau;
+	}
+	else if (seltype == "inclusive_1l2tau") {
+		selType_ = Selection_types::Inclusive_1l2tau;
+	}
+	else if (seltype == "inclusive_2lss1tau") {
+		selType_ = Selection_types::Inclusive_2lss1tau;
+	}
+	else if (seltype == "inclusive_3l1tau") {
+		selType_ = Selection_types::Inclusive_3l1tau;
+	}
 	else {
 		std::cerr << "Not valid selection region!" << std::endl;
 		assert(0);

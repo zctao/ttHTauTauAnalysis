@@ -27,7 +27,11 @@ enum Selection_types {
 	Control_fake_1l2tau,
 	Control_fake_3l1tau,
 	Control_WZ,
-	Loose_2lss1tau  // for training
+	Loose_2lss1tau,  // for training
+	Loose_1l2tau,
+	Inclusive_1l2tau,
+	Inclusive_2lss1tau,
+	Inclusive_3l1tau
 };
 
 

@@ -112,11 +112,14 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 															const std::string&);
 	template <typename T> void addIDFlags(std::vector<T>&,
 										  edm::Handle<reco::GenParticleCollection>);
+	void addIDFlagsTau(std::vector<pat::Tau>&);
 	bool isLooseID(const pat::Muon&) const;
 	bool isLooseID(const pat::Electron&) const;
+	bool isLooseID(const pat::Tau&) const;
 	bool isFakeableID(const pat::Muon&) const;
 	bool isFakeableID(const pat::Electron&) const;
 	bool isTightID(const pat::Muon&) const;
+	bool isTightID(const pat::Tau&) const;
 	bool isTightID(const pat::Electron&) const;
 	bool isTightCharge(const pat::Muon&) const;
 	bool isTightCharge(const pat::Electron&) const;

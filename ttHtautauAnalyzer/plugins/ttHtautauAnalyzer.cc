@@ -323,12 +323,6 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		std::cout << "n_lep_fakeable : " << lep_fakeable.size() << std::endl;
 		std::cout << "n_lep_tight : " << lep_tight.size() << std::endl;
 	}
-
-	// loose leptons for training
-	if (selType_==Loose_2lss1tau) {
-		lep_fakeable.clear();
-		lep_fakeable = lep_loose;
-	}
 	
 	/////////////////////////////////////////
 	// Taus
@@ -338,27 +332,24 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	std::vector<pat::Tau> tau_corrected = getCorrectedTaus(*taus, tauES_unc_, TESType_);
 	
 	// loose
-	std::vector<pat::Tau> tau_preselected = getPreselTaus(tau_corrected);
+	std::vector<pat::Tau> tau_loose = getPreselTaus(tau_corrected);
 	// remove overlap with muons and electrons
-	tau_preselected = removeOverlapdR(tau_preselected, mu_preselected, 0.3);
-	tau_preselected = removeOverlapdR(tau_preselected, ele_preselected, 0.3);
+	tau_loose = removeOverlapdR(tau_loose, mu_preselected, 0.3);
+	tau_loose = removeOverlapdR(tau_loose, ele_preselected, 0.3);
+	addIDFlagsTau(tau_loose);
 	// sort by pt
-	SortByPt(tau_preselected);
+	SortByPt(tau_loose);
 	// add mc match type if not data
 	if (not isdata_) {
-		for (auto & tau : tau_preselected)
+		for (auto & tau : tau_loose)
 			tau.addUserInt("MCMatchType", getMCMatchType(tau, *MC_particles));
 	}
 	// tight
-	std::vector<pat::Tau> tau_selected;
-	if (selType_==Loose_2lss1tau)
-		tau_selected = tau_preselected;
-	else
-		tau_selected = getSelectedTaus(tau_preselected);
+	std::vector<pat::Tau> tau_tight = getSelectedTaus(tau_loose);
 
 	if (debug_) {
-		std::cout << "n_tau_loose : " << tau_preselected.size() << std::endl;
-		std::cout << "n_tau : " << tau_selected.size() << std::endl; 
+		std::cout << "n_tau_loose : " << tau_loose.size() << std::endl;
+		std::cout << "n_tau : " << tau_tight.size() << std::endl; 
 	}
 	
 	/////////////////////////////////////////
@@ -382,7 +373,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 
 	// remove overlap
 	std::vector<pat::Jet> jet_no_lep = removeOverlapdR(jet_raw, lep_fakeable, 0.4);
-	std::vector<pat::Jet> jet_cleaned = removeOverlapdR(jet_no_lep, tau_preselected, 0.4);
+	std::vector<pat::Jet> jet_cleaned = removeOverlapdR(jet_no_lep, tau_loose, 0.4);
 
 	// selected jets
 	std::vector<pat::Jet> jet_selected = getSelectedJets(jet_cleaned);
@@ -418,10 +409,28 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	float MET = pfMET.pt();
 	// MHT
 	//float MHT = getMHT(mu_fakeable, ele_fakeable, tau_selected, jet_selected);
-	float MHT = getMHT(lep_loose, tau_preselected, jet_selected);
+	float MHT = getMHT(lep_loose, tau_loose, jet_selected);
 	float metLD = 0.00397 * MET + 0.00265 * MHT;
 
+	/////////////////////////////////////////
+	// Determine which object collection to use in event selection and to write to
+	// ntuples according to the selection type
+	std::vector<miniLepton>* lep_selected;
+	std::vector<pat::Tau>* tau_selected;
 
+	if (selType_==Loose_2lss1tau) {
+		lep_selected = &lep_loose;
+		tau_selected = &tau_loose;
+	}
+	else if (selType_==Loose_1l2tau) {
+		lep_selected = &lep_fakeable;
+		tau_selected = &tau_loose;
+	}
+	else {
+		lep_selected = &lep_fakeable;
+		tau_selected = &tau_tight;
+	}
+	
 	/////////////////////////////////////////
 	// Event selection
 	/////////////////////////////////////////
@@ -430,20 +439,20 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	
 	if (anaType_==Analyze_2lss1tau) {
 		pass_event_sel =
-			pass_event_sel_2lss1tau(lep_loose, lep_fakeable, lep_tight,
-									tau_selected, jet_selected.size(),
+			pass_event_sel_2lss1tau(lep_loose, *lep_selected, lep_tight,
+									*tau_selected, jet_selected.size(),
 									n_btags_loose, n_btags_medium, metLD);
 	}
 	else if (anaType_==Analyze_1l2tau) {
 		pass_event_sel =
-			pass_event_sel_1l2tau(lep_loose, lep_fakeable, lep_tight,
-								  tau_preselected, tau_selected, jet_selected.size(),
+			pass_event_sel_1l2tau(lep_loose, *lep_selected, lep_tight,
+								  tau_loose, *tau_selected, jet_selected.size(),
 								  n_btags_loose, n_btags_medium);
 	}
 	else if (anaType_==Analyze_3l1tau) {
 		pass_event_sel =
-			pass_event_sel_3l1tau(lep_loose, lep_fakeable, lep_tight,
-								  tau_selected, jet_selected.size(),
+			pass_event_sel_3l1tau(lep_loose, *lep_selected, lep_tight,
+								  *tau_selected, jet_selected.size(),
 								  n_btags_loose, n_btags_medium, metLD);
 	}
 
@@ -478,27 +487,27 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		if (not event_selection_off_) {
 			if (anaType_==Analyze_2lss1tau) {
 				evNtuple_.isGenMatchedLep =
-					evt_selector_->pass_lep_mc_match(lep_fakeable);
+					evt_selector_->pass_lep_mc_match(*lep_selected);
 				
-				assert(tau_selected.size() > 0);
+				assert(tau_selected->size() > 0);
 				evNtuple_.isGenMatchedTau =
-					evt_selector_->pass_tau_mc_match(tau_selected[0]);
+					evt_selector_->pass_tau_mc_match((*tau_selected)[0]);
 			}
 			else if (anaType_==Analyze_1l2tau) {
-				assert(lep_fakeable.size() > 0);
+				assert(lep_selected->size() > 0);
 				evNtuple_.isGenMatchedLep =
-					evt_selector_->pass_lep_mc_match(lep_fakeable[0]);
+					evt_selector_->pass_lep_mc_match((*lep_selected)[0]);
 
 				evNtuple_.isGenMatchedTau =
-					evt_selector_->pass_tau_mc_match(tau_selected);
+					evt_selector_->pass_tau_mc_match(*tau_selected);
 			}
 			else if (anaType_==Analyze_3l1tau) {
 				evNtuple_.isGenMatchedLep =
-					evt_selector_->pass_lep_mc_match(lep_fakeable, 3);
+					evt_selector_->pass_lep_mc_match(*lep_selected, 3);
 
-				assert(tau_selected.size() > 0);
+				assert(tau_selected->size() > 0);
 				evNtuple_.isGenMatchedTau =
-					evt_selector_->pass_tau_mc_match(tau_selected[0]);
+					evt_selector_->pass_tau_mc_match((*tau_selected)[0]);
 			}
 		}
 	}
@@ -511,37 +520,37 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 
 	if (not event_selection_off_) {
 		if (anaType_==Analyze_2lss1tau) {
-			assert(tau_selected.size() > 0);
+			assert(tau_selected->size() > 0);
 			evNtuple_.passTauCharge = evt_selector_->pass_tau_charge(
-									  tau_selected[0].charge(),lep_fakeable);
-			assert(lep_fakeable.size() >= 2);
-			if (abs(lep_fakeable[0].pdgId())==13 and
-				abs(lep_fakeable[1].pdgId())==13)
+								     (*tau_selected)[0].charge(),*lep_selected);
+			assert(lep_selected->size() >= 2);
+			if (abs((*lep_selected)[0].pdgId())==13 and
+				abs((*lep_selected)[1].pdgId())==13)
 				evNtuple_.lepCategory = 0;  // mumu
-			else if (abs(lep_fakeable[0].pdgId())==11 and
-					 abs(lep_fakeable[1].pdgId())==11)
+			else if (abs((*lep_selected)[0].pdgId())==11 and
+					 abs((*lep_selected)[1].pdgId())==11)
 				evNtuple_.lepCategory = 1;  // ee
 			else
 				evNtuple_.lepCategory = 2;  // emu
 		}
 		else if (anaType_==Analyze_1l2tau) {
-			if (selType_==Signal_1l2tau) {
-				assert(tau_selected.size() > 1);
+			if (selType_==Signal_1l2tau or selType_==Loose_1l2tau) {
+				assert(tau_selected->size() > 1);
 				evNtuple_.passTauCharge =
-					evt_selector_->pass_taupair_charge(tau_selected[0].charge(),
-													   tau_selected[1].charge());
+					evt_selector_->pass_taupair_charge((*tau_selected)[0].charge(),
+													   (*tau_selected)[1].charge());
 			}
 			else if (selType_==Control_fake_1l2tau) {
-				assert(tau_preselected.size() > 1);
+				assert(tau_loose.size() > 1);
 				evNtuple_.passTauCharge =
-					evt_selector_->pass_taupair_charge(tau_preselected[0].charge(),
-													   tau_preselected[1].charge());
+					evt_selector_->pass_taupair_charge(tau_loose[0].charge(),
+													   tau_loose[1].charge());
 			}
 		}
 		else if (anaType_==Analyze_3l1tau) {
-			assert(tau_selected.size() > 0);
+			assert(tau_selected->size() > 0);
 			evNtuple_.passTauCharge = evt_selector_->pass_charge_sum(
-								      tau_selected[0].charge(), lep_fakeable);
+									  (*tau_selected)[0].charge(), *lep_selected);
 		}
 		
 		evNtuple_.btagCategory = n_btags_medium >= 2 ? 1 : 0;
@@ -555,8 +564,8 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	evNtuple_.n_presel_ele = ele_preselected.size();
 	evNtuple_.n_fakeable_ele = n_ele_fakeable;
 	evNtuple_.n_mvasel_ele = n_ele_tight;
-	evNtuple_.n_presel_tau = tau_preselected.size();
-	evNtuple_.n_tau = tau_selected.size();
+	evNtuple_.n_presel_tau = tau_loose.size();
+	evNtuple_.n_tau = tau_selected->size();
 	evNtuple_.n_jet = jet_selected.size();
 	evNtuple_.n_btag_loose = n_btags_loose;
 	evNtuple_.n_btag_medium = n_btags_medium;
@@ -570,10 +579,11 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	/// scale factors
 	if (!isdata_ and !event_selection_off_) {
 		write_ntuple_bTagSF(jet_selected);
-		write_ntuple_leptonSF(lep_fakeable);
+		write_ntuple_leptonSF(*lep_selected);
 		if (selType_ == Signal_2lss1tau or selType_ == Loose_2lss1tau or
-		selType_ == Signal_1l2tau or selType_ == Signal_3l1tau)
-			write_ntuple_tauSF(tau_selected); //only actually useful for signal region
+			selType_ == Signal_1l2tau or selType_ == Loose_1l2tau or
+			selType_ == Signal_3l1tau)
+			write_ntuple_tauSF(*tau_selected); //only actually useful for signal region
 		
 		if (anaType_==Analyze_2lss1tau)
 			write_ntuple_triggerSF(evNtuple_.lepCategory);
@@ -584,17 +594,17 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 				trig_helper_->pass_single_lep_triggers(evNtuple_.triggerBits);
 			bool hltXTriggered =
 				trig_helper_->pass_leptau_cross_triggers(evNtuple_.triggerBits);
-			write_ntuple_triggerSF(lep_fakeable[0], tau_selected, hlt1LTriggered,
-								   hltXTriggered);
+			write_ntuple_triggerSF((*lep_selected)[0], *tau_selected,
+								   hlt1LTriggered, hltXTriggered);
 		}
 	}
 	
 	/// fake rate weights
 	if (!event_selection_off_) {
 		if (anaType_==Analyze_1l2tau)
-			write_ntuple_frweight(lep_fakeable, tau_preselected);
+			write_ntuple_frweight(*lep_selected, tau_loose);
 		else
-			write_ntuple_frweight(lep_fakeable, tau_selected);
+			write_ntuple_frweight(*lep_selected, *tau_selected);
 	}
 	
 	/// event weights
@@ -608,7 +618,8 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	}
 	
 	if (selType_ == Signal_2lss1tau or selType_ == Loose_2lss1tau or
-		selType_ == Signal_1l2tau or selType_ == Signal_3l1tau) {
+		selType_ == Signal_1l2tau or selType_ == Loose_1l2tau or
+		selType_ == Signal_3l1tau) {
 		if (isdata_) evNtuple_.event_weight = 1.;
 		else {
 			evNtuple_.event_weight =
@@ -629,7 +640,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	write_ntuple_electrons(ele_preselected);
 
 	/// taus
-	write_ntuple_taus(tau_preselected);
+	write_ntuple_taus(tau_loose);
 
 	/// jets
 	write_ntuple_jets(jet_selected);

@@ -307,8 +307,10 @@ void ttHtautauAnalyzer::write_ntuple_taus(const std::vector<pat::Tau>& taus)
 		evNtuple_.tau_againstElectronLooseMVA6->push_back(tau.tauID("againstElectronLooseMVA6"));
 		evNtuple_.tau_againstElectronMediumMVA6->push_back(tau.tauID("againstElectronMediumMVA6"));
 		evNtuple_.tau_againstElectronTightMVA6->push_back(tau.tauID("againstElectronTightMVA6"));
-		evNtuple_.tau_idPreselection->push_back(tau.userFloat("idPreselection"));
-		evNtuple_.tau_idSelection->push_back(tau.userFloat("idSelection"));
+		//evNtuple_.tau_idPreselection->push_back(tau.userFloat("idPreselection"));
+		//evNtuple_.tau_idSelection->push_back(tau.userFloat("idSelection"));
+		evNtuple_.tau_idPreselection->push_back(tau.userInt("isLoose"));
+		evNtuple_.tau_idSelection->push_back(tau.userInt("isTight"));
 		if (!isdata_)
 			evNtuple_.tau_mcMatchType->push_back(tau.userInt("MCMatchType"));
 		evNtuple_.tau_ecalEnergy->push_back(tau.ecalEnergy());

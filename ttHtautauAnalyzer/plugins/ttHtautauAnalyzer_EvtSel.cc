@@ -117,7 +117,8 @@ bool ttHtautauAnalyzer::pass_event_sel_2lss1tau (
 
 	//////////////////////////
 	// lepton WP
-	if (evt_selector_->pass_lepton_ID(lep_fakeable[0].passTightSel(),
+	if (selType_==Loose_2lss1tau or
+		evt_selector_->pass_lepton_ID(lep_fakeable[0].passTightSel(),
 									  lep_fakeable[1].passTightSel())
 		) {
 		if (doCutflow_) fill_CutFlow(ibin++,"lep WP");
@@ -284,7 +285,7 @@ bool ttHtautauAnalyzer::pass_event_sel_1l2tau (
 		else
 			return false;
 	}
-
+	
 	//////////////////////////
 	if (debug_) std::cout << "PASSED event selection!" << std::endl;
 

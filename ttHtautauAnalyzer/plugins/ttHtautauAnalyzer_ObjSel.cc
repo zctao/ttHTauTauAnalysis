@@ -152,41 +152,36 @@ std::vector<pat::Tau> ttHtautauAnalyzer::getPreselTaus(const std::vector<pat::Ta
 {
 	std::vector<pat::Tau> preseltaus;
 	for (auto & tau : taus) {
-		bool passKinematic = tau.pt() > 20. and std::abs(tau.eta()) < 2.3;
-		
-		bool passID = false;
-		//////////////////////////////////////
-		if (selType_==Loose_2lss1tau) { // VLoose 
-			passID = (tau.tauID("decayModeFinding")>0.5) and
-				(tau.tauID("byVLooseIsolationMVArun2v1DBdR03oldDMwLT")>0.5);
+
+		if (tau.hasUserInt("isLoose")) {
+			if (not tau.userInt("isLoose")) continue;
 		}
-		//////////////////////////////////////
-		else
-			// tauID("byLooseIsolationMVArun2v1DBdR03oldDMwLT")
-			passID = tau.userFloat("idPreselection") > 0.5;
-		
-		if (passKinematic and passID) {
-			preseltaus.push_back(tau);
+		else {
+			if (not isLooseID(tau)) continue;
 		}
+	
+		preseltaus.push_back(tau);	
 	}
+	
 	return preseltaus;
 }
 
 std::vector<pat::Tau> ttHtautauAnalyzer::getSelectedTaus(const std::vector<pat::Tau>& taus)
 {
 	std::vector<pat::Tau> seltaus;
+
 	for (auto & tau : taus) {
-		if (anaType_==Analyze_1l2tau) {
-			// tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT")
-			if (tau.tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT")>0.5)
-				seltaus.push_back(tau);
+
+		if (tau.hasUserInt("isTight")) {
+			if (not tau.userInt("isTight")) continue;
 		}
 		else {
-			// tauID("byMediumIsolationMVArun2v1DBdR03oldDMwLT")
-			if (tau.userFloat("idSelection") > 0.5)
-				seltaus.push_back(tau);
+			if (not isTightID(tau)) continue;
 		}
+
+		seltaus.push_back(tau);
 	}
+	
 	return seltaus;
 }
 
@@ -212,6 +207,54 @@ std::vector<pat::Tau> ttHtautauAnalyzer::getCorrectedTaus(
 	}
 
 	return output_taus;
+}
+
+// better to move this to leptonID package
+bool ttHtautauAnalyzer::isLooseID(const pat::Tau& tau) const
+{
+	bool passKinematic = tau.pt() > 20. and std::abs(tau.eta()) < 2.3;
+
+	bool passID = false;
+	//////////////////////////////////////
+	if (selType_==Loose_2lss1tau or selType_==Loose_1l2tau) { // VLoose 
+		passID = (tau.tauID("decayModeFinding")>0.5) and
+				 (tau.tauID("byVLooseIsolationMVArun2v1DBdR03oldDMwLT")>0.5);
+	}
+	//////////////////////////////////////
+	else
+		// tauID("byLooseIsolationMVArun2v1DBdR03oldDMwLT")
+		passID = tau.userFloat("idPreselection") > 0.5;
+
+	return (passKinematic and passID);
+}
+
+bool ttHtautauAnalyzer::isTightID(const pat::Tau& tau) const
+{
+
+	// loose ID is the prerequisite for tight ID
+	if (tau.hasUserInt("isLoose")) {
+		if (not tau.userInt("isLoose")) return false;
+	}
+	else {
+		if (not isLooseID(tau)) return false;
+	}
+	
+	if (anaType_==Analyze_1l2tau) {
+		// tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT")
+		return tau.tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT")>0.5;
+	}
+	else {
+		// tauID("byMediumIsolationMVArun2v1DBdR03oldDMwLT")
+		return tau.userFloat("idSelection") > 0.5;
+	}
+}
+
+void ttHtautauAnalyzer::addIDFlagsTau(std::vector<pat::Tau>& taus)
+{
+	for (auto & tau : taus) {
+		tau.addUserInt("isLoose", isLooseID(tau));
+		tau.addUserInt("isTight", isTightID(tau));
+	}
 }
 
 ///////////////////
