@@ -64,7 +64,7 @@ options.register('AnalysisType', '2lss1tau',
 options.register('SelectionRegion', 'signal_2lss1tau',
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
-                 "Which selection region to apply: signal_2lss1tau, control_2los1tau, control_fake_2lss1tau, signal_1l2tau, control_fake_1l2tau, signal_3l1tau, control_fake_3l1au, loose_2lss1tau")
+                 "Which selection region to apply: signal_2lss1tau, control_2los1tau, control_fake_2lss1tau, signal_1l2tau, control_fake_1l2tau, signal_3l1tau, control_fake_3l1au, loose_2lss1tau, loose_1l2tau")
 
 options.register('doSystematics', True,
                  VarParsing.VarParsing.multiplicity.singleton,
@@ -95,6 +95,7 @@ options.register("HIPSafeMediumMuon", True,
 options.maxEvents = -1
 options.inputFiles='file:/uscms/home/ztao/nobackup/datasample/ttH_80X/ttHnonbb.root'
 #options.inputFiles='/store/mc/RunIISummer16MiniAODv2/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/00D10AF2-76BE-E611-8EFB-001E67457DFA.root'
+#options.inputFiles='/store/mc/RunIISummer16MiniAODv2/ttHJetToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8_mWCutfix/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/110000/14466B11-62E3-E611-85A2-02163E011900.root'
 
 # get and parse the command line arguments
 options.parseArguments()

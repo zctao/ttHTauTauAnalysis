@@ -198,43 +198,21 @@ class eventNtuple
 	std::vector<int>   *tau_mcMatchType = 0;
 	std::vector<float> *tau_ecalEnergy = 0;
 	std::vector<float> *tau_hcalEnergy = 0;
-	std::vector<float> *tau_ecalStripSumEOverPLead = 0;
-	std::vector<float> *tau_emFraction = 0;
+	std::vector<int> *tau_isPFTau = 0;
+	std::vector<int> *tau_isCaloTau = 0;
 	// decay substructure
-	// of tau0
-	std::vector<float> *tau0_signalChargedHadrCands_pt = 0;
-	std::vector<float> *tau0_signalChargedHadrCands_eta = 0;
-	std::vector<float> *tau0_signalChargedHadrCands_phi = 0;
-	std::vector<float> *tau0_signalChargedHadrCands_E = 0;
-	std::vector<float> *tau0_signalNeutrHadrCands_pt = 0;
-	std::vector<float> *tau0_signalNeutrHadrCands_eta = 0;
-	std::vector<float> *tau0_signalNeutrHadrCands_phi = 0;
-	std::vector<float> *tau0_signalNeutrHadrCands_E = 0;
-	std::vector<float> *tau0_signalGammaCands_pt = 0;
-	std::vector<float> *tau0_signalGammaCands_eta = 0;
-	std::vector<float> *tau0_signalGammaCands_phi = 0;
-	std::vector<float> *tau0_signalGammaCands_E = 0;
-	std::vector<float> *tau0_signalTracks_pt = 0;
-	std::vector<float> *tau0_signalTracks_eta = 0;
-	std::vector<float> *tau0_signalTracks_phi = 0;
-	std::vector<float> *tau0_signalTracks_E = 0;
-	// of tau1 (if there's any)
-	std::vector<float> *tau1_signalChargedHadrCands_pt = 0;
-	std::vector<float> *tau1_signalChargedHadrCands_eta = 0;
-	std::vector<float> *tau1_signalChargedHadrCands_phi = 0;
-	std::vector<float> *tau1_signalChargedHadrCands_E = 0;
-	std::vector<float> *tau1_signalNeutrHadrCands_pt = 0;
-	std::vector<float> *tau1_signalNeutrHadrCands_eta = 0;
-	std::vector<float> *tau1_signalNeutrHadrCands_phi = 0;
-	std::vector<float> *tau1_signalNeutrHadrCands_E = 0;
-	std::vector<float> *tau1_signalGammaCands_pt = 0;
-	std::vector<float> *tau1_signalGammaCands_eta = 0;
-	std::vector<float> *tau1_signalGammaCands_phi = 0;
-	std::vector<float> *tau1_signalGammaCands_E = 0;
-	std::vector<float> *tau1_signalTracks_pt = 0;
-	std::vector<float> *tau1_signalTracks_eta = 0;
-	std::vector<float> *tau1_signalTracks_phi = 0;
-	std::vector<float> *tau1_signalTracks_E = 0;
+	std::vector<std::vector<float>> *tau_signalChargedHadrCands_pt = 0;
+	std::vector<std::vector<float>> *tau_signalChargedHadrCands_eta = 0;
+	std::vector<std::vector<float>> *tau_signalChargedHadrCands_phi = 0;
+	std::vector<std::vector<float>> *tau_signalChargedHadrCands_E = 0;
+	std::vector<std::vector<float>> *tau_signalNeutrHadrCands_pt = 0;
+	std::vector<std::vector<float>> *tau_signalNeutrHadrCands_eta = 0;
+	std::vector<std::vector<float>> *tau_signalNeutrHadrCands_phi = 0;
+	std::vector<std::vector<float>> *tau_signalNeutrHadrCands_E = 0;
+	std::vector<std::vector<float>> *tau_signalGammaCands_pt = 0;
+	std::vector<std::vector<float>> *tau_signalGammaCands_eta = 0;
+	std::vector<std::vector<float>> *tau_signalGammaCands_phi = 0;
+	std::vector<std::vector<float>> *tau_signalGammaCands_E = 0;
 	
 	// jets
 	std::vector<float> *jet_pt = 0;

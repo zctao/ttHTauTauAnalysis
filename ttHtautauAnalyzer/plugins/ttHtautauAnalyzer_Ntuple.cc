@@ -313,59 +313,75 @@ void ttHtautauAnalyzer::write_ntuple_taus(const std::vector<pat::Tau>& taus)
 		evNtuple_.tau_idSelection->push_back(tau.userInt("isTight"));
 		if (!isdata_)
 			evNtuple_.tau_mcMatchType->push_back(tau.userInt("MCMatchType"));
+		evNtuple_.tau_isPFTau->push_back(tau.isPFTau());
+		evNtuple_.tau_isCaloTau->push_back(tau.isCaloTau());
+		
 		evNtuple_.tau_ecalEnergy->push_back(tau.ecalEnergy());
 		evNtuple_.tau_hcalEnergy->push_back(tau.hcalEnergy());
-		evNtuple_.tau_ecalStripSumEOverPLead->push_back(tau.ecalStripSumEOverPLead());
-		evNtuple_.tau_emFraction->push_back(tau.emFraction());
-	}
 
-	assert(taus.size()>0);
-	//std::cout << taus[0].signalChargedHadrCands().size() << std::endl;
-	for (const auto & chargedhadron : taus[0].signalChargedHadrCands()) {
-		evNtuple_.tau0_signalChargedHadrCands_pt->push_back(chargedhadron->pt());
-		evNtuple_.tau0_signalChargedHadrCands_eta->push_back(chargedhadron->eta());
-		evNtuple_.tau0_signalChargedHadrCands_phi->push_back(chargedhadron->phi());
-		evNtuple_.tau0_signalChargedHadrCands_E->push_back(chargedhadron->energy());
-	}
-	for (const auto & neutralhadron : taus[0].signalNeutrHadrCands()) {
-		evNtuple_.tau0_signalNeutrHadrCands_pt->push_back(neutralhadron->pt());
-		evNtuple_.tau0_signalNeutrHadrCands_eta->push_back(neutralhadron->eta());
-		evNtuple_.tau0_signalNeutrHadrCands_phi->push_back(neutralhadron->phi());
-		evNtuple_.tau0_signalNeutrHadrCands_E->push_back(neutralhadron->energy());
-	}
-	for (const auto & gamma : taus[0].signalGammaCands()) {
-		evNtuple_.tau0_signalGammaCands_pt->push_back(gamma->pt());
-		evNtuple_.tau0_signalGammaCands_eta->push_back(gamma->eta());
-		evNtuple_.tau0_signalGammaCands_phi->push_back(gamma->phi());
-		evNtuple_.tau0_signalGammaCands_E->push_back(gamma->energy());
-	}
-	//for (const auto & track : taus[0].signalTracks()) {
-	//	evNtuple_.tau0_signalTracks_pt->push_back();
-	//	evNtuple_.tau0_signalTracks_eta->push_back();
-	//	evNtuple_.tau0_signalTracks_phi->push_back();
-	//	evNtuple_.tau0_signalTracks_E->push_back();
-	//}
-	
-	if (taus.size()>1) { // if there's a second tau
-		for (const auto & chargedhadron : taus[1].signalChargedHadrCands()) {
-			evNtuple_.tau1_signalChargedHadrCands_pt->push_back(chargedhadron->pt());
-			evNtuple_.tau1_signalChargedHadrCands_eta->push_back(chargedhadron->eta());
-			evNtuple_.tau1_signalChargedHadrCands_phi->push_back(chargedhadron->phi());
-			evNtuple_.tau1_signalChargedHadrCands_E->push_back(chargedhadron->energy());
+		// tau decay sub-structure
+		std::vector<float> hpts;
+		std::vector<float> hetas;
+		std::vector<float> hphis;
+		std::vector<float> hEs;	
+		for (const auto & h : tau.signalChargedHadrCands()) {
+			hpts.push_back(h->pt());
+			hetas.push_back(h->eta());
+			hphis.push_back(h->phi());
+			hEs.push_back(h->energy());
 		}
-		for (const auto & neutralhadron : taus[1].signalNeutrHadrCands()) {
-			evNtuple_.tau1_signalNeutrHadrCands_pt->push_back(neutralhadron->pt());
-			evNtuple_.tau1_signalNeutrHadrCands_eta->push_back(neutralhadron->eta());
-			evNtuple_.tau1_signalNeutrHadrCands_phi->push_back(neutralhadron->phi());
-			evNtuple_.tau1_signalNeutrHadrCands_E->push_back(neutralhadron->energy());
+		evNtuple_.tau_signalChargedHadrCands_pt->push_back(hpts);
+		evNtuple_.tau_signalChargedHadrCands_eta->push_back(hpts);
+		evNtuple_.tau_signalChargedHadrCands_phi->push_back(hpts);
+		evNtuple_.tau_signalChargedHadrCands_E->push_back(hEs);
+
+		std::vector<float> npts;
+		std::vector<float> netas;
+		std::vector<float> nphis;
+		std::vector<float> nEs;
+		for (const auto & n : tau.signalNeutrHadrCands()) {
+			npts.push_back(n->pt());
+			netas.push_back(n->eta());
+			nphis.push_back(n->phi());
+			nEs.push_back(n->energy());
 		}
-		for (const auto & gamma : taus[1].signalGammaCands()) {
-			evNtuple_.tau1_signalGammaCands_pt->push_back(gamma->pt());
-			evNtuple_.tau1_signalGammaCands_eta->push_back(gamma->eta());
-			evNtuple_.tau1_signalGammaCands_phi->push_back(gamma->phi());
-			evNtuple_.tau1_signalGammaCands_E->push_back(gamma->energy());
+		evNtuple_.tau_signalNeutrHadrCands_pt->push_back(npts);
+		evNtuple_.tau_signalNeutrHadrCands_eta->push_back(netas);
+		evNtuple_.tau_signalNeutrHadrCands_phi->push_back(nphis);
+		evNtuple_.tau_signalNeutrHadrCands_E->push_back(nEs);
+
+		std::vector<float> gpts;
+		std::vector<float> getas;
+		std::vector<float> gphis;
+		std::vector<float> gEs;
+		for (const auto & g : tau.signalGammaCands()) {
+			gpts.push_back(g->pt());
+			getas.push_back(g->eta());
+			gphis.push_back(g->phi());
+			gEs.push_back(g->energy());
 		}
-	}
+		evNtuple_.tau_signalGammaCands_pt->push_back(gpts);
+		evNtuple_.tau_signalGammaCands_eta->push_back(getas);
+		evNtuple_.tau_signalGammaCands_phi->push_back(gphis);
+		evNtuple_.tau_signalGammaCands_E->push_back(gEs);
+		
+		/*
+		std::cout << "decay mode : " << tau.decayMode() << std::endl;
+		std::cout << "signalChargedHadrCands size : " << tau.signalChargedHadrCands().size();
+		std::cout << "  pdgid : ";
+		for (const auto & c : taus[0].signalChargedHadrCands()) {
+			std::cout << c->pdgId() << " ";
+		}
+		std::cout << std::endl;
+		std::cout << "signalNeutralHadrCands size : " << tau.signalNeutrHadrCands().size() << std::endl;
+		std::cout << "  pdgid : ";
+		for (const auto & n : taus[0].signalNeutrHadrCands()) {
+			std::cout << n->pdgId() << " ";
+		}
+		std::cout << std::endl;
+		std::cout << "signalGammaCands size : " << tau.signalGammaCands().size() << std::endl;
+		*/
+ 	}
 	
 }
 
