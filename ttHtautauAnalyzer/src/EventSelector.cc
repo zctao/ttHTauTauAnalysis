@@ -367,7 +367,8 @@ bool EventSelector::pass_taupair_charge(int tau0charge, int tau1charge)
 {
 	// 1l2tau category only
 	assert(anaType_==Analyze_1l2tau);
-	assert(selType_==Signal_1l2tau or selType_==Control_fake_1l2tau);
+	assert(selType_==Signal_1l2tau or selType_==Control_fake_1l2tau or
+		   selType_==Loose_1l2tau);
 	
 	if (debug_) {
 		std::cout << "tau charge : " << tau0charge << " " << tau1charge
