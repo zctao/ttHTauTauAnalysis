@@ -17,11 +17,9 @@ samples=$@
 #echo $samples
 
 # make list of directories containing root files to be addes
-./dumpCrabOutputDirList.py $analysis_type $samples -l $samplelist -s >> list.tmp
+dumpCrabOutputDirList.py $analysis_type $samples -l $samplelist -s >> list.tmp
 
 # hadd root files
-./haddEOSRoot.sh $outname list.tmp
+haddEOSRoot.sh $outname list.tmp
 
 rm list.tmp
-
-# move output root file somewhere?
