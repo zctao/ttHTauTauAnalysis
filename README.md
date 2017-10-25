@@ -59,7 +59,7 @@ Produce sync ntuples:
 	./ttHtautauAnalyzer/test/produceSyncNtuples.sh
 
 Submit CRAB jobs:
-
-	python crabSubmitter.py --samples='<SampleLists>' --channels='<channels>'
-
-	python crabSubmitter.py -h for help
+	   
+	submitCrabJobs.py <samplelist> <analysis_type> <selection_type> --channel_list <channel_list>
+	
+	submitCrabJobs.py -h for help
