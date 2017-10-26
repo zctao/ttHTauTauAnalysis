@@ -24,6 +24,9 @@ chgroup.add_argument('--channel_list', type=str,
 
 parser.add_argument('-c','--config', type=str, default='analyzer2016_cfg.py',
                     help="cmsRun config file")
+parser.add_argument('--dbs', choices=['global','phys01','phys02','phys03'],
+                    default='global',
+                    help="Alias of the URL of the DBS reader instance where the input dataset is published ")
 parser.add_argument('--systematics', nargs='+',
                     choices=['jesup','jesdown','tesup','tesdown'],
                     default=[],
@@ -91,7 +94,7 @@ config.JobType.psetName = '%(configfile)s'
 config.JobType.pyCfgParams = %(cfgparams)s
 config.JobType.sendExternalFolder = True
 config.Data.inputDataset = %(dataset)s
-config.Data.inputDBS = 'phys03'
+config.Data.inputDBS = '%(DBS)s'
 config.Data.splitting = '%(splitting)s'
 config.Data.unitsPerJob = %(unit)s
 %(lumimask)s
@@ -205,6 +208,7 @@ for ch in channels:
         vd['dataset'] = dataset
         vd['configfile'] = args.config
         vd['cfgparams'] = ps
+        vd['DBS'] = args.dbs
         vd['unit'] = perjob
         vd['outdir'] = args.outdir
         if 'data' in ch:
