@@ -21,7 +21,10 @@ class eventNtuple
 	void initialize();
 	std::vector<miniLepton> buildLeptons(bool loose=false);
 	std::vector<TLorentzVector> buildFourVectorLeps(bool loose=false);
+	std::vector<TLorentzVector> buildFourVectorTaus(std::vector<int>&, bool loose=false);
 	std::vector<TLorentzVector> buildFourVectorTaus(bool loose=false);
+	std::vector<TLorentzVector> buildFourVectorTauDaugsCharged(bool loose=false);
+	std::vector<TLorentzVector> buildFourVectorTauDaugsNeutral(bool loose=false);
 	std::vector<TLorentzVector> buildFourVectorJets(bool loose=false);
 	std::vector<TLorentzVector> buildFourVectorBtagJets(bool loose=false);
 	TLorentzVector buildFourVectorMET();
@@ -198,8 +201,8 @@ class eventNtuple
 	std::vector<int>   *tau_mcMatchType = 0;
 	std::vector<float> *tau_ecalEnergy = 0;
 	std::vector<float> *tau_hcalEnergy = 0;
-	std::vector<int> *tau_isPFTau = 0;
-	std::vector<int> *tau_isCaloTau = 0;
+	//std::vector<int> *tau_isPFTau = 0;
+	//std::vector<int> *tau_isCaloTau = 0;
 	// decay substructure
 	std::vector<std::vector<float>> *tau_signalChargedHadrCands_pt = 0;
 	std::vector<std::vector<float>> *tau_signalChargedHadrCands_eta = 0;

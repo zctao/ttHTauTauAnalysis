@@ -76,6 +76,24 @@ void MVAVars::compute_all_variables(const std::vector<miniLepton>& leptons, cons
 	}
 }
 
+void MVAVars::compute_taudecay_variables(const std::vector<TLorentzVector>& taus,
+										 const std::vector<TLorentzVector>& chargedDaug,
+										 const std::vector<TLorentzVector>& neutralDaug,
+										 const std::vector<int> decaymode)
+{
+	assert(taus.size()>0);
+	tau0_decaymode_ = decaymode[0];
+	tau0_energy_ = taus[0].E();
+	tau0_upsilon_ = (chargedDaug[0].E()-neutralDaug[0].E()) / (chargedDaug[0].E()+neutralDaug[0].E());
+	
+	if (anaType_==Analyze_1l2tau) {
+		assert(taus.size()>1);
+		tau1_decaymode_ = decaymode[1];
+		tau1_energy_ = taus[1].E();
+		tau1_upsilon_ = (chargedDaug[1].E()-neutralDaug[1].E()) / (chargedDaug[1].E()+neutralDaug[1].E());
+	}
+}
+
 float MVAVars::compute_mindr(const TLorentzVector& l, const std::vector<TLorentzVector>& vjs)
 {
 	if (vjs.size() < 1) return -9999.;

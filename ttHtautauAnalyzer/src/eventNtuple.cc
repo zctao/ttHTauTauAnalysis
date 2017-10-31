@@ -46,10 +46,13 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorLeps(bool loose)
 	return lepsP4;
 }
 
-std::vector<TLorentzVector> eventNtuple::buildFourVectorTaus(bool loose)
+std::vector<TLorentzVector> eventNtuple::buildFourVectorTaus(std::vector<int>& decaymode, bool loose)
 {
+	
 	std::vector<TLorentzVector> tausP4;
 
+	decaymode.clear();
+	
 	for (unsigned int t = 0; t < tau_pt->size(); ++t) {
 		// require tight tau if not loose selection
 		if (!loose and !(tau_idSelection->at(t))) continue;
@@ -57,9 +60,78 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorTaus(bool loose)
 		TLorentzVector tau;
 		tau.SetPtEtaPhiE(tau_pt->at(t),tau_eta->at(t),tau_phi->at(t),tau_E->at(t));
 		tausP4.push_back(tau);
+		decaymode.push_back(tau_decayMode->at(t));
 	}
 	// should be already sorted by pt
 	return tausP4;
+}
+
+std::vector<TLorentzVector> eventNtuple::buildFourVectorTaus(bool loose)
+{
+	std::vector<int> dummy;
+	return buildFourVectorTaus(dummy, loose);
+}
+
+std::vector<TLorentzVector> eventNtuple::buildFourVectorTauDaugsCharged(bool loose)
+{
+	std::vector<TLorentzVector> tauDaugsChargedP4;
+
+	for (unsigned int t = 0; t < tau_pt->size(); ++t) {
+		// require tight tau if not loose selection
+		if (!loose and !(tau_idSelection->at(t))) continue;
+
+		TLorentzVector chargedDaugsP4;
+		
+		// loop over tau charged daughters and add up four vectors
+		for (unsigned int ch=0; ch<(tau_signalChargedHadrCands_pt->at(t)).size(); ++ch) {
+			TLorentzVector chargedhadr;
+			chargedhadr.SetPtEtaPhiE((tau_signalChargedHadrCands_pt->at(t))[ch],
+									 (tau_signalChargedHadrCands_eta->at(t))[ch],
+									 (tau_signalChargedHadrCands_phi->at(t))[ch],
+									 (tau_signalChargedHadrCands_E->at(t))[ch]);
+			chargedDaugsP4 += chargedhadr;
+		}
+
+		tauDaugsChargedP4.push_back(chargedDaugsP4);
+	}
+
+	return tauDaugsChargedP4;
+}
+
+std::vector<TLorentzVector> eventNtuple::buildFourVectorTauDaugsNeutral(bool loose)
+{
+	std::vector<TLorentzVector> tauDaugsNeutralP4;
+
+	for (unsigned int t = 0; t < tau_pt->size(); ++t) {
+		// require tight tau if not loose selection
+		if (!loose and !(tau_idSelection->at(t))) continue;
+
+		TLorentzVector neutralDaugsP4;
+
+		// loop over tau neutral daughters and add up four vectors
+		for (unsigned int g=0; g<(tau_signalGammaCands_pt->at(t)).size(); ++g) {
+			TLorentzVector gamma;
+			gamma.SetPtEtaPhiE((tau_signalGammaCands_pt->at(t))[g],
+							   (tau_signalGammaCands_eta->at(t))[g],
+							   (tau_signalGammaCands_phi->at(t))[g],
+							   (tau_signalGammaCands_E->at(t))[g]);
+			neutralDaugsP4 += gamma;
+		}
+
+		for (unsigned int nh=0; nh<(tau_signalNeutrHadrCands_pt->at(t)).size(); ++nh) {
+			TLorentzVector neutralhadr;
+			neutralhadr.SetPtEtaPhiE((tau_signalNeutrHadrCands_pt->at(t))[nh],
+									 (tau_signalNeutrHadrCands_eta->at(t))[nh],
+									 (tau_signalNeutrHadrCands_phi->at(t))[nh],
+									 (tau_signalNeutrHadrCands_E->at(t))[nh]);
+			neutralDaugsP4 += neutralhadr;
+		}
+		
+
+		tauDaugsNeutralP4.push_back(neutralDaugsP4);
+	}
+
+	return tauDaugsNeutralP4;
 }
 
 std::vector<TLorentzVector> eventNtuple::buildFourVectorJets(bool loose)
@@ -302,8 +374,8 @@ void eventNtuple::initialize()
 	tau_mcMatchType->clear();
 	tau_ecalEnergy->clear();
 	tau_hcalEnergy->clear();
-	tau_isPFTau->clear();
-	tau_isCaloTau->clear();
+	//tau_isPFTau->clear();
+	//tau_isCaloTau->clear();
 	///
 	tau_signalChargedHadrCands_pt->clear();
 	tau_signalChargedHadrCands_eta->clear();
@@ -490,8 +562,8 @@ void eventNtuple::setup_branches(TTree* tree)
 	tree->Branch("tau_mcMatchType", &tau_mcMatchType);
 	tree->Branch("tau_ecalEnergy", &tau_ecalEnergy);
 	tree->Branch("tau_hcalEnergy", &tau_hcalEnergy);
-	tree->Branch("tau_isPFTau", &tau_isPFTau);
-	tree->Branch("tau_isCaloTau", &tau_isCaloTau);
+	//tree->Branch("tau_isPFTau", &tau_isPFTau);
+	//tree->Branch("tau_isCaloTau", &tau_isCaloTau);
 	///
 	tree->Branch("tau_signalChargedHadrCands_pt", &tau_signalChargedHadrCands_pt);
 	tree->Branch("tau_signalChargedHadrCands_eta", &tau_signalChargedHadrCands_eta);
@@ -675,8 +747,8 @@ void eventNtuple::set_branch_address(TTree* tree)
 	tree->SetBranchAddress("tau_mcMatchType", &tau_mcMatchType);
 	tree->SetBranchAddress("tau_ecalEnergy", &tau_ecalEnergy);
 	tree->SetBranchAddress("tau_hcalEnergy", &tau_hcalEnergy);
-	tree->SetBranchAddress("tau_isPFTau", &tau_isPFTau);
-	tree->SetBranchAddress("tau_isCaloTau", &tau_isCaloTau);
+	//tree->SetBranchAddress("tau_isPFTau", &tau_isPFTau);
+	//tree->SetBranchAddress("tau_isCaloTau", &tau_isCaloTau);
 	
 	tree->SetBranchAddress("tau_signalChargedHadrCands_pt", &tau_signalChargedHadrCands_pt);
 	tree->SetBranchAddress("tau_signalChargedHadrCands_eta", &tau_signalChargedHadrCands_eta);

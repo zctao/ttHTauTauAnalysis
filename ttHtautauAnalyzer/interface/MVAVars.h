@@ -21,6 +21,15 @@ class MVAVars
 	~MVAVars(){};
 
 	void set_up_tmva_reader();
+
+	void compute_all_variables(const std::vector<miniLepton>&,
+							   const std::vector<TLorentzVector>&,
+							   const std::vector<TLorentzVector>&,
+							   float, float, float, int);
+	void compute_taudecay_variables(const std::vector<TLorentzVector>&,
+									const std::vector<TLorentzVector>&,
+									const std::vector<TLorentzVector>&,
+									const std::vector<int> decaymode);
 	
 	//int nJet() const {return nJet_;}
 	float nJet() const {return nJet_;}
@@ -49,10 +58,14 @@ class MVAVars
 	float max_dr_jet() const {return max_dr_jet_;}
 	float tau0_pt() const {return tau0_pt_;}
 	float tau1_pt() const {return tau1_pt_;}
-	void compute_all_variables(const std::vector<miniLepton>&,
-							   const std::vector<TLorentzVector>&,
-							   const std::vector<TLorentzVector>&,
-							   float, float, float, int);
+
+	int tau0_decaymode() const {return tau0_decaymode_;}
+	int tau1_decaymode() const {return tau1_decaymode_;}
+	float tau0_energy() const {return tau0_energy_;}
+	float tau1_energy() const {return tau1_energy_;}
+	float tau0_upsilon() const {return tau0_upsilon_;}
+	float tau1_upsilon() const {return tau1_upsilon_;}
+	
 	float BDT_ttV();
 	float BDT_ttbar();
 	
@@ -88,6 +101,13 @@ class MVAVars
 	float tau1_pt_;
 	float ntags_loose_;
 	//float ntags_medium_;
+
+	int tau0_decaymode_;
+	int tau1_decaymode_;
+	float tau0_energy_;
+	float tau1_energy_;
+	float tau0_upsilon_;
+	float tau1_upsilon_;
 	
 	float compute_average_dr(const std::vector<TLorentzVector>&);
 	float compute_max_dr(const std::vector<TLorentzVector>&);
