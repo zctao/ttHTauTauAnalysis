@@ -22,6 +22,9 @@ chgroup.add_argument('--channels',nargs='+', type=str,
 chgroup.add_argument('--channel_list', type=str,
                      help="Text file that stores a list of channels to run")
 
+parser.add_argument('--prefix', type=str, default='',
+                    help="Prefix of crab job name.")
+
 parser.add_argument('-c','--config', type=str, default='analyzer2016_cfg.py',
                     help="cmsRun config file")
 parser.add_argument('--dbs', choices=['global','phys01','phys02','phys03'],
@@ -34,7 +37,7 @@ parser.add_argument('--systematics', nargs='+',
 parser.add_argument('--syst_only', action='store_true',
                     help="Only create crab jobs for systematics")
 parser.add_argument('-o','--outdir', type=str,
-                    default='/store/user/ztao/ttH_80X',
+                    default='/store/user/ztao/ttHtautau_80X',
                     help="Output directory")
 parser.add_argument('-d','--dryrun', action='store_true',
                     help="Run the script without actually submitting crab jobs")
@@ -204,7 +207,7 @@ for ch in channels:
     for ps, jn in zip(pset, jobnames):
         
         vd = locals()
-        vd['name'] = jn
+        vd['name'] = args.prefix+jn
         vd['dataset'] = dataset
         vd['configfile'] = args.config
         vd['cfgparams'] = ps
