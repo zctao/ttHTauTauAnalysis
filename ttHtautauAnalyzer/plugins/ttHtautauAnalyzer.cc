@@ -161,16 +161,16 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	Handle<LHEEventProduct> event_lhe_info;
 	Handle<reco::GenParticleCollection> MC_particles;
 	Handle<reco::GenJetCollection> genJets;
+	Handle<View<reco::Muon>> badMuons;
+	Handle<View<reco::Muon>> clonedMuons;
 	if (not isdata_) {
 		iEvent.getByToken(geninfo_token_,event_gen_info);
 		iEvent.getByToken(lheinfo_token_,event_lhe_info);
 		iEvent.getByToken(genparticle_token_,MC_particles);		
 		iEvent.getByToken(genjets_token_,genJets);
+		iEvent.getByToken(badMuons_token_,badMuons);
+		iEvent.getByToken(clonedMuons_token_,clonedMuons);
 	}
-    Handle<View<reco::Muon>> badMuons;
-	iEvent.getByToken(badMuons_token_,badMuons);
-	Handle<View<reco::Muon>> clonedMuons;
-	iEvent.getByToken(clonedMuons_token_,clonedMuons);
 
 	/////////////////////////////////////////
 	// Pile up
@@ -510,6 +510,8 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 					evt_selector_->pass_tau_mc_match((*tau_selected)[0]);
 			}
 		}
+
+		evNtuple_.nBadMuons = badMuons->size() + clonedMuons->size();
 	}
 
 	/// primary vertex
@@ -555,8 +557,6 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		
 		evNtuple_.btagCategory = n_btags_medium >= 2 ? 1 : 0;
 	}
-		
-	evNtuple_.nBadMuons = badMuons->size() + clonedMuons->size();
 	
 	evNtuple_.n_presel_mu = mu_preselected.size();
 	evNtuple_.n_fakeable_mu = n_muon_fakeable;
