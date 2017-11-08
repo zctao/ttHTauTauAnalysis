@@ -35,8 +35,10 @@ if __name__ == "__main__":
                         help="Output name")
     parser.add_argument('-t','--timestamp', type=str, default='',
                         help="Time stamp of crab job. If none provided, assume the latest in the directory")
+    parser.add_argument('-p','--prefix', type=str, default='crab_',
+                        help="Crab job name prefix")
     parser.add_argument('-r','--rootdir', type=str,
-                        default='/store/user/ztao/ttH_80X/',
+                        default='/store/user/ztao/',
                         help="root directory in eos")
     parser.add_argument('-s','--streaming', action='store_true',
                         help="Stream out list of directories instead of write to disk")
@@ -47,7 +49,7 @@ if __name__ == "__main__":
     for sample in args.samples:
         
         fullsamplename = getSampleFullname(sample, args.list)
-        directory = args.rootdir+fullsamplename+'/crab_'+sample+'_'+args.type+'/'
+        directory = args.rootdir+fullsamplename+'/'+args.prefix+sample+'_'+args.type+'/'
         
         # time stamp
         if args.timestamp!='':
