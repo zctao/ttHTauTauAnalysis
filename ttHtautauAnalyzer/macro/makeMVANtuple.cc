@@ -18,7 +18,7 @@
 
 void makeMVANtuple(const TString infile, const TString sample,
 				   const TString analysis_type, bool looseSelection,
-				   const TString outdir = "./",
+				   bool requireMCMatching, const TString outdir = "./",
 				   const TString intree = "ttHtaus/eventTree")
 {
 	using namespace std;
@@ -157,9 +157,13 @@ void makeMVANtuple(const TString infile, const TString sample,
 		}
 		else if (anaType == Analyze_1l2tau) {
 			// mc match
-			if (not (evNtuple.isGenMatchedLep and evNtuple.isGenMatchedTau))
+			if (requireMCMatching and
+				not(evNtuple.isGenMatchedLep and evNtuple.isGenMatchedTau))
 				continue;
 			// tau pair charge
+			if (not evNtuple.passTauCharge) continue;
+		}
+		else if (anaType == Analyze_3l1tau) {
 			if (not evNtuple.passTauCharge) continue;
 		}
 

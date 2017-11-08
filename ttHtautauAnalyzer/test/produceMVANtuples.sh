@@ -12,8 +12,8 @@ ttHntuple_1l2tau=$redirector$eostopdir$tthfn'/'$era'/ntuple_ttH_1l2tau_loose.roo
 ttHntuple_2lss1tau=$redirector$eostopdir$tthfn'/'$era'/ntuple_ttH_2lss1tau_loose.root'
 
 root -b <<EOF
-.x ../macro/makeMVANtuple.cc+("$ttHntuple_1l2tau","ttH","1l2tau",1,"$outdir")
-.x ../macro/makeMVANtuple.cc+("$ttHntuple_2lss1tau","ttH","2lss1tau",1,"$outdir")
+.x ../macro/makeMVANtuple.cc+("$ttHntuple_1l2tau","ttH","1l2tau",1,1,"$outdir")
+.x ../macro/makeMVANtuple.cc+("$ttHntuple_2lss1tau","ttH","2lss1tau",1,1,"$outdir")
 .q
 EOF
 
@@ -27,10 +27,10 @@ TTslntuple_1l2tau=$redirector$eostopdir$ttslfn'/'$era'/ntuple_TT_SemiLep_1l2tau_
 TTslntuple_2lss1tau=$redirector$eostopdir$ttslfn'/'$era'/ntuple_TT_SemiLep_2lss1tau_loose.root'
 
 root -b <<EOF
-.x ../macro/makeMVANtuple.cc+("$TTdlntuple_1l2tau","TT_DiLep","1l2tau",1,"$outdir")
-.x ../macro/makeMVANtuple.cc+("$TTdlntuple_2lss1tau","TT_DiLep","2lss1tau",1,"$outdir")
-.x ../macro/makeMVANtuple.cc+("$TTslntuple_1l2tau","TT_SemiLep","1l2tau",1,"$outdir")
-.x ../macro/makeMVANtuple.cc+("$TTslntuple_2lss1tau","TT_SemiLep","2lss1tau",1,"$outdir")
+.x ../macro/makeMVANtuple.cc+("$TTdlntuple_1l2tau","TT_DiLep","1l2tau",1,0,"$outdir")
+.x ../macro/makeMVANtuple.cc+("$TTdlntuple_2lss1tau","TT_DiLep","2lss1tau",1,0,"$outdir")
+.x ../macro/makeMVANtuple.cc+("$TTslntuple_1l2tau","TT_SemiLep","1l2tau",1,0,"$outdir")
+.x ../macro/makeMVANtuple.cc+("$TTslntuple_2lss1tau","TT_SemiLep","2lss1tau",1,0,"$outdir")
 .q
 EOF
 
@@ -40,8 +40,8 @@ ttwntuple_1l2tau=$redirector$eostopdir$ttwfn'/'$era'/ntuple_TTW_1l2tau_loose.roo
 ttwntuple_2lss1tau=$redirector$eostopdir$ttwfn'/'$era'/ntuple_TTW_2lss1tau_loose.root'
 
 root -b <<EOF
-.x ../macro/makeMVANtuple.cc+("$ttwntuple_1l2tau","TTW","1l2tau",1,"$outdir")
-.x ../macro/makeMVANtuple.cc+("$ttwntuple_2lss1tau","TTW","2lss1tau",1,"$outdir")
+.x ../macro/makeMVANtuple.cc+("$ttwntuple_1l2tau","TTW","1l2tau",1,1,"$outdir")
+.x ../macro/makeMVANtuple.cc+("$ttwntuple_2lss1tau","TTW","2lss1tau",1,1,"$outdir")
 .q
 EOF
 
@@ -51,7 +51,7 @@ ttzntuple_1l2tau=$redirector$eostopdir$ttzfn'/'$era'/ntuple_TTZ_1l2tau_loose.roo
 ttzntuple_2lss1tau=$redirector$eostopdir$ttzfn'/'$era'/ntuple_TTZ_2lss1tau_loose.root'
 
 root -b <<EOF
-.x ../macro/makeMVANtuple.cc+("$ttzntuple_1l2tau","TTZ","1l2tau",1,"$outdir")
-.x ../macro/makeMVANtuple.cc+("$ttzntuple_2lss1tau","TTZ","2lss1tau",1,"$outdir")
+.x ../macro/makeMVANtuple.cc+("$ttzntuple_1l2tau","TTZ","1l2tau",1,1,"$outdir")
+.x ../macro/makeMVANtuple.cc+("$ttzntuple_2lss1tau","TTZ","2lss1tau",1,1,"$outdir")
 .q
 EOF
