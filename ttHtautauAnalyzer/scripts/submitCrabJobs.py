@@ -80,7 +80,7 @@ def getSelectionRegionString(analysis, selection):
     #elif analysis_tpye == '3l1tau' and selection=='loose':
     #    return 'loose_3l1tau'
     elif analysis == '3l1tau' and selection=='fakes':
-        return 'control_fake_3l1au'
+        return 'control_fake_3l1tau'
     else:
         assert(False)
         return ''

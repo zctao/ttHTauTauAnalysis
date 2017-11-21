@@ -64,7 +64,7 @@ options.register('AnalysisType', '2lss1tau',
 options.register('SelectionRegion', 'signal_2lss1tau',
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
-                 "Which selection region to apply: signal_2lss1tau, control_2los1tau, control_fake_2lss1tau, signal_1l2tau, control_fake_1l2tau, signal_3l1tau, control_fake_3l1au, loose_2lss1tau, loose_1l2tau")
+                 "Which selection region to apply: signal_2lss1tau, control_2los1tau, control_fake_2lss1tau, signal_1l2tau, control_fake_1l2tau, signal_3l1tau, control_fake_3l1tau, loose_2lss1tau, loose_1l2tau")
 
 options.register('doSystematics', True,
                  VarParsing.VarParsing.multiplicity.singleton,
