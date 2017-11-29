@@ -6,6 +6,11 @@ def getSampleFullname(sample, list):
 
     with open(list) as f:
         for line in f:
+            if 'data' in sample:
+                sample = sample.replace('fakes_','')
+                sample = sample.replace('flips_','')
+                sample = sample.replace('obs_','')
+            
             if sample != line.strip():
                 continue
 
