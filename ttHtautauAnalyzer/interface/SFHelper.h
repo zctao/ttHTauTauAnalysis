@@ -25,7 +25,7 @@ class SFHelper
 {
  public:
 	// constructor and destructor
-	SFHelper(Analysis_types, Selection_types, bool);
+	SFHelper(Analysis_types, Selection_types, bool, bool debug=false);
 	~SFHelper();
 
 	// member functions
@@ -41,12 +41,14 @@ class SFHelper
 	float Get_PUWeight(int);	
 	float Get_TauIDSF(float,float,bool,TString syst="NA");
 	//float Get_MCWeight();
-	float Get_FakeRate(float,float,bool,bool,TString syst="NA"); // for ele or mu
-	float Get_FakeRate(float,float);  // for tau
+	float Get_FakeRate_lep(float,float,bool,bool,TString syst="NA");
+	float Get_FakeRate_lep(const miniLepton&, TString syst="NA");
+	float Get_FakeRate_tau(float,float,TString);
 	float Get_FR_weight(float,float,bool,bool,bool,float,float,bool,bool,bool,
 						TString syst="NA");
-	//float Get_ChargeFlipWeight();
+	float Get_ChargeFlipWeight(const std::vector<miniLepton>&, int);
 	float Get_EleChargeMisIDProb(float,float,int,int);
+	float Get_EleChargeMisIDProb(const miniLepton&, int);
 	float Get_LeptonIDSF(const miniLepton&);
 
 	float Get_LeptonSF_loose(float,float,bool,bool);
@@ -59,11 +61,15 @@ class SFHelper
 						   bool);
 	float Get_EvtCSVWeight(const std::vector<pat::Jet> &, const std::string &);
 	float Get_TauIDSF(const pat::Tau&, bool, TString syst="NA");
-	float Get_FakeRate(const miniLepton&, TString syst="NA");
-	float Get_FakeRate(const pat::Tau&);
+	float Get_FakeRate_tau(const pat::Tau&, TString);
+	float Get_FR_weight(const std::vector<miniLepton>&,
+						const std::vector<pat::Tau>&, TString syst="NA");
+	float Get_ChargeFlipWeight(const std::vector<miniLepton>&,
+							   const std::vector<pat::Tau>&);
 #endif
-	float Get_FR_weight(const miniLepton&, const miniLepton&, TString syst="NA");
-	float Get_EleChargeMisIDProb(const miniLepton&, int);
+	float Get_FR_weight(const std::vector<miniLepton>&, const std::vector<float>&,
+						const std::vector<float>&, const std::vector<int>&,
+						TString syst="NA");
 		
 	// utilities
 	float read2DHist(TH2*, float, float);
@@ -74,6 +80,7 @@ class SFHelper
  private:
 
 	bool _isdata;
+	bool _debug;
 	Analysis_types _analysis;
 	Selection_types _selection;
 
@@ -220,8 +227,8 @@ class SFHelper
 	void Delete_BTagCalibration_Readers();
 #endif
 	
-	void Set_up_FakeRate_Lut();
-	void Set_up_TauSF_Lut();
+	void Set_up_FakeRate_Lut(TString tauIDWP="dR03mvaTight");
+	void Set_up_TauSF_Lut(TString tauIDWP="dR03mvaMedium");
 	void Set_up_ChargeMisID_Lut();
 	void Set_up_PUWeight_hist();
 	void Set_up_LeptonSF_Lut();
