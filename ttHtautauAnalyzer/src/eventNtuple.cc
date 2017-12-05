@@ -46,6 +46,62 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorLeps(bool loose)
 	return lepsP4;
 }
 
+std::vector<miniTau> eventNtuple::buildTaus(bool loose)
+{
+	std::vector<miniTau> taus;
+
+	for (unsigned int t = 0; t < tau_pt->size(); ++t) {
+		// require tight tau if not loose selection
+		if (!loose and !(tau_idSelection->at(t))) continue;
+		TLorentzVector tauP4;
+		tauP4.SetPtEtaPhiE(tau_pt->at(t),tau_eta->at(t),tau_phi->at(t),tau_E->at(t));
+		miniTau tau(tauP4,tau_charge->at(t),tau_decayMode->at(t),
+					tau_idPreselection->at(t), tau_idSelection->at(t),
+					tau_mcMatchType->at(t));
+
+		// Tau decay products
+		// charged hadron
+		std::vector<TLorentzVector> chP4;		
+		for (unsigned int ch = 0; ch<(tau_signalChargedHadrCands_pt->at(t)).size();++ch) {
+			TLorentzVector chargedhadr;
+			chargedhadr.SetPtEtaPhiE((tau_signalChargedHadrCands_pt->at(t))[ch],
+									 (tau_signalChargedHadrCands_eta->at(t))[ch],
+									 (tau_signalChargedHadrCands_phi->at(t))[ch],
+									 (tau_signalChargedHadrCands_E->at(t))[ch]);
+			chP4.push_back(chargedhadr);
+		}			
+		tau.set_signalChargedHadrCands(chP4);
+
+		// gamma (pi0)
+		std::vector<TLorentzVector> gmP4;
+		for (unsigned int g=0; g<(tau_signalGammaCands_pt->at(t)).size(); ++g) {
+			TLorentzVector gamma;
+			gamma.SetPtEtaPhiE((tau_signalGammaCands_pt->at(t))[g],
+							   (tau_signalGammaCands_eta->at(t))[g],
+							   (tau_signalGammaCands_phi->at(t))[g],
+							   (tau_signalGammaCands_E->at(t))[g]);
+			gmP4.push_back(gamma);
+		}
+		tau.set_signalGammaCands(gmP4);
+
+		// neutral hadron
+		std::vector<TLorentzVector> nhP4;
+		for (unsigned int nh=0; nh<(tau_signalNeutrHadrCands_pt->at(t)).size(); ++nh) {
+			TLorentzVector neutralhadr;
+			neutralhadr.SetPtEtaPhiE((tau_signalNeutrHadrCands_pt->at(t))[nh],
+									 (tau_signalNeutrHadrCands_eta->at(t))[nh],
+									 (tau_signalNeutrHadrCands_phi->at(t))[nh],
+									 (tau_signalNeutrHadrCands_E->at(t))[nh]);
+		    nhP4.push_back(neutralhadr);
+		}
+		tau.set_signalNeutrHadrCands(nhP4);
+
+		taus.push_back(tau);
+	}
+	// should be already sorted by pt
+	return taus;
+}
+
 std::vector<TLorentzVector> eventNtuple::buildFourVectorTaus(std::vector<int>& decaymode, bool loose)
 {
 	

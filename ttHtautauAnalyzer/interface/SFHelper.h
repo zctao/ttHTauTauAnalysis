@@ -8,6 +8,7 @@
 #include "CondTools/BTau/interface/BTagCalibrationReader.h"
 #endif
 #include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/miniLepton.h"
+#include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/miniTau.h"
 
 #include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/Types_enum.h"
 // Root
@@ -31,45 +32,62 @@ class SFHelper
 	// member functions
 	float Get_HLTSF_2l1tau(int);
 	float Get_HLTSF_3l1tau();
+	float Get_HLTSF_1l2tau(const miniLepton&, const std::vector<miniTau>&, bool,
+						   bool);
 	float Get_HLTSF_1l2tau(float, float, int, float, float, int, float, float,
 						   int, bool, bool);
+#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
+	float Get_HLTSF_1l2tau(const miniLepton&, const std::vector<pat::Tau>&, bool,
+						   bool);
+#endif
 	float Compute_trig_eff_OR_1l2tau(float, float, float, float, bool, bool);
 	float Get_trig_eff_lepLeg_crossTrigger(float, float, int, bool);
 	float Get_trig_eff_tauLeg_crossTrigger(float, float, int, int, bool);
 	float Get_trig_eff_singleLep(float, float, int, bool);
-	float Get_LeptonIDSF(float,float,bool,bool,bool);	
-	float Get_PUWeight(int);	
-	float Get_TauIDSF(float,float,bool,TString syst="NA");
+	
+	float Get_PUWeight(int);
+	
 	//float Get_MCWeight();
+	
 	float Get_FakeRate_lep(float,float,bool,bool,TString syst="NA");
 	float Get_FakeRate_lep(const miniLepton&, TString syst="NA");
 	float Get_FakeRate_tau(float,float,TString);
-	float Get_FR_weight(float,float,bool,bool,bool,float,float,bool,bool,bool,
-						TString syst="NA");
+	//float Get_FR_weight(float,float,bool,bool,bool,float,float,bool,bool,bool,
+	//					TString syst="NA");
+#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
+	float Get_FakeRate_tau(const pat::Tau&, TString);
+	float Get_FR_weight(const std::vector<miniLepton>&,
+						const std::vector<pat::Tau>&, TString syst="NA");
+#endif
+	float Get_FR_weight(const std::vector<miniLepton>&,
+						const std::vector<miniTau>&, TString syst="NA");
+
+#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
+	float Get_EvtCSVWeight(const std::vector<pat::Jet> &, const std::string &);
+	float Get_JetCSVWeight(const pat::Jet&, std::string);
+	
+	float Get_ChargeFlipWeight(const std::vector<miniLepton>&,
+							   const std::vector<pat::Tau>&);
+#endif
+	
 	float Get_ChargeFlipWeight(const std::vector<miniLepton>&, int);
 	float Get_EleChargeMisIDProb(float,float,int,int);
 	float Get_EleChargeMisIDProb(const miniLepton&, int);
-	float Get_LeptonIDSF(const miniLepton&);
 
+	float Get_LeptonIDSF(float,float,bool,bool,bool);
+	float Get_LeptonIDSF(const miniLepton&);
 	float Get_LeptonSF_loose(float,float,bool,bool);
 	float Get_LeptonSF_tight_vs_loose(float,float,bool,bool);
 	float Get_LeptonSF_loose(const miniLepton&);
 	float Get_LeptonSF_tight_vs_loose(const miniLepton&);
-	
+	float Get_LeptonIDSF_weight(const std::vector<miniLepton>&);
+
+	float Get_TauIDSF(float,float,bool,TString syst="NA");
+	float Get_TauIDSF(const miniTau&, TString syst="NA");
 #if !defined(__ACLIC__) && !defined(__ROOTCLING__)
-	float Get_HLTSF_1l2tau(const miniLepton&, const std::vector<pat::Tau>&, bool,
-						   bool);
-	float Get_EvtCSVWeight(const std::vector<pat::Jet> &, const std::string &);
 	float Get_TauIDSF(const pat::Tau&, bool, TString syst="NA");
-	float Get_FakeRate_tau(const pat::Tau&, TString);
-	float Get_FR_weight(const std::vector<miniLepton>&,
-						const std::vector<pat::Tau>&, TString syst="NA");
-	float Get_ChargeFlipWeight(const std::vector<miniLepton>&,
-							   const std::vector<pat::Tau>&);
 #endif
-	float Get_FR_weight(const std::vector<miniLepton>&, const std::vector<float>&,
-						const std::vector<float>&, const std::vector<int>&,
-						TString syst="NA");
+	float Get_TauIDSF_weight(const std::vector<miniTau>&, TString syst="NA");
 		
 	// utilities
 	float read2DHist(TH2*, float, float);
@@ -246,11 +264,6 @@ class SFHelper
 	//float Get_LeptonSF_tight_vs_loose(float,float,bool,bool);
 	//float Get_LeptonSF_loose(const miniLepton&);
 	//float Get_LeptonSF_tight_vs_loose(const miniLepton&);
-	
-#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
-	float Get_JetCSVWeight(const pat::Jet&, std::string);
-#endif
-	
 };
 
 #endif

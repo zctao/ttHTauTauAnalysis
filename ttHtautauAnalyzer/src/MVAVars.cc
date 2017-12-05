@@ -94,6 +94,24 @@ void MVAVars::compute_taudecay_variables(const std::vector<TLorentzVector>& taus
 	}
 }
 
+void MVAVars::compute_all_variables(const std::vector<miniLepton>& leptons, const std::vector<miniTau>& taus, const std::vector<TLorentzVector>& jets, float met, float metphi, float mht, int ntags_loose)
+{
+	std::vector<TLorentzVector> tausP4;
+	std::vector<TLorentzVector> tausChargedDaug;
+	std::vector<TLorentzVector> tausNeutralDaug;
+	std::vector<int> tausDecaymode;
+
+	for (const miniTau & t : taus) {
+		tausP4.push_back(t.p4());
+		tausChargedDaug.push_back(t.chargedDaughtersP4());
+		tausNeutralDaug.push_back(t.neutralDaughtersP4());
+		tausDecaymode.push_back(t.decaymode());
+	}
+
+	compute_all_variables(leptons, tausP4, jets, met, metphi, mht, ntags_loose);
+	compute_taudecay_variables(tausP4, tausChargedDaug, tausNeutralDaug, tausDecaymode);
+}
+
 float MVAVars::compute_mindr(const TLorentzVector& l, const std::vector<TLorentzVector>& vjs)
 {
 	if (vjs.size() < 1) return -9999.;

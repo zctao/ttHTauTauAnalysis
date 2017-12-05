@@ -5,6 +5,7 @@
 #include "TLorentzVector.h"
 
 #include "../interface/miniLepton.h"
+#include "../interface/miniTau.h"
 
 #include <iostream>
 #include <vector>
@@ -22,6 +23,7 @@ class eventNtuple
 	std::vector<miniLepton> buildLeptons(bool loose=false);
 	std::vector<TLorentzVector> buildFourVectorLeps(bool loose=false);
 	std::vector<TLorentzVector> buildFourVectorTaus(std::vector<int>&, bool loose=false);
+	std::vector<miniTau> buildTaus(bool loose=false);
 	std::vector<TLorentzVector> buildFourVectorTaus(bool loose=false);
 	std::vector<TLorentzVector> buildFourVectorTauDaugsCharged(bool loose=false);
 	std::vector<TLorentzVector> buildFourVectorTauDaugsNeutral(bool loose=false);

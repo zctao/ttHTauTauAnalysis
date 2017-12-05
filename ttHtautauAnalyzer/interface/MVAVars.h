@@ -3,6 +3,7 @@
 
 //#include "DataFormats/Math/interface/deltaR.h"
 #include "miniLepton.h"
+#include "miniTau.h"
 #include "TLorentzVector.h"
 #include "TMVA/Reader.h"
 #include "Types_enum.h"
@@ -24,6 +25,10 @@ class MVAVars
 
 	void compute_all_variables(const std::vector<miniLepton>&,
 							   const std::vector<TLorentzVector>&,
+							   const std::vector<TLorentzVector>&,
+							   float, float, float, int);
+	void compute_all_variables(const std::vector<miniLepton>&,
+							   const std::vector<miniTau>&,
 							   const std::vector<TLorentzVector>&,
 							   float, float, float, int);
 	void compute_taudecay_variables(const std::vector<TLorentzVector>&,

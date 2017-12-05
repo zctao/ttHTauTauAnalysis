@@ -386,6 +386,17 @@ float SFHelper::Get_HLTSF_1l2tau(const miniLepton& lepton,
 							passHLT1l, passHLT1l1tau);
 }
 #endif
+float SFHelper::Get_HLTSF_1l2tau(const miniLepton& lepton,
+								 const std::vector<miniTau>& taus,
+								 bool passHLT1l, bool passHLT1l1tau)
+{
+	assert(taus.size()>1);
+	return Get_HLTSF_1l2tau(lepton.pt(), lepton.eta(), lepton.pdgId(),
+							taus[0].pt(), taus[0].eta(), taus[0].decaymode(),
+							taus[1].pt(), taus[1].eta(), taus[1].decaymode(),
+							passHLT1l, passHLT1l1tau);
+}
+
 float SFHelper::Get_HLTSF_1l2tau(float lepPt, float lepEta, int lepPdgId,
 								 float tau0Pt, float tau0Eta, int decaymode0,
 								 float tau1Pt, float tau1Eta, int decaymode1,
@@ -616,6 +627,26 @@ float SFHelper::Get_trig_eff_singleLep(float pt, float eta, int pdgid, bool isda
 }
 
 //#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
+float SFHelper::Get_LeptonIDSF_weight(const std::vector<miniLepton>& leptons)
+{
+	size_t nleps = 0;
+	if (_analysis==Analyze_1l2tau)
+		nleps = 1;
+	else if (_analysis==Analyze_2lss1tau)
+		nleps = 2;
+	else if (_analysis==Analyze_3l1tau)
+		nleps = 3;
+
+	assert(leptons.size() >= nleps);
+
+	float lepSF = 1.;
+	for (size_t ilep = 0; ilep < nleps; ilep++) {
+		lepSF *= Get_LeptonIDSF(leptons[ilep]);
+	}
+
+	return lepSF;
+}
+
 float SFHelper::Get_LeptonIDSF(const miniLepton& lepton)
 {
 	assert(not _isdata);
@@ -805,6 +836,12 @@ float SFHelper::Get_TauIDSF(const pat::Tau& tau, bool isGenMatched, TString syst
 	return Get_TauIDSF(tau.pt(), tau.eta(), isGenMatched, syst);
 }
 #endif
+
+float SFHelper::Get_TauIDSF(const miniTau& tau, TString syst)
+{
+	return Get_TauIDSF(tau.pt(), tau.eta(), tau.isGenMatched(), syst);
+}
+
 float SFHelper::Get_TauIDSF(float tauPt, float tauEta, bool isGenMatched, TString syst)
 {
 	assert(not _isdata);
@@ -841,6 +878,23 @@ float SFHelper::Get_TauIDSF(float tauPt, float tauEta, bool isGenMatched, TStrin
 	return (isGenMatched ? tauEff_sf : tauFR_sf);
 }
 
+float SFHelper::Get_TauIDSF_weight(const std::vector<miniTau>& taus, TString syst)
+{
+	size_t ntaus = 1;
+	if (_analysis==Analyze_1l2tau)
+		ntaus = 2;
+
+	assert(taus.size()>=ntaus);
+
+	float tauSF = 1.;
+
+	for (size_t itau = 0; itau < ntaus; itau++) {
+		tauSF *= Get_TauIDSF(taus[itau],syst);
+	}
+
+	return tauSF;
+}
+
 /*float SFHelper::Get_MCWeight()
 {
 	return 0.;
@@ -864,17 +918,14 @@ float SFHelper::Get_FR_weight(const std::vector<miniLepton>& leps,
 							  const std::vector<pat::Tau>& taus,
 							  TString syst)
 {
-	std::vector<float> tauPt;
-	std::vector<float> tauEta;
-	std::vector<int> tauIsTight;
-
+	std::vector<miniTau> mtaus;
+	bool addDaughters = false;
 	for (const auto & tau : taus) {
-		tauPt.push_back(tau.pt());
-		tauEta.push_back(tau.eta());
-		tauIsTight.push_back(tau.tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT")>0.5);  // 1l2tau
+		miniTau mt(tau, addDaughters);
+		mtaus.push_back(mt);
 	}
 
-	return Get_FR_weight(leps, tauPt, tauEta, tauIsTight, syst);
+	return Get_FR_weight(leps, mtaus, syst);
 }
 
 float SFHelper::Get_ChargeFlipWeight(const std::vector<miniLepton>& leps,
@@ -1027,9 +1078,7 @@ float SFHelper::Get_FakeRate_tau(float tauPt, float tauEta, TString syst)
 }
 
 float SFHelper::Get_FR_weight(const std::vector<miniLepton>& leps,
-							  const std::vector<float>& taus_pt,
-							  const std::vector<float>& taus_eta,
-							  const std::vector<int>& isTightTaus,
+							  const std::vector<miniTau>& taus,
 							  TString syst)
 {
 	float F1, F2, F3 = -1.;
@@ -1038,24 +1087,23 @@ float SFHelper::Get_FR_weight(const std::vector<miniLepton>& leps,
 	
 	if (_selection==Control_fake_1l2tau) {
 		assert(leps.size() >= 1);
-		assert(taus_pt.size() >= 2);
-		assert(taus_pt.size()==isTightTaus.size());
+		assert(taus.size() >= 2);
 
 		f1 = Get_FakeRate_lep(leps[0], syst);
-		f2 = Get_FakeRate_tau(taus_pt[0], taus_eta[0], syst);
-		f3 = Get_FakeRate_tau(taus_pt[1], taus_eta[1], syst);
+		f2 = Get_FakeRate_tau(taus[0].pt(), taus[0].eta(), syst);
+		f3 = Get_FakeRate_tau(taus[1].pt(), taus[1].eta(), syst);
 
 		F1 = leps[0].passTightSel() ? -1. : f1/(1.-f1);
-		F2 = isTightTaus[0] ? -1. : f2/(1.-f2);
-		F3 = isTightTaus[1] ? -1. : f3/(1.-f3);
+		F2 = taus[0].passTightSel() ? -1. : f2/(1.-f2);
+		F3 = taus[1].passTightSel() ? -1. : f3/(1.-f3);
 
 		if (_debug) {
 			std::cout << "lep pdgid passTight? : " << leps[0].pdgId() << " "
 					  << leps[0].passTightSel() << std::endl;
 			std::cout << "f1 F1 : " << f1 << " " << F1 << std::endl;
-			std::cout << "tau0 passTight? : " << isTightTaus[0] << std::endl;
+			std::cout << "tau0 passTight? : " << taus[0].passTightSel() << std::endl;
 			std::cout << "f2 F2 : " << f2 << " " << F2 << std::endl;
-			std::cout << "tau1 passTight? : " << isTightTaus[1] << std::endl;
+			std::cout << "tau1 passTight? : " << taus[1].passTightSel() << std::endl;
 			std::cout << "f3 F3 : " << f3 << " " << F3 << std::endl;
 		}
 
