@@ -271,9 +271,53 @@ int main(int argc, char** argv)
 		if (updateSF) {
 			if (selType==Control_fake_1l2tau or selType==Control_fake_2lss1tau or
 				selType==Control_fake_3l1tau) {
-
 				mvantuple.event_weight =
 					sfhelper.Get_FR_weight(leptons,taus);
+
+				if (systematics) {
+					if (selType==Control_fake_1l2tau) {
+						mvantuple.event_weight_FRjt_normUp = sfhelper.Get_FR_weight(leptons,taus,"FRjt_normUp");
+						mvantuple.event_weight_FRjt_normDown = sfhelper.Get_FR_weight(leptons,taus,"FRjt_normDown");
+						mvantuple.event_weight_FRjt_shapeUp = sfhelper.Get_FR_weight(leptons,taus,"FRjt_shapeUp");
+						mvantuple.event_weight_FRjt_shapeDown = sfhelper.Get_FR_weight(leptons,taus,"FRjt_shapeDown");
+						
+						// electron/muon fake rate systematics?
+					}
+					else { // fake 2lss1tau or 3l1tau
+						mvantuple.event_weight_FRe_normUp =
+							sfhelper.Get_FR_weight(leptons,taus,"FRe_normUp");
+						mvantuple.event_weight_FRe_normDown =
+							sfhelper.Get_FR_weight(leptons,taus,"FRe_normDown");
+						mvantuple.event_weight_FRe_ptUp =
+							sfhelper.Get_FR_weight(leptons,taus,"FRe_ptUp");
+						mvantuple.event_weight_FRe_ptDown =
+							sfhelper.Get_FR_weight(leptons,taus,"FRe_ptDown");
+						mvantuple.event_weight_FRe_bUp =
+							sfhelper.Get_FR_weight(leptons,taus,"FRe_bUp");
+						mvantuple.event_weight_FRe_bDown =
+							sfhelper.Get_FR_weight(leptons,taus,"FRe_bDown");
+						mvantuple.event_weight_FRe_ecUp =
+							sfhelper.Get_FR_weight(leptons,taus,"FRe_ecUp");
+						mvantuple.event_weight_FRe_ecDown =
+							sfhelper.Get_FR_weight(leptons,taus,"FRe_ecDown");
+						mvantuple.event_weight_FRm_normUp =
+							sfhelper.Get_FR_weight(leptons,taus,"FRm_normUp");
+						mvantuple.event_weight_FRm_normDown =
+							sfhelper.Get_FR_weight(leptons,taus,"FRm_normDown");
+						mvantuple.event_weight_FRm_ptUp =
+							sfhelper.Get_FR_weight(leptons,taus,"FRm_ptUp");
+						mvantuple.event_weight_FRm_ptDown =
+							sfhelper.Get_FR_weight(leptons,taus,"FRm_ptDown");
+						mvantuple.event_weight_FRm_bUp =
+							sfhelper.Get_FR_weight(leptons,taus,"FRm_bUp");
+						mvantuple.event_weight_FRm_bDown =
+							sfhelper.Get_FR_weight(leptons,taus,"FRm_bDown");
+						mvantuple.event_weight_FRm_ecUp =
+							sfhelper.Get_FR_weight(leptons,taus,"FRm_ecUp");
+						mvantuple.event_weight_FRm_ecDown =
+							sfhelper.Get_FR_weight(leptons,taus,"FRm_ecDown");
+					}
+				}
 			}
 			else if (selType==Control_2los1tau) {
 				assert(taus.size()>0);
@@ -306,15 +350,43 @@ int main(int argc, char** argv)
 				// not recomputable with current ntuple
 				float mc_weight = evNtuple.MC_weight;
 				float btag_sf = evNtuple.bTagSF_weight;
-				
+
 				mvantuple.event_weight =
 					pu_weight * mc_weight * btag_sf * lepid_sf * tauid_sf * hlt_sf;
+				if (systematics) {
+					mvantuple.event_weight_thu_shape_x1Up = mvantuple.event_weight / mc_weight * evNtuple.MC_weight_scale_muF2;
+					mvantuple.event_weight_thu_shape_x1Down = mvantuple.event_weight / mc_weight * evNtuple.MC_weight_scale_muF0p5;
+					mvantuple.event_weight_thu_shape_y1Up = mvantuple.event_weight / mc_weight * evNtuple.MC_weight_scale_muR2;
+					mvantuple.event_weight_thu_shape_y1Down = mvantuple.event_weight / mc_weight * evNtuple.MC_weight_scale_muR0p5;
+
+					mvantuple.event_weight_btag_LFUp = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_LFUp;
+					mvantuple.event_weight_btag_LFDown = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_LFDown;
+					mvantuple.event_weight_btag_HFUp = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_HFUp;
+					mvantuple.event_weight_btag_HFDown = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_HFDown;
+					mvantuple.event_weight_btag_HFStats1Up = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_HFStats1Up;
+					mvantuple.event_weight_btag_HFStats1Down = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_HFStats1Down;
+					mvantuple.event_weight_btag_HFStats2Up = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_HFStats2Up;
+					mvantuple.event_weight_btag_HFStats2Down = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_HFStats2Down;
+					mvantuple.event_weight_btag_LFStats1Up = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_LFStats1Up;
+					mvantuple.event_weight_btag_LFStats1Down = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_LFStats1Down;
+					mvantuple.event_weight_btag_LFStats2Up = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_LFStats2Up;
+					mvantuple.event_weight_btag_LFStats2Down = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_LFStats2Down;
+					mvantuple.event_weight_btag_cErr1Up = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_cErr1Up;
+					mvantuple.event_weight_btag_cErr1Down = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_cErr1Down;
+					mvantuple.event_weight_btag_cErr2Up = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_cErr2Up;
+					mvantuple.event_weight_btag_cErr2Down = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_cErr2Down;
+
+					if (anaType==Analyze_2lss1tau or anaType==Analyze_3l1tau) {
+						mvantuple.event_weight_FRjt_normUp = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_normUp");
+						mvantuple.event_weight_FRjt_normDown = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_normDown");
+						mvantuple.event_weight_FRjt_shapeUp = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_shapeUp");
+						mvantuple.event_weight_FRjt_shapeDown = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_shapeDown");
+					}
+					
+				} // if (systematics)
+				
 			}
 		} // if (updateSF)
-		
-		if (systematics) {
-			
-		}
 		
 	} // end of event loop
 
