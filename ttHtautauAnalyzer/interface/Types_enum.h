@@ -10,7 +10,8 @@ enum Analysis_types {
 	Analyze_dilepton,
 	Analyze_1l2tau,
 	Analyze_2lss1tau,
-	Analyze_3l1tau
+	Analyze_3l1tau,
+	Analyze_NA
 };
 
 /*
@@ -31,7 +32,8 @@ enum Selection_types {
 	Loose_1l2tau,
 	Inclusive_1l2tau,
 	Inclusive_2lss1tau,
-	Inclusive_3l1tau
+	Inclusive_3l1tau,
+	Selection_NA
 };
 
 
