@@ -78,16 +78,16 @@ int main(int argc, char** argv)
 
 	po::options_description desc("Options");
 	desc.add_options()
-		// TODO: help
+		("help,h", "produce help message")
 		("infile,i", po::value<string>(&infile), "input file")
 		("outdir,o", po::value<string>(&outdir)->default_value("./"), "output directory")
 		("sample,s", po::value<string>(&sample), "sample name")
 		("anatype", po::value<string>(&analysis_type), "analysis type")
 		("seltype", po::value<string>(&selection_type), "selection type")
 		("treename,tn", po::value<string>(&intree)->default_value("ttHtaus/eventTree"))
-		("mc_matching,m", po::value<bool>(&requireMCMatching)->default_value(false))
+		("mc_matching,m", po::value<bool>(&requireMCMatching)->default_value(true))
 		("evaluate,e", po::value<bool>(&evaluate)->default_value(false))
-		("systematics", po::value<bool>(&systematics))
+		("systematics", po::value<bool>(&systematics)->default_value(true))
 		("update_sf,u", po::value<bool>(&updateSF)->default_value(false))
 		("loose_selection,l", po::value<bool>(&looseSelection)->default_value(false))
 		("tree_weight,w", po::value<bool>(&setTreeWeight)->default_value(false));
@@ -95,6 +95,11 @@ int main(int argc, char** argv)
 	po::variables_map vm;
 	po::store(po::command_line_parser(argc, argv).options(desc).run(), vm);
 	po::notify(vm);
+
+	if (vm.count("help")) {
+		cout << desc << endl;
+		return 1;
+	}
 
 	TString sample_ts = sample.c_str();
 	bool isdata = sample_ts.Contains("data");
@@ -205,10 +210,6 @@ int main(int argc, char** argv)
 		mvantuple.nJet = mvaVars.nJet();
 		mvantuple.avg_dr_jet = mvaVars.avg_dr_jet();
 
-		mvantuple.tau0_decaymode = mvaVars.tau0_decaymode();
-		mvantuple.tau0_E = mvaVars.tau0_energy();
-		mvantuple.tau0_upsilon = mvaVars.tau0_upsilon();
-		
 		if (anaType == Analyze_2lss1tau) {	
 			
 			mvantuple.mindr_lep0_jet = mvaVars.mindr_lep0_jet();
@@ -225,6 +226,10 @@ int main(int argc, char** argv)
 			mvantuple.dr_lep1_tau = mvaVars.dr_lep1_tau();
 			mvantuple.mvis_lep0_tau = mvaVars.mvis_lep0_tau();
 			mvantuple.mvis_lep1_tau = mvaVars.mvis_lep1_tau();
+
+			mvantuple.tau0_decaymode = mvaVars.tau0_decaymode();
+			mvantuple.tau0_E = mvaVars.tau0_energy();
+			mvantuple.tau0_upsilon = mvaVars.tau0_upsilon();
 		}
 		else if (anaType == Analyze_1l2tau) {
 			mvantuple.HT = mvaVars.ht();
@@ -237,9 +242,12 @@ int main(int argc, char** argv)
 			mvantuple.ntags = evNtuple.n_btag_medium;
 			mvantuple.ntags_loose = evNtuple.n_btag_loose;
 
-			mvantuple.tau1_decaymode = mvaVars.tau1_decaymode();
-			mvantuple.tau1_E = mvaVars.tau1_energy();
-			mvantuple.tau1_upsilon = mvaVars.tau1_upsilon();
+			mvantuple.taup_decaymode = mvaVars.taup_decaymode();
+			mvantuple.taum_decaymode = mvaVars.taum_decaymode();
+			mvantuple.taup_E = mvaVars.taup_energy();
+			mvantuple.taum_E = mvaVars.taum_energy();
+			mvantuple.taup_upsilon = mvaVars.taup_upsilon();
+			mvantuple.taum_upsilon = mvaVars.taum_upsilon();
 		}
 		else if (anaType == Analyze_3l1tau) {
 			mvantuple.max_lep_eta = mvaVars.max_lep_eta();
@@ -250,6 +258,10 @@ int main(int argc, char** argv)
 			mvantuple.lep0_conept = mvaVars.lep0_conept();
 			mvantuple.lep1_conept = mvaVars.lep1_conept();
 			mvantuple.lep2_conept = mvaVars.lep2_conept();
+
+			mvantuple.tau0_decaymode = mvaVars.tau0_decaymode();
+			mvantuple.tau0_E = mvaVars.tau0_energy();
+			mvantuple.tau0_upsilon = mvaVars.tau0_upsilon();
 		}
 
 		if (evaluate) {
@@ -387,6 +399,8 @@ int main(int argc, char** argv)
 				
 			}
 		} // if (updateSF)
+		
+		tree_mva->Fill();
 		
 	} // end of event loop
 
