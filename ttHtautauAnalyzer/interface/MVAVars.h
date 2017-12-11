@@ -31,6 +31,7 @@ class MVAVars
 							   const std::vector<miniTau>&,
 							   const std::vector<TLorentzVector>&,
 							   float, float, float, int);
+	void compute_taudecay_variables(const std::vector<miniTau>&);
 	void compute_taudecay_variables(const std::vector<TLorentzVector>&,
 									const std::vector<TLorentzVector>&,
 									const std::vector<TLorentzVector>&,
@@ -70,6 +71,12 @@ class MVAVars
 	float tau1_energy() const {return tau1_energy_;}
 	float tau0_upsilon() const {return tau0_upsilon_;}
 	float tau1_upsilon() const {return tau1_upsilon_;}
+	int taup_decaymode() const {return taup_decaymode_;}
+	int taum_decaymode() const {return taum_decaymode_;}
+	float taup_energy() const {return taup_energy_;}
+	float taum_energy() const {return taum_energy_;}
+	float taup_upsilon() const {return taup_upsilon_;}
+	float taum_upsilon() const {return taum_upsilon_;}
 	
 	float BDT_ttV();
 	float BDT_ttbar();
@@ -113,6 +120,12 @@ class MVAVars
 	float tau1_energy_;
 	float tau0_upsilon_;
 	float tau1_upsilon_;
+	int taup_decaymode_;
+	int taum_decaymode_;
+	float taup_energy_;
+	float taum_energy_;
+	float taup_upsilon_;
+	float taum_upsilon_;
 	
 	float compute_average_dr(const std::vector<TLorentzVector>&);
 	float compute_max_dr(const std::vector<TLorentzVector>&);

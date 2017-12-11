@@ -81,6 +81,7 @@ void MVAVars::compute_taudecay_variables(const std::vector<TLorentzVector>& taus
 										 const std::vector<TLorentzVector>& neutralDaug,
 										 const std::vector<int> decaymode)
 {
+	std::cout << "WARNING: this method is deprecated" << std::endl;
 	assert(taus.size()>0);
 	tau0_decaymode_ = decaymode[0];
 	tau0_energy_ = taus[0].E();
@@ -94,22 +95,53 @@ void MVAVars::compute_taudecay_variables(const std::vector<TLorentzVector>& taus
 	}
 }
 
+void MVAVars::compute_taudecay_variables(const std::vector<miniTau>& taus)
+{
+	assert(taus.size()>0);
+
+	if (anaType_==Analyze_1l2tau) {
+		assert(taus.size()>1);
+		assert(taus[0].charge() * taus[1].charge() < 0);
+		int ip, im;
+		if (taus[0].charge() > 0) {
+			ip = 0;
+			im = 1;
+		}
+		else {
+			ip = 1;
+			im = 0;
+		}
+
+		taup_decaymode_ = taus[ip].decaymode();
+		taup_energy_ = taus[ip].p4().E();
+		taup_upsilon_ = (taus[ip].chargedDaughtersP4().E()-taus[ip].neutralDaughtersP4().E()) / (taus[ip].chargedDaughtersP4().E()+taus[ip].neutralDaughtersP4().E());
+		taum_decaymode_ = taus[im].decaymode();
+		taum_energy_ = taus[im].p4().E();
+		taum_upsilon_ = (taus[im].chargedDaughtersP4().E()-taus[im].neutralDaughtersP4().E()) / (taus[im].chargedDaughtersP4().E()+taus[im].neutralDaughtersP4().E());
+	}
+	else {
+		tau0_decaymode_ = taus[0].decaymode();
+		tau0_energy_ = taus[0].p4().E();
+		tau0_upsilon_ = (taus[0].chargedDaughtersP4().E()-taus[0].neutralDaughtersP4().E()) / (taus[0].chargedDaughtersP4().E()+taus[0].neutralDaughtersP4().E());
+	}
+}
+
 void MVAVars::compute_all_variables(const std::vector<miniLepton>& leptons, const std::vector<miniTau>& taus, const std::vector<TLorentzVector>& jets, float met, float metphi, float mht, int ntags_loose)
 {
 	std::vector<TLorentzVector> tausP4;
-	std::vector<TLorentzVector> tausChargedDaug;
-	std::vector<TLorentzVector> tausNeutralDaug;
-	std::vector<int> tausDecaymode;
+	//std::vector<TLorentzVector> tausChargedDaug;
+	//std::vector<TLorentzVector> tausNeutralDaug;
+	//std::vector<int> tausDecaymode;
 
 	for (const miniTau & t : taus) {
 		tausP4.push_back(t.p4());
-		tausChargedDaug.push_back(t.chargedDaughtersP4());
-		tausNeutralDaug.push_back(t.neutralDaughtersP4());
-		tausDecaymode.push_back(t.decaymode());
+		//tausChargedDaug.push_back(t.chargedDaughtersP4());
+		//tausNeutralDaug.push_back(t.neutralDaughtersP4());
+		//tausDecaymode.push_back(t.decaymode());
 	}
 
 	compute_all_variables(leptons, tausP4, jets, met, metphi, mht, ntags_loose);
-	compute_taudecay_variables(tausP4, tausChargedDaug, tausNeutralDaug, tausDecaymode);
+	compute_taudecay_variables(taus);
 }
 
 float MVAVars::compute_mindr(const TLorentzVector& l, const std::vector<TLorentzVector>& vjs)

@@ -56,6 +56,13 @@ class mvaNtuple
 	float tau0_upsilon;
 	float tau1_upsilon;
 
+	int taup_decaymode;
+	int taum_decaymode;
+	float taup_E;
+	float taum_E;
+	float taup_upsilon;
+	float taum_upsilon;
+
 	float mva_ttV;
 	float mva_ttbar;
 

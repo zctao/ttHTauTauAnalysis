@@ -51,10 +51,6 @@ void mvaNtuple::setup_branches(TTree* tree)
 	
 	tree->Branch("nJet", &nJet);
 	tree->Branch("avg_dr_jet", &avg_dr_jet);
-
-	tree->Branch("tau0_decaymode", &tau0_decaymode);
-	tree->Branch("tau0_E", &tau0_E);
-	tree->Branch("tau0_upsilon", &tau0_upsilon);
 	
 	if (anatype_ == Analyze_2lss1tau) {		
 		tree->Branch("mindr_lep0_jet", &mindr_lep0_jet);
@@ -71,6 +67,9 @@ void mvaNtuple::setup_branches(TTree* tree)
 		tree->Branch("dr_lep1_tau", &dr_lep1_tau);
 		tree->Branch("mvis_lep0_tau", &mvis_lep0_tau);
 		tree->Branch("mvis_lep1_tau", &mvis_lep1_tau);
+		tree->Branch("tau0_decaymode", &tau0_decaymode);
+		tree->Branch("tau0_E", &tau0_E);
+		tree->Branch("tau0_upsilon", &tau0_upsilon);
 	}
 	else if (anatype_ == Analyze_1l2tau) {
 		tree->Branch("ht", &HT);
@@ -83,9 +82,12 @@ void mvaNtuple::setup_branches(TTree* tree)
 		tree->Branch("ntags", &ntags);
 		tree->Branch("ntags_loose", &ntags_loose);
 		
-		tree->Branch("tau1_decaymode", &tau1_decaymode);
-		tree->Branch("tau1_E", &tau1_E);
-		tree->Branch("tau1_upsilon", &tau1_upsilon);
+		tree->Branch("taup_decaymode", &taup_decaymode);
+		tree->Branch("taum_decaymode", &taum_decaymode);
+		tree->Branch("taup_E", &taup_E);
+		tree->Branch("taum_E", &taum_E);
+		tree->Branch("taup_upsilon", &taup_upsilon);
+		tree->Branch("taum_upsilon", &taum_upsilon);
 	}
 	else if (anatype_ == Analyze_3l1tau) {
 		tree->Branch("max_lep_eta", &max_lep_eta);
@@ -96,6 +98,9 @@ void mvaNtuple::setup_branches(TTree* tree)
 		tree->Branch("lep0_conept", &lep0_conept);
 		tree->Branch("lep1_conept", &lep1_conept);
 		tree->Branch("lep2_conept", &lep2_conept);
+		tree->Branch("tau0_decaymode", &tau0_decaymode);
+		tree->Branch("tau0_E", &tau0_E);
+		tree->Branch("tau0_upsilon", &tau0_upsilon);
 	}
 
 	tree->Branch("isGenMatchedTau", &isGenMatchedTau);
