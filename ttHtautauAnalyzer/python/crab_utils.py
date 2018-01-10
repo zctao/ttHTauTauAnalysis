@@ -10,13 +10,19 @@ def getSampleFullname(sample, list):
                 sample = sample.replace('fakes_','')
                 sample = sample.replace('flips_','')
                 sample = sample.replace('obs_','')
-            
+
+            sample = sample.replace('_jesup','')
+            sample = sample.replace('_jesdown','')
+            sample = sample.replace('_tesup','')
+            sample = sample.replace('_tesdown','')
+                
             if sample != line.strip():
                 continue
 
             fullname = f.next().strip()
             return fullname.split('/')[1] # [0] is expected to always be "'"
 
+        print 'WARNING: CANNOT find matched sample name!'
 
 def getSubDirectoryNames(eosDir):
     # return a list of sub-directory names under eos
