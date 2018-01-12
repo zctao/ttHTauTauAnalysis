@@ -50,13 +50,17 @@ if __name__ == "__main__":
         
         fullsamplename = getSampleFullname(sample, args.list)
         directory = args.rootdir+fullsamplename+'/'+args.prefix+sample+'_'+args.type+'/'
-        
         # time stamp
         if args.timestamp!='':
             directory += args.timestamp+'/'
         else:
             # loop over the sub directories, which should be the time stampes at this level, and pick the latest one
             TimeStampList = getSubDirectoryNames(directory)
+ 
+            if len(TimeStampList)==1 and '' in TimeStampList:
+                #print 'WARNING:', directory, 'is empty or does not exist!!'
+                continue
+            
             directory += getLatestTimeStamp(TimeStampList)+'/'
                 
         # 0000, 0001,...

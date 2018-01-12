@@ -14,5 +14,8 @@ do
 	xrdfs root://cmseos.fnal.gov ls -u $line | grep '.root' >> tmp
 done < $inlist
 
-hadd $target @tmp
+if [[ -s tmp ]]; then
+	hadd $target @tmp
+fi
+
 rm tmp
