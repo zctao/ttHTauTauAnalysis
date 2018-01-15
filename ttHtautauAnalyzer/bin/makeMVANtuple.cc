@@ -72,22 +72,24 @@ int main(int argc, char** argv)
 	using namespace std;
 	namespace po = boost::program_options;
 
-	string infile, outdir, sample, analysis_type, selection_type, intree;
-	bool requireMCMatching, evaluate, systematics;
+	string infile, outname, sample, analysis_type, selection_type, intree;
+	bool requireMCMatching, evaluate, systematics, isdata;
 	bool updateSF, looseSelection, setTreeWeight;
 
 	po::options_description desc("Options");
 	desc.add_options()
 		("help,h", "produce help message")
 		("infile,i", po::value<string>(&infile), "input file")
-		("outdir,o", po::value<string>(&outdir)->default_value("./"), "output directory")
-		("sample,s", po::value<string>(&sample), "sample name")
+		//("outdir,o", po::value<string>(&outdir)->default_value("./"), "output directory")
+		("outname,o", po::value<string>(&outname)->default_value("mvaNtuple.root"), "output file name")	
+		//("sample,s", po::value<string>(&sample), "sample name")
 		("anatype", po::value<string>(&analysis_type), "analysis type")
 		("seltype", po::value<string>(&selection_type), "selection type")
 		("treename,tn", po::value<string>(&intree)->default_value("ttHtaus/eventTree"))
+		("isdata,d", po::value<bool>(&isdata)->default_value(false))
 		("mc_matching,m", po::value<bool>(&requireMCMatching)->default_value(true))
 		("evaluate,e", po::value<bool>(&evaluate)->default_value(false))
-		("systematics", po::value<bool>(&systematics)->default_value(true))
+		("systematics,s", po::value<bool>(&systematics)->default_value(true))
 		("update_sf,u", po::value<bool>(&updateSF)->default_value(false))
 		("loose_selection,l", po::value<bool>(&looseSelection)->default_value(false))
 		("tree_weight,w", po::value<bool>(&setTreeWeight)->default_value(false));
@@ -101,8 +103,8 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	TString sample_ts = sample.c_str();
-	bool isdata = sample_ts.Contains("data");
+	//TString sample_ts = sample.c_str();
+	//bool isdata = sample_ts.Contains("data");
 	
 	////////////////////////////////////
 	/*
@@ -143,7 +145,8 @@ int main(int argc, char** argv)
 	evNtuple.set_branch_address(tree_in);
 
 	// create output file
-	const string output_file = outdir+"mvaVars_"+sample+"_"+analysis_type+".root";
+	//const string output_file = outdir+"mvaVars_"+sample+"_"+analysis_type+".root";
+	const string output_file = outname;
 	cout << "Output file created : " << output_file << endl;
 	TFile* f_out = new TFile(output_file.c_str(), "recreate");
 	TTree* tree_mva = new TTree("mva","mva");
@@ -169,7 +172,7 @@ int main(int argc, char** argv)
 		}
 		else if (anaType == Analyze_1l2tau) {
 			// mc match
-			if (requireMCMatching and
+			if (requireMCMatching and !isdata and
 				not(evNtuple.isGenMatchedLep and evNtuple.isGenMatchedTau))
 				continue;
 			// tau pair charge
