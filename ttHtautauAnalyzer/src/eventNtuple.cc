@@ -49,15 +49,16 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorLeps(bool loose)
 std::vector<miniTau> eventNtuple::buildTaus(bool loose)
 {
 	std::vector<miniTau> taus;
-
+		
 	for (unsigned int t = 0; t < tau_pt->size(); ++t) {
 		// require tight tau if not loose selection
 		if (!loose and !(tau_idSelection->at(t))) continue;
 		TLorentzVector tauP4;
 		tauP4.SetPtEtaPhiE(tau_pt->at(t),tau_eta->at(t),tau_phi->at(t),tau_E->at(t));
 		miniTau tau(tauP4,tau_charge->at(t),tau_decayMode->at(t),
-					tau_idPreselection->at(t), tau_idSelection->at(t),
-					tau_mcMatchType->at(t));
+					tau_idPreselection->at(t), tau_idSelection->at(t));
+		if (tau_mcMatchType->size()>0)
+			tau.set_MCMatchType(tau_mcMatchType->at(t));
 
 		// Tau decay products
 		// charged hadron

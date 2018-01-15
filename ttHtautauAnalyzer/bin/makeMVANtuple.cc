@@ -106,22 +106,6 @@ int main(int argc, char** argv)
 	//TString sample_ts = sample.c_str();
 	//bool isdata = sample_ts.Contains("data");
 	
-	////////////////////////////////////
-	/*
-	cout << infile << endl;
-	cout << outdir << endl;
-	cout << sample << endl;
-	cout << analysis_type << endl;
-	cout << selection_type << endl;
-	cout << intree << endl;
-
-	if (evaluate)
-		cout << "evaluate" << endl;
-	else
-		cout << "not evaluate" << endl;
-	*/
-	////////////////////////////////////
-	
 	auto anaType = getAnaType(analysis_type);
 	auto selType = getSelType(selection_type);
 
@@ -195,7 +179,8 @@ int main(int argc, char** argv)
 
 		/////////////////
 		// taus
-		vector<miniTau> taus = evNtuple.buildTaus(looseSelection);
+		vector<miniTau> taus =
+			evNtuple.buildTaus(looseSelection or selType==Control_fake_1l2tau);
 
 		/////////////////
 		// jets

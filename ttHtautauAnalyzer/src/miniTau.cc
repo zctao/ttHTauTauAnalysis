@@ -26,7 +26,7 @@ miniTau::miniTau(const pat::Tau& tau, bool addDaughters)
 #endif
 
 miniTau::miniTau(const TLorentzVector& t, int charge, int decaymode,
-				 bool isloose, bool istight, int mcmatchtype)
+				 bool isloose, bool istight)//, int mcmatchtype)
 {
 	pt_ = t.Pt();
 	eta_ = t.Eta();
@@ -36,11 +36,11 @@ miniTau::miniTau(const TLorentzVector& t, int charge, int decaymode,
 	decaymode_ = decaymode;
 	isloose_ = isloose;
 	istight_ = istight;
-	mcmatchtype_ = mcmatchtype;
+	//mcmatchtype_ = mcmatchtype;
 }
 
 miniTau::miniTau(const TLorentzVector& t, int charge, int decaymode,
-				 bool isloose, bool istight, int mcmatchtype,
+				 bool isloose, bool istight, //int mcmatchtype,
 				 const std::vector<TLorentzVector>& signalChargedHadrCands,
 				 const std::vector<TLorentzVector>& signalGammaCands,
 				 const std::vector<TLorentzVector>& signalNeutrHadrCands)
@@ -53,7 +53,7 @@ miniTau::miniTau(const TLorentzVector& t, int charge, int decaymode,
 	decaymode_ = decaymode;
 	isloose_ = isloose;
 	istight_ = istight;
-	mcmatchtype_ = mcmatchtype;
+	//mcmatchtype_ = mcmatchtype;
 	signalChargedHadrCands_ = signalChargedHadrCands;
 	signalGammaCands_ = signalGammaCands;
 	signalNeutrHadrCands_ = signalNeutrHadrCands;

@@ -15,8 +15,8 @@ class miniTau
 	miniTau(const pat::Tau&, bool addDaughters = false);
 #endif
 
-	miniTau(const TLorentzVector&, int, int, bool, bool, int);
-	miniTau(const TLorentzVector&, int, int, bool, bool, int,
+	miniTau(const TLorentzVector&, int, int, bool, bool);//, int);
+	miniTau(const TLorentzVector&, int, int, bool, bool, //int,
 			const std::vector<TLorentzVector>&,const std::vector<TLorentzVector>&,
 			const std::vector<TLorentzVector>&);
 
@@ -30,6 +30,7 @@ class miniTau
 	void set_mass(float imass) {mass_ = imass;}
 	void set_charge(int icharge) {charge_ = icharge;}
 	void set_decaymode(int idecaymode) {decaymode_ = idecaymode;}
+	void set_MCMatchType(int imctype) {mcmatchtype_ = imctype;}
 	//void set_pdgId(int id) {pdgid_ = id;}
 	void set_signalChargedHadrCands(std::vector<TLorentzVector>& ch) {signalChargedHadrCands_ = ch;}
 	void set_signalGammaCands(std::vector<TLorentzVector>& ga) {signalGammaCands_ = ga;}
