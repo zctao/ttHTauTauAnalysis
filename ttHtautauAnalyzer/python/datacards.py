@@ -236,3 +236,37 @@ def makeBinContentsPositive(histogram, verbosity):
 
     if verbosity:
         print ' integral(', histogram.GetName(), ') =', histogram.Integral()
+
+
+def getNtupleFileName_mc(ntuplelist, anatype, sample, correction=None):
+    # get ntuple file name from list
+    target = '_'+sample
+    if correction is not None and correction!='':
+        assert(correction.lower()=='jesup' or correction.lower()=='jesdown' or
+           correction.lower()=='tesup' or correction.lower()=='tesdown')
+        target += '_'+correction.lower()
+    target += '_'+anatype
+
+    assert(anatype=='1l2tau' or anatype=='2lss1tau' or anatype=='3l1tau')
+        
+    with open(ntuplelist) as f:
+        for line in f:
+            if target in line.strip():
+                return line.strip()
+
+        print 'WARNING: CANNOT find ntuple file in', ntuplelist,'(',anatype,sample,correction,')'
+        print 'Make sure to hadd and produce it first.'
+
+def getNtupleFileName_data(ntuplelist, anatype, channel, sample):
+    # get ntuple file name from list
+
+    assert('data_obs' in channel or 'fakes_data' in channel or 'flips_data' in channel)
+    assert('SingleMuon' in sample or 'SingleElectron' in sample or 'DoubleMuon' in sample or 'DoubleEG' in sample or 'MuonEG' in sample)
+    
+    with open(ntuplelist) as f:
+        for line in f:
+            if anatype in line.strip() and channel in line.strip() and sample in line.strip():
+                return line.strip()
+
+        print 'WARNING: CANNOT find ntuple file in', ntuplelist,'(',anatype,channel,sample,')'
+        print 'Make sure to hadd and produce it first.'
