@@ -324,7 +324,11 @@ int main(int argc, char** argv)
 				mvantuple.event_weight =
 					sfhelper.Get_ChargeFlipWeight(leptons, taus[0].charge());
 			}
-			else {
+			else { // signal region selection
+			  if (isdata)
+				  mvantuple.event_weight = 1;
+			  else {
+				
 				float pu_weight = sfhelper.Get_PUWeight(evNtuple.npuTrue);
 				float lepid_sf = sfhelper.Get_LeptonIDSF_weight(leptons);
 				float tauid_sf = sfhelper.Get_TauIDSF_weight(taus);
@@ -385,6 +389,7 @@ int main(int argc, char** argv)
 					
 				} // if (systematics)
 				
+			  } // if (isdata)
 			}
 		} // if (updateSF)
 		
