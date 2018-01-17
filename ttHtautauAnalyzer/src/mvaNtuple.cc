@@ -5,6 +5,10 @@
 
 void mvaNtuple::setup_branches(TTree* tree)
 {
+	tree->Branch("run", &run);
+	tree->Branch("lumi", &lumi);
+	tree->Branch("nEvent", &nEvent);
+	
 	tree->Branch("event_weight", &event_weight);
 	if (dosystematics_) {
 		tree->Branch("event_weight_thu_shape_x1Up",&event_weight_thu_shape_x1Up);

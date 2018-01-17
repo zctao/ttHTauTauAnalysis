@@ -21,6 +21,11 @@ class mvaNtuple
 	//// variables
 	//////////////////////////////
 
+	// event ID
+	unsigned int run;
+	unsigned int lumi;
+	unsigned long long nEvent;
+	
 	// MVA variables
 	int nJet;
 	float mindr_lep0_jet;

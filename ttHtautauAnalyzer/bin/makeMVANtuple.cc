@@ -188,6 +188,13 @@ int main(int argc, char** argv)
 			= evNtuple.buildFourVectorJets(looseSelection);
 
 		//////////////////////////////////////
+		/// Event ID
+		//////////////////////////////////////
+		mvantuple.run = evNtuple.run;
+		mvantuple.lumi = evNtuple.ls;
+		mvantuple.nEvent = evNtuple.nEvent;
+		
+		//////////////////////////////////////
 		/// MVA variables
 		//////////////////////////////////////
 

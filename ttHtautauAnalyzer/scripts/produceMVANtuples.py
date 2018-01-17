@@ -70,8 +70,6 @@ for sample in args.samples:
                 
                 ntuplename = args.redirector+fname_cor
                 outputname = args.outdir+'mvaNtuple_'+sample+'_'+cor+'_'+args.anatype+'.root'
-                print 'here'
-                print outputname
                 
                 os.system('makeMVANtuple -i '+ntuplename+' -o '+outputname+' --anatype '+args.anatype+' --seltype '+seltype+' -e true -u true -w true -s '+dosys_str)
                 mvantupleList.write(outputname+'\n')
