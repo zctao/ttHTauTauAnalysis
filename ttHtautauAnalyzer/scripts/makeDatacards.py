@@ -82,7 +82,9 @@ def getShapesfromSample_mc(anaType, channel, sample, tree_name, nbin, xmin, xmax
     inverseSumGenWeight = tree.GetWeight()
     xsection = CrossSection[sample]
 
-    # make data cards 
+    # make data cards
+    # change sample name to all lower case first
+    namelist = [name.lower() for name in namelist]
     for name in namelist:
 
         if correction is None:
@@ -123,6 +125,7 @@ def makeDatacards_mc(anaType, channel, treename, nbin, xmin, xmax, ntuplelist,
                                         nbin, xmin, xmax, ntuplelist, binningMap,
                                         lumi, addSystematics, correction=None)  
         datacards_sample += shapes
+        print "datacards_sample : ",datacards_sample
         
         if addSystematics:
             shape_jesup = getShapesfromSample_mc(anaType, channel, sample, treename, nbin, xmin, xmax, ntuplelist, binningMap, lumi, addSyst=False, correction='JESUp')
@@ -140,14 +143,17 @@ def makeDatacards_mc(anaType, channel, treename, nbin, xmin, xmax, ntuplelist,
             # rename histograms
             for h in datacards_channel:
                 hname = h.GetName()
-                h.SetName(hname.replace(sample, channel))
+                h.SetName(hname.replace(sample.lower(), channel))
         else:
             for card_channel, card_sample in zip(datacards_channel,datacards_sample):
                 card_channel.Add(card_sample)
 
+        print "datacards_channel : ", datacards_channel
         datacards += datacards_sample
+        print "datacards : ", datacards
                 
     datacards += datacards_channel
+    print "datacards outofloop : ", datacards
 
     datacards_copy = copy.deepcopy(datacards) # better way?
     
