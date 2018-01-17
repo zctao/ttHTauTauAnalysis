@@ -7,26 +7,7 @@ import copy
 import argparse
 
 syst_coname = '_CMS_ttHl_'
-
-# well...
-def getNtupleFileName(anatype, channel, sample, correction=None):
-
-    filename = ''
-    
-    if anatype=='1l2tau':
-
-    elif anatype=='2lss1tau':
-
-    elif anatype=='3l1tau':
-
-    else:
-        print 'analysis', anatype, 'not supported yet'
-        print 'supported analysis types are: 1l2tau, 2lss1tau, 3l1tau'
-
-
-    return filename
-#
-    
+ 
 def getClosureTestShapes(h_nominal, infile,
                          hname_ele = 'x_TT_DL_FR_TT_MC_minus_FR_QCD_MC_ele',
                          hname_mu = 'x_TT_DL_FR_TT_MC_minus_FR_QCD_MC_mu'):
@@ -69,7 +50,7 @@ def getClosureTestShapes(h_nominal, infile,
         
 
 def getShapesfromSample_mc(anaType, channel, sample, tree_name, nbin, xmin, xmax,
-                           lumi, addSyst=True, correction=None)
+                           ntuplelist, binningMap, lumi, addSyst=True, correction=None):
     cards = []
     
     # setup
@@ -81,50 +62,54 @@ def getShapesfromSample_mc(anaType, channel, sample, tree_name, nbin, xmin, xmax
 
     systlist = []
     if correction is None:
-        for btsys in dc.BTagSysts:
-            systlist.append('btag_'+btsys)
-        for thu in dc.ThSysts:
-            systlist.append('thu_shape_'+thu)
-        for frjt in dc.FakeTauSysts:
-            systlist.append(frjt)
+        if addSyst:
+            for btsys in dc.BTagSysts:
+                systlist.append('btag_'+btsys)
+            for thu in dc.ThSysts:
+                systlist.append('thu_shape_'+thu)
+            for frjt in dc.FakeTauSysts:
+                systlist.append(frjt)
                 
     else:
         assert(correction in ['JESUp','JESDown','TESUp','TESDown'])
         systlist = [correction]
         
     # open ntuple and get tree
-    infile = getNtupleFileName(anaType, channel, sample, correction)
+    infile = dc.getNtupleFileName_mc(ntuplelist, anaType, sample, correction)
     f = TFile(infile,'read')
     tree = f.Get(tree_name)
     
     inverseSumGenWeight = tree.GetWeight()
     xsection = CrossSection[sample]
-    
+
     # make data cards 
     for name in namelist:
 
         if correction is None:
             histname = 'x_'+name
-            h = getShapeFromTree(tree, histname, nbin, xmin, xmax)
+            h = dc.getShapeFromTree(tree, histname, nbin, xmin, xmax, binningMap)
             # scale histogram
             h.Scale(lumi*xsection*inverseSumGenWeight)
-            dc.makeBinContentPositive(h, False)
+            dc.makeBinContentsPositive(h, False)
             cards.append(h)
             
         for syst in systlist:
-            if syst in dc.FakeTauSysts and (args.anaType=='1l2tau' or 'gentau' in name)
-            continue
+            if syst in dc.FakeTauSysts and (args.anaType=='1l2tau' or 'gentau' in name):
+                continue
             histname = 'x_'+name+syst_coname+syst
-            h = getShapeFromTree(tree, histname, nbin, xmin, xmax)
+            h = dc.getShapeFromTree(tree, histname, nbin, xmin, xmax, binningMap)
             # scale histogram
             h.Scale(lumi*xsection*inverseSumGenWeight)
-            dc.makeBinContentPositive(h, False)
+            dc.makeBinContentsPositive(h, False)
             cards.append(h)
 
-    return cards
+    cardscopy = copy.deepcopy(cards) # better way than doing this?
+            
+    return cardscopy
+    
 
-
-def makeDatacards_mc(anaType, channel, treename, nbin, xmin, xmax, lumi, addSystematics):
+def makeDatacards_mc(anaType, channel, treename, nbin, xmin, xmax, ntuplelist,
+                     binningMap, lumi, addSystematics):
     
     datacards = []
     datacards_channel = []
@@ -135,15 +120,15 @@ def makeDatacards_mc(anaType, channel, treename, nbin, xmin, xmax, lumi, addSyst
         datacards_sample = []
         
         shapes = getShapesfromSample_mc(anaType, channel, sample, treename,
-                                        nbin, xmin, xmax, lumi,
-                                        addSystematics, correction=None)
+                                        nbin, xmin, xmax, ntuplelist, binningMap,
+                                        lumi, addSystematics, correction=None)  
         datacards_sample += shapes
         
         if addSystematics:
-            shape_jesup = getShapesfromSample_mc(anaType, channel, sample, treename, nbin, xmin, xmax, addSyst=False, correction='JESUp')
-            shape_jesdo = getShapesfromSample_mc(anaType, channel, sample, treename, nbin, xmin, xmax, addSyst=False, correction='JESDown')
-            shape_tesup = getShapesfromSample_mc(anaType, channel, sample, treename, nbin, xmin, xmax, addSyst=False, correction='TESUp')
-            shape_tesdo = getShapesfromSample_mc(anaType, channel, sample, treename, nbin, xmin, xmax, addSyst=False, correction='TESDown')
+            shape_jesup = getShapesfromSample_mc(anaType, channel, sample, treename, nbin, xmin, xmax, ntuplelist, binningMap, lumi, addSyst=False, correction='JESUp')
+            shape_jesdo = getShapesfromSample_mc(anaType, channel, sample, treename, nbin, xmin, xmax, ntuplelist, binningMap, lumi, addSyst=False, correction='JESDown')
+            shape_tesup = getShapesfromSample_mc(anaType, channel, sample, treename, nbin, xmin, xmax, ntuplelist, binningMap, lumi, addSyst=False, correction='TESUp')
+            shape_tesdo = getShapesfromSample_mc(anaType, channel, sample, treename, nbin, xmin, xmax, ntuplelist, binningMap, lumi, addSyst=False, correction='TESDown')
             datacards_sample += shape_jesup
             datacards_sample += shape_jesdo
             datacards_sample += shape_tesup
@@ -164,28 +149,27 @@ def makeDatacards_mc(anaType, channel, treename, nbin, xmin, xmax, lumi, addSyst
                 
     datacards += datacards_channel
 
-    return datacards
+    datacards_copy = copy.deepcopy(datacards) # better way?
+    
+    return datacards_copy
 
             
-def makeDatacards_data(anaType, channel, treename, nbin, xmin, xmax, addSystematics):
-
-    datacards = []
+def makeDatacards_data(anaType, channel, treename, nbin, xmin, xmax, ntuplelist,
+                       binningMap, addSystematics):
     
+    datacards = []
     samples = dc.SamplesInChannel[channel]
     
     # open root file and get tree for each of the samples
-    trees = []
-    for sample in samples:
-        fname = getNtupleFileName(anaType, channel, sample)
-        fin = TFile(fname, 'read')
-        tin = fin.Get(treename)
-        trees.append()
-
+    inputfiles = [TFile(dc.getNtupleFileName_data(ntuplelist, anaType, channel, sample),'read') for sample in samples]
+    trees = [fin.Get(treename) for fin in inputfiles]
+        
     histname = 'x_'+channel
     
-    shape = getShapeFromMergingTrees(trees, histname, nbin, xmin, xmax)
+    shape = dc.getShapeFromMergingTrees(trees, histname, nbin, xmin, xmax, binningMap)
+    
     # make bin contents positive
-    dc.makeBinContentPositive(shape, False)
+    dc.makeBinContentsPositive(shape, False)
     datacards.append(shape)
 
     # systematics
@@ -202,32 +186,37 @@ def makeDatacards_data(anaType, channel, treename, nbin, xmin, xmax, addSystemat
 
         for syst in systlist:
             hname = 'x_'+channel+syst_coname+syst
-            h = getShapeFromMergingTrees(trees, hname, args.nbin, args.xmin, args.xmax)
-            dc.makeBinContentPositive(h, False)
+            h = dc.getShapeFromMergingTrees(trees, hname, nbin, xmin,xmax, binningMap)
+            dc.makeBinContentsPositive(h, False)
             datacards.append(h)
             
         # closure test systematics of the lepton fake rate
         if args.anaType=='2lss1tau' or args.anaType=='3l1tau':
             datacards += getClosureTestShapes(shape)
 
-    return datacards
+    datacards_copy = copy.deepcopy(datacards) # better way?
+            
+    return datacards_copy
 
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('anaType', choice=['1l2tau','2lss1tau','3l1tau'],
+    parser.add_argument('anaType', choices=['1l2tau','2lss1tau','3l1tau'],
                         help="Analysis type")
-    parser.add_argument('channels', nargs='+', choices=['ttH','TTW','TTZ','EWK','Rares','fakes_data','flips_data','data_obs'],
+    parser.add_argument('channels', nargs='+',choices=['ttH','TTW','TTZ','EWK','Rares','fakes_data','flips_data','data_obs'],
                         help="List of channels to make data cards")
     parser.add_argument('nbin', type=int, help="number of bins")
-    parser.add_argument('xmin', type=int)
-    parser.add_argument('xmax', type=int)
+    parser.add_argument('--xmin', type=float)
+    parser.add_argument('--xmax', type=float)
+    parser.add_argument('-n','--ntuplelist', type=str, default='mvaNtuplelist.txt')
+    parser.add_argument('-b','--binmap', type=str, default='binning.root',
+                        help="Binning Map from 2D to 1D. Default histogram name: 'hTargetBinning'")
     parser.add_argument('-o','--outname', type=str, default='./datacards.root',
                         help="Output file name")
     parser.add_argument('-l', '--luminosity', type=float, default=1.,
                         help="Integrated luminosity")
-    parser.add_argument('-tn', '--treename', type=str, default="mva",
+    parser.add_argument('--treename', type=str, default="mva",
                         help="Name of tree")
     parser.add_argument('-s','--systematics', action='store_true',
                         help="Include systematics")
@@ -236,6 +225,14 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
 
+    # get binning Map 2D histogram
+    fMap = TFile(args.binmap)
+    hBinningMap = fMap.Get("hTargetBinning")
+
+    # determine xmin and xmax if not specified
+    xMin = 0. if args.xmin is None else args.xmin
+    xMax = float(args.nbin) if args.xmax is None else args.xmax
+    
     datacards = []
     
     for channel in args.channels:
@@ -246,17 +243,19 @@ if __name__ == "__main__":
         
         if 'data' in channel: # Collision data
             datacards += makeDatacards_data(args.anaType, channel, args.treename,
-                                            args.nbin, args.xmin, args.xmax,
+                                            args.nbin, xMin, xMax,
+                                            args.ntuplelist, hBinningMap,
                                             args.systematics)
         else: # Monte Carlo
             datacards += makeDatacards_mc(args.anaType, channel, args.treename,
-                                          args.nbin, args.xmin, args.xmax,
+                                          args.nbin, xMin, xMax,
+                                          args.ntuplelist, hBinningMap,
                                           args.luminosity, args.systematics)
 
     # write datacards to file
-    outfile = TFile(outname, 'recreate')
+    outfile = TFile(args.outname, 'recreate')
 
     for datacard in datacards:
         datacard.Write()
 
-    print "Output file:", outname
+    print "Output file:", args.outname
