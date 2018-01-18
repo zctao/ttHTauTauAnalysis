@@ -26,6 +26,8 @@ FakeRateLepSysts = ['FRe_normUp','FRe_normDown','FRe_ptUp','FRe_ptDown',
 
 FakeTauSysts = ['FRjt_normUp','FRjt_normDown','FRjt_shapeUp','FRjt_shapeDown']
 
+ClosureTests = ['Clos_e_shapeUp','Clos_e_shapeDown','Clos_m_shapeUp',
+                'Clos_m_shapeDown']
 
 def getEventWeight(event, name):
 
@@ -190,7 +192,7 @@ def compIntegral(histogram, includeUnderflowBin, includeOverflowBin):
 
     return sumBinContent
 
-def makeBinContentsPositive(histogram, verbosity):
+def makeBinContentsPositive(histogram, verbosity=False):
 
     if verbosity:
         print '<make>BinContentsPositive>:'
@@ -243,7 +245,7 @@ def getNtupleFileName_mc(ntuplelist, anatype, sample, correction=None):
     target = '_'+sample
     if correction is not None and correction!='':
         assert(correction.lower()=='jesup' or correction.lower()=='jesdown' or
-           correction.lower()=='tesup' or correction.lower()=='tesdown')
+               correction.lower()=='tesup' or correction.lower()=='tesdown')
         target += '_'+correction.lower()
     target += '_'+anatype
 
@@ -270,3 +272,54 @@ def getNtupleFileName_data(ntuplelist, anatype, channel, sample):
 
         print 'WARNING: CANNOT find ntuple file in', ntuplelist,'(',anatype,channel,sample,')'
         print 'Make sure to hadd and produce it first.'
+
+
+def getClosureTestShape(h_nominal, closTest, infile, syst_coname='_CMS_ttHl_',
+                        hname_ele = 'x_TT_DL_FR_TT_MC_minus_FR_QCD_MC_ele',
+                        hname_mu = 'x_TT_DL_FR_TT_MC_minus_FR_QCD_MC_mu'):
+
+    assert(h_nominal.GetName()=='x_fakes_data')
+    assert(closTest in ClosureTests)
+    
+    # get number of bins and x range from h_nominal
+    nbin = h_nominal.GetNbinsX()
+    xmin = h_nominal.GetBinLowEdge(1)
+    xmax = h_nominal.GetBinLowEdge(nbin)+h_nominal.GetBinWidth(nbin)
+
+    # open file and get histograms
+    f_clos = TFile(infile, 'read')
+
+    hname = hname_ele if 'Clos_e_' in closTest else hname_mu
+    assert('Clos_e' in closTest or 'Clos_m' in closTest)
+    
+    h_ttbar_minus_qcd_fr = f_clos.Get(hname)
+
+    h_clos = TH1D("x_fakes_data"+syst_coname+closTest)
+    h_clos.Sumw2()
+
+    factor = 1. if 'shapeUp' in closTest else -1.
+
+    h_clos.Add(h_nominal, h_ttbar_minus_qcd_fr, 1., factor)
+
+    return h_clos
+
+
+def printYields(label, histlist):
+    hname1 = 'x_'+label
+    hname2 = 'x_'+label+'_gentau'
+    hname3 = 'x_'+label+'_faketau'
+
+    yields = [-1., -1., -1.]
+
+    for hist in histlist:
+        if hist.GetName()==hname1:
+            yields[0]=hist.Integral()
+        elif hist.GetName()==hname2:
+            yields[1]=hist.Integral()
+        elif hist.GetName()==hname3:
+            yields[2]=hist.Integral()
+
+        if yields[0]!= -1. and yields[1]!=-1. and yields[2]!=-1.:
+            break
+
+    print label,'\t','%.5f'%yields[0],'\t','%.5f'%yields[1],'\t','%.5f'%yields[2]

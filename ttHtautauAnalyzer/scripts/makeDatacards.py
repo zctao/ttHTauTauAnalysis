@@ -6,204 +6,95 @@ from ttHTauTauAnalysis.ttHtautauAnalyzer.cross_section import CrossSection
 import copy
 import argparse
 
-syst_coname = '_CMS_ttHl_'
- 
-def getClosureTestShapes(h_nominal, infile,
-                         hname_ele = 'x_TT_DL_FR_TT_MC_minus_FR_QCD_MC_ele',
-                         hname_mu = 'x_TT_DL_FR_TT_MC_minus_FR_QCD_MC_mu'):
+def getHistogramNames_mc(anaType, sample, addSyst, syst_coname='_CMS_ttHl_'):
+
+    lowercase=True
+    s = sample.lower() if lowercase else sample
     
-    assert(h_nominal.GetName()=='x_fakes_data')
-
-    # get number of bins and x range from h_nominal
-    nbin = h_nominal.GetNbinsX()
-    xmin = h_nominal.GetBinLowEdge(1)
-    xmax = h_nominal.GetBinLowEdge(nbin)+h_nominal.GetBinWidth(nbin)
-    
-    hists_clos = []
-
-    # open file and get histograms
-    f_clos = TFile(infile, 'read')
-    h_ttbar_minus_qcd_fr_ele = f_clos.Get(hname_ele)
-    h_ttbar_minus_qcd_fr_mu = f_clos.Get(hname_mu)
-
-    h_clos_e_shape_up = TH1D("x_fakes_data_"+sys_coname+"Clos_e_shapeUp", '',
-                             nbin, xmin, xmax)
-    h_clos_e_shape_down = TH1D("x_fakes_data_"+sys_coname+"Clos_e_shapeDown", '',
-                               nbin, xmin, xmax)
-    h_clos_m_shape_up = TH1D("x_fakes_data_"+sys_coname+"Clos_m_shapeUp", '',
-                             nbin, xmin, xmax)
-    h_clos_m_shape_down = TH1D("x_fakes_data_"+sys_coname+"Clos_m_shapeDown", '',
-                               nbin, xmin, xmax)
-
-    h_clos_e_shape_up.Sumw2()
-    h_clos_e_shape_down.Sumw2()
-    h_clos_m_shape_up.Sumw2()
-    h_clos_m_shape_down.Sumw2()
-
-    h_clos_e_shape_up.Add(h_nominal, h_ttbar_minus_qcd_fr_ele, 1, 1)
-    h_clos_e_shape_down.Add(h_nominal, h_ttbar_minus_qcd_fr_ele, 1, -1)
-    h_clos_m_shape_up.Add(h_nominal, h_ttbar_minus_qcd_fr_mu, 1, 1)
-    h_clos_m_shape_down.Add(h_nominal, h_ttbar_minus_qcd_fr_mu, 1, -1)
-
-    return [h_clos_e_shape_up, h_clos_e_shape_down, h_clos_m_shape_up,
-            h_clos_m_shape_down]
-        
-
-def getShapesfromSample_mc(anaType, channel, sample, tree_name, nbin, xmin, xmax,
-                           ntuplelist, binningMap, lumi, addSyst=True, correction=None):
-    cards = []
-    
-    # setup
-    namelist = [sample, sample+'_gentau', sample+'_faketau']
+    namelist = [s, s+'_gentau', s+'_faketau']
     if sample=='ttH':
-        namelist += [sample+'_htt',sample+'_htt_gentau',sample+'_htt_faketau',
-                     sample+'_hww',sample+'_hww_gentau',sample+'_hww_faketau',
-                     sample+'_hzz',sample+'_hzz_gentau',sample+'_hzz_faketau']
+        namelist += [s+'_htt', s+'_htt_gentau', s+'_htt_faketau',
+                     s+'_hww', s+'_hww_gentau', s+'_hww_faketau',
+                     s+'_hzz', s+'_hzz_gentau', s+'_hzz_faketau']
+
+    if not addSyst:
+        return ['x_'+hname for hname in namelist]
 
     systlist = []
-    if correction is None:
-        if addSyst:
-            for btsys in dc.BTagSysts:
-                systlist.append('btag_'+btsys)
-            for thu in dc.ThSysts:
-                systlist.append('thu_shape_'+thu)
-            for frjt in dc.FakeTauSysts:
-                systlist.append(frjt)
-                
-    else:
-        assert(correction in ['JESUp','JESDown','TESUp','TESDown'])
-        systlist = [correction]
-        
-    # open ntuple and get tree
+    #systlist = ['JESUp','JESDown','TESUp','TESDown']
+
+    for btsys in dc.BTagSysts:
+        systlist.append('btag_'+btsys)
+    for thu in dc.ThSysts:
+        systlist.append('thu_shape_'+thu)
+    for frjt in dc.FakeTauSysts:
+        systlist.append(frjt)
+
+    return ['x_'+hname for hname in namelist]+['x_'+hname+syst_coname+syst for hname in namelist for syst in systlist if not(syst in dc.FakeTauSysts and (anaType=='1l2tau' or 'gentau' in hname))]
+
+def getHistogramNames_data(anaType, channel, addSyst, syst_coname='_CMS_ttHl_'):
+    namelist = ['x_'+channel]
+
+    if not (addSyst and 'fakes' in channel):
+        return namelist
+
+    # fake rate systematics
+    systlist = []
+    if anaType=='1l2tau':
+        systlist = [frjt for frjt in dc.FakeTauSysts]
+        # lepton fake rate systematics?
+    elif anaType=='2lss1tau' or anaType=='3l1tau':
+        systlist = [frl for frl in dc.FakeRateLepSysts]
+        # closure test
+        #systlist += [clos for clos in dc.ClosureTests]
+        # closure test shapes and dealt with separately
+
+    return namelist+[hname+syst_coname+syst for hname in namelist for syst in systlist]
+
+def getShapefromSample_mc(anaType, sample, histname, treename, nbin, xmin, xmax,
+                          ntuplelist, binningMap, lumi):
+    # determine jet/tau energy correction
+    correction = None
+    for cor in ['JESUp','JESDown','TESUp','TESDown']:
+        if cor in histname:
+            correction = cor
+            break
+   
+    # open ntuple file and get tree
     infile = dc.getNtupleFileName_mc(ntuplelist, anaType, sample, correction)
     f = TFile(infile,'read')
-    tree = f.Get(tree_name)
-    
+    tree = f.Get(treename)
+
     inverseSumGenWeight = tree.GetWeight()
     xsection = CrossSection[sample]
 
     # make data cards
-    # change sample name to all lower case first
-    namelist = [name.lower() for name in namelist]
-    for name in namelist:
+    shape = dc.getShapeFromTree(tree, histname, nbin, xmin, xmax, binningMap)
+    # scale histogram
+    shape.Scale(lumi*xsection*inverseSumGenWeight)
+    dc.makeBinContentsPositive(shape)
 
-        if correction is None:
-            histname = 'x_'+name
-            h = dc.getShapeFromTree(tree, histname, nbin, xmin, xmax, binningMap)
-            # scale histogram
-            h.Scale(lumi*xsection*inverseSumGenWeight)
-            dc.makeBinContentsPositive(h, False)
-            cards.append(h)
-            
-        for syst in systlist:
-            if syst in dc.FakeTauSysts and (args.anaType=='1l2tau' or 'gentau' in name):
-                continue
-            histname = 'x_'+name+syst_coname+syst
-            h = dc.getShapeFromTree(tree, histname, nbin, xmin, xmax, binningMap)
-            # scale histogram
-            h.Scale(lumi*xsection*inverseSumGenWeight)
-            dc.makeBinContentsPositive(h, False)
-            cards.append(h)
-
-    cardscopy = copy.deepcopy(cards) # better way than doing this?
-            
-    return cardscopy
+    shape.SetDirectory(0)
     
+    return shape
 
-def makeDatacards_mc(anaType, channel, treename, nbin, xmin, xmax, ntuplelist,
-                     binningMap, lumi, addSystematics):
-    
-    datacards = []
-    datacards_channel = []
-
-    samples = dc.SamplesInChannel[channel]
-
-    for sample in samples:
-        datacards_sample = []
-        
-        shapes = getShapesfromSample_mc(anaType, channel, sample, treename,
-                                        nbin, xmin, xmax, ntuplelist, binningMap,
-                                        lumi, addSystematics, correction=None)  
-        datacards_sample += shapes
-        print "datacards_sample : ",datacards_sample
-        
-        if addSystematics:
-            shape_jesup = getShapesfromSample_mc(anaType, channel, sample, treename, nbin, xmin, xmax, ntuplelist, binningMap, lumi, addSyst=False, correction='JESUp')
-            shape_jesdo = getShapesfromSample_mc(anaType, channel, sample, treename, nbin, xmin, xmax, ntuplelist, binningMap, lumi, addSyst=False, correction='JESDown')
-            shape_tesup = getShapesfromSample_mc(anaType, channel, sample, treename, nbin, xmin, xmax, ntuplelist, binningMap, lumi, addSyst=False, correction='TESUp')
-            shape_tesdo = getShapesfromSample_mc(anaType, channel, sample, treename, nbin, xmin, xmax, ntuplelist, binningMap, lumi, addSyst=False, correction='TESDown')
-            datacards_sample += shape_jesup
-            datacards_sample += shape_jesdo
-            datacards_sample += shape_tesup
-            datacards_sample += shape_tesdo
-
-        # add datacards 
-        if datacards_channel==[]:
-            datacards_channel = copy.deepcopy(datacards_sample)
-            # rename histograms
-            for h in datacards_channel:
-                hname = h.GetName()
-                h.SetName(hname.replace(sample.lower(), channel))
-        else:
-            for card_channel, card_sample in zip(datacards_channel,datacards_sample):
-                card_channel.Add(card_sample)
-
-        print "datacards_channel : ", datacards_channel
-        datacards += datacards_sample
-        print "datacards : ", datacards
-                
-    datacards += datacards_channel
-    print "datacards outofloop : ", datacards
-
-    datacards_copy = copy.deepcopy(datacards) # better way?
-    
-    return datacards_copy
-
-            
-def makeDatacards_data(anaType, channel, treename, nbin, xmin, xmax, ntuplelist,
-                       binningMap, addSystematics):
-    
-    datacards = []
-    samples = dc.SamplesInChannel[channel]
-    
-    # open root file and get tree for each of the samples
-    inputfiles = [TFile(dc.getNtupleFileName_data(ntuplelist, anaType, channel, sample),'read') for sample in samples]
+def getShapefromSamples_data(anaType, channel, histname, treename, nbin, xmin, xmax,
+                            ntuplelist, binningMap, lumi):
+    # open ntuple files and get trees
+    inputfiles = [TFile(dc.getNtupleFileName_data(ntuplelist, anaType, channel, sample),'read') for sample in dc.SamplesInChannel[channel]]
     trees = [fin.Get(treename) for fin in inputfiles]
-        
-    histname = 'x_'+channel
-    
-    shape = dc.getShapeFromMergingTrees(trees, histname, nbin, xmin, xmax, binningMap)
-    
+
+    shape = dc.getShapeFromMergingTrees(trees, histname, nbin,xmin,xmax, binningMap)
+
     # make bin contents positive
-    dc.makeBinContentsPositive(shape, False)
-    datacards.append(shape)
+    dc.makeBinContentsPositive(shape)
 
-    # systematics
-    if 'fakes' in channel and addSystematics:
-        # fake rate systematics
-        systlist = []
-        if args.anaType=='1l2tau':
-            for frjt in dc.FakeTauSysts:
-                systlist.append(frjt)
-            # lepton fake rate systematics?
-        elif args.anaType=='2lss1tau' or args.anaType=='3l1tau':
-            for frl in dc.FakeRateLepSysts:
-                systlist.append(frl)
+    shape.SetDirectory(0)
+    return shape
+    
 
-        for syst in systlist:
-            hname = 'x_'+channel+syst_coname+syst
-            h = dc.getShapeFromMergingTrees(trees, hname, nbin, xmin,xmax, binningMap)
-            dc.makeBinContentsPositive(h, False)
-            datacards.append(h)
+
             
-        # closure test systematics of the lepton fake rate
-        if args.anaType=='2lss1tau' or args.anaType=='3l1tau':
-            datacards += getClosureTestShapes(shape)
-
-    datacards_copy = copy.deepcopy(datacards) # better way?
-            
-    return datacards_copy
-
 
 if __name__ == "__main__":
 
@@ -220,13 +111,15 @@ if __name__ == "__main__":
                         help="Binning Map from 2D to 1D. Default histogram name: 'hTargetBinning'")
     parser.add_argument('-o','--outname', type=str, default='./datacards.root',
                         help="Output file name")
-    parser.add_argument('-l', '--luminosity', type=float, default=1.,
+    parser.add_argument('-l', '--luminosity', type=float, default=100.,
                         help="Integrated luminosity")
     parser.add_argument('--treename', type=str, default="mva",
                         help="Name of tree")
+    parser.add_argument('--sys_coname', type=str, default='_CMS_ttHl_',
+                        help="common string in histogram names for systematics")
     parser.add_argument('-s','--systematics', action='store_true',
                         help="Include systematics")
-    parser.add_argument('-v', '--verbose', action='store_true',
+    parser.add_argument('-v', '--verbose', action='count', #action='store_true',
                         help='verbosity')
     
     args = parser.parse_args()
@@ -246,18 +139,84 @@ if __name__ == "__main__":
         print "======================================="
         print "processing channel:", channel
         print "---------------------------------------"
+
         
         if 'data' in channel: # Collision data
-            datacards += makeDatacards_data(args.anaType, channel, args.treename,
-                                            args.nbin, xMin, xMax,
-                                            args.ntuplelist, hBinningMap,
-                                            args.systematics)
-        else: # Monte Carlo
-            datacards += makeDatacards_mc(args.anaType, channel, args.treename,
-                                          args.nbin, xMin, xMax,
-                                          args.ntuplelist, hBinningMap,
-                                          args.luminosity, args.systematics)
 
+            hnames = getHistogramNames_data(args.anaType, channel, args.systematics)
+            for histname in hnames:
+
+                h = getShapefromSamples_data(args.anaType, channel, histname,
+                                             args.treename, args.nbin, xMin, xMax,
+                                             args.ntuplelist, hBinningMap,
+                                             args.luminosity)
+                datacards.append(h)
+
+                if args.verbose>=1 and histname=='x_'+channel:
+                    yields = h.Integral()
+                    print channel, "\t", '%.5f'%yields
+                
+                # Closure test
+                if not (histname=="x_fakes_data" and args.systematics):
+                    continue
+
+                if not (args.anaType=="2lss1tau" or args.anaType=="3l1tau"):
+                    continue
+                
+                # FIXME get auxiliary files
+                fname_closure = "../data/Closure_FR_syst/Closure_FR_lepton_syst_2lSS1tau_nofaketau_MVA_2lSS_36.8fb.root" if args.anaType=='2lss1tau' else "../data/Closure_FR_syst/Closure_FR_lepton_syst_3l1tau_nofaketau_MVA_3l_36.8fb.root"
+                
+                for clos in dc.ClosureTests:
+                    h_clos = dc.getClosureTestShape(h, clos, fname_closure)
+                    datacards.append(h_clos)
+                     
+        else: # Monte Carlo
+            
+            datacards_channel = []
+            samples = dc.SamplesInChannel[channel]
+
+            if args.verbose>=1:
+                print '\tyields\tyields(gentau)\tyields(faketau)'
+            
+            firstsample = True
+            for sample in samples:
+
+                datacards_sample = []
+                
+                hnames = getHistogramNames_mc(args.anaType, sample, args.systematics)
+                for histname in hnames: 
+                    h = getShapefromSample_mc(args.anaType, sample, histname,
+                                              args.treename, args.nbin, xMin, xMax,
+                                              args.ntuplelist, hBinningMap,
+                                              args.luminosity)
+                    datacards_sample.append(h)
+
+                if args.verbose>=2 and len(samples)>1:
+                    dc.printYields(sample.lower(), datacards_sample)
+
+                if firstsample:
+                    datacards_channel = [h.Clone(h.GetName().replace(sample.lower(),channel)) for h in datacards_sample]
+                else:
+                    for hc, hs in zip(datacards_channel, datacards_sample):
+                        hc.Add(hs)
+                        
+                firstsample = False
+
+                if len(samples)>1:
+                    datacards += datacards_sample   
+                
+            assert(datacards_channel!=[])
+            datacards += datacards_channel
+
+            if args.verbose>=1:
+                if channel=='ttH':
+                    dc.printYields('ttH_htt', datacards_channel)
+                    dc.printYields('ttH_hww', datacards_channel)
+                    dc.printYields('ttH_hzz', datacards_channel)
+
+                dc.printYields(channel, datacards_channel)
+                
+                
     # write datacards to file
     outfile = TFile(args.outname, 'recreate')
 
