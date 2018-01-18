@@ -124,15 +124,15 @@ def getShapeFromTree(tree, histname, nbin, xmin, xmax, binningMap):
     for ev in tree:
         ibin = getBin(ev.mva_ttbar, ev.mva_ttV, binningMap)
 
-        if 'gentau' in histname and not ev.isGenMatchedTau:
+        if 'gentau' in histname.lower() and not ev.isGenMatchedTau:
             continue
-        if 'faketau' in histname and ev.isGenMatchedTau:
+        if 'faketau' in histname.lower() and ev.isGenMatchedTau:
             continue
-        if 'ttH_htt' in histname and abs(ev.HiggsDecayType)!=15:
+        if 'tth_htt' in histname.lower() and abs(ev.HiggsDecayType)!=15:
             continue
-        if 'ttH_hww' in histname and abs(ev.HiggsDecayType)!=24:
+        if 'tth_hww' in histname.lower() and abs(ev.HiggsDecayType)!=24:
             continue
-        if 'ttH_hzz' in histname and abs(ev.HiggsDecayType)!=23:
+        if 'tth_hzz' in histname.lower() and abs(ev.HiggsDecayType)!=23:
             continue
     
         weight = getEventWeight(ev, histname)
