@@ -106,7 +106,8 @@ if __name__ == "__main__":
     parser.add_argument('nbin', type=int, help="number of bins")
     parser.add_argument('--xmin', type=float)
     parser.add_argument('--xmax', type=float)
-    parser.add_argument('-n','--ntuplelist', type=str, default='mvaNtuplelist.txt')
+    parser.add_argument('-n','--ntuplelist', type=str, default='mvaNtuplelist.txt',
+                        help="List of mva ntuple names to be read from")
     parser.add_argument('-b','--binmap', type=str, default='binning.root',
                         help="Binning Map from 2D to 1D. Default histogram name: 'hTargetBinning'")
     parser.add_argument('-o','--outname', type=str, default='./datacards.root',

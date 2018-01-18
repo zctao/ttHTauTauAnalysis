@@ -11,6 +11,8 @@ ttHtautauAnalyzer/test/crab/
 ttHtautauAnalyzer/test/*.txt
 ttHtautauAnalyzer/test/EventDump*.py
 ttHtautauAnalyzer/scripts/task_to_resubmit.txt
+ttHtautauAnalyzer/scripts/task_to_resubmit_updated.txt
+ttHtautauAnalyzer/scripts/task_to_kill.txt
 
 *.d
 *.so
