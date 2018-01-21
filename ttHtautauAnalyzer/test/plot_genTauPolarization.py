@@ -1,5 +1,6 @@
 import argparse
 from ROOT import TCanvas, TFile, TTree, TH1F, TH2F
+from ROOT import gStyle
 
 parser = argparse.ArgumentParser()
 parser.add_argument('infile', type=str,
@@ -19,7 +20,8 @@ tree = fin.Get(args.treename)
 # 5: kThreeProng0pi0; 6: kThreeProng1pi0; 7: kOther
 
 ###### histograms ######
-decaymodes=['leptonic', '1prong0pi0', '1prong1pi0', '1prong2pi0', '3prong0pi0']
+decaymodes=['leptonic', '1prong0pi0', '1prong1pi0', '1prong2pi0', '3prong0pi0',
+            'combDMold']
 frames=['lab', 'boson', 'vis']
 charges=['plus', 'minus']
 signs={'plus':'+','minus':'-'}
@@ -62,11 +64,12 @@ for c, charge in enumerate(charges):
 
 ### 2D
 # nmode: number of combinatinos of tau pair decay mode
-nmode = len(decaymodes)*(len(decaymodes)+1)/2
+nmode = len(decaymodes)*(len(decaymodes)-1)/2 + 1
 combModes = []
-for i in range(len(decaymodes)):
-    for j in range(i, len(decaymodes)):
+for i in range(len(decaymodes)-1):
+    for j in range(i, len(decaymodes)-1):
         combModes.append(decaymodes[i]+"_"+decaymodes[j])
+combModes.append("oldDM_oldDM")
 print combModes
 
 # h_costheta_corr[mode]
@@ -139,6 +142,7 @@ for ev in tree:
     # only consider 1prong0pi0, 1prong1pi0, 1prong2pi0 and 3prong0pi0
     decaymode_p = max(ev.decayMode_plus-1, 0) 
     decaymode_m = max(ev.decayMode_minus-1, 0)
+    # 0: leptonic; 1: 1prong0pi0; 2: 1prong1pi0; 3: 1prong2pi0; 4: 3prong0pi0;
 
     if decaymode_p > 4:
         continue
@@ -172,13 +176,30 @@ for ev in tree:
     h_cos[0][decaymode_p].Fill(ev.cos_plus)
     h_cos[1][decaymode_m].Fill(ev.cos_minus)
 
+    # Old DecayMode
+    index_oldDM = len(decaymodes)-1
+    if decaymode_p in [1,2,4] and decaymode_m in [1,2,4]:
+        h_evis[0][0][index_oldDM].Fill(ev.evis_plus_lab)
+        h_upsilon[0][0][index_oldDM].Fill(ev.upsilon_plus_lab)
+        h_evis[1][0][index_oldDM].Fill(ev.evis_plus_bRF)
+        h_upsilon[1][0][index_oldDM].Fill(ev.upsilon_plus_bRF)
+        h_evis[2][0][index_oldDM].Fill(ev.evis_plus_visRF)
+        h_upsilon[2][0][index_oldDM].Fill(ev.upsilon_plus_visRF)
+        
+        h_evis[0][1][index_oldDM].Fill(ev.evis_plus_lab)
+        h_upsilon[0][1][index_oldDM].Fill(ev.upsilon_plus_lab)
+        h_evis[1][1][index_oldDM].Fill(ev.evis_minus_bRF)
+        h_upsilon[1][1][index_oldDM].Fill(ev.upsilon_minus_bRF)
+        h_evis[2][1][index_oldDM].Fill(ev.evis_minus_visRF)
+        h_upsilon[2][1][index_oldDM].Fill(ev.upsilon_minus_visRF)
+
     ### Correlations    
     if decaymode_p > decaymode_m:
         continue  # only plot e.g. l+pi-, but not l-pi+
     
     # Index of tau pair decay mode in combModes list
     #(2*len(combModes)-decaymode_p+1)*decaymode_p/2 + decaymode_m - decaymode_p
-    imode = (2*len(decaymodes)-decaymode_p-1) * decaymode_p / 2 + decaymode_m
+    imode = (2*(len(decaymodes)-1)-decaymode_p-1) * decaymode_p / 2 + decaymode_m
     #print decaymodes[decaymode_p], decaymodes[decaymode_m]
     #print combModes[imode]
     assert(decaymodes[decaymode_p]+'_'+decaymodes[decaymode_m]==combModes[imode])
@@ -212,10 +233,36 @@ for ev in tree:
     # costheta
     h_costheta_corr[imode].Fill(ev.cos_minus, ev.cos_plus)
 
+    # Old DecayMode
+    index2_oDM = len(combModes)-1
+    if decaymode_p in [1,2,4] and decaymode_m in [1,2,4]:
+        ## lab frame
+        h_evis_corr[0][index2_oDM].Fill(ev.evis_minus_lab, ev.evis_plus_lab)
+        h_upsilon_corr[0][index2_oDM].Fill(ev.upsilon_minus_lab, ev.upsilon_plus_lab)
+        h_evis_upsilon_corr[0][index2_oDM].Fill(
+            ev.upsilon_minus_lab if plotUpsilon_x else ev.evis_minus_lab,
+            ev.upsilon_plus_lab if plotUpsilon_y else ev.evis_plus_lab)
+        ## boson rest frame
+        h_evis_corr[1][index2_oDM].Fill(ev.evis_minus_bRF, ev.evis_plus_bRF)
+        h_upsilon_corr[1][index2_oDM].Fill(ev.upsilon_minus_bRF, ev.upsilon_plus_bRF)
+        h_evis_upsilon_corr[1][index2_oDM].Fill(
+            ev.upsilon_minus_bRF if plotUpsilon_x else ev.evis_minus_bRF,
+            ev.upsilon_plus_bRF if plotUpsilon_y else ev.evis_plus_bRF)
+        ## visible tau pair rest frame
+        h_evis_corr[2][index2_oDM].Fill(ev.evis_minus_visRF, ev.evis_plus_visRF)
+        h_upsilon_corr[2][index2_oDM].Fill(ev.upsilon_minus_visRF, ev.upsilon_plus_visRF)
+        h_evis_upsilon_corr[2][index2_oDM].Fill(
+            ev.upsilon_minus_visRF if plotUpsilon_x else ev.evis_minus_visRF,
+            ev.upsilon_plus_visRF if plotUpsilon_y else ev.evis_plus_visRF)
+
+        h_costheta_corr[index2_oDM].Fill(ev.cos_minus, ev.cos_plus)
+    
     #break
 
 ################
 # draw and save histogmras
+
+gStyle.SetOptStat(10)
 
 canvas = TCanvas()
 
