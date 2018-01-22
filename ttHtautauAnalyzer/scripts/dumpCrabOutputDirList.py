@@ -25,7 +25,7 @@ def getLatestTimeStamp(timestamplist):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Dump the list eos directories of crab job outputs given samples names and analysis type')
 
-    parser.add_argument('type', type=str, choices=['1l2tau','2lss1tau','3l1tau'],
+    parser.add_argument('type', type=str, choices=['1l2tau','2lss1tau','3l1tau','gen'],
                         help='analysis type')
     parser.add_argument('samples', nargs='+', type=str,
                         help="sample names. NOTE: They will be hadd'ed all together into ONE root file. Normally they should be the same type of samples e.g. TTW and TTW_ext")
