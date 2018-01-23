@@ -9,6 +9,8 @@ parser.add_argument('-t','--treename', type=str, default='GenAna/eventTree',
                     help="tree name")
 parser.add_argument('-o','--outdir', type=str, default='ttH/',
                     help="output directory")
+parser.add_argument('-e','--epsilon', type=float, default=0.000001,
+                    help="small addition to xmax to include the upper edge in the last bin; set to 0 if wish to exclude upper edge in the last bin")
 args = parser.parse_args()
 
 # read root file and get the event tree
@@ -33,7 +35,7 @@ h_evis = [[[] for j in range(len(charges))] for i in range(len(frames))]
 for f, frame in enumerate(frames):
     for c, charge in enumerate(charges):
         for decay in decaymodes:
-            xmax=50. if frame=='lab' else 1.
+            xmax=50. if frame=='lab' else 1.+args.epsilon
             h_tmp = TH1F('h_evis_'+charge+'_'+decay+"_"+frame,
                          '#tau^{'+signs[charge]+'}  '+decay+'  '+frame+' frame',
                          20, 0., xmax)
@@ -48,7 +50,7 @@ for f, frame in enumerate(frames):
         for decay in decaymodes:
             h_tmp = TH1F('h_upsilon_'+charge+'_'+decay+"_"+frame,
                          '#tau^{'+signs[charge]+'}  '+decay+'  '+frame+' frame',
-                         20, -1., 1.)
+                         20, -1., 1.+args.epsilon)
             h_tmp.GetXaxis().SetTitle("(E_{#pm}-E_{0})/(E_{#pm}+E_{0})")
             h_upsilon[f][c].append(h_tmp)
             
@@ -58,7 +60,7 @@ h_cos = [[] for i in range(len(charges))]
 for c, charge in enumerate(charges):
     for decay in decaymodes:
         h_tmp = TH1F('h_cos_'+charge+'_'+decay,'#tau^{'+signs[charge]+'}  '+decay,
-                     20, -1., 1.)
+                     20, -1., 1.+args.epsilon)
         h_tmp.GetXaxis().SetTitle("cos#theta^{"+signs[charge]+"}")
         h_cos[c].append(h_tmp)
 
@@ -76,7 +78,7 @@ print combModes
 h_costheta_corr = []
 for mode in combModes:
     h_tmp = TH2F('h_costheta_corr_'+mode+'_'+frame, mode+' ('+frame+' frame)',
-                 20, -1., 1., 20, -1., 1.)
+                 20, -1., 1.+args.epsilon, 20, -1., 1.+args.epsilon)
     h_tmp.GetXaxis().SetTitle("cos#theta^{-}")
     h_tmp.GetYaxis().SetTitle("cos#theta^{+}")
     h_costheta_corr.append(h_tmp)
@@ -86,7 +88,7 @@ h_evis_corr = [[] for i in range(len(frames))]
 
 for f, frame in enumerate(frames):
     for mode in combModes:
-        xmax=50. if frame=='lab' else 1.
+        xmax=50. if frame=='lab' else 1.+args.epsilon
         h_tmp = TH2F('h_evis_corr_'+mode+'_'+frame, mode+' ('+frame+' frame)',
                      20, 0., xmax, 20, 0., xmax)
         h_tmp.GetXaxis().SetTitle('2E_{vis}^{-}/M_{X} ('+mode.split('_')[1]+')')
@@ -98,7 +100,7 @@ h_upsilon_corr = [[] for i in range(len(frames))]
 for f, frame in enumerate(frames):
     for mode in combModes:
         h_tmp = TH2F('h_upsilon_corr_'+mode+'_'+frame, mode+' ('+frame+' frame)',
-                     20, -1., 1., 20, -1., 1.)
+                     20, -1., 1.+args.epsilon, 20, -1., 1.+args.epsilon)
         h_tmp.GetXaxis().SetTitle('#Upsilon^{-} ('+mode.split('_')[1]+')')
         h_tmp.GetYaxis().SetTitle('#Upsilon^{+} ('+mode.split('_')[0]+')')
         h_upsilon_corr[f].append(h_tmp)
@@ -108,19 +110,19 @@ h_evis_upsilon_corr = [[] for i in range(len(frames))]
 for f, frame in enumerate(frames):
     for mode in combModes:
         xmin = 0.
-        xmax = 50. if frame=='lab' else 1.
+        xmax = 50. if frame=='lab' else 1.+args.epsilon
         ymin = 0.
-        ymax = 50. if frame=='lab' else 1.
+        ymax = 50. if frame=='lab' else 1.+args.epsilon
         xtitle = '2E_{vis}^{-}/M_{X}'
         ytitle = '2E_{vis}^{+}/M_{X}'
         
         if mode.split('_')[1] in ['1prong1pi0','1prong2pi0']:
             xmin = -1.
-            xmax = 1.
+            xmax = 1.+args.epsilon
             xtitle = '#Upsilon^{-}'
         if mode.split('_')[0] in ['1prong1pi0','1prong2pi0']:
             ymin = -1.
-            ymax = 1.
+            ymax = 1.+args.epsilon
             ytitle = '#Upsilon^{+}'
             
         h_tmp = TH2F('h_evis_upsilon_corr_'+mode+'_'+frame,
