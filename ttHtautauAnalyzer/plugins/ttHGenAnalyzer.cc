@@ -139,6 +139,48 @@ class ttHGenAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 		}
 	}
 	
+	float Upsilon(const TLorentzVector& p4_leadtrack,
+				  const TLorentzVector& p4_visible) 
+	{
+		// (2*E_ldgtrk - E_vis) / E_vis
+		return (2*p4_leadtrack.Energy()/p4_visible.Energy() - 1);
+	}
+
+	float TauDecayEnergyAsymmetry(const TLorentzVector& p4_charged,
+								  const TLorentzVector& p4_neutral)
+	{
+		// (E_charged - E_neutral) / (E_charged + E_neutral) of tau decay products
+		return (p4_charged.Energy() - p4_neutral.Energy()) / (p4_charged.Energy() + p4_neutral.Energy());
+	}
+
+	float lambda(float a, float b, float c)
+	{
+		return a*a + b*b + c*c - 2*a*b - 2*b*c - 2*a*c;
+	}
+	
+	float CosPsi(const TLorentzVector& p1, const TLorentzVector& p2,
+				 const TLorentzVector& p3, float mass = 0.139)
+	// lab frame, 3 prongs only
+	{
+		// angle between the direction of the normal to the plane defined by the three pions and the direction of flight of a1
+		float s = (p1+p2+p3).M2();
+		float s12 = (p1+p2).M2();
+		float s23 = (p2+p3).M2();
+		float s13 = (p1+p3).M2();
+
+		TVector3 v1 = p1.Vect();
+		TVector3 v2 = p2.Vect();
+		TVector3 v3 = p3.Vect();
+
+		float m2 = mass*mass;
+		
+		float numerator = v1.Dot(v2.Cross(v3)) / (v1+v2+v3).Mag();
+		float denominator = TMath::Sqrt(-lambda(lambda(s,s12,m2),lambda(s,s13,m2),
+												lambda(s,s23,m2)));
+
+		return 8*s*numerator/denominator;
+	}
+	
 private:
 	virtual void beginJob() override;
 	virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
@@ -158,35 +200,56 @@ private:
 	int decayMode_plus_;
 	int decayMode_minus_;
 	// lab frame
-	float evis_plus_lab_;
+	float evis_plus_lab_;  // visble energy / (boson mass / 2)
 	float evis_minus_lab_;
-	float upsilon_plus_lab_;
+	float upsilon_plus_lab_;  // (E_charged - E_neutral) / (E_charged + E_neutral)
 	float upsilon_minus_lab_;
+	float cosTauTheta_plus_lab_;  // angle between tau and visible decay products
+	float cosTauTheta_minus_lab_;
+	float x1ThreeProngs_plus_lab_; // E1/(E1+E2+E3) of 3 pions
+	float x1ThreeProngs_minus_lab_;
+	float x2ThreeProngs_plus_lab_;
+	float x2ThreeProngs_minus_lab_;
+	float x3ThreeProngs_plus_lab_;
+	float x3ThreeProngs_minus_lab_;
 	// Boson rest frame
 	float evis_plus_bRF_;
 	float evis_minus_bRF_;
 	float upsilon_plus_bRF_;
 	float upsilon_minus_bRF_;
+	float cosTauTheta_plus_bRF_;
+	float cosTauTheta_minus_bRF_;
+	float x1ThreeProngs_plus_bRF_; // E1/(E1+E2+E3) of 3 pions
+	float x1ThreeProngs_minus_bRF_;
+	float x2ThreeProngs_plus_bRF_;
+	float x2ThreeProngs_minus_bRF_;
+	float x3ThreeProngs_plus_bRF_;
+	float x3ThreeProngs_minus_bRF_;
 	// visible tau pair rest frame
 	float evis_plus_visRF_;
 	float evis_minus_visRF_;
 	float upsilon_plus_visRF_;
 	float upsilon_minus_visRF_;
+	//float cosTauTheta_plus_visRF_;
+	//float cosTauTheta_minus_visRF_;
+	//float x1ThreeProngs_plus_visRF_; // E1/(E1+E2+E3) of 3 pions
+	//float x1ThreeProngs_minus_visRF_;
+	//float x2ThreeProngs_plus_visRF_;
+	//float x2ThreeProngs_minus_visRF_;
+	//float x3ThreeProngs_plus_visRF_;
+	//float x3ThreeProngs_minus_visRF_;
 
-	float cos_plus_;
+	// angle between visible daughter and tau direction of flight in tau plus frame
+	float cos_plus_; 
+	// angle between visible daughter and tau direction of flight in tau minus frame
 	float cos_minus_;
+
+	// 3-prong decay mode
+	float cosPsi_plus_;
+	float cosPsi_minus_;
 	
 	// Tree
 	TTree* eventTree_;
-
-	/*
-	// histograms
-	// decay mode: [0]:pi+/pi-, [1]:pi+/rho-, [2]:pi+/l-, [3]:rho+/rho-, [4]:rho+/l-
-	// not include a1 yet
-	TH2F* h_taudecay_costheta_correlation[5];
-	TH2F* h_taudecay_Evis_correlation[5];
-	TH2F* h_taudecay_Evis_correlation_visRF[5];
-	*/
 };
 
 //
@@ -218,63 +281,46 @@ ttHGenAnalyzer::ttHGenAnalyzer(const edm::ParameterSet& iConfig):
    eventTree_->Branch("evis_minus_lab", &evis_minus_lab_);
    eventTree_->Branch("upsilon_plus_lab", &upsilon_plus_lab_);
    eventTree_->Branch("upsilon_minus_lab", &upsilon_minus_lab_);
+   eventTree_->Branch("cosTauTheta_plus_lab", &cosTauTheta_plus_lab_);
+   eventTree_->Branch("cosTauTheta_minus_lab", &cosTauTheta_minus_lab_);
+   eventTree_->Branch("x1ThreeProngs_plus_lab", &x1ThreeProngs_plus_lab_);
+   eventTree_->Branch("x1ThreeProngs_minus_lab", &x1ThreeProngs_minus_lab_);
+   eventTree_->Branch("x2ThreeProngs_plus_lab", &x2ThreeProngs_plus_lab_);
+   eventTree_->Branch("x2ThreeProngs_minus_lab", &x2ThreeProngs_minus_lab_);
+   eventTree_->Branch("x3ThreeProngs_plus_lab", &x3ThreeProngs_plus_lab_);
+   eventTree_->Branch("x3ThreeProngs_minus_lab", &x3ThreeProngs_minus_lab_);
    eventTree_->Branch("evis_plus_bRF", &evis_plus_bRF_);
    eventTree_->Branch("evis_minus_bRF", &evis_minus_bRF_);
    eventTree_->Branch("upsilon_plus_bRF", &upsilon_plus_bRF_);
    eventTree_->Branch("upsilon_minus_bRF", &upsilon_minus_bRF_);
+   eventTree_->Branch("cosTauTheta_plus_bRF", &cosTauTheta_plus_bRF_);
+   eventTree_->Branch("cosTauTheta_minus_bRF", &cosTauTheta_minus_bRF_);
+   eventTree_->Branch("x1ThreeProngs_plus_bRF", &x1ThreeProngs_plus_bRF_);
+   eventTree_->Branch("x1ThreeProngs_minus_bRF", &x1ThreeProngs_minus_bRF_);
+   eventTree_->Branch("x2ThreeProngs_plus_bRF", &x2ThreeProngs_plus_bRF_);
+   eventTree_->Branch("x2ThreeProngs_minus_bRF", &x2ThreeProngs_minus_bRF_);
+   eventTree_->Branch("x3ThreeProngs_plus_bRF", &x3ThreeProngs_plus_bRF_);
+   eventTree_->Branch("x3ThreeProngs_minus_bRF", &x3ThreeProngs_minus_bRF_);
    eventTree_->Branch("evis_plus_visRF", &evis_plus_visRF_);
    eventTree_->Branch("evis_minus_visRF", &evis_minus_visRF_);
    eventTree_->Branch("upsilon_plus_visRF", &upsilon_plus_visRF_);
    eventTree_->Branch("upsilon_minus_visRF", &upsilon_minus_visRF_);
+   //eventTree_->Branch("cosTauTheta_plus_visRF", &cosTauTheta_plus_visRF_);
+   //eventTree_->Branch("cosTauTheta_minus_visRF", &cosTauTheta_minus_visRF_);
+   //eventTree_->Branch("x1ThreeProngs_plus_visRF", &x1ThreeProngs_plus_visRF_);
+   //eventTree_->Branch("x1ThreeProngs_minus_visRF", &x1ThreeProngs_minus_visRF_);
+   //eventTree_->Branch("x2ThreeProngs_plus_visRF", &x2ThreeProngs_plus_visRF_);
+   //eventTree_->Branch("x2ThreeProngs_minus_visRF", &x2ThreeProngs_minus_visRF_);
+   //eventTree_->Branch("x3ThreeProngs_plus_visRF", &x3ThreeProngs_plus_visRF_);
+   //eventTree_->Branch("x3ThreeProngs_minus_visRF", &x3ThreeProngs_minus_visRF_);
    eventTree_->Branch("cos_plus", &cos_plus_);
    eventTree_->Branch("cos_minus", &cos_minus_);
-   
-   /*
-   // histograms
-   h_taudecay_costheta_correlation[0] = fs_->make<TH2F>("h_taudecay_costheta_pipi","1prong0pi0 + 1prong0pi0",20, -1, 1, 20, -1, 1);
-   h_taudecay_costheta_correlation[1] = fs_->make<TH2F>("h_taudecay_costheta_pirho","1prong0pi0 + 1prong1pi0",20, -1, 1, 20, -1, 1);
-   h_taudecay_costheta_correlation[2] = fs_->make<TH2F>("h_taudecay_costheta_pil","1prong0pi0 + e/mu",20, -1, 1, 20, -1, 1);
-   h_taudecay_costheta_correlation[3] = fs_->make<TH2F>("h_taudecay_costheta_rhorho","1prong1pi0 + 1prong1pi0",20, -1, 1, 20, -1, 1);
-   h_taudecay_costheta_correlation[4] = fs_->make<TH2F>("h_taudecay_costheta_rhol","1prong1pi0 + e/mu",20, -1, 1, 20, -1, 1);
-   // set axis labels
-   for (int i=0; i<5; ++i) {
-	   h_taudecay_costheta_correlation[i]->GetXaxis()->SetTitle("cos#theta^{-}");
-	   h_taudecay_costheta_correlation[i]->GetYaxis()->SetTitle("cos#theta^{+}");
-   }
-   
-   h_taudecay_Evis_correlation[0] = fs_->make<TH2F>("h_taudecay_Evis_pipi","1prong0pi0 + 1prong0pi0 (Boson rest frame)",20, 0, 1, 20, 0, 1);
-   h_taudecay_Evis_correlation[1] = fs_->make<TH2F>("h_taudecay_Evis_pirho","1prong0pi0 + 1prong1pi0 (Boson rest frame)",20, 0, 1, 20, 0, 1);
-   h_taudecay_Evis_correlation[2] = fs_->make<TH2F>("h_taudecay_Evis_pil","1prong0pi0 + e/mu (Boson rest frame)",20, 0, 1, 20, 0, 1);
-   h_taudecay_Evis_correlation[3] = fs_->make<TH2F>("h_taudecay_Evis_rhorho","1prong1pi0 + 1prong1pi0 (Boson rest frame)",20, 0, 1, 20, 0, 1);
-   h_taudecay_Evis_correlation[4] = fs_->make<TH2F>("h_taudecay_Evis_rhol","1prong1pi0 + e/mu (Boson rest frame)",20, 0, 1, 20, 0, 1);
-   // set axis labels
-   for (int i=0; i<5; ++i) {
-	   h_taudecay_Evis_correlation[i]->GetXaxis()->SetTitle("2E_{vis}^{-}/M_{X}");
-	   h_taudecay_Evis_correlation[i]->GetYaxis()->SetTitle("2E_{vis}^{+}/M_{X}");
-   }
-
-   h_taudecay_Evis_correlation_visRF[0] = fs_->make<TH2F>("h_taudecay_Evis_pipi_visRF","1prong0pi0 + 1prong0pi0 (visible tau pair rest frame)",20, 0, 1, 20, 0, 1);
-   h_taudecay_Evis_correlation_visRF[1] = fs_->make<TH2F>("h_taudecay_Evis_pirho_visRF","1prong0pi0 + 1prong1pi0 (visible tau pair rest frame)",20, 0, 1, 20, 0, 1);
-   h_taudecay_Evis_correlation_visRF[2] = fs_->make<TH2F>("h_taudecay_Evis_pil_visRF","1prong0pi0 + e/mu (visible tau pair rest frame)",20, 0, 1, 20, 0, 1);
-   h_taudecay_Evis_correlation_visRF[3] = fs_->make<TH2F>("h_taudecay_Evis_rhorho_visRF","1prong1pi0 + 1prong1pi0 (visible tau pair rest frame)",20, 0, 1, 20, 0, 1);
-   h_taudecay_Evis_correlation_visRF[4] = fs_->make<TH2F>("h_taudecay_Evis_rhol_visRF","1prong1pi0 + e/mu (visible tau pair rest frame)",20, 0, 1, 20, 0, 1);
-   // set axis labels
-   for (int i=0; i<5; ++i) {
-	   h_taudecay_Evis_correlation_visRF[i]->GetXaxis()->SetTitle("2E_{vis}^{-}/M_{X}");
-	   h_taudecay_Evis_correlation_visRF[i]->GetYaxis()->SetTitle("2E_{vis}^{+}/M_{X}");
-   } 
-   */
-   
+   eventTree_->Branch("cosPsi_plus", &cosPsi_plus_);
+   eventTree_->Branch("cosPsi_minus", &cosPsi_minus_);
 }
 
 
-ttHGenAnalyzer::~ttHGenAnalyzer()
-{
- 
-   // do anything here that needs to be done at desctruction time
-   // (e.g. close files, deallocate resources etc.)
-
-}
+ttHGenAnalyzer::~ttHGenAnalyzer(){}
 
 
 //
@@ -362,6 +408,8 @@ ttHGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
    TLorentzVector tauplusp4, visplusp4, chargedplusp4, neutralplusp4;
    TLorentzVector tauminusp4, visminusp4, chargedminusp4, neutralminusp4;
+   TLorentzVector pion1tauplusp4, pion2tauplusp4, pion3tauplusp4;
+   TLorentzVector pion1tauminusp4, pion2tauminusp4, pion3tauminusp4;
    GeneratorTau::tauDecayModeEnum decaymode_plus =
 	   GeneratorTau::tauDecayModeEnum::kUndefined;
    GeneratorTau::tauDecayModeEnum decaymode_minus =
@@ -372,71 +420,113 @@ ttHGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	   //printDecayChain(tau);
 	   
 	   LorentzVector vis = tau.getVisibleFourVector();
-	   vector<LorentzVector> chargedpions = tau.getChargedPions();
+	   auto chargedpions = tau.getGenChargedPions();
 	   LorentzVector charged;
-	   for (auto & pion : chargedpions)
-		   charged += pion;
+	   for (const auto & pion : chargedpions)
+		   charged += pion->p4();
 	   LorentzVector neutral = vis - charged;
+
+	   vector<LorentzVector> pions_sorted;
+	   if (tau.getDecayType()==GeneratorTau::tauDecayModeEnum::kThreeProng0pi0) {
+		   assert(chargedpions.size()==3);
+		   // assign pion1 and pion2 to the two indistinguishable pions
+		   int i_distinguishable = -1;
+		   for (unsigned int i=0; i<3; ++i) {
+			   if (chargedpions[i]->charge() * tau.charge() < 0)
+				   i_distinguishable = i;
+			   else
+				   pions_sorted.push_back(chargedpions[i]->p4());
+			   
+		   }
+		   assert(i_distinguishable>=0 and i_distinguishable<3);
+		   pions_sorted.push_back(chargedpions[i_distinguishable]->p4());
+		   assert(pions_sorted.size()==3);
+		   /*
+		   if (neutral.energy()!=0) {
+			   auto npis = tau.getGenNeutralPions();
+			   cout << "number of neutral pions : " << npis.size() << endl;
+			   auto stabledaugs = tau.getStableDecayProducts();
+			   for (const auto& d: stabledaugs)
+				   cout << d->pdgId() << endl;
+		   }
+		   */	   
+	   }
 	   
 	   if (tau.charge()>0) { // tau+
-		   tauplusp4.SetPtEtaPhiM(tau.pt(), tau.eta(), tau.phi(), tau.mass());
-		   visplusp4.SetPtEtaPhiM(vis.pt(), vis.eta(), vis.phi(), vis.mass());
-		   chargedplusp4.SetPtEtaPhiM(charged.pt(), charged.eta(), charged.phi(), charged.mass());
-		   neutralplusp4.SetPtEtaPhiM(neutral.pt(), neutral.eta(), neutral.phi(), neutral.mass());
 		   decaymode_plus = tau.getDecayType();
+		   tauplusp4.SetPtEtaPhiM(tau.pt(),tau.eta(),tau.phi(),tau.mass());
+		   visplusp4.SetPtEtaPhiM(vis.pt(),vis.eta(),vis.phi(),vis.mass()); 
+		   chargedplusp4.SetPtEtaPhiM(charged.pt(),charged.eta(),charged.phi(),charged.mass());
+		   neutralplusp4.SetPtEtaPhiM(neutral.pt(),neutral.eta(),neutral.phi(),neutral.mass());
+		   
+		   if (pions_sorted.size() > 0) { // 3 prongs
+			   pion1tauplusp4.SetPtEtaPhiM(pions_sorted[0].pt(),pions_sorted[0].eta(),pions_sorted[0].phi(),pions_sorted[0].mass());
+			   pion2tauplusp4.SetPtEtaPhiM(pions_sorted[1].pt(),pions_sorted[1].eta(),pions_sorted[1].phi(),pions_sorted[1].mass());
+			   pion3tauplusp4.SetPtEtaPhiM(pions_sorted[2].pt(),pions_sorted[2].eta(),pions_sorted[2].phi(),pions_sorted[2].mass());
+		   }		   
 	   }
 	   else {  // tau-
-		   tauminusp4.SetPtEtaPhiM(tau.pt(), tau.eta(), tau.phi(), tau.mass());
-		   visminusp4.SetPtEtaPhiM(vis.pt(), vis.eta(), vis.phi(), vis.mass());
-		   chargedminusp4.SetPtEtaPhiM(charged.pt(), charged.eta(), charged.phi(), charged.mass());
-		   neutralminusp4.SetPtEtaPhiM(neutral.pt(), neutral.eta(), neutral.phi(), neutral.mass());
 		   decaymode_minus = tau.getDecayType();
+		   tauminusp4.SetPtEtaPhiM(tau.pt(),tau.eta(),tau.phi(),tau.mass());
+		   visminusp4.SetPtEtaPhiM(vis.pt(),vis.eta(),vis.phi(),vis.mass()); 
+		   chargedminusp4.SetPtEtaPhiM(charged.pt(),charged.eta(),charged.phi(),charged.mass());
+		   neutralminusp4.SetPtEtaPhiM(neutral.pt(),neutral.eta(),neutral.phi(),neutral.mass());
+		   
+		   if (pions_sorted.size() > 0) { // 3 prongs
+			   pion1tauminusp4.SetPtEtaPhiM(pions_sorted[0].pt(),pions_sorted[0].eta(),pions_sorted[0].phi(),pions_sorted[0].mass());
+			   pion2tauminusp4.SetPtEtaPhiM(pions_sorted[1].pt(),pions_sorted[1].eta(),pions_sorted[1].phi(),pions_sorted[1].mass());
+			   pion3tauminusp4.SetPtEtaPhiM(pions_sorted[2].pt(),pions_sorted[2].eta(),pions_sorted[2].phi(),pions_sorted[2].mass());
+		   }
 	   }
    }
 
    assert(decaymode_plus!=GeneratorTau::tauDecayModeEnum::kUndefined and
 		  decaymode_minus!=GeneratorTau::tauDecayModeEnum::kUndefined);
-   /*
-   int mode = -1;
-   if (decaymode_plus==GeneratorTau::tauDecayModeEnum::kOneProng0pi0 and
-	   decaymode_minus==GeneratorTau::tauDecayModeEnum::kOneProng0pi0) {
-	   mode = 0;
-   }
-   else if (decaymode_plus==GeneratorTau::tauDecayModeEnum::kOneProng0pi0 and
-			decaymode_minus==GeneratorTau::tauDecayModeEnum::kOneProng1pi0) {
-	   mode = 1;
-   }
-   else if (decaymode_plus==GeneratorTau::tauDecayModeEnum::kOneProng0pi0 and
-			(decaymode_minus==GeneratorTau::tauDecayModeEnum::kElectron or
-			 decaymode_minus==GeneratorTau::tauDecayModeEnum::kMuon)) {
-	   mode = 2;
-   }
-   else if (decaymode_plus==GeneratorTau::tauDecayModeEnum::kOneProng1pi0 and
-			decaymode_minus==GeneratorTau::tauDecayModeEnum::kOneProng1pi0) {
-	   mode = 3;
-   }
-   else if (decaymode_plus==GeneratorTau::tauDecayModeEnum::kOneProng1pi0 and
-			(decaymode_minus==GeneratorTau::tauDecayModeEnum::kElectron or
-			 decaymode_minus==GeneratorTau::tauDecayModeEnum::kMuon)) {
-	   mode = 4;
-   }
-   else
-   	   return;
-
-   assert(mode > -1);
-   */
 
    decayMode_plus_ = decaymode_plus;
    decayMode_minus_ = decaymode_minus;
 
    // Lab frame
    TLorentzVector xp4;
-   xp4.SetPtEtaPhiM(boson->pt(), boson->eta(), boson->phi(), boson->mass());
+   xp4.SetPtEtaPhiM(boson->pt(),boson->eta(),boson->phi(),boson->mass());
    
    evis_plus_lab_ = 2*visplusp4.Energy()/xp4.M();
    evis_minus_lab_ = 2*visminusp4.Energy()/xp4.M();
-   upsilon_plus_lab_ = (chargedplusp4.Energy()-neutralplusp4.Energy())/(chargedplusp4.Energy()+neutralplusp4.Energy());
-   upsilon_minus_lab_ = (chargedminusp4.Energy()-neutralminusp4.Energy())/(chargedminusp4.Energy()+neutralminusp4.Energy());
+   upsilon_plus_lab_ = TauDecayEnergyAsymmetry(chargedplusp4, neutralplusp4);
+   upsilon_minus_lab_ = TauDecayEnergyAsymmetry(chargedminusp4, neutralminusp4);
+   cosTauTheta_plus_lab_ = TMath::Cos(visplusp4.Angle(tauplusp4.Vect()));
+   cosTauTheta_minus_lab_ = TMath::Cos(visminusp4.Angle(tauminusp4.Vect()));
+   if (decayMode_plus_ == GeneratorTau::tauDecayModeEnum::kThreeProng0pi0) {
+	   float E1 = pion1tauplusp4.Energy();  float E2 = pion2tauplusp4.Energy();
+	   float E3 = pion3tauplusp4.Energy();
+	   float Ea = (pion1tauplusp4+pion2tauplusp4+pion3tauplusp4).Energy();
+	   x1ThreeProngs_plus_lab_ = E1/Ea;
+	   x2ThreeProngs_plus_lab_ = E2/Ea;
+	   x3ThreeProngs_plus_lab_ = E3/Ea;
+	   cosPsi_plus_ = CosPsi(pion1tauplusp4, pion2tauplusp4, pion3tauplusp4);
+   }
+   else {
+	   x1ThreeProngs_plus_lab_ = -9;
+	   x2ThreeProngs_plus_lab_ = -9;
+	   x3ThreeProngs_plus_lab_ = -9;
+	   cosPsi_plus_ = -9;
+   }
+   if (decayMode_minus_ == GeneratorTau::tauDecayModeEnum::kThreeProng0pi0) {
+	   float E1 = pion1tauminusp4.Energy();  float E2 = pion2tauminusp4.Energy();
+	   float E3 = pion3tauminusp4.Energy();
+	   float Ea = (pion1tauminusp4+pion2tauminusp4+pion3tauminusp4).Energy();
+	   x1ThreeProngs_minus_lab_ = E1/Ea;
+	   x2ThreeProngs_minus_lab_ = E2/Ea;
+	   x3ThreeProngs_minus_lab_ = E3/Ea;
+	   cosPsi_minus_ = CosPsi(pion1tauminusp4, pion2tauminusp4, pion3tauminusp4);
+   }
+   else {
+	   x1ThreeProngs_minus_lab_ = -9;
+	   x2ThreeProngs_minus_lab_ = -9;
+	   x3ThreeProngs_minus_lab_ = -9;
+	   cosPsi_minus_ = -9;
+   }
+   
    // Boost to boson rest frame
    TLorentzVector taupx(tauplusp4), vispx(visplusp4);
    TLorentzVector chargedpx(chargedplusp4), neutralpx(neutralplusp4);
@@ -455,12 +545,45 @@ ttHGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    chargedmx.Boost(-xboost);
    neutralmx.Boost(-xboost);
 
+   pion1tauplusp4.Boost(-xboost);
+   pion2tauplusp4.Boost(-xboost);
+   pion3tauplusp4.Boost(-xboost);
+   pion1tauminusp4.Boost(-xboost);
+   pion2tauminusp4.Boost(-xboost);
+   pion3tauminusp4.Boost(-xboost);
+
    evis_plus_bRF_ = 2*vispx.Energy()/xp4.M();
    evis_minus_bRF_ = 2*vismx.Energy()/xp4.M();
-   upsilon_plus_bRF_ = (chargedpx.Energy()-neutralpx.Energy())/(chargedpx.Energy()+neutralpx.Energy());
-   upsilon_minus_bRF_ = (chargedmx.Energy()-neutralmx.Energy())/(chargedmx.Energy()+neutralmx.Energy());
-   
-   //h_taudecay_Evis_correlation[mode]->Fill(zm, zp);
+   upsilon_plus_bRF_ = TauDecayEnergyAsymmetry(chargedpx, neutralpx);
+   upsilon_minus_bRF_ = TauDecayEnergyAsymmetry(chargedmx, neutralmx);
+   cosTauTheta_plus_bRF_ = TMath::Cos(vispx.Angle(taupx.Vect()));
+   cosTauTheta_minus_bRF_ = TMath::Cos(vismx.Angle(taumx.Vect()));
+   if (decayMode_plus_ == GeneratorTau::tauDecayModeEnum::kThreeProng0pi0) {
+	   float E1 = pion1tauplusp4.Energy();  float E2 = pion2tauplusp4.Energy();
+	   float E3 = pion3tauplusp4.Energy();
+	   float Ea = (pion1tauplusp4+pion2tauplusp4+pion3tauplusp4).Energy();
+	   x1ThreeProngs_plus_bRF_ = E1/Ea;
+	   x2ThreeProngs_plus_bRF_ = E2/Ea;
+	   x3ThreeProngs_plus_bRF_ = E3/Ea;
+   }
+   else {
+	   x1ThreeProngs_plus_bRF_ = -9;
+	   x2ThreeProngs_plus_bRF_ = -9;
+	   x3ThreeProngs_plus_bRF_ = -9;
+   }
+   if (decayMode_minus_ == GeneratorTau::tauDecayModeEnum::kThreeProng0pi0) {
+	   float E1 = pion1tauminusp4.Energy();  float E2 = pion2tauminusp4.Energy();
+	   float E3 = pion3tauminusp4.Energy();
+	   float Ea = (pion1tauminusp4+pion2tauminusp4+pion3tauminusp4).Energy();
+	   x1ThreeProngs_minus_bRF_ = E1/Ea;
+	   x2ThreeProngs_minus_bRF_ = E2/Ea;
+	   x3ThreeProngs_minus_bRF_ = E3/Ea;
+   }
+   else {
+	   x1ThreeProngs_minus_bRF_ = -9;
+	   x2ThreeProngs_minus_bRF_ = -9;
+	   x3ThreeProngs_minus_bRF_ = -9;
+   }
 
    // Boost to tau+ rest frame
    TVector3 tpboost = taupx.BoostVector();
@@ -471,8 +594,6 @@ ttHGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    TVector3 tmboost = taumx.BoostVector();
    vismx.Boost(-tmboost);
    cos_minus_ = TMath::Cos(vismx.Angle(tmboost));
-
-   //h_taudecay_costheta_correlation[mode]->Fill(cosm, cosp);
 
    // Boost to visible tau pair rest frame
    TVector3 visboost = (visplusp4+visminusp4).BoostVector();
