@@ -192,6 +192,8 @@ private:
 	//edm::EDGetTokenT<edm::View<pat::PackedGenParticle> > packedGenToken_;
 
 	int boson_pdgid_;
+	float tau_ptcut_;
+	float tau_etacut_;
 	
 	// Output file
 	edm::Service<TFileService> fs_;
@@ -264,7 +266,9 @@ private:
 // constructors and destructor
 //
 ttHGenAnalyzer::ttHGenAnalyzer(const edm::ParameterSet& iConfig):
-	boson_pdgid_ (iConfig.getParameter<int>("boson"))
+	boson_pdgid_ (iConfig.getParameter<int>("boson")),
+	tau_ptcut_ (iConfig.getParameter<double>("tauptcut")),
+	tau_etacut_ (iConfig.getParameter<double>("tauetacut"))
 {
    //now do what ever initialization is needed
    usesResource("TFileService");
@@ -420,6 +424,10 @@ ttHGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	   //printDecayChain(tau);
 	   
 	   LorentzVector vis = tau.getVisibleFourVector();
+	   // kinematic cuts
+	   if (not (vis.pt() > tau_ptcut_ and std::abs(vis.eta()) < tau_etacut_))
+		   return;
+	   
 	   auto chargedpions = tau.getGenChargedPions();
 	   LorentzVector charged;
 	   for (const auto & pion : chargedpions)
@@ -489,7 +497,7 @@ ttHGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    // Lab frame
    TLorentzVector xp4;
    xp4.SetPtEtaPhiM(boson->pt(),boson->eta(),boson->phi(),boson->mass());
-   
+
    evis_plus_lab_ = 2*visplusp4.Energy()/xp4.M();
    evis_minus_lab_ = 2*visminusp4.Energy()/xp4.M();
    upsilon_plus_lab_ = TauDecayEnergyAsymmetry(chargedplusp4, neutralplusp4);

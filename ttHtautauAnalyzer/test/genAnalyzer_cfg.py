@@ -69,7 +69,9 @@ process.TFileService = cms.Service("TFileService",
 process.GenAna = cms.EDAnalyzer('ttHGenAnalyzer',
                                 #packed = cms.InputTag("packedGenParticles"),
                                 pruned = cms.InputTag("prunedGenParticles"),
-                                boson = cms.int32(options.pdgid)
+                                boson = cms.int32(options.pdgid),
+                                tauptcut = cms.double(20.),
+                                tauetacut = cms.double(2.3)
 )
 
 process.p = cms.Path(process.GenAna)
