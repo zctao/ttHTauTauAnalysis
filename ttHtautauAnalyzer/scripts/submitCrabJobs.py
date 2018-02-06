@@ -102,7 +102,7 @@ config.Data.splitting = '%(splitting)s'
 config.Data.unitsPerJob = %(unit)s
 %(lumimask)s
 %(runrange)s
-config.Data.ignoreLocality = True
+config.Data.ignoreLocality = False
 config.Data.publication = False
 config.Data.outLFNDirBase = '%(outdir)s'
 config.Site.storageSite = 'T3_US_FNALLPC'
