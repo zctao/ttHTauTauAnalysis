@@ -143,7 +143,7 @@ class ttHGenAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 				  const TLorentzVector& p4_visible) 
 	{
 		// (2*E_ldgtrk - E_vis) / E_vis
-		return (2*p4_leadtrack.Energy()/p4_visible.Energy() - 1);
+		return (2.*p4_leadtrack.Energy()/p4_visible.Energy() - 1);
 	}
 
 	float TauDecayEnergyAsymmetry(const TLorentzVector& p4_charged,
@@ -200,7 +200,15 @@ private:
 
 	// event variables to store
 	int decayMode_plus_;
+	float pt_vis_plus_;
+	float eta_vis_plus_;
+	float phi_vis_plus_;
+	float mass_vis_plus_;
 	int decayMode_minus_;
+	float pt_vis_minus_;
+	float eta_vis_minus_;
+	float phi_vis_minus_;
+	float mass_vis_minus_;
 	// lab frame
 	float evis_plus_lab_;  // visble energy / (boson mass / 2)
 	float evis_minus_lab_;
@@ -249,6 +257,8 @@ private:
 	// 3-prong decay mode
 	float cosPsi_plus_;
 	float cosPsi_minus_;
+
+	float vismass_;
 	
 	// Tree
 	TTree* eventTree_;
@@ -280,7 +290,15 @@ ttHGenAnalyzer::ttHGenAnalyzer(const edm::ParameterSet& iConfig):
    // Setup tree
    eventTree_ = fs_->make<TTree>("eventTree", "Event tree");
    eventTree_->Branch("decayMode_plus", &decayMode_plus_);
+   eventTree_->Branch("pt_vis_plus", &pt_vis_plus_);
+   eventTree_->Branch("eta_vis_plus", &eta_vis_plus_);
+   eventTree_->Branch("phi_vis_plus", &phi_vis_plus_);
+   eventTree_->Branch("mass_vis_plus", &mass_vis_plus_);
    eventTree_->Branch("decayMode_minus", &decayMode_minus_);
+   eventTree_->Branch("pt_vis_minus", &pt_vis_minus_);
+   eventTree_->Branch("eta_vis_minus", &eta_vis_minus_);
+   eventTree_->Branch("phi_vis_minus", &phi_vis_minus_);
+   eventTree_->Branch("mass_vis_minus", &mass_vis_minus_);
    eventTree_->Branch("evis_plus_lab", &evis_plus_lab_);
    eventTree_->Branch("evis_minus_lab", &evis_minus_lab_);
    eventTree_->Branch("upsilon_plus_lab", &upsilon_plus_lab_);
@@ -321,6 +339,7 @@ ttHGenAnalyzer::ttHGenAnalyzer(const edm::ParameterSet& iConfig):
    eventTree_->Branch("cos_minus", &cos_minus_);
    eventTree_->Branch("cosPsi_plus", &cosPsi_plus_);
    eventTree_->Branch("cosPsi_minus", &cosPsi_minus_);
+   eventTree_->Branch("vismass", &vismass_);
 }
 
 
@@ -462,8 +481,12 @@ ttHGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	   
 	   if (tau.charge()>0) { // tau+
 		   decaymode_plus = tau.getDecayType();
+		   pt_vis_plus_ = vis.pt();
+		   eta_vis_plus_ = vis.eta();
+		   phi_vis_plus_ = vis.phi();
+		   mass_vis_plus_ = vis.mass();
 		   tauplusp4.SetPtEtaPhiM(tau.pt(),tau.eta(),tau.phi(),tau.mass());
-		   visplusp4.SetPtEtaPhiM(vis.pt(),vis.eta(),vis.phi(),vis.mass()); 
+		   visplusp4.SetPtEtaPhiM(vis.pt(),vis.eta(),vis.phi(),vis.mass());
 		   chargedplusp4.SetPtEtaPhiM(charged.pt(),charged.eta(),charged.phi(),charged.mass());
 		   neutralplusp4.SetPtEtaPhiM(neutral.pt(),neutral.eta(),neutral.phi(),neutral.mass());
 		   
@@ -475,6 +498,10 @@ ttHGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	   }
 	   else {  // tau-
 		   decaymode_minus = tau.getDecayType();
+		   pt_vis_minus_ = vis.pt();
+		   eta_vis_minus_ = vis.eta();
+		   phi_vis_minus_ = vis.phi();
+		   mass_vis_minus_ = vis.mass();
 		   tauminusp4.SetPtEtaPhiM(tau.pt(),tau.eta(),tau.phi(),tau.mass());
 		   visminusp4.SetPtEtaPhiM(vis.pt(),vis.eta(),vis.phi(),vis.mass()); 
 		   chargedminusp4.SetPtEtaPhiM(charged.pt(),charged.eta(),charged.phi(),charged.mass());
@@ -494,6 +521,8 @@ ttHGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    decayMode_plus_ = decaymode_plus;
    decayMode_minus_ = decaymode_minus;
 
+   vismass_ = (visplusp4+visminusp4).M();
+   
    // Lab frame
    TLorentzVector xp4;
    xp4.SetPtEtaPhiM(boson->pt(),boson->eta(),boson->phi(),boson->mass());
