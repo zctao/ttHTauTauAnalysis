@@ -23,7 +23,7 @@ options.maxEvents = -1
 # ttZ
 #'root://cmsxrootd.fnal.gov//store/mc/RunIISummer16MiniAODv2/TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/120000/0603A111-42B5-E611-9369-0CC47A7EED28.root'
 #options.inputFiles = '/store/user/matze/TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8/faster_v9_ttZ_maod_54aa74f75231422e9f4d3766cb92a64a/ttZ_maod_13294.root'
-options.inputFiles = '/store/user/matze/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/faster_v8_ttH_maod_p1_3a2fa29ab1d54ae0995b28f27b405be9/ttH_maod_102533.root',
+options.inputFiles = ['/store/user/matze/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/faster_v8_ttH_maod_p1_3a2fa29ab1d54ae0995b28f27b405be9/ttH_maod_102533.root',
 '/store/user/matze/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/faster_v8_ttH_maod_p1_3a2fa29ab1d54ae0995b28f27b405be9/ttH_maod_104121.root',
 '/store/user/matze/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/faster_v8_ttH_maod_p1_3a2fa29ab1d54ae0995b28f27b405be9/ttH_maod_105619.root',
 '/store/user/matze/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/faster_v8_ttH_maod_p1_3a2fa29ab1d54ae0995b28f27b405be9/ttH_maod_107191.root',
@@ -49,7 +49,7 @@ options.inputFiles = '/store/user/matze/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3
 '/store/user/matze/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/faster_v8_ttH_maod_p1_3a2fa29ab1d54ae0995b28f27b405be9/ttH_maod_151458.root',
 '/store/user/matze/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/faster_v8_ttH_maod_p1_3a2fa29ab1d54ae0995b28f27b405be9/ttH_maod_154249.root',
 '/store/user/matze/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/faster_v8_ttH_maod_p1_3a2fa29ab1d54ae0995b28f27b405be9/ttH_maod_157031.root',
-'/store/user/matze/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/faster_v8_ttH_maod_p1_3a2fa29ab1d54ae0995b28f27b405be9/ttH_maod_161398.root'
+'/store/user/matze/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/faster_v8_ttH_maod_p1_3a2fa29ab1d54ae0995b28f27b405be9/ttH_maod_161398.root']
 
 
 options.outputFile = 'GenParticles.root'
@@ -70,8 +70,8 @@ process.GenAna = cms.EDAnalyzer('ttHGenAnalyzer',
                                 #packed = cms.InputTag("packedGenParticles"),
                                 pruned = cms.InputTag("prunedGenParticles"),
                                 boson = cms.int32(options.pdgid),
-                                tauptcut = cms.double(20.),
-                                tauetacut = cms.double(2.3)
+                                tauptcut = cms.double(0.), # 20.
+                                tauetacut = cms.double(1000000.) # 2.3
 )
 
 process.p = cms.Path(process.GenAna)

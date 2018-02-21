@@ -138,6 +138,16 @@ class ttHGenAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 			return getLastCopy(*copy, collection);
 		}
 	}
+
+	float VisEnergyFraction_collinear(const TLorentzVector& p4_visible,
+									 float taumass = 1.777)
+	{
+		float mh = p4_visible.M();
+		float ph = p4_visible.P();
+		float Eh = p4_visible.Energy();
+
+		return 1./(1.+(taumass*taumass-mh*mh)/(2*Eh*Eh-2*Eh*ph));
+	}
 	
 	float Upsilon(const TLorentzVector& p4_leadtrack,
 				  const TLorentzVector& p4_visible) 
@@ -212,8 +222,12 @@ private:
 	// lab frame
 	float evis_plus_lab_;  // visble energy / (boson mass / 2)
 	float evis_minus_lab_;
-	float upsilon_plus_lab_;  // (E_charged - E_neutral) / (E_charged + E_neutral)
+	float evisfrac_plus_lab_;  // visible energy fraction under collinear assumption
+	float evisfrac_minus_lab_;
+	float upsilon_plus_lab_;  // (2*E_ldgtrk - E_vis) / E_vis
 	float upsilon_minus_lab_;
+	float energyasym_plus_lab_;  // (E_charged - E_neutral) / (E_charged + E_neutral)
+	float energyasym_minus_lab_;
 	float cosTauTheta_plus_lab_;  // angle between tau and visible decay products
 	float cosTauTheta_minus_lab_;
 	float x1ThreeProngs_plus_lab_; // E1/(E1+E2+E3) of 3 pions
@@ -225,8 +239,12 @@ private:
 	// Boson rest frame
 	float evis_plus_bRF_;
 	float evis_minus_bRF_;
+	float evisfrac_plus_bRF_;
+	float evisfrac_minus_bRF_;
 	float upsilon_plus_bRF_;
 	float upsilon_minus_bRF_;
+	float energyasym_plus_bRF_;
+	float energyasym_minus_bRF_;
 	float cosTauTheta_plus_bRF_;
 	float cosTauTheta_minus_bRF_;
 	float x1ThreeProngs_plus_bRF_; // E1/(E1+E2+E3) of 3 pions
@@ -238,8 +256,12 @@ private:
 	// visible tau pair rest frame
 	float evis_plus_visRF_;
 	float evis_minus_visRF_;
+	float evisfrac_plus_visRF_;
+	float evisfrac_minus_visRF_;
 	float upsilon_plus_visRF_;
 	float upsilon_minus_visRF_;
+	float energyasym_plus_visRF_;
+	float energyasym_minus_visRF_;
 	//float cosTauTheta_plus_visRF_;
 	//float cosTauTheta_minus_visRF_;
 	//float x1ThreeProngs_plus_visRF_; // E1/(E1+E2+E3) of 3 pions
@@ -301,8 +323,12 @@ ttHGenAnalyzer::ttHGenAnalyzer(const edm::ParameterSet& iConfig):
    eventTree_->Branch("mass_vis_minus", &mass_vis_minus_);
    eventTree_->Branch("evis_plus_lab", &evis_plus_lab_);
    eventTree_->Branch("evis_minus_lab", &evis_minus_lab_);
+   eventTree_->Branch("evisfrac_plus_lab", &evisfrac_plus_lab_);
+   eventTree_->Branch("evisfrac_minus_lab", &evisfrac_minus_lab_);
    eventTree_->Branch("upsilon_plus_lab", &upsilon_plus_lab_);
    eventTree_->Branch("upsilon_minus_lab", &upsilon_minus_lab_);
+   eventTree_->Branch("energyasym_plus_lab", &energyasym_plus_lab_);
+   eventTree_->Branch("energyasym_minus_lab", &energyasym_minus_lab_);
    eventTree_->Branch("cosTauTheta_plus_lab", &cosTauTheta_plus_lab_);
    eventTree_->Branch("cosTauTheta_minus_lab", &cosTauTheta_minus_lab_);
    eventTree_->Branch("x1ThreeProngs_plus_lab", &x1ThreeProngs_plus_lab_);
@@ -313,8 +339,12 @@ ttHGenAnalyzer::ttHGenAnalyzer(const edm::ParameterSet& iConfig):
    eventTree_->Branch("x3ThreeProngs_minus_lab", &x3ThreeProngs_minus_lab_);
    eventTree_->Branch("evis_plus_bRF", &evis_plus_bRF_);
    eventTree_->Branch("evis_minus_bRF", &evis_minus_bRF_);
+   eventTree_->Branch("evisfrac_plus_bRF", &evisfrac_plus_bRF_);
+   eventTree_->Branch("evisfrac_minus_bRF", &evisfrac_minus_bRF_);
    eventTree_->Branch("upsilon_plus_bRF", &upsilon_plus_bRF_);
    eventTree_->Branch("upsilon_minus_bRF", &upsilon_minus_bRF_);
+   eventTree_->Branch("energyasym_plus_bRF", &energyasym_plus_bRF_);
+   eventTree_->Branch("energyasym_minus_bRF", &energyasym_minus_bRF_);
    eventTree_->Branch("cosTauTheta_plus_bRF", &cosTauTheta_plus_bRF_);
    eventTree_->Branch("cosTauTheta_minus_bRF", &cosTauTheta_minus_bRF_);
    eventTree_->Branch("x1ThreeProngs_plus_bRF", &x1ThreeProngs_plus_bRF_);
@@ -325,8 +355,12 @@ ttHGenAnalyzer::ttHGenAnalyzer(const edm::ParameterSet& iConfig):
    eventTree_->Branch("x3ThreeProngs_minus_bRF", &x3ThreeProngs_minus_bRF_);
    eventTree_->Branch("evis_plus_visRF", &evis_plus_visRF_);
    eventTree_->Branch("evis_minus_visRF", &evis_minus_visRF_);
+   eventTree_->Branch("evisfrac_plus_visRF", &evisfrac_plus_visRF_);
+   eventTree_->Branch("evisfrac_minus_visRF", &evisfrac_minus_visRF_);
    eventTree_->Branch("upsilon_plus_visRF", &upsilon_plus_visRF_);
    eventTree_->Branch("upsilon_minus_visRF", &upsilon_minus_visRF_);
+   eventTree_->Branch("energyasym_plus_visRF", &energyasym_plus_visRF_);
+   eventTree_->Branch("energyasym_minus_visRF", &energyasym_minus_visRF_);
    //eventTree_->Branch("cosTauTheta_plus_visRF", &cosTauTheta_plus_visRF_);
    //eventTree_->Branch("cosTauTheta_minus_visRF", &cosTauTheta_minus_visRF_);
    //eventTree_->Branch("x1ThreeProngs_plus_visRF", &x1ThreeProngs_plus_visRF_);
@@ -431,6 +465,7 @@ ttHGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
    TLorentzVector tauplusp4, visplusp4, chargedplusp4, neutralplusp4;
    TLorentzVector tauminusp4, visminusp4, chargedminusp4, neutralminusp4;
+   TLorentzVector leadtrkplusp4, leadtrkminusp4;
    TLorentzVector pion1tauplusp4, pion2tauplusp4, pion3tauplusp4;
    TLorentzVector pion1tauminusp4, pion2tauminusp4, pion3tauminusp4;
    GeneratorTau::tauDecayModeEnum decaymode_plus =
@@ -478,6 +513,8 @@ ttHGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 		   }
 		   */	   
 	   }
+
+	   auto leadtrk = tau.getLeadTrack();
 	   
 	   if (tau.charge()>0) { // tau+
 		   decaymode_plus = tau.getDecayType();
@@ -494,7 +531,10 @@ ttHGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 			   pion1tauplusp4.SetPtEtaPhiM(pions_sorted[0].pt(),pions_sorted[0].eta(),pions_sorted[0].phi(),pions_sorted[0].mass());
 			   pion2tauplusp4.SetPtEtaPhiM(pions_sorted[1].pt(),pions_sorted[1].eta(),pions_sorted[1].phi(),pions_sorted[1].mass());
 			   pion3tauplusp4.SetPtEtaPhiM(pions_sorted[2].pt(),pions_sorted[2].eta(),pions_sorted[2].phi(),pions_sorted[2].mass());
-		   }		   
+		   }
+
+		   leadtrkplusp4.SetPtEtaPhiM(leadtrk->pt(), leadtrk->eta(), leadtrk->phi(),
+									  leadtrk->mass());
 	   }
 	   else {  // tau-
 		   decaymode_minus = tau.getDecayType();
@@ -512,6 +552,9 @@ ttHGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 			   pion2tauminusp4.SetPtEtaPhiM(pions_sorted[1].pt(),pions_sorted[1].eta(),pions_sorted[1].phi(),pions_sorted[1].mass());
 			   pion3tauminusp4.SetPtEtaPhiM(pions_sorted[2].pt(),pions_sorted[2].eta(),pions_sorted[2].phi(),pions_sorted[2].mass());
 		   }
+
+		   leadtrkminusp4.SetPtEtaPhiM(leadtrk->pt(), leadtrk->eta(), leadtrk->phi(),
+									   leadtrk->mass());
 	   }
    }
 
@@ -529,8 +572,12 @@ ttHGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
    evis_plus_lab_ = 2*visplusp4.Energy()/xp4.M();
    evis_minus_lab_ = 2*visminusp4.Energy()/xp4.M();
-   upsilon_plus_lab_ = TauDecayEnergyAsymmetry(chargedplusp4, neutralplusp4);
-   upsilon_minus_lab_ = TauDecayEnergyAsymmetry(chargedminusp4, neutralminusp4);
+   evisfrac_plus_lab_ = VisEnergyFraction_collinear(visplusp4);
+   evisfrac_minus_lab_ = VisEnergyFraction_collinear(visminusp4);
+   upsilon_plus_lab_ = Upsilon(leadtrkplusp4, visplusp4);
+   upsilon_minus_lab_ = Upsilon(leadtrkminusp4, visminusp4);
+   energyasym_plus_lab_ = TauDecayEnergyAsymmetry(chargedplusp4, neutralplusp4);
+   energyasym_minus_lab_ = TauDecayEnergyAsymmetry(chargedminusp4, neutralminusp4);
    cosTauTheta_plus_lab_ = TMath::Cos(visplusp4.Angle(tauplusp4.Vect()));
    cosTauTheta_minus_lab_ = TMath::Cos(visminusp4.Angle(tauminusp4.Vect()));
    if (decayMode_plus_ == GeneratorTau::tauDecayModeEnum::kThreeProng0pi0) {
@@ -569,16 +616,19 @@ ttHGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    TLorentzVector chargedpx(chargedplusp4), neutralpx(neutralplusp4);
    TLorentzVector taumx(tauminusp4), vismx(visminusp4);
    TLorentzVector chargedmx(chargedminusp4), neutralmx(neutralminusp4);
+   TLorentzVector ldgtrkpx(leadtrkplusp4), ldgtrkmx(leadtrkminusp4);
    
    TVector3 xboost = xp4.BoostVector();
    xp4.Boost(-xboost);
 
    taupx.Boost(-xboost);
    vispx.Boost(-xboost);
+   ldgtrkpx.Boost(-xboost);
    chargedpx.Boost(-xboost);
    neutralpx.Boost(-xboost);
    taumx.Boost(-xboost);
    vismx.Boost(-xboost);
+   ldgtrkmx.Boost(-xboost);
    chargedmx.Boost(-xboost);
    neutralmx.Boost(-xboost);
 
@@ -591,8 +641,12 @@ ttHGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
    evis_plus_bRF_ = 2*vispx.Energy()/xp4.M();
    evis_minus_bRF_ = 2*vismx.Energy()/xp4.M();
-   upsilon_plus_bRF_ = TauDecayEnergyAsymmetry(chargedpx, neutralpx);
-   upsilon_minus_bRF_ = TauDecayEnergyAsymmetry(chargedmx, neutralmx);
+   evisfrac_plus_bRF_ = VisEnergyFraction_collinear(vispx);
+   evisfrac_minus_bRF_ = VisEnergyFraction_collinear(vismx);
+   upsilon_plus_bRF_ = Upsilon(ldgtrkpx, vispx);
+   upsilon_minus_bRF_ = Upsilon(ldgtrkmx, vismx);
+   energyasym_plus_bRF_ = TauDecayEnergyAsymmetry(chargedpx, neutralpx);
+   energyasym_minus_bRF_ = TauDecayEnergyAsymmetry(chargedmx, neutralmx);
    cosTauTheta_plus_bRF_ = TMath::Cos(vispx.Angle(taupx.Vect()));
    cosTauTheta_minus_bRF_ = TMath::Cos(vismx.Angle(taumx.Vect()));
    if (decayMode_plus_ == GeneratorTau::tauDecayModeEnum::kThreeProng0pi0) {
@@ -636,6 +690,8 @@ ttHGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    TVector3 visboost = (visplusp4+visminusp4).BoostVector();
    visplusp4.Boost(-visboost);
    visminusp4.Boost(-visboost);
+   leadtrkplusp4.Boost(-visboost);
+   leadtrkminusp4.Boost(-visboost);
    chargedplusp4.Boost(-visboost);
    neutralplusp4.Boost(-visboost);
    chargedminusp4.Boost(-visboost);
@@ -643,8 +699,12 @@ ttHGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
    evis_plus_visRF_ = 2*visplusp4.Energy()/xp4.M();
    evis_minus_visRF_ = 2*visminusp4.Energy()/xp4.M();
-   upsilon_plus_visRF_ = (chargedplusp4.Energy()-neutralplusp4.Energy())/(chargedplusp4.Energy()+neutralplusp4.Energy());
-   upsilon_minus_visRF_ = (chargedminusp4.Energy()-neutralminusp4.Energy())/(chargedminusp4.Energy()+neutralminusp4.Energy());
+   evisfrac_plus_visRF_ = VisEnergyFraction_collinear(visplusp4);
+   evisfrac_minus_visRF_ = VisEnergyFraction_collinear(visminusp4);
+   upsilon_plus_visRF_ = Upsilon(leadtrkplusp4, visplusp4);
+   upsilon_minus_visRF_ = Upsilon(leadtrkminusp4, visminusp4);
+   energyasym_plus_visRF_ = TauDecayEnergyAsymmetry(chargedplusp4, neutralplusp4);
+   energyasym_minus_visRF_ = TauDecayEnergyAsymmetry(chargedminusp4, neutralminusp4);
 
    //h_taudecay_Evis_correlation_visRF[mode]->Fill(zmv, zpv);
 
