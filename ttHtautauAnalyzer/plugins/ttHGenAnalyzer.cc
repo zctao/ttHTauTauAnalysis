@@ -484,12 +484,17 @@ ttHGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	   
 	   auto chargedpions = tau.getGenChargedPions();
 	   LorentzVector charged;
-	   for (const auto & pion : chargedpions)
+	   // std::cout << "decay mode : " << tau.getDecayType() << std::endl; 
+	   for (const auto & pion : chargedpions) {
 		   charged += pion->p4();
+		   //std::cout << pion->pdgId() << std::endl;
+	   }
 	   LorentzVector neutral = vis - charged;
-
+	   
 	   vector<LorentzVector> pions_sorted;
 	   if (tau.getDecayType()==GeneratorTau::tauDecayModeEnum::kThreeProng0pi0) {
+		   if (chargedpions.size()!=3) return;
+		   
 		   assert(chargedpions.size()==3);
 		   // assign pion1 and pion2 to the two indistinguishable pions
 		   int i_distinguishable = -1;
