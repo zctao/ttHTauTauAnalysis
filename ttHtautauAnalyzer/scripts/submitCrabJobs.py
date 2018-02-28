@@ -44,6 +44,10 @@ parser.add_argument('-d','--dryrun', action='store_true',
 parser.add_argument('--lumimask', type=str,
                     default='https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt',
                     help='Lumi mask to run on data sample')
+parser.add_argument('-a','--automatic', action='store_true',
+                    help="Automatic data splitting")
+parser.add_argument('-b','--batch_lpc', action='store_true',
+                    help="Submit batch job on CMS LPC")
 
 args = parser.parse_args()
 
@@ -108,6 +112,15 @@ config.Data.outLFNDirBase = '%(outdir)s'
 config.Site.storageSite = 'T3_US_FNALLPC'
 '''
 
+if args.automatic:
+    template = template.replace("config.Data.unitsPerJob","#config.Data.unitsPerJob")
+
+if args.batch_lpc:
+    template = template.replace("config.Data.ignoreLocality = False",
+                                "config.Data.ignoreLocality = True\n"
+                                +"config.Site.whitelist = ['T3_US_FNALLPC']\n"
+                                +"config.Site.ignoreGlobalBlacklist = True\n")
+    
 #'analyzer2016_cfg.py'
 
 for ch in channels:
@@ -223,6 +236,10 @@ for ch in channels:
             vd['runrange'] = ''
             vd['splitting'] = 'EventAwareLumiBased'
 
+        if args.automatic:
+            vd['splitting'] = 'Automatic'
+            #vd['unit'] = '180'
+            
         # write crab config files
         open('crab/crabConfig_'+vd['name']+'.py','wt').write(template % vd)
         
