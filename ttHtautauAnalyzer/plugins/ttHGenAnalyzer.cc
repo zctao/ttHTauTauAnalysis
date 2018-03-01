@@ -222,8 +222,12 @@ private:
 	// lab frame
 	float evis_plus_lab_;  // visble energy / (boson mass / 2)
 	float evis_minus_lab_;
-	float evisfrac_plus_lab_;  // visible energy fraction under collinear assumption
+	float evisfrac_plus_lab_;  // visible energy fraction
+	float evisfrac_mctau_plus_lab_;
 	float evisfrac_minus_lab_;
+	float evisfrac_mctau_minus_lab_;
+	float evisdiff_lab_;  // E_vis_tauplus - E_vis_tauminus
+	float evissum_lab_;   // E_vis_tauplus + E_vis_tauminus
 	float upsilon_plus_lab_;  // (2*E_ldgtrk - E_vis) / E_vis
 	float upsilon_minus_lab_;
 	float energyasym_plus_lab_;  // (E_charged - E_neutral) / (E_charged + E_neutral)
@@ -240,7 +244,11 @@ private:
 	float evis_plus_bRF_;
 	float evis_minus_bRF_;
 	float evisfrac_plus_bRF_;
+	float evisfrac_mctau_plus_bRF_;
 	float evisfrac_minus_bRF_;
+	float evisfrac_mctau_minus_bRF_;
+	float evisdiff_bRF_;
+	float evissum_bRF_;
 	float upsilon_plus_bRF_;
 	float upsilon_minus_bRF_;
 	float energyasym_plus_bRF_;
@@ -257,7 +265,11 @@ private:
 	float evis_plus_visRF_;
 	float evis_minus_visRF_;
 	float evisfrac_plus_visRF_;
+	//float evisfrac_mctau_plus_visRF_;
 	float evisfrac_minus_visRF_;
+	//float evisfrac_mctau_minus_visRF_;
+	float evisdiff_visRF_;
+	float evissum_visRF_;
 	float upsilon_plus_visRF_;
 	float upsilon_minus_visRF_;
 	float energyasym_plus_visRF_;
@@ -324,7 +336,11 @@ ttHGenAnalyzer::ttHGenAnalyzer(const edm::ParameterSet& iConfig):
    eventTree_->Branch("evis_plus_lab", &evis_plus_lab_);
    eventTree_->Branch("evis_minus_lab", &evis_minus_lab_);
    eventTree_->Branch("evisfrac_plus_lab", &evisfrac_plus_lab_);
+   eventTree_->Branch("evisfrac_mctau_plus_lab", &evisfrac_mctau_plus_lab_);
    eventTree_->Branch("evisfrac_minus_lab", &evisfrac_minus_lab_);
+   eventTree_->Branch("evisfrac_mctau_minus_lab", &evisfrac_mctau_minus_lab_);
+   eventTree_->Branch("evisdiff_lab", &evisdiff_lab_);
+   eventTree_->Branch("evissum_lab", &evissum_lab_);
    eventTree_->Branch("upsilon_plus_lab", &upsilon_plus_lab_);
    eventTree_->Branch("upsilon_minus_lab", &upsilon_minus_lab_);
    eventTree_->Branch("energyasym_plus_lab", &energyasym_plus_lab_);
@@ -340,7 +356,11 @@ ttHGenAnalyzer::ttHGenAnalyzer(const edm::ParameterSet& iConfig):
    eventTree_->Branch("evis_plus_bRF", &evis_plus_bRF_);
    eventTree_->Branch("evis_minus_bRF", &evis_minus_bRF_);
    eventTree_->Branch("evisfrac_plus_bRF", &evisfrac_plus_bRF_);
+   eventTree_->Branch("evisfrac_mctau_plus_bRF", &evisfrac_mctau_plus_bRF_);
    eventTree_->Branch("evisfrac_minus_bRF", &evisfrac_minus_bRF_);
+   eventTree_->Branch("evisfrac_mctau_minus_bRF", &evisfrac_mctau_minus_bRF_);
+   eventTree_->Branch("evisdiff_bRF", &evisdiff_bRF_);
+   eventTree_->Branch("evissum_bRF", &evissum_bRF_);
    eventTree_->Branch("upsilon_plus_bRF", &upsilon_plus_bRF_);
    eventTree_->Branch("upsilon_minus_bRF", &upsilon_minus_bRF_);
    eventTree_->Branch("energyasym_plus_bRF", &energyasym_plus_bRF_);
@@ -356,7 +376,11 @@ ttHGenAnalyzer::ttHGenAnalyzer(const edm::ParameterSet& iConfig):
    eventTree_->Branch("evis_plus_visRF", &evis_plus_visRF_);
    eventTree_->Branch("evis_minus_visRF", &evis_minus_visRF_);
    eventTree_->Branch("evisfrac_plus_visRF", &evisfrac_plus_visRF_);
+   //eventTree_->Branch("evisfrac_mctau_plus_visRF", &evisfrac_mctau_plus_visRF_);
    eventTree_->Branch("evisfrac_minus_visRF", &evisfrac_minus_visRF_);
+   //eventTree_->Branch("evisfrac_mctau_minus_visRF", &evisfrac_mctau_minus_visRF_);
+   eventTree_->Branch("evisdiff_visRF", &evisdiff_visRF_);
+   eventTree_->Branch("evissum_visRF", &evissum_visRF_);
    eventTree_->Branch("upsilon_plus_visRF", &upsilon_plus_visRF_);
    eventTree_->Branch("upsilon_minus_visRF", &upsilon_minus_visRF_);
    eventTree_->Branch("energyasym_plus_visRF", &energyasym_plus_visRF_);
@@ -577,8 +601,12 @@ ttHGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
    evis_plus_lab_ = 2*visplusp4.Energy()/xp4.M();
    evis_minus_lab_ = 2*visminusp4.Energy()/xp4.M();
-   evisfrac_plus_lab_ = VisEnergyFraction_collinear(visplusp4);
-   evisfrac_minus_lab_ = VisEnergyFraction_collinear(visminusp4);
+   evisfrac_plus_lab_ = visplusp4.Energy()/(visplusp4+visminusp4).Energy();
+   evisfrac_minus_lab_ = visminusp4.Energy()/(visplusp4+visminusp4).Energy();
+   evisfrac_mctau_plus_lab_= visplusp4.Energy()/tauplusp4.Energy();
+   evisfrac_mctau_minus_lab_ = visminusp4.Energy()/tauminusp4.Energy();
+   evisdiff_lab_ = visplusp4.Energy()-visminusp4.Energy();
+   evissum_lab_ = visplusp4.Energy()+visminusp4.Energy();
    upsilon_plus_lab_ = Upsilon(leadtrkplusp4, visplusp4);
    upsilon_minus_lab_ = Upsilon(leadtrkminusp4, visminusp4);
    energyasym_plus_lab_ = TauDecayEnergyAsymmetry(chargedplusp4, neutralplusp4);
@@ -646,8 +674,12 @@ ttHGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
    evis_plus_bRF_ = 2*vispx.Energy()/xp4.M();
    evis_minus_bRF_ = 2*vismx.Energy()/xp4.M();
-   evisfrac_plus_bRF_ = VisEnergyFraction_collinear(vispx);
-   evisfrac_minus_bRF_ = VisEnergyFraction_collinear(vismx);
+   evisfrac_plus_bRF_ = vispx.Energy()/(vispx+vismx).Energy();
+   evisfrac_minus_bRF_ = vismx.Energy()/(vispx+vismx).Energy();
+   evisfrac_mctau_plus_bRF_ = vispx.Energy()/taupx.Energy();
+   evisfrac_mctau_minus_bRF_ = vismx.Energy()/taumx.Energy();
+   evisdiff_bRF_ = vispx.Energy()-vismx.Energy();
+   evissum_bRF_ = vispx.Energy()+vismx.Energy();
    upsilon_plus_bRF_ = Upsilon(ldgtrkpx, vispx);
    upsilon_minus_bRF_ = Upsilon(ldgtrkmx, vismx);
    energyasym_plus_bRF_ = TauDecayEnergyAsymmetry(chargedpx, neutralpx);
@@ -704,8 +736,10 @@ ttHGenAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
    evis_plus_visRF_ = 2*visplusp4.Energy()/xp4.M();
    evis_minus_visRF_ = 2*visminusp4.Energy()/xp4.M();
-   evisfrac_plus_visRF_ = VisEnergyFraction_collinear(visplusp4);
-   evisfrac_minus_visRF_ = VisEnergyFraction_collinear(visminusp4);
+   evisfrac_plus_visRF_ = visplusp4.Energy()/(visplusp4+visminusp4).Energy();
+   evisfrac_minus_visRF_ = visminusp4.Energy()/(visplusp4+visminusp4).Energy();
+   evisdiff_visRF_ = visplusp4.Energy()-visminusp4.Energy();
+   evissum_visRF_ = visplusp4.Energy()+visminusp4.Energy();
    upsilon_plus_visRF_ = Upsilon(leadtrkplusp4, visplusp4);
    upsilon_minus_visRF_ = Upsilon(leadtrkminusp4, visminusp4);
    energyasym_plus_visRF_ = TauDecayEnergyAsymmetry(chargedplusp4, neutralplusp4);
