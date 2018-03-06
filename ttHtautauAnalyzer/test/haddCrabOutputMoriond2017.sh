@@ -8,7 +8,8 @@ samplelist='../data/SampleList_Moriond17.txt'
 
 
 # version
-version='dec2017'
+#version='dec2017'
+version='jan2018'
 
 # crab job prefix
 prefix='crab_m17_'
@@ -21,19 +22,19 @@ touch $nlist
 
 ###############
 # hadd ntuples
-analysis='1l2tau 2lss1tau 3l1tau'
-#analysis=''
+#analysis='1l2tau 2lss1tau 3l1tau'
+analysis='1l2tau'
 
 #MC
 samples='ttH TTW TTZ TTGJets TGJets WG ZG WZ ZZ WW WWds WpWp WZZ WWZ WWW ZZZ tZq TTTT'
 #samples=''
-corrections='jesup jesdown tesup tesdown'
-#corrections=''
+#corrections='jesup jesdown tesup tesdown'
+corrections=''
 skipNominal=false
 
 # Data
-channels='fakes_data flips_data data_obs'
-#channels=''
+#channels='fakes_data flips_data data_obs'
+channels=''
 datasets='mu e dimu dieg mueg'
 dataset_era='2016b 2016c 2016d 2016e 2016f 2016g 2016h_v2 2016h_v3'
 

@@ -387,17 +387,17 @@ if __name__ == "__main__":
                                       minpt=20.,maxeta=2.4)
             drawHistogram(htmp, dir=args.outdir)
 
-    for decays in [[2],[3],[5],[2,3,5]]:
-        for charge in ['minus','plus']:
-            htmp = makeHist1DfromTree(tree,'evisfrac_mctau',charge,decays,'lab',
-                                      minpt=20.,maxeta=2.4)
-            drawHistogram(htmp, dir=args.outdir)
+    #for decays in [[2],[3],[5],[2,3,5]]:
+    #    for charge in ['minus','plus']:
+    #        htmp = makeHist1DfromTree(tree,'evisfrac_mctau',charge,decays,'lab',
+    #                                  minpt=20.,maxeta=2.4)
+    #        drawHistogram(htmp, dir=args.outdir)
 
-    for decays in [[2],[3],[5],[2,3,5]]:
-        for charge in ['minus','plus']:
-            htmp = makeHist1DfromTree(tree,'evisfrac_mctau',charge,decays,'bRF',
-                                      minpt=20.,maxeta=2.4)
-            drawHistogram(htmp, dir=args.outdir)           
+    #for decays in [[2],[3],[5],[2,3,5]]:
+    #    for charge in ['minus','plus']:
+    #        htmp = makeHist1DfromTree(tree,'evisfrac_mctau',charge,decays,'bRF',
+    #                                  minpt=20.,maxeta=2.4)
+    #        drawHistogram(htmp, dir=args.outdir)           
 
     # 2D
     for (modeX, modeY) in decayModesComb:
@@ -408,10 +408,10 @@ if __name__ == "__main__":
                                 minpt=20.,maxeta=2.4)
         drawHistogram(htmp, dir=args.outdir, options='colz')
         
-        htmp=makeHist2DfromTree(tree,'evisfrac_mctau',modeX,modeY,'lab',minpt=20.,maxeta=2.4)
-        drawHistogram(htmp, dir=args.outdir, options='colz')
-        htmp=makeHist2DfromTree(tree,'evisfrac_mctau',modeX,modeY,'bRF',minpt=20.,maxeta=2.4)
-        drawHistogram(htmp, dir=args.outdir, options='colz')      
+        #htmp=makeHist2DfromTree(tree,'evisfrac_mctau',modeX,modeY,'lab',minpt=20.,maxeta=2.4)
+        #drawHistogram(htmp, dir=args.outdir, options='colz')
+        #htmp=makeHist2DfromTree(tree,'evisfrac_mctau',modeX,modeY,'bRF',minpt=20.,maxeta=2.4)
+        #drawHistogram(htmp, dir=args.outdir, options='colz')      
 
     ###########
     # upsilon
@@ -437,9 +437,10 @@ if __name__ == "__main__":
         drawHistogram(htmp, dir=args.outdir)
 
     # 2D
-    # kOneProng1pi0
-    htmp=makeHist2DfromTree(tree,'energyasym',[3],[3],'lab',minpt=20.,maxeta=2.4)
-    drawHistogram(htmp, dir=args.outdir, options='colz')
+    for (modeX, modeY) in decayModesComb:
+        htmp=makeHist2DfromTree(tree,'energyasym',modeX,modeY,'lab',
+                                minpt=20.,maxeta=2.4)
+        drawHistogram(htmp, dir=args.outdir, options='colz')
 
     ###########
     # x1ThreeProngs, x2ThreeProngs, x3ThreeProngs
