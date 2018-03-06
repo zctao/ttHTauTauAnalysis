@@ -10,6 +10,7 @@ void mvaNtuple::setup_branches(TTree* tree)
 	tree->Branch("nEvent", &nEvent);
 	
 	tree->Branch("event_weight", &event_weight);
+	tree->Branch("xsection_weight", &xsection_weight);
 	if (dosystematics_) {
 		tree->Branch("event_weight_thu_shape_x1Up",&event_weight_thu_shape_x1Up);
 		tree->Branch("event_weight_thu_shape_x1Down",&event_weight_thu_shape_x1Down);
@@ -56,55 +57,97 @@ void mvaNtuple::setup_branches(TTree* tree)
 	tree->Branch("nJet", &nJet);
 	tree->Branch("avg_dr_jet", &avg_dr_jet);
 	
-	if (anatype_ == Analyze_2lss1tau) {		
-		tree->Branch("mindr_lep0_jet", &mindr_lep0_jet);
-		tree->Branch("mindr_lep1_jet", &mindr_lep1_jet);		
-		tree->Branch("max_lep_eta", &max_lep_eta);
-		tree->Branch("met", &met);
-		tree->Branch("mht", &mht);
-		tree->Branch("mT_met_lep0", &mT_met_lep0);
-		tree->Branch("lep0_conept", &lep0_conept);
-		tree->Branch("lep1_conept", &lep1_conept);
-		tree->Branch("dr_leps", &dr_leps);
-		tree->Branch("tau_pt", &tau0_pt);
-		tree->Branch("dr_lep0_tau", &dr_lep0_tau);
-		tree->Branch("dr_lep1_tau", &dr_lep1_tau);
-		tree->Branch("mvis_lep0_tau", &mvis_lep0_tau);
-		tree->Branch("mvis_lep1_tau", &mvis_lep1_tau);
-		tree->Branch("tau0_decaymode", &tau0_decaymode);
-		tree->Branch("tau0_E", &tau0_E);
-		tree->Branch("tau0_upsilon", &tau0_upsilon);
+	if (anatype_ == Analyze_2lss1tau) {
+		if (is2016_) {
+			tree->Branch("mindr_lep0_jet", &mindr_lep0_jet);
+			tree->Branch("mindr_lep1_jet", &mindr_lep1_jet);		
+			tree->Branch("max_lep_eta", &max_lep_eta);
+			tree->Branch("met", &met);
+			tree->Branch("mht", &mht);
+			tree->Branch("mT_met_lep0", &mT_met_lep0);
+			tree->Branch("lep0_conept", &lep0_conept);
+			tree->Branch("lep1_conept", &lep1_conept);
+			tree->Branch("dr_leps", &dr_leps);
+			tree->Branch("tau_pt", &tau0_pt);
+			tree->Branch("dr_lep0_tau", &dr_lep0_tau);
+			tree->Branch("dr_lep1_tau", &dr_lep1_tau);
+			tree->Branch("mvis_lep0_tau", &mvis_lep0_tau);
+			tree->Branch("mvis_lep1_tau", &mvis_lep1_tau);
+			tree->Branch("tau0_decaymode", &tau0_decaymode);
+			tree->Branch("tau0_E", &tau0_E);
+			tree->Branch("tau0_upsilon", &tau0_upsilon);
+		}
+		else {
+
+		}
 	}
 	else if (anatype_ == Analyze_1l2tau) {
-		tree->Branch("ht", &HT);
-		tree->Branch("tt_deltaR", &tt_deltaR);
-		tree->Branch("tt_mvis", &tt_mvis);
-		tree->Branch("tt_sumpt", &tt_pt);
-		tree->Branch("max_dr_jet", &max_dr_jet);
-		tree->Branch("tau0_pt", &tau0_pt);
-		tree->Branch("tau1_pt", &tau1_pt);
-		tree->Branch("ntags", &ntags);
-		tree->Branch("ntags_loose", &ntags_loose);
-		
-		tree->Branch("taup_decaymode", &taup_decaymode);
-		tree->Branch("taum_decaymode", &taum_decaymode);
-		tree->Branch("taup_E", &taup_E);
-		tree->Branch("taum_E", &taum_E);
-		tree->Branch("taup_upsilon", &taup_upsilon);
-		tree->Branch("taum_upsilon", &taum_upsilon);
+		if (is2016_) {
+			tree->Branch("ht", &HT);
+			tree->Branch("tt_deltaR", &dr_taus);
+			tree->Branch("tt_mvis", &mTauTauVis);
+			tree->Branch("tt_sumpt", &tt_pt);
+			tree->Branch("max_dr_jet", &max_dr_jet);
+			tree->Branch("tau0_pt", &tau0_pt);
+			tree->Branch("tau1_pt", &tau1_pt);
+			tree->Branch("ntags", &ntags);
+			tree->Branch("ntags_loose", &ntags_loose);
+			
+			tree->Branch("taup_decaymode", &taup_decaymode);
+			tree->Branch("taum_decaymode", &taum_decaymode);
+			tree->Branch("taup_E", &taup_E);
+			tree->Branch("taum_E", &taum_E);
+			tree->Branch("taup_upsilon", &taup_upsilon);
+			tree->Branch("taum_upsilon", &taum_upsilon);
+		}
+		else {
+			//tree->Branch("avg_dr_jet", &avg_dr_jet);
+			tree->Branch("costS_tau", &costS_tau); 
+			tree->Branch("dr_taus", &dr_taus);
+			tree->Branch("dr_lep_tau_lead", &dr_lep_tau_lead); 
+			tree->Branch("dr_lep_tau_sublead", &dr_lep_tau_sublead);
+			tree->Branch("dr_lep_tau_ss", &dr_lep_tau_ss);
+			tree->Branch("lep_conePt", &lep0_conept);
+			tree->Branch("mindr_lep_jet", &mindr_lep0_jet);
+			tree->Branch("mindr_tau1_jet", &mindr_tau0_jet);
+			tree->Branch("mindr_tau2_jet", &mindr_tau1_jet);
+			tree->Branch("mTauTauVis", &mTauTauVis);
+			tree->Branch("mT_lep", &mT_met_lep0);
+			tree->Branch("ptmiss", &met);
+			tree->Branch("ht", &HT);
+			tree->Branch("tau1_pt", &tau0_pt);
+			tree->Branch("tau2_pt", &tau1_pt);
+			tree->Branch("nBjetLoose", &ntags_loose);
+			tree->Branch("nBjetMedium", &ntags);
+			
+			tree->Branch("taup_decaymode", &taup_decaymode);
+			tree->Branch("taum_decaymode", &taum_decaymode);
+			tree->Branch("taup_easym", &taup_upsilon);
+			tree->Branch("taum_easym", &taum_upsilon);
+			tree->Branch("taup_cosPsi", &taup_cosPsi);
+			tree->Branch("taum_cosPsi", &taum_cosPsi);
+			tree->Branch("evisTaus_diff", &evisTaus_diff);
+			tree->Branch("evisTaus_sum", &evisTaus_sum);
+			tree->Branch("evisTausAsym", &evisTausAsym);
+		}
 	}
 	else if (anatype_ == Analyze_3l1tau) {
-		tree->Branch("max_lep_eta", &max_lep_eta);
-		tree->Branch("mindr_lep0_jet", &mindr_lep0_jet);
-		tree->Branch("mindr_lep1_jet", &mindr_lep1_jet);
-		tree->Branch("mindr_lep2_jet", &mindr_lep2_jet);
-		tree->Branch("mT_met_lep0", &mT_met_lep0);
-		tree->Branch("lep0_conept", &lep0_conept);
-		tree->Branch("lep1_conept", &lep1_conept);
-		tree->Branch("lep2_conept", &lep2_conept);
-		tree->Branch("tau0_decaymode", &tau0_decaymode);
-		tree->Branch("tau0_E", &tau0_E);
-		tree->Branch("tau0_upsilon", &tau0_upsilon);
+		if (is2016_) {
+			tree->Branch("max_lep_eta", &max_lep_eta);
+			tree->Branch("mindr_lep0_jet", &mindr_lep0_jet);
+			tree->Branch("mindr_lep1_jet", &mindr_lep1_jet);
+			tree->Branch("mindr_lep2_jet", &mindr_lep2_jet);
+			tree->Branch("mT_met_lep0", &mT_met_lep0);
+			tree->Branch("lep0_conept", &lep0_conept);
+			tree->Branch("lep1_conept", &lep1_conept);
+			tree->Branch("lep2_conept", &lep2_conept);
+			tree->Branch("tau0_decaymode", &tau0_decaymode);
+			tree->Branch("tau0_E", &tau0_E);
+			tree->Branch("tau0_upsilon", &tau0_upsilon);
+		}
+		else {
+
+		}
 	}
 
 	tree->Branch("isGenMatchedTau", &isGenMatchedTau);

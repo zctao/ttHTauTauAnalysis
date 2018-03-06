@@ -23,12 +23,16 @@ parser.add_argument('-l','--list', type=str, default='ntuplelist.log',
                     help="list of event ntuple to be processed")
 parser.add_argument('-r','--redirector', type=str,
                     default='root://cmsxrootd.fnal.gov/',help="redirector for xrootd")
+parser.add_argument('-p','--is2016', action-'store_true',
+                    help="Is 2016 analysis")
 
 args = parser.parse_args()
 
 mvantupleList = open(args.outdir+'mvaNtuples.txt','w')
 
 dosys_str = 'true' if args.doSystematics else 'false'
+is2016_str = 'true' if args.is2016 else 'false'
+print is2016_str
 
 for sample in args.samples:
 
@@ -50,7 +54,7 @@ for sample in args.samples:
             ntuplename = args.redirector+fname
             outputname = args.outdir+'mvaNtuple_'+sample+'_'+dataset+'_'+args.anatype+'.root'
             
-            os.system('makeMVANtuple -i '+ntuplename+' -o '+outputname+' --anatype '+args.anatype+' --seltype '+seltype+' -d true -m false -e true -u true -w true -s '+dosys_str)
+            os.system('makeMVANtuple -i '+ntuplename+' -o '+outputname+' --anatype '+args.anatype+' --seltype '+seltype+' -d true -m false -e true -u true -w true -s '+dosys_str+' -p '+is2016_str)
             mvantupleList.write(outputname+'\n')
     else:
         fname = dc.getNtupleFileName_mc(args.list, args.anatype, sample)
@@ -59,7 +63,7 @@ for sample in args.samples:
         
         ntuplename = args.redirector+fname
         outputname = args.outdir+'mvaNtuple_'+sample+'_'+args.anatype+'.root'
-        os.system('makeMVANtuple -i '+ntuplename+' -o '+outputname+' --anatype '+args.anatype+' --seltype '+seltype+' -e true -u true -w true -s '+dosys_str)
+        os.system('makeMVANtuple -i '+ntuplename+' -o '+outputname+' --anatype '+args.anatype+' --seltype '+seltype+' -e true -u true -w true -s '+dosys_str+' -p '+is2016_str)
         mvantupleList.write(outputname+'\n')
 
         if args.doSystematics:
@@ -71,5 +75,5 @@ for sample in args.samples:
                 ntuplename = args.redirector+fname_cor
                 outputname = args.outdir+'mvaNtuple_'+sample+'_'+cor+'_'+args.anatype+'.root'
                 
-                os.system('makeMVANtuple -i '+ntuplename+' -o '+outputname+' --anatype '+args.anatype+' --seltype '+seltype+' -e true -u true -w true -s '+dosys_str)
+                os.system('makeMVANtuple -i '+ntuplename+' -o '+outputname+' --anatype '+args.anatype+' --seltype '+seltype+' -e true -u true -w true -s '+dosys_str+' -p '+is2016_str)
                 mvantupleList.write(outputname+'\n')

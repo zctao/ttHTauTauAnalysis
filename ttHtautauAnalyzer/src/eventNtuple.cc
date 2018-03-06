@@ -46,13 +46,25 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorLeps(bool loose)
 	return lepsP4;
 }
 
-std::vector<miniTau> eventNtuple::buildTaus(bool loose)
+std::vector<miniTau> eventNtuple::buildTaus(bool loose, char WP)
 {
 	std::vector<miniTau> taus;
 		
 	for (unsigned int t = 0; t < tau_pt->size(); ++t) {
-		// require tight tau if not loose selection
-		if (!loose and !(tau_idSelection->at(t))) continue;
+		if (WP=='L') {
+			if (tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT->at(t)<1) continue;
+		}
+		else if (WP=='M') {
+			if (tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT->at(t)<1) continue;
+		}
+		else if (WP='T') {
+			if (tau_byTightIsolationMVArun2v1DBdR03oldDMwLT->at(t)<1) continue;
+		}
+		else { // if WP is not explicitly set
+			// require tight tau if not loose selection
+			if (!loose and !(tau_idSelection->at(t))) continue;
+		}
+		
 		TLorentzVector tauP4;
 		tauP4.SetPtEtaPhiE(tau_pt->at(t),tau_eta->at(t),tau_phi->at(t),tau_E->at(t));
 		miniTau tau(tauP4,tau_charge->at(t),tau_decayMode->at(t),

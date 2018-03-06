@@ -51,6 +51,7 @@ class miniTau
 	TLorentzVector p4() const;
 	TLorentzVector chargedDaughtersP4() const;
 	TLorentzVector neutralDaughtersP4() const;
+	TLorentzVector leadtrackP4() const;
 
 	std::vector<TLorentzVector> get_signalChargedHadrCands() const {return signalChargedHadrCands_;}
 	std::vector<TLorentzVector> get_signalGammaCands() const {return signalGammaCands_;}

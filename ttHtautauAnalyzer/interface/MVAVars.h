@@ -5,6 +5,8 @@
 #include "miniLepton.h"
 #include "miniTau.h"
 #include "TLorentzVector.h"
+#include "TVector3.h"
+#include "TMath.h"
 #include "TMVA/Reader.h"
 #include "Types_enum.h"
 
@@ -23,10 +25,10 @@ class MVAVars
 
 	void set_up_tmva_reader();
 
-	void compute_all_variables(const std::vector<miniLepton>&,
-							   const std::vector<TLorentzVector>&,
-							   const std::vector<TLorentzVector>&,
-							   float, float, float, int);
+	//void compute_all_variables(const std::vector<miniLepton>&,
+	///						   const std::vector<TLorentzVector>&,
+	//						   const std::vector<TLorentzVector>&,
+	//						   float, float, float, int);
 	void compute_all_variables(const std::vector<miniLepton>&,
 							   const std::vector<miniTau>&,
 							   const std::vector<TLorentzVector>&,
@@ -65,6 +67,17 @@ class MVAVars
 	float tau0_pt() const {return tau0_pt_;}
 	float tau1_pt() const {return tau1_pt_;}
 
+	float costS_tau() const {return costS_tau_;}
+	float dr_lep_tau0() const {return dr_lep_tau0_;}
+	float dr_lep_tau1() const {return dr_lep_tau1_;}
+	float dr_lep_tau_ss() const {return dr_lep_tau_ss_;}
+	float mindr_tau0_jet() const {return mindr_tau0_jet_;}
+	float mindr_tau1_jet() const {return mindr_tau1_jet_;}
+	float taup_cosPsi() const {return taup_cosPsi_;}
+	float taum_cosPsi() const {return taum_cosPsi_;}
+	float evistaus_diff() const {return taum_energy_-taup_energy_;}
+	float evistaus_sum() const {return taum_energy_+taup_energy_;}
+	
 	int tau0_decaymode() const {return tau0_decaymode_;}
 	int tau1_decaymode() const {return tau1_decaymode_;}
 	float tau0_energy() const {return tau0_energy_;}
@@ -114,6 +127,18 @@ class MVAVars
 	float ntags_loose_;
 	//float ntags_medium_;
 
+	
+	float costS_tau_;
+	float dr_lep_tau0_;
+	float dr_lep_tau1_;
+	float dr_lep_tau_ss_;
+	float mindr_tau0_jet_;
+	float mindr_tau1_jet_;
+
+	float taup_cosPsi_;
+	float taum_cosPsi_;
+
+	
 	int tau0_decaymode_;
 	int tau1_decaymode_;
 	float tau0_energy_;
@@ -130,6 +155,13 @@ class MVAVars
 	float compute_average_dr(const std::vector<TLorentzVector>&);
 	float compute_max_dr(const std::vector<TLorentzVector>&);
 	float compute_mindr(const TLorentzVector&, const std::vector<TLorentzVector>&);
+	float compute_cosThetaS(const TLorentzVector&);
+	float compute_upsilon(const TLorentzVector&, const TLorentzVector&);
+	//float compute_chargedEnergyAsym();
+	float compute_cosPsi(const miniTau&, float mass=0.139);
+	float compute_cosPsi(const TLorentzVector&, const TLorentzVector&,
+						 const TLorentzVector&, float mass=0.139);
+	float lam(float, float, float);
 	
 	Analysis_types anaType_;
 	

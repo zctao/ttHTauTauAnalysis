@@ -73,8 +73,10 @@ int main(int argc, char** argv)
 	namespace po = boost::program_options;
 
 	string infile, outname, sample, analysis_type, selection_type, intree;
+	float xsection;
 	bool requireMCMatching, evaluate, systematics, isdata;
-	bool updateSF, looseSelection, setTreeWeight;
+	bool updateSF, setTreeWeight, is2016;
+	bool looseSelection, looseLeptons, looseTaus;
 
 	po::options_description desc("Options");
 	desc.add_options()
@@ -85,14 +87,18 @@ int main(int argc, char** argv)
 		//("sample,s", po::value<string>(&sample), "sample name")
 		("anatype", po::value<string>(&analysis_type), "analysis type")
 		("seltype", po::value<string>(&selection_type), "selection type")
+		("xsection,x", po::value<float>(&xsection)->default_value(1.),"cross section of the sample")
 		("treename,tn", po::value<string>(&intree)->default_value("ttHtaus/eventTree"))
 		("isdata,d", po::value<bool>(&isdata)->default_value(false))
+		("is2016,p", po::value<bool>(&is2016)->default_value(false))
 		("mc_matching,m", po::value<bool>(&requireMCMatching)->default_value(true))
 		("evaluate,e", po::value<bool>(&evaluate)->default_value(false))
 		("systematics,s", po::value<bool>(&systematics)->default_value(true))
 		("update_sf,u", po::value<bool>(&updateSF)->default_value(false))
 		("loose_selection,l", po::value<bool>(&looseSelection)->default_value(false))
-		("tree_weight,w", po::value<bool>(&setTreeWeight)->default_value(false));
+		("loose_leptons", po::value<bool>(&looseLeptons)->default_value(false))
+		("loose_taus", po::value<bool>(&looseTaus)->default_value(false))
+		("tree_weight,w", po::value<bool>(&setTreeWeight)->default_value(true));
 	
 	po::variables_map vm;
 	po::store(po::command_line_parser(argc, argv).options(desc).run(), vm);
@@ -136,8 +142,12 @@ int main(int argc, char** argv)
 	TTree* tree_mva = new TTree("mva","mva");
 
 	// mva ntuple
-	mvaNtuple mvantuple(anaType, evaluate, systematics);
+	mvaNtuple mvantuple(anaType, evaluate, systematics, is2016);
 	mvantuple.setup_branches(tree_mva);
+
+	// total number of events processed
+	auto h_nProcessed = (TH1D*)f_in->Get("ttHtaus/h_nProcessed");
+	double nProcessed = h_nProcessed->GetBinContent(1);
 	
 	// loop over events
 	int nEntries = tree_in->GetEntries();
@@ -175,18 +185,38 @@ int main(int argc, char** argv)
 
 		/////////////////
 		// leptons
-		vector<miniLepton> leptons = evNtuple.buildLeptons(looseSelection);
+		vector<miniLepton> leptons = evNtuple.buildLeptons(looseSelection or
+														   looseLeptons);
 
 		/////////////////
 		// taus
 		vector<miniTau> taus =
-			evNtuple.buildTaus(looseSelection or selType==Control_fake_1l2tau);
+			evNtuple.buildTaus((looseSelection or looseTaus)
+							   or selType==Control_fake_1l2tau,'M');
 
 		/////////////////
 		// jets
 		vector<TLorentzVector> jets
 			= evNtuple.buildFourVectorJets(looseSelection);
 
+		/////////////////////////////////////
+		// Double check event selections
+		if (anaType == Analyze_2lss1tau) {
+			if (leptons.size()<2) continue;
+			if (leptons[0].charge()*leptons[1].charge()<0) continue;
+			if (taus.size()<1) continue;
+		}
+		else if (anaType == Analyze_1l2tau) {
+			if (leptons.size()<1) continue;
+			if (taus.size()<2) continue;
+			if (taus[0].charge()*taus[1].charge()>0) continue;
+		}
+		else if (anaType == Analyze_3l1tau) {
+		    if (leptons.size()<3) continue;
+			if (taus.size()<1) continue;
+			if ((taus[0].charge()+leptons[0].charge()+leptons[1].charge()+leptons[2].charge())!=0) continue;
+		}
+		
 		//////////////////////////////////////
 		/// Event ID
 		//////////////////////////////////////
@@ -206,57 +236,98 @@ int main(int argc, char** argv)
 		mvantuple.avg_dr_jet = mvaVars.avg_dr_jet();
 
 		if (anaType == Analyze_2lss1tau) {	
-			
-			mvantuple.mindr_lep0_jet = mvaVars.mindr_lep0_jet();
-			mvantuple.mindr_lep1_jet = mvaVars.mindr_lep1_jet();	
-			mvantuple.max_lep_eta = mvaVars.max_lep_eta();
-			mvantuple.met = mvaVars.met();
-			mvantuple.mht = mvaVars.mht();
-			mvantuple.mT_met_lep0 = mvaVars.mT_met_lep0();
-			mvantuple.lep0_conept = mvaVars.lep0_conept();
-			mvantuple.lep1_conept = mvaVars.lep1_conept();
-			mvantuple.dr_leps = mvaVars.dr_leps();
-			mvantuple.tau0_pt = mvaVars.tau_pt();
-			mvantuple.dr_lep0_tau = mvaVars.dr_lep0_tau();
-			mvantuple.dr_lep1_tau = mvaVars.dr_lep1_tau();
-			mvantuple.mvis_lep0_tau = mvaVars.mvis_lep0_tau();
-			mvantuple.mvis_lep1_tau = mvaVars.mvis_lep1_tau();
+			if (is2016) {
+				mvantuple.mindr_lep0_jet = mvaVars.mindr_lep0_jet();
+				mvantuple.mindr_lep1_jet = mvaVars.mindr_lep1_jet();	
+				mvantuple.max_lep_eta = mvaVars.max_lep_eta();
+				mvantuple.met = mvaVars.met();
+				mvantuple.mht = mvaVars.mht();
+				mvantuple.mT_met_lep0 = mvaVars.mT_met_lep0();
+				mvantuple.lep0_conept = mvaVars.lep0_conept();
+				mvantuple.lep1_conept = mvaVars.lep1_conept();
+				mvantuple.dr_leps = mvaVars.dr_leps();
+				mvantuple.tau0_pt = mvaVars.tau_pt();
+				mvantuple.dr_lep0_tau = mvaVars.dr_lep0_tau();
+				mvantuple.dr_lep1_tau = mvaVars.dr_lep1_tau();
+				mvantuple.mvis_lep0_tau = mvaVars.mvis_lep0_tau();
+				mvantuple.mvis_lep1_tau = mvaVars.mvis_lep1_tau();
 
-			mvantuple.tau0_decaymode = mvaVars.tau0_decaymode();
-			mvantuple.tau0_E = mvaVars.tau0_energy();
-			mvantuple.tau0_upsilon = mvaVars.tau0_upsilon();
+				mvantuple.tau0_decaymode = mvaVars.tau0_decaymode();
+				mvantuple.tau0_E = mvaVars.tau0_energy();
+				mvantuple.tau0_upsilon = mvaVars.tau0_upsilon();
+			}
+			else {
+
+			}
 		}
 		else if (anaType == Analyze_1l2tau) {
-			mvantuple.HT = mvaVars.ht();
-			mvantuple.tt_deltaR = mvaVars.dr_taus();
-			mvantuple.tt_mvis = mvaVars.mvis_taus();
-			mvantuple.tt_pt = mvaVars.pt_taus();
-			mvantuple.max_dr_jet = mvaVars.max_dr_jet();
-			mvantuple.tau0_pt = mvaVars.tau0_pt();
-			mvantuple.tau1_pt = mvaVars.tau1_pt();
-			mvantuple.ntags = evNtuple.n_btag_medium;
-			mvantuple.ntags_loose = evNtuple.n_btag_loose;
-
-			mvantuple.taup_decaymode = mvaVars.taup_decaymode();
-			mvantuple.taum_decaymode = mvaVars.taum_decaymode();
-			mvantuple.taup_E = mvaVars.taup_energy();
-			mvantuple.taum_E = mvaVars.taum_energy();
-			mvantuple.taup_upsilon = mvaVars.taup_upsilon();
-			mvantuple.taum_upsilon = mvaVars.taum_upsilon();
+			if (is2016) {
+				mvantuple.HT = mvaVars.ht();
+				mvantuple.dr_taus = mvaVars.dr_taus();
+				mvantuple.mTauTauVis = mvaVars.mvis_taus();
+				mvantuple.tt_pt = mvaVars.pt_taus();
+				mvantuple.max_dr_jet = mvaVars.max_dr_jet();
+				mvantuple.tau0_pt = mvaVars.tau0_pt();
+				mvantuple.tau1_pt = mvaVars.tau1_pt();
+				mvantuple.ntags = evNtuple.n_btag_medium;
+				mvantuple.ntags_loose = evNtuple.n_btag_loose;
+				
+				mvantuple.taup_decaymode = mvaVars.taup_decaymode();
+				mvantuple.taum_decaymode = mvaVars.taum_decaymode();
+				mvantuple.taup_E = mvaVars.taup_energy();
+				mvantuple.taum_E = mvaVars.taum_energy();
+				mvantuple.taup_upsilon = mvaVars.taup_upsilon();
+				mvantuple.taum_upsilon = mvaVars.taum_upsilon();
+			}
+			else {
+				mvantuple.costS_tau = mvaVars.costS_tau();
+				mvantuple.dr_taus = mvaVars.dr_taus();
+			    mvantuple.dr_lep_tau_lead = mvaVars.dr_lep_tau0();
+				mvantuple.dr_lep_tau_sublead = mvaVars.dr_lep_tau1();
+				mvantuple.dr_lep_tau_ss = mvaVars.dr_lep_tau_ss();
+				mvantuple.lep0_conept = mvaVars.lep0_conept();
+				mvantuple.mindr_lep0_jet = mvaVars.mindr_lep0_jet();
+				mvantuple.mindr_tau0_jet = mvaVars.mindr_tau0_jet();
+				mvantuple.mindr_tau1_jet = mvaVars.mindr_tau1_jet();
+				mvantuple.mTauTauVis = mvaVars.mvis_taus();
+				mvantuple.mT_met_lep0 = mvaVars.mT_met_lep0();
+				mvantuple.met = mvaVars.met();
+				mvantuple.HT = mvaVars.ht();
+				mvantuple.tau0_pt = mvaVars.tau0_pt();
+				mvantuple.tau1_pt = mvaVars.tau1_pt();
+				mvantuple.ntags_loose = evNtuple.n_btag_loose;
+				mvantuple.ntags = evNtuple.n_btag_medium;
+				
+				mvantuple.taup_decaymode = mvaVars.taup_decaymode();
+				mvantuple.taum_decaymode = mvaVars.taum_decaymode();
+				mvantuple.taup_upsilon = mvaVars.taup_upsilon();
+				mvantuple.taum_upsilon = mvaVars.taum_upsilon();
+				mvantuple.evisTaus_diff = mvaVars.evistaus_diff();
+				mvantuple.evisTaus_sum = mvaVars.evistaus_sum();
+				mvantuple.evisTausAsym =
+					mvaVars.evistaus_diff()/mvaVars.evistaus_sum();
+				mvantuple.taup_cosPsi = mvaVars.taup_cosPsi();
+				mvantuple.taum_cosPsi = mvaVars.taum_cosPsi();
+			}
 		}
 		else if (anaType == Analyze_3l1tau) {
-			mvantuple.max_lep_eta = mvaVars.max_lep_eta();
-			mvantuple.mindr_lep0_jet = mvaVars.mindr_lep0_jet();
-			mvantuple.mindr_lep1_jet = mvaVars.mindr_lep1_jet();
-			mvantuple.mindr_lep2_jet = mvaVars.mindr_lep2_jet();
-			mvantuple.mT_met_lep0 = mvaVars.mT_met_lep0();
-			mvantuple.lep0_conept = mvaVars.lep0_conept();
-			mvantuple.lep1_conept = mvaVars.lep1_conept();
-			mvantuple.lep2_conept = mvaVars.lep2_conept();
+			if (is2016) {
+				mvantuple.max_lep_eta = mvaVars.max_lep_eta();
+				mvantuple.mindr_lep0_jet = mvaVars.mindr_lep0_jet();
+				mvantuple.mindr_lep1_jet = mvaVars.mindr_lep1_jet();
+				mvantuple.mindr_lep2_jet = mvaVars.mindr_lep2_jet();
+				mvantuple.mT_met_lep0 = mvaVars.mT_met_lep0();
+				mvantuple.lep0_conept = mvaVars.lep0_conept();
+				mvantuple.lep1_conept = mvaVars.lep1_conept();
+				mvantuple.lep2_conept = mvaVars.lep2_conept();
+				
+				mvantuple.tau0_decaymode = mvaVars.tau0_decaymode();
+				mvantuple.tau0_E = mvaVars.tau0_energy();
+				mvantuple.tau0_upsilon = mvaVars.tau0_upsilon();
+			}
+			else {
 
-			mvantuple.tau0_decaymode = mvaVars.tau0_decaymode();
-			mvantuple.tau0_E = mvaVars.tau0_energy();
-			mvantuple.tau0_upsilon = mvaVars.tau0_upsilon();
+			}
 		}
 
 		if (evaluate) {
@@ -274,6 +345,7 @@ int main(int argc, char** argv)
 		//////////////////////////////////////
 
 		mvantuple.event_weight = evNtuple.event_weight;
+		mvantuple.xsection_weight = xsection/nProcessed;
 
 		if (updateSF) {
 			if (selType==Control_fake_1l2tau or selType==Control_fake_2lss1tau or
@@ -407,10 +479,14 @@ int main(int argc, char** argv)
 	if (setTreeWeight) {
 		// Get SumGenWeights from histogram in the input file
 		// Set output tree weight as 1./SumGenWeight
-		auto h_SumGenWeight = (TH1D*)f_in->Get("ttHtaus/h_SumGenWeight");
+		//auto h_SumGenWeight = (TH1D*)f_in->Get("ttHtaus/h_SumGenWeight");
 		//auto h_SumGenWeight = (TH1D*)f_in->Get("ttHtaus/h_SumGenWeightxPU");
-		double SumGenWeight = h_SumGenWeight->GetBinContent(1);
-		tree_mva->SetWeight(1./SumGenWeight);
+		//double SumGenWeight = h_SumGenWeight->GetBinContent(1);
+		//tree_mva->SetWeight(1./SumGenWeight);
+		
+		//auto h_nProcessed = (TH1D*)f_in->Get("ttHtaus/h_nProcessed");
+		//double nProcessed = h_nProcessed->GetBinContent(1);
+		tree_mva->SetWeight(1./nProcessed);
 	}
 
 	delete tree_in;

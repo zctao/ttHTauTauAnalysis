@@ -9,8 +9,9 @@ class mvaNtuple
 {
  public:
 
-	mvaNtuple(Analysis_types anaType, bool evaluate, bool doSystematics):
-	anatype_(anaType),evaluate_(evaluate), dosystematics_(doSystematics){};
+    mvaNtuple(Analysis_types anaType, bool evaluate, bool doSystematics,
+			  bool is2016=false) : anatype_(anaType),evaluate_(evaluate),
+		dosystematics_(doSystematics),is2016_(is2016){};
 	
 	~mvaNtuple(){};
 
@@ -31,6 +32,8 @@ class mvaNtuple
 	float mindr_lep0_jet;
 	float mindr_lep1_jet;
 	float mindr_lep2_jet;
+	float mindr_tau0_jet;
+	float mindr_tau1_jet;
 	float avg_dr_jet;
 	float max_lep_eta;
 	float met;
@@ -39,15 +42,19 @@ class mvaNtuple
 	float lep0_conept;
 	float lep1_conept;
 	float lep2_conept;
+	float costS_tau;
 	float dr_leps;
 	float tau0_pt;
 	float tau1_pt;
 	float dr_lep0_tau;
 	float dr_lep1_tau;
+	float dr_lep_tau_ss;
+	float dr_lep_tau_lead;
+	float dr_lep_tau_sublead;
 	float mvis_lep0_tau;
 	float mvis_lep1_tau;
-	float tt_deltaR;
-	float tt_mvis;
+	float dr_taus;
+	float mTauTauVis;
 	float tt_pt;
 	float max_dr_jet;
 	float HT;
@@ -67,6 +74,11 @@ class mvaNtuple
 	float taum_E;
 	float taup_upsilon;
 	float taum_upsilon;
+	float evisTaus_diff;
+	float evisTaus_sum;
+	float evisTausAsym;
+	float taup_cosPsi;
+	float taum_cosPsi;
 
 	float mva_ttV;
 	float mva_ttbar;
@@ -119,6 +131,8 @@ class mvaNtuple
 	float event_weight_FRm_ecUp;
 	float event_weight_FRm_ecDown;
 
+	float xsection_weight;
+	
 	// selection flags
 	int isGenMatchedTau;
 	int HiggsDecayType;
@@ -128,6 +142,7 @@ class mvaNtuple
 	Analysis_types anatype_;
 	bool evaluate_;
 	bool dosystematics_;
+	bool is2016_;
 	
 };
 

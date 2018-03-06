@@ -88,6 +88,17 @@ TLorentzVector miniTau::neutralDaughtersP4() const
 	return NeutralP4;
 }
 
+TLorentzVector miniTau::leadtrackP4() const
+{
+	TLorentzVector ldgtrkP4(0.,0.,0.,0.);
+	for (const TLorentzVector& ch : signalChargedHadrCands_) {
+		if (ch.Pt()>ldgtrkP4.Pt())
+			ldgtrkP4 = ch;
+	}
+
+	return ldgtrkP4;
+}
+
 bool miniTau::isGenMatched() const
 {
 	return (mcmatchtype_==1 or mcmatchtype_==2 or mcmatchtype_==3 or
