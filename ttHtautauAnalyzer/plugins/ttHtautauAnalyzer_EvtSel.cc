@@ -417,7 +417,7 @@ void ttHtautauAnalyzer::fill_CutFlow(int ibin, const char* name)
 				  << " exceeds number of bins of histogram" << std::endl;
 	}
 	
-	h_CutFlow_->Fill(ibin);
+	h_CutFlow_->Fill(ibin-0.5);
 
 	return;
 }
