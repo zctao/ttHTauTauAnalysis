@@ -338,8 +338,8 @@ void ttHtautauAnalyzer::write_ntuple_taus(const std::vector<pat::Tau>& taus)
 			hEs.push_back(h->energy());
 		}
 		evNtuple_.tau_signalChargedHadrCands_pt->push_back(hpts);
-		evNtuple_.tau_signalChargedHadrCands_eta->push_back(hpts);
-		evNtuple_.tau_signalChargedHadrCands_phi->push_back(hpts);
+		evNtuple_.tau_signalChargedHadrCands_eta->push_back(hetas);
+		evNtuple_.tau_signalChargedHadrCands_phi->push_back(hphis);
 		evNtuple_.tau_signalChargedHadrCands_E->push_back(hEs);
 
 		std::vector<float> npts;
