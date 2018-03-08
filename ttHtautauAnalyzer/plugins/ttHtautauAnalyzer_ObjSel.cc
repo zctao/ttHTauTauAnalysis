@@ -215,6 +215,8 @@ bool ttHtautauAnalyzer::isLooseID(const pat::Tau& tau) const
 	bool passKinematic = tau.pt() > 20. and std::abs(tau.eta()) < 2.3;
 
 	bool passID = false;
+	
+	/* deprecated
 	//////////////////////////////////////
 	if (selType_==Loose_2lss1tau or selType_==Loose_1l2tau) { // VLoose 
 		passID = (tau.tauID("decayModeFinding")>0.5) and
@@ -224,6 +226,10 @@ bool ttHtautauAnalyzer::isLooseID(const pat::Tau& tau) const
 	else
 		// tauID("byLooseIsolationMVArun2v1DBdR03oldDMwLT")
 		passID = tau.userFloat("idPreselection") > 0.5;
+	*/
+	
+	// tauID("byLooseIsolationMVArun2v1DBdR03oldDMwLT")
+	passID = tau.userFloat("idPreselection") > 0.5;
 
 	return (passKinematic and passID);
 }
