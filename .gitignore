@@ -13,6 +13,7 @@ ttHtautauAnalyzer/test/EventDump*.py
 ttHtautauAnalyzer/scripts/task_to_resubmit.txt
 ttHtautauAnalyzer/scripts/task_to_resubmit_updated.txt
 ttHtautauAnalyzer/scripts/task_to_kill.txt
+ttHtautauAnalyzer/scripts/eoscleanlist_*.txt
 
 *.d
 *.so
