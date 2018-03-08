@@ -1,22 +1,37 @@
 #ifndef mvaNtuple_h
 #define mvaNtuple_h
 
-#include "TTree.h"
+#include <iostream>
+#include <string>
+#include <cmath>
+#include <algorithm>
 
+#include "TTree.h"
+#include "TLorentzVector.h"
+#include "TVector3.h"
+#include "TMath.h"
+
+#include "miniLepton.h"
+#include "miniTau.h"
 #include "Types_enum.h"
 
 class mvaNtuple
 {
  public:
 
-    mvaNtuple(Analysis_types anaType, bool evaluate, bool doSystematics,
-			  bool is2016=false) : anatype_(anaType),evaluate_(evaluate),
-		dosystematics_(doSystematics),is2016_(is2016){};
+    mvaNtuple(Analysis_types anaType, bool doSystematics,
+			  const std::string& version="2017") :
+	anatype_(anaType),dosystematics_(doSystematics),
+		version_(version){};
 	
 	~mvaNtuple(){};
 
 	//void set_branch_address(TTree*);
 	void setup_branches(TTree*);
+	void compute_variables(const std::vector<miniLepton>&,
+						   const std::vector<miniTau>&,
+						   const std::vector<TLorentzVector>&,
+						   float, float, float, int, int);
 
 	//////////////////////////////
 	//// variables
@@ -58,35 +73,27 @@ class mvaNtuple
 	float tt_pt;
 	float max_dr_jet;
 	float HT;
-	int ntags;
-	int ntags_loose;
+	int nbtags_medium;
+	int nbtags_loose;
 
 	int tau0_decaymode;
 	int tau1_decaymode;
 	float tau0_E;
 	float tau1_E;
-	float tau0_upsilon;
-	float tau1_upsilon;
+	float tau0_easym;
+	float tau1_easym;
 
 	int taup_decaymode;
 	int taum_decaymode;
 	float taup_E;
 	float taum_E;
-	float taup_upsilon;
-	float taum_upsilon;
 	float evisTaus_diff;
 	float evisTaus_sum;
 	float evisTausAsym;
+	float taup_easym;
+	float taum_easym;
 	float taup_cosPsi;
 	float taum_cosPsi;
-
-	float mva_ttV;
-	float mva_ttbar;
-
-	// Todo
-	//float memLR_ttV;
-	//float memLR_ttbar;
-	//tree_in->AddFriend();
 	
 	// event weights
 	float event_weight;
@@ -131,19 +138,56 @@ class mvaNtuple
 	float event_weight_FRm_ecUp;
 	float event_weight_FRm_ecDown;
 
-	float xsection_weight;
+	double xsection_weight;
+	double xsection_weight_gen;
 	
 	// selection flags
 	int isGenMatchedTau;
 	int HiggsDecayType;
 
+	// TEST
+	// Four vector product of all combinations
+	double pp1_pp1;
+	double pp1_pp2;
+	double pp1_pp3;
+	double pp1_pm1;
+	double pp1_pm2;
+	double pp1_pm3;
+	double pp2_pp2;
+	double pp2_pp3;
+	double pp2_pm1;
+	double pp2_pm2;
+	double pp2_pm3;
+	double pp3_pp3;
+	double pp3_pm1;
+	double pp3_pm2;
+	double pp3_pm3;
+	double pm1_pm1;
+	double pm1_pm2;
+	double pm1_pm3;
+	double pm2_pm2;
+	double pm2_pm3;
+	double pm3_pm3;
+	
+
  protected:
 
 	Analysis_types anatype_;
-	bool evaluate_;
 	bool dosystematics_;
-	bool is2016_;
-	
+	std::string version_;
+
+	void compute_tauDecay_variables(const std::vector<miniTau>&, bool test=false);
+	float compute_average_dr(const std::vector<TLorentzVector>&);
+	float compute_max_dr(const std::vector<TLorentzVector>&);
+	float compute_min_dr(const TLorentzVector&, const std::vector<TLorentzVector>&);
+	float compute_cosThetaS(const TLorentzVector&);
+	float compute_mT_lep(const miniLepton&, float, float);
+	float compute_max_lep_eta(const std::vector<miniLepton>&);
+	float compute_upsilon(const miniTau&);
+	float compute_cosPsi(const miniTau&, float mass=0.139);
+	float compute_cosPsi(const TLorentzVector&, const TLorentzVector&,
+						 const TLorentzVector&, float mass=0.139);
+	float lam(float, float, float);
 };
 
 #endif

@@ -20,7 +20,7 @@ class MVAVars
 
 	//MVAVars(const std::vector<miniLepton>&, const std::vector<TLorentzVector>&,
 	//		const std::vector<TLorentzVector>&, float, float, float);
-	MVAVars(Analysis_types type){anaType_ = type;}
+	MVAVars(Analysis_types type){std::cout << "This class is deprecated. All functionalities were moved to mvaNtuple class." << std::endl; anaType_ = type; }
 	~MVAVars(){};
 
 	void set_up_tmva_reader();
