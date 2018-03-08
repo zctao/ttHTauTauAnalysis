@@ -97,9 +97,9 @@ void ttHtautauAnalyzer::write_ntuple_triggerSF(const miniLepton& lep,
 											   bool LTriggered, bool XTriggered)
 {
 	assert(anaType_==Analyze_1l2tau);
-	if (selType_==Signal_1l2tau)
-		evNtuple_.triggerSF_weight =
-			sf_helper_->Get_HLTSF_1l2tau(lep, taus, LTriggered, XTriggered);
+	//if (selType_==Signal_1l2tau)
+	evNtuple_.triggerSF_weight =
+		sf_helper_->Get_HLTSF_1l2tau(lep, taus, LTriggered, XTriggered);
 }
 
 void ttHtautauAnalyzer::write_ntuple_frweight(const std::vector<miniLepton>& leps,
@@ -109,112 +109,6 @@ void ttHtautauAnalyzer::write_ntuple_frweight(const std::vector<miniLepton>& lep
 		evNtuple_.FR_weight = sf_helper_->Get_ChargeFlipWeight(leps, taus);
 	else
 		evNtuple_.FR_weight = sf_helper_->Get_FR_weight(leps, taus);
-	
-	/*
-	float F1, F2, F3 = -1.;
-	float f1, f2, f3 = 0.;
-
-	if (selType_==Control_fake_1l2tau) {
-		assert(leps.size() >= 1);
-		assert(taus.size() >= 2);
-
-	    f1 = sf_helper_->Get_FakeRate(leps[0]);
-	    f2 = sf_helper_->Get_FakeRate(taus[0]);
-	    f3 = sf_helper_->Get_FakeRate(taus[1]);
-
-		F1 = leps[0].passTightSel() ? -1. : f1/(1-f1);
-		F2 = (taus[0].tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT")>0.5) ? -1. : f2/(1-f2);
-	    F3 = (taus[1].tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT")>0.5) ? -1. : f3/(1-f3);
-
-		if (debug_) {
-			std::cout << "lep pdgid passTight? : " << leps[0].pdgId() << " "
-					  << leps[0].passTightSel() << std::endl;
-			std::cout << "f1 F1 : " << f1 << " " << F1 << std::endl;
-			std::cout << "tau0 passTight? : " << (taus[0].tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT")>0.5) << std::endl;
-			std::cout << "f2 F2 : " << f2 << " " << F2 << std::endl;
-			std::cout << "tau1 passTight? : " << (taus[1].tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT")>0.5) << std::endl;
-			std::cout << "f3 F3 : " << f3 << " " << F3 << std::endl;
-		}
-
-		evNtuple_.FR_weight = F1 * F2 * F3;
-		if (debug_) std::cout << "FR_weight : " << F1 * F2 * F3 << std::endl;
-	}
-	else if (selType_==Control_fake_2lss1tau) {
-		assert(leps.size() >= 2);
-		assert(leps[0].passFakeableSel() and leps[1].passFakeableSel());
-			
-		f1 = sf_helper_->Get_FakeRate(leps[0]);
-		f2 = sf_helper_->Get_FakeRate(leps[1]);
-
-		F1 = leps[0].passTightSel() ? -1. : f1/(1-f1);
-		F2 = leps[1].passTightSel() ? -1. : f2/(1-f2);
-
-		if (debug_) {
-			std::cout << "lep0 pdgid passTight? : " << leps[0].pdgId() << " "
-					  << leps[0].passTightSel() << std::endl;
-			std::cout << "f1 F1 : " << f1 << " " << F1 << std::endl;
-			std::cout << "lep1 pdgid passTight? : " << leps[1].pdgId() << " "
-					  << leps[1].passTightSel() << std::endl;
-			std::cout << "f2 F2 : " << f2 << " " << F2 << std::endl;
-		}
-
-		evNtuple_.FR_weight = -1. * F1 * F2;
-		if (debug_) std::cout << "FR_weight : " << -1 * F1 * F2 << std::endl;
-	}
-	else if (selType_==Control_fake_3l1tau) {
-		assert(leps.size() >= 2);
-		assert(leps[0].passFakeableSel() and leps[1].passFakeableSel() and
-			   leps[2].passFakeableSel());
-
-		f1 = sf_helper_->Get_FakeRate(leps[0]);
-		f2 = sf_helper_->Get_FakeRate(leps[1]);
-		f3 = sf_helper_->Get_FakeRate(leps[2]);
-
-		F1 = leps[0].passTightSel() ? -1. : f1/(1-f1);
-		F2 = leps[1].passTightSel() ? -1. : f2/(1-f2);
-		F3 = leps[2].passTightSel() ? -1. : f3/(1-f3);
-
-		if (debug_) {
-			std::cout << "lep0 pdgid passTight? : " << leps[0].pdgId() << " "
-					  << leps[0].passTightSel() << std::endl;
-			std::cout << "f1 F1 : " << f1 << " " << F1 << std::endl;
-			std::cout << "lep1 pdgid passTight? : " << leps[1].pdgId() << " "
-					  << leps[1].passTightSel() << std::endl;
-			std::cout << "f2 F2 : " << f2 << " " << F2 << std::endl;
-			std::cout << "lep2 pdgid passTight? : " << leps[2].pdgId() << " "
-					  << leps[2].passTightSel() << std::endl;
-			std::cout << "f3 F3 : " << f3 << " " << F3 << std::endl;
-		}
-
-		evNtuple_.FR_weight = F1 * F2 * F3;
-		if (debug_) std::cout << "FR_weight : " << F1 * F2 * F3 << std::endl;
-	}
-	else if (selType_==Control_2los1tau) {
-		assert(leps.size() >= 2);
-		assert(leps[0].passFakeableSel() and leps[1].passFakeableSel());
-		assert(taus.size() >= 1);
-		
-		float P1_misCharge =
-			sf_helper_->Get_EleChargeMisIDProb(leps[0], taus[0].charge());
-		float P2_misCharge =
-			sf_helper_->Get_EleChargeMisIDProb(leps[1], taus[0].charge());
-
-		// only one of the above two can be non-zero
-		//assert(P1_misCharge*P2_misCharge==0.);
-
-		if (debug_) {
-			std::cout << "tau charge : " << taus[0].charge() << std::endl;
-			std::cout << "lep0 pt conept eta : " << leps[0].pt() << " "
-					  << leps[0].conept() << " " << leps[0].eta() << std::endl;
-			std::cout << "p1_mischarge : " << P1_misCharge << std::endl;
-			std::cout << "lep1 pt conept eta : " << leps[1].pt() << " "
-					  << leps[1].conept() << " " << leps[1].eta() << std::endl;
-			std::cout << "p2_mischarge : " << P2_misCharge << std::endl;
-		}
-
-		evNtuple_.FR_weight = P1_misCharge + P2_misCharge;
-	}
-	*/
 }
 
 void ttHtautauAnalyzer::write_ntuple_muons(const std::vector<pat::Muon>& muons)
@@ -330,17 +224,20 @@ void ttHtautauAnalyzer::write_ntuple_taus(const std::vector<pat::Tau>& taus)
 		std::vector<float> hpts;
 		std::vector<float> hetas;
 		std::vector<float> hphis;
-		std::vector<float> hEs;	
+		std::vector<float> hEs;
+		std::vector<int> hcharges;
 		for (const auto & h : tau.signalChargedHadrCands()) {
 			hpts.push_back(h->pt());
 			hetas.push_back(h->eta());
 			hphis.push_back(h->phi());
 			hEs.push_back(h->energy());
+			hcharges.push_back(h->charge());
 		}
 		evNtuple_.tau_signalChargedHadrCands_pt->push_back(hpts);
 		evNtuple_.tau_signalChargedHadrCands_eta->push_back(hetas);
 		evNtuple_.tau_signalChargedHadrCands_phi->push_back(hphis);
 		evNtuple_.tau_signalChargedHadrCands_E->push_back(hEs);
+		evNtuple_.tau_signalChargedHadrCands_charge->push_back(hcharges);
 
 		std::vector<float> npts;
 		std::vector<float> netas;
@@ -371,23 +268,6 @@ void ttHtautauAnalyzer::write_ntuple_taus(const std::vector<pat::Tau>& taus)
 		evNtuple_.tau_signalGammaCands_eta->push_back(getas);
 		evNtuple_.tau_signalGammaCands_phi->push_back(gphis);
 		evNtuple_.tau_signalGammaCands_E->push_back(gEs);
-		
-		/*
-		std::cout << "decay mode : " << tau.decayMode() << std::endl;
-		std::cout << "signalChargedHadrCands size : " << tau.signalChargedHadrCands().size();
-		std::cout << "  pdgid : ";
-		for (const auto & c : taus[0].signalChargedHadrCands()) {
-			std::cout << c->pdgId() << " ";
-		}
-		std::cout << std::endl;
-		std::cout << "signalNeutralHadrCands size : " << tau.signalNeutrHadrCands().size() << std::endl;
-		std::cout << "  pdgid : ";
-		for (const auto & n : taus[0].signalNeutrHadrCands()) {
-			std::cout << n->pdgId() << " ";
-		}
-		std::cout << std::endl;
-		std::cout << "signalGammaCands size : " << tau.signalGammaCands().size() << std::endl;
-		*/
  	}
 	
 }

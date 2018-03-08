@@ -450,6 +450,7 @@ void eventNtuple::initialize()
 	tau_signalChargedHadrCands_eta->clear();
 	tau_signalChargedHadrCands_phi->clear();
 	tau_signalChargedHadrCands_E->clear();
+	tau_signalChargedHadrCands_charge->clear();
 	tau_signalNeutrHadrCands_pt->clear();
 	tau_signalNeutrHadrCands_eta->clear();
 	tau_signalNeutrHadrCands_phi->clear();
@@ -638,6 +639,7 @@ void eventNtuple::setup_branches(TTree* tree)
 	tree->Branch("tau_signalChargedHadrCands_eta", &tau_signalChargedHadrCands_eta);
 	tree->Branch("tau_signalChargedHadrCands_phi", &tau_signalChargedHadrCands_phi);
 	tree->Branch("tau_signalChargedHadrCands_E", &tau_signalChargedHadrCands_E);
+	tree->Branch("tau_signalChargedHadrCands_charge", &tau_signalChargedHadrCands_charge);
 	tree->Branch("tau_signalNeutrHadrCands_pt", &tau_signalNeutrHadrCands_pt);
 	tree->Branch("tau_signalNeutrHadrCands_eta", &tau_signalNeutrHadrCands_eta);
 	tree->Branch("tau_signalNeutrHadrCands_phi", &tau_signalNeutrHadrCands_phi);
@@ -823,6 +825,7 @@ void eventNtuple::set_branch_address(TTree* tree)
 	tree->SetBranchAddress("tau_signalChargedHadrCands_eta", &tau_signalChargedHadrCands_eta);
 	tree->SetBranchAddress("tau_signalChargedHadrCands_phi", &tau_signalChargedHadrCands_phi);
 	tree->SetBranchAddress("tau_signalChargedHadrCands_E", &tau_signalChargedHadrCands_E);
+	tree->SetBranchAddress("tau_signalChargedHadrCands_charge", &tau_signalChargedHadrCands_charge);
 	tree->SetBranchAddress("tau_signalNeutrHadrCands_pt", &tau_signalNeutrHadrCands_pt);
 	tree->SetBranchAddress("tau_signalNeutrHadrCands_eta", &tau_signalNeutrHadrCands_eta);
 	tree->SetBranchAddress("tau_signalNeutrHadrCands_phi", &tau_signalNeutrHadrCands_phi);

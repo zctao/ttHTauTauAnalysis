@@ -210,6 +210,7 @@ class eventNtuple
 	std::vector<std::vector<float>> *tau_signalChargedHadrCands_eta = 0;
 	std::vector<std::vector<float>> *tau_signalChargedHadrCands_phi = 0;
 	std::vector<std::vector<float>> *tau_signalChargedHadrCands_E = 0;
+	std::vector<std::vector<int>>   *tau_signalChargedHadrCands_charge = 0;
 	std::vector<std::vector<float>> *tau_signalNeutrHadrCands_pt = 0;
 	std::vector<std::vector<float>> *tau_signalNeutrHadrCands_eta = 0;
 	std::vector<std::vector<float>> *tau_signalNeutrHadrCands_phi = 0;
