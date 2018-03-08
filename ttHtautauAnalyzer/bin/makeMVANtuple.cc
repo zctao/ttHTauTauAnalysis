@@ -159,21 +159,6 @@ int main(int argc, char** argv)
 
 	//std::cout << "nProcessed : " << nProcessed << std::endl;
 	//std::cout << "SumGenWeight : " << SumGenWeight << std::endl;
-
-	
-	int ntot = tree_in->GetEntries();
-	for (int i = 0; i < ntot; ++i) {
-		tree_in->GetEntry(i);
-
-		std::cout << evNtuple.event_weight
-				  << " " << evNtuple.PU_weight * evNtuple.MC_weight * evNtuple.bTagSF_weight * evNtuple.leptonSF_weight * evNtuple.tauSF_weight
-				  << std::endl;
-
-		if (i>10) break;
-	}
-	
-	return 1;
-	
 	
 	// loop over events
 	int nEntries = tree_in->GetEntries();
@@ -270,7 +255,7 @@ int main(int argc, char** argv)
 		//////////////////////////////////////
 
 		mvantuple.event_weight = evNtuple.event_weight;
-
+		
 		if (updateSF) {
 			if (selType==Control_fake_1l2tau or selType==Control_fake_2lss1tau or
 				selType==Control_fake_3l1tau) {

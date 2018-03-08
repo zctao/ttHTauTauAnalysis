@@ -323,12 +323,6 @@ void mvaNtuple::compute_tauDecay_variables(const std::vector<miniTau>& taus,bool
 			taus[ip].get_signalChargedHadrCands();
 		std::vector<TLorentzVector> taum_chargedHadrons =
 			taus[im].get_signalChargedHadrCands();
-
-		std::cout << taup_chargedHadrons[0].Pt() << " "
-				  << taup_chargedHadrons[0].Eta() << " "
-				  << taup_chargedHadrons[0].Phi() << " "
-				  << taup_chargedHadrons[0].M() << " "
-				  << std::endl;
 		
 		assert(taup_chargedHadrons.size()>0);
 		assert(taum_chargedHadrons.size()>0);
