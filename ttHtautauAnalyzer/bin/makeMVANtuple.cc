@@ -102,7 +102,7 @@ int main(int argc, char** argv)
 		("loose_selection,l", po::value<bool>(&looseSelection)->default_value(false))
 		("loose_leptons", po::value<bool>(&looseLeptons)->default_value(false))
 		("loose_taus", po::value<bool>(&looseTaus)->default_value(false))
-		("tree_weight,w", po::value<bool>(&setTreeWeight)->default_value(false));
+		("tree_weight,w", po::value<bool>(&setTreeWeight)->default_value(true));
 	
 	po::variables_map vm;
 	po::store(po::command_line_parser(argc, argv).options(desc).run(), vm);
