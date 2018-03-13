@@ -51,8 +51,8 @@ def getHistogramNames_data(anaType, channel, addSyst, syst_coname='_CMS_ttHl_'):
 
     return namelist+[hname+syst_coname+syst for hname in namelist for syst in systlist]
 
-def getShapefromSample_mc(anaType, sample, histname, treename, nbin, xmin, xmax,
-                          ntuplelist, binningMap, lumi):
+def getShapefromSample_mc(anaType, sample, histname, treename, var_x, var_y,
+                          nbin, xmin, xmax, ntuplelist, binningMap, lumi):
     # determine jet/tau energy correction
     correction = None
     for cor in ['JESUp','JESDown','TESUp','TESDown']:
@@ -62,6 +62,7 @@ def getShapefromSample_mc(anaType, sample, histname, treename, nbin, xmin, xmax,
    
     # open ntuple file and get tree
     infile = dc.getNtupleFileName_mc(ntuplelist, anaType, sample, correction)
+    
     f = TFile(infile,'read')
     tree = f.Get(treename)
 
@@ -69,7 +70,8 @@ def getShapefromSample_mc(anaType, sample, histname, treename, nbin, xmin, xmax,
     xsection = CrossSection[sample]
 
     # make data cards
-    shape = dc.getShapeFromTree(tree, histname, nbin, xmin, xmax, binningMap)
+    shape = dc.getShapeFromTree(tree, histname, var_x, var_y, nbin, xmin, xmax,
+                                binningMap)
     # scale histogram
     shape.Scale(lumi*xsection*inverseSumGenWeight)
     dc.makeBinContentsPositive(shape)
@@ -78,13 +80,14 @@ def getShapefromSample_mc(anaType, sample, histname, treename, nbin, xmin, xmax,
     
     return shape
 
-def getShapefromSamples_data(anaType, channel, histname, treename, nbin, xmin, xmax,
-                            ntuplelist, binningMap, lumi):
+def getShapefromSamples_data(anaType, channel, histname, treename, var_x, var_y,
+                             nbin, xmin, xmax, ntuplelist, binningMap, lumi):
     # open ntuple files and get trees
     inputfiles = [TFile(dc.getNtupleFileName_data(ntuplelist, anaType, channel, sample),'read') for sample in dc.SamplesInChannel[channel]]
     trees = [fin.Get(treename) for fin in inputfiles]
 
-    shape = dc.getShapeFromMergingTrees(trees, histname, nbin,xmin,xmax, binningMap)
+    shape = dc.getShapeFromMergingTrees(trees, histname, var_x, var_y,
+                                        nbin,xmin,xmax, binningMap)
 
     # make bin contents positive
     dc.makeBinContentsPositive(shape)
@@ -104,11 +107,15 @@ if __name__ == "__main__":
     parser.add_argument('channels', nargs='+',choices=['ttH','TTW','TTZ','EWK','Rares','fakes_data','flips_data','data_obs'],
                         help="List of channels to make data cards")
     parser.add_argument('nbin', type=int, help="number of bins")
+    parser.add_argument('--varname_x', type=str, default='mva_tt',
+                        help="Variable name of BDT against ttbar background")
+    parser.add_argument('--varname_y', type=str, default='mva_ttV',
+                        help="Variable name of BDT against ttV background")
     parser.add_argument('--xmin', type=float)
     parser.add_argument('--xmax', type=float)
     parser.add_argument('-n','--ntuplelist', type=str, default='mvaNtuplelist.txt',
                         help="List of mva ntuple names to be read from")
-    parser.add_argument('-b','--binmap', type=str, default='binning.root',
+    parser.add_argument('-b','--binmap', type=str, 
                         help="Binning Map from 2D to 1D. Default histogram name: 'hTargetBinning'")
     parser.add_argument('-o','--outname', type=str, default='./datacards.root',
                         help="Output file name")
@@ -126,9 +133,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # get binning Map 2D histogram
-    fMap = TFile(args.binmap)
-    hBinningMap = fMap.Get("hTargetBinning")
-
+    hBinningMap = None
+    if args.binmap is not None: 
+        fMap = TFile(args.binmap)
+        hBinningMap = fMap.Get("hTargetBinning")
+    if hBinningMap is None:
+        print "Binning map not provided. Only bin x value uniformly based on nbin."
+        
+        
     # determine xmin and xmax if not specified
     xMin = 0. if args.xmin is None else args.xmin
     xMax = float(args.nbin) if args.xmax is None else args.xmax
@@ -148,7 +160,9 @@ if __name__ == "__main__":
             for histname in hnames:
 
                 h = getShapefromSamples_data(args.anaType, channel, histname,
-                                             args.treename, args.nbin, xMin, xMax,
+                                             args.treename,
+                                             args.varname_x, args.varname_y,
+                                             args.nbin, xMin, xMax,
                                              args.ntuplelist, hBinningMap,
                                              args.luminosity)
                 datacards.append(h)
@@ -187,7 +201,9 @@ if __name__ == "__main__":
                 hnames = getHistogramNames_mc(args.anaType, sample, args.systematics)
                 for histname in hnames: 
                     h = getShapefromSample_mc(args.anaType, sample, histname,
-                                              args.treename, args.nbin, xMin, xMax,
+                                              args.treename,
+                                              args.varname_x, args.varname_y,
+                                              args.nbin, xMin, xMax,
                                               args.ntuplelist, hBinningMap,
                                               args.luminosity)
                     datacards_sample.append(h)

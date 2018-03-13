@@ -116,13 +116,14 @@ def getEventWeight(event, name):
 
     return weight
 
-def getShapeFromTree(tree, histname, nbin, xmin, xmax, binningMap):
+def getShapeFromTree(tree, histname, var_tt, var_ttV, nbin, xmin, xmax, binningMap):
     
     h = TH1D(histname,"", nbin, xmin, xmax)
     h.Sumw2()
     
     for ev in tree:
-        ibin = getBin(ev.mva_ttbar, ev.mva_ttV, binningMap)
+        ibin = getBin(ev.GetLeaf(var_tt).GetValue(), ev.GetLeaf(var_ttV).GetValue(),
+                      binningMap)
 
         if 'gentau' in histname.lower() and not ev.isGenMatchedTau:
             continue
@@ -140,7 +141,8 @@ def getShapeFromTree(tree, histname, nbin, xmin, xmax, binningMap):
         
     return h
 
-def getShapeFromMergingTrees(trees, histname, nbin, xmin, xmax, binningMap):
+def getShapeFromMergingTrees(trees, histname, var_tt, var_ttV, nbin, xmin, xmax,
+                             binningMap):
     # histogram
     h = TH1D(histname,"", nbin, xmin, xmax)
     h.Sumw2()
@@ -155,7 +157,8 @@ def getShapeFromMergingTrees(trees, histname, nbin, xmin, xmax, binningMap):
                 
             eventIDlist.append(eventID)
 
-            ibin = getBin(ev.mva_ttbar, ev.mva_ttV, binningMap)
+            ibin=getBin(ev.GetLeaf(var_tt).GetValue(),ev.GetLeaf(var_ttV).GetValue(),
+                        binningMap)
             weight = getEventWeight(ev, histname)
 
             h.Fill(ibin, weight)
