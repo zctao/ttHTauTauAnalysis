@@ -57,7 +57,7 @@ std::vector<miniTau> eventNtuple::buildTaus(bool loose, char WP)
 		else if (WP=='M') {
 			if (tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT->at(t)<1) continue;
 		}
-		else if (WP='T') {
+		else if (WP=='T') {
 			if (tau_byTightIsolationMVArun2v1DBdR03oldDMwLT->at(t)<1) continue;
 		}
 		else { // if WP is not explicitly set
@@ -203,7 +203,7 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorTauDaugsNeutral(bool loo
 	return tauDaugsNeutralP4;
 }
 
-std::vector<TLorentzVector> eventNtuple::buildFourVectorJets(bool loose)
+std::vector<TLorentzVector> eventNtuple::buildFourVectorJets()
 {
 	std::vector<TLorentzVector> jetsP4;
 	
@@ -216,7 +216,7 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorJets(bool loose)
 	return jetsP4;
 }
 
-std::vector<TLorentzVector> eventNtuple::buildFourVectorBtagJets(bool loose)
+std::vector<TLorentzVector> eventNtuple::buildFourVectorBtagJets()
 {
 	std::vector<TLorentzVector> btagsP4;
 	btagsP4.reserve(2);

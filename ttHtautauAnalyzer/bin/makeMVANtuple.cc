@@ -77,7 +77,8 @@ int main(int argc, char** argv)
 	float xsection;
 	bool requireMCMatching, systematics, isdata; //evaluate, 
 	bool updateSF, setTreeWeight, addMEM;
-	bool looseSelection, looseLeptons, looseTaus;
+	bool looseSelection; //, looseLeptons, looseTaus;
+	char tauWP;
 
 	po::options_description desc("Options");
 	desc.add_options()
@@ -100,8 +101,9 @@ int main(int argc, char** argv)
 		("systematics,s", po::value<bool>(&systematics)->default_value(true))
 		("update_sf,u", po::value<bool>(&updateSF)->default_value(false))
 		("loose_selection,l", po::value<bool>(&looseSelection)->default_value(false))
-		("loose_leptons", po::value<bool>(&looseLeptons)->default_value(false))
-		("loose_taus", po::value<bool>(&looseTaus)->default_value(false))
+		//("loose_leptons", po::value<bool>(&looseLeptons)->default_value(false))
+		//("loose_taus", po::value<bool>(&looseTaus)->default_value(false))
+		("tauWP", po::value<char>(&tauWP)->default_value('-'))
 		("tree_weight,w", po::value<bool>(&setTreeWeight)->default_value(true));
 	
 	po::variables_map vm;
@@ -162,6 +164,8 @@ int main(int argc, char** argv)
 	
 	// loop over events
 	int nEntries = tree_in->GetEntries();
+	//std::cout << "nEntries : " << nEntries << std::endl;
+	int passlep=0, passtau=0, passcharge=0;
 	for (int i = 0; i < nEntries; ++i) {
 		tree_in->GetEntry(i);
 
@@ -196,31 +200,29 @@ int main(int argc, char** argv)
 
 		/////////////////
 		// leptons
-		vector<miniLepton> leptons = evNtuple.buildLeptons(looseSelection or
-														   looseLeptons);
+		bool looseLep = looseSelection;
+		vector<miniLepton> leptons = evNtuple.buildLeptons(looseLep);
 
 		/////////////////
 		// taus
-		vector<miniTau> taus =
-			evNtuple.buildTaus((looseSelection or looseTaus)
-							   or selType==Control_fake_1l2tau,'M');
+		bool looseTau = looseSelection or selType==Control_fake_1l2tau;
+		vector<miniTau> taus = evNtuple.buildTaus(looseTau, tauWP);
 
 		/////////////////
 		// jets
-		vector<TLorentzVector> jets
-			= evNtuple.buildFourVectorJets(looseSelection);
+		vector<TLorentzVector> jets = evNtuple.buildFourVectorJets();
 
 		/////////////////////////////////////
 		// Double check event selections
 		if (anaType == Analyze_2lss1tau) {
 			if (leptons.size()<2) continue;
-			if (leptons[0].charge()*leptons[1].charge()<0) continue;
 			if (taus.size()<1) continue;
+			if (leptons[0].charge()*leptons[1].charge()<0) continue;
 		}
 		else if (anaType == Analyze_1l2tau) {
-			if (leptons.size()<1) continue;
-			if (taus.size()<2) continue;
-			if (taus[0].charge()*taus[1].charge()>0) continue;
+			if (leptons.size()<1) continue; passlep++;
+			if (taus.size()<2) continue; passtau++;
+			if (taus[0].charge()*taus[1].charge()>0) continue; passcharge++;
 		}
 		else if (anaType == Analyze_3l1tau) {
 		    if (leptons.size()<3) continue;
@@ -384,8 +386,8 @@ int main(int argc, char** argv)
 		tree_mva->Fill();
 		
 	} // end of event loop
-
-	if (setTreeWeight) {
+	
+	if (setTreeWeight and !isdata) {
 		// Set output tree weight as 1./SumGenWeight
 		tree_mva->SetWeight(1./SumGenWeight);
 		//tree_mva->SetWeight(1./nProcessed);
@@ -403,6 +405,10 @@ int main(int argc, char** argv)
 	// close files
 	f_out->Close();
 	f_in->Close();
+
+	//std::cout << "passlep : " << passlep << std::endl;
+	//std::cout << "passtau : " << passtau << std::endl;
+	//std::cout << "passcharge : " << passcharge << std::endl;
 	
 	return 0;
 }

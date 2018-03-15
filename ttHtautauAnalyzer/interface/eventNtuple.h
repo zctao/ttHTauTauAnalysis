@@ -27,8 +27,8 @@ class eventNtuple
 	std::vector<TLorentzVector> buildFourVectorTaus(bool loose=false);
 	std::vector<TLorentzVector> buildFourVectorTauDaugsCharged(bool loose=false);
 	std::vector<TLorentzVector> buildFourVectorTauDaugsNeutral(bool loose=false);
-	std::vector<TLorentzVector> buildFourVectorJets(bool loose=false);
-	std::vector<TLorentzVector> buildFourVectorBtagJets(bool loose=false);
+	std::vector<TLorentzVector> buildFourVectorJets();
+	std::vector<TLorentzVector> buildFourVectorBtagJets();
 	TLorentzVector buildFourVectorMET();
 	
 	////////////////////////
