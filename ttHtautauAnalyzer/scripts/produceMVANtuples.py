@@ -53,7 +53,7 @@ for sample in args.samples:
             ntuplename = args.redirector+fname
             outputname = args.outdir+'mvaNtuple_'+sample+'_'+dataset+'_'+args.anatype+'.root'
             
-            os.system('makeMVANtuple -i '+ntuplename+' -o '+outputname+' --anatype '+args.anatype+' --seltype '+seltype+' -d true -m false -u true -w true -s '+dosys_str+' -v '+args.version)
+            os.system('makeMVANtuple -i '+ntuplename+' -o '+outputname+' --anatype '+args.anatype+' --seltype '+seltype+' -d true -m false -u true -w false -s '+dosys_str+' -v '+args.version)
             mvantupleList.write(outputname+'\n')
     else:
         fname = dc.getNtupleFileName_mc(args.list, args.anatype, sample)

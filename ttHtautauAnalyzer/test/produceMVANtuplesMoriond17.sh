@@ -13,6 +13,7 @@ samples='ttH TTW TTZ TTGJets TGJets WG ZG WZ ZZ WW WWds WpWp WZZ WWZ WWW ZZZ tZq
 #samples='fakes_data'
 corrections='jesup jesdown tesup tesdown'
 datasets='SingleMuon SingleElectron DoubleMuon DoubleEG MuonEG'
+#ntuplelist='../test/ntuplelist_m17_20180130.log'
 ntuplelist='../test/ntuplelist_m17_20180307.log'
 
 produceMVANtuples.py 1l2tau $samples -d $datasets -l $ntuplelist -o $outdir -v $version #-s -c $corrections 
