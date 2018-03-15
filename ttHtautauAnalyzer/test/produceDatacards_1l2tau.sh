@@ -1,0 +1,1 @@
+makeDatacards.py 1l2tau ttH TTW TTZ EWK fakes_data 5 --xmin 0. --xmax 1. -n /uscms/home/ztao/nobackup/mvaNtuples/M17/jan2018/1l2tau_13plus2Vars/mvaNtuples_wBDT_20180314.txt -o ./datacards_1l2tau_15vars.root --luminosity 35.9 -vvvv
