@@ -1,4 +1,5 @@
 # cross section
+# pb
 CrossSection = {
     'ttH':0.215, #ttHJetToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8_mWCutfix
     'TTW':0.2043, #TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8

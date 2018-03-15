@@ -73,6 +73,7 @@ def getShapefromSample_mc(anaType, sample, histname, treename, var_x, var_y,
     shape = dc.getShapeFromTree(tree, histname, var_x, var_y, nbin, xmin, xmax,
                                 binningMap)
     # scale histogram
+    lumi = lumi*1000  # convert from 1/fb to 1/pb
     shape.Scale(lumi*xsection*inverseSumGenWeight)
     dc.makeBinContentsPositive(shape)
 
@@ -120,7 +121,7 @@ if __name__ == "__main__":
     parser.add_argument('-o','--outname', type=str, default='./datacards.root',
                         help="Output file name")
     parser.add_argument('-l', '--luminosity', type=float, default=100.,
-                        help="Integrated luminosity")
+                        help="Integrated luminosity (1/fb)")
     parser.add_argument('--treename', type=str, default="mva",
                         help="Name of tree")
     parser.add_argument('--sys_coname', type=str, default='_CMS_ttHl_',
