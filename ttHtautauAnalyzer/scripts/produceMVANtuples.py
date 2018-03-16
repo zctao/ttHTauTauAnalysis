@@ -53,7 +53,7 @@ for sample in args.samples:
             ntuplename = args.redirector+fname
             outputname = args.outdir+'mvaNtuple_'+sample+'_'+dataset+'_'+args.anatype+'.root'
             
-            os.system('makeMVANtuple -i '+ntuplename+' -o '+outputname+' --anatype '+args.anatype+' --seltype '+seltype+' -d true -m false -u true -w false -s '+dosys_str+' -v '+args.version)
+            os.system('makeMVANtuple -i '+ntuplename+' -o '+outputname+' --anatype '+args.anatype+' --seltype '+seltype+' -d true -t true -m false -u true -w false -s '+dosys_str+' -v '+args.version)
             mvantupleList.write(outputname+'\n')
     else:
         fname = dc.getNtupleFileName_mc(args.list, args.anatype, sample)
@@ -64,7 +64,7 @@ for sample in args.samples:
         
         ntuplename = args.redirector+fname
         outputname = args.outdir+'mvaNtuple_'+sample+'_'+args.anatype+'.root'
-        os.system('makeMVANtuple -i '+ntuplename+' -o '+outputname+' --anatype '+args.anatype+' --seltype '+seltype+' -u true -w true -s '+dosys_str+' -v '+args.version+' -x '+str(xsection))
+        os.system('makeMVANtuple -i '+ntuplename+' -o '+outputname+' --anatype '+args.anatype+' --seltype '+seltype+' -t true -u true -w true -s '+dosys_str+' -v '+args.version+' -x '+str(xsection))
         mvantupleList.write(outputname+'\n')
 
         if args.doSystematics:
@@ -76,5 +76,5 @@ for sample in args.samples:
                 ntuplename = args.redirector+fname_cor
                 outputname = args.outdir+'mvaNtuple_'+sample+'_'+cor+'_'+args.anatype+'.root'
                 
-                os.system('makeMVANtuple -i '+ntuplename+' -o '+outputname+' --anatype '+args.anatype+' --seltype '+seltype+' -u true -w true -s '+dosys_str+' -v '+args.version+' -x '+str(xsection))
+                os.system('makeMVANtuple -i '+ntuplename+' -o '+outputname+' --anatype '+args.anatype+' --seltype '+seltype+' -t true -u true -w true -s '+dosys_str+' -v '+args.version+' -x '+str(xsection))
                 mvantupleList.write(outputname+'\n')

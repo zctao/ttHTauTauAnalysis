@@ -77,7 +77,7 @@ int main(int argc, char** argv)
 	float xsection;
 	bool requireMCMatching, systematics, isdata; //evaluate, 
 	bool updateSF, setTreeWeight, addMEM;
-	bool looseSelection; //, looseLeptons, looseTaus;
+	bool requireTrigger, looseSelection; //, looseLeptons, looseTaus;
 	char tauWP;
 
 	po::options_description desc("Options");
@@ -91,8 +91,9 @@ int main(int argc, char** argv)
 		("seltype", po::value<string>(&selection_type), "selection type")
 		("version,v", po::value<string>(&version)->default_value("2017"), "analysis version")
 		("xsection,x", po::value<float>(&xsection)->default_value(1.),"cross section of the sample")
-		("treename,tn", po::value<string>(&intree)->default_value("ttHtaus/eventTree"))
+		("treename", po::value<string>(&intree)->default_value("ttHtaus/eventTree"))
 		("isdata,d", po::value<bool>(&isdata)->default_value(false))
+		("trigger,t", po::value<bool>(&requireTrigger)->default_value(false))
 		("add_mem", po::value<bool>(&addMEM)->default_value(false))
 		("mem_filename", po::value<string>(&mem_filename)->default_value("mem_output.root"))
 		("mem_treename", po::value<string>(&mem_treename)->default_value("mem"))
@@ -174,6 +175,26 @@ int main(int argc, char** argv)
 		//////////////////////////////////////
 
 		// triggers/filters
+		if (requireTrigger) {
+			if (anaType==Analyze_1l2tau) {
+				bool passhlt =
+					trighelper.pass_single_lep_triggers(evNtuple.triggerBits) or
+					trighelper.pass_leptau_cross_triggers(evNtuple.triggerBits);
+				if (not passhlt) continue;
+			}
+			else if (anaType==Analyze_2lss1tau) {
+				bool passhlt =
+					trighelper.pass_single_e_triggers(evNtuple.triggerBits) or
+					trighelper.pass_single_m_triggers(evNtuple.triggerBits) or
+					trighelper.pass_dilep_triggers(evNtuple.triggerBits);
+				if (not passhlt) continue;
+			}
+			else if (anaType==Analyze_3l1tau) {
+				// TODO
+				assert(0);
+			}
+		}
+		
 		// also apply tighter/additional selection if needed
 		if (anaType == Analyze_2lss1tau) {
 			// tau charge
