@@ -4,32 +4,41 @@
 
 Setup CMSSW environment:
 
-	cmsrel CMSSW_8_0_26_patch1
-	cd CMSSW_8_0_26_patch1/src/
+	cmsrel CMSSW_9_4_4
+	cd CMSSW_9_4_4/src/
 	cmsenv
 	git cms-init
 
-For MET Correction:
-
-	git cms-merge-topic cms-met:METRecipe_8020 -u
-	git cms-merge-topic cms-met:METRecipe_80X_part2 -u
-
 Electron MVA ID:
 
-	git cms-merge-topic ikrav:egm_id_80X_v2
+	git cms-merge-topic guitargeek:ElectronID_MVA2017_940pre3
 
 Get Analyzer:
 
 	git clone https://github.com/zctao/ttHTauTauAnalysis.git
+	cd ttHTauTauAnalysis
+	git checkout cmssw_9_4_x
+	cd -
+
+Add MVA package if necessary:
+
+	git clone https://github.com/zctao/ttHTauTauMVA.git
+
+Add MEM interface if necessary:
+
+	git clone https://github.com/zctao/ttHTauTau_MEM_Interface.git
 
 MiniAODHelper:
 
 	git clone https://github.com/cms-ttH/MiniAOD.git
-	(currently use branch CMSSW_8_0_24_v1_sync)
+	(currently use branch cmssw940pre3)
 
 LeptonID package shared with ND ttH-Multilepton group:
 
-	git clone https://github.com/cms-ttH/ttH-LeptonID.git ttH/LeptonID
+	git clone https://github.com/zctao/ttH-LeptonID.git ttH/LeptonID
+	cd ttH/LeptonID
+	git checkout cmssw_944_sync
+	cd -
 
 Compile:
 
@@ -38,10 +47,15 @@ Compile:
 Add the area containing the Electron MVA weights:
 
 	cd $CMSSW_BASE/external
-	cd slc6_amd64_gcc530/
-	git clone https://github.com/ikrav/RecoEgamma-ElectronIdentification.git data/RecoEgamma/ElectronIdentification/data
+	cd slc6_amd64_gcc630/
+	git clone https://github.com/lsoffi/RecoEgamma-PhotonIdentification.git data/RecoEgamma/PhotonIdentification/data
+	cd data/RecoEgamma/PhotonIdentification/data
+	git checkout CMSSW_9_4_0_pre3_TnP
+	cd $CMSSW_BASE/external
+	cd slc6_amd64_gcc630/
+	git clone https://github.com/lsoffi/RecoEgamma-ElectronIdentification.git data/RecoEgamma/ElectronIdentification/data
 	cd data/RecoEgamma/ElectronIdentification/data
-	git checkout egm_id_80X_v1
+	git checkout CMSSW_9_4_0_pre3_TnP
 	cd $CMSSW_BASE/src
 
 Get data files before running analyzer:
