@@ -83,6 +83,13 @@ class mvaNtuple
 	float tau0_easym;
 	float tau1_easym;
 
+	int tau0_tightWP;
+	int tau1_tightWP;
+	float tau0_ldgtrkpt;
+	float tau1_ldgtrkpt;
+	float tau0_ldgtrkE;
+	float tau1_ldgtrkE;
+
 	int taup_decaymode;
 	int taum_decaymode;
 	float taup_E;
@@ -94,6 +101,17 @@ class mvaNtuple
 	float taum_easym;
 	float taup_cosPsi;
 	float taum_cosPsi;
+
+	float taup_pt;
+	float taum_pt;
+	float taup_ldgtrkpt;
+	float taum_ldgtrkpt;
+	float taup_ldgtrkE;
+	float taum_ldgtrkE;
+	int taup_tightWP;
+	int taum_tightWP;
+	float taup_upsilon;  // using pt
+	float taum_upsilon;  // using pt
 	
 	// event weights
 	float event_weight;
@@ -184,6 +202,7 @@ class mvaNtuple
 	float compute_mT_lep(const miniLepton&, float, float);
 	float compute_max_lep_eta(const std::vector<miniLepton>&);
 	float compute_upsilon(const miniTau&);
+	float compute_upsilon_pt(const miniTau&);
 	float compute_cosPsi(const miniTau&, float mass=0.139);
 	float compute_cosPsi(const TLorentzVector&, const TLorentzVector&,
 						 const TLorentzVector&, float mass=0.139);

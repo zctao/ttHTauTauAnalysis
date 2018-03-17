@@ -119,6 +119,13 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("tau2_pt", &tau1_pt);
 			tree->Branch("nBjetLoose", &nbtags_loose);
 			tree->Branch("nBjetMedium", &nbtags_medium);
+
+			tree->Branch("tau0_tightWP", &tau0_tightWP);
+			tree->Branch("tau1_tightWP", &tau1_tightWP);
+			tree->Branch("tau0_ldgtrkpt", &tau0_ldgtrkpt);
+			tree->Branch("tau1_ldgtrkpt", &tau1_ldgtrkpt);
+			tree->Branch("tau0_ldgtrkE", &tau0_ldgtrkE);
+			tree->Branch("tau1_ldgtrkE", &tau1_ldgtrkE);
 			
 			tree->Branch("taup_decaymode", &taup_decaymode);
 			tree->Branch("taum_decaymode", &taum_decaymode);
@@ -129,6 +136,17 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("evisTaus_diff", &evisTaus_diff);
 			tree->Branch("evisTaus_sum", &evisTaus_sum);
 			tree->Branch("evisTausAsym", &evisTausAsym);
+			
+			tree->Branch("taup_pt", &taup_pt);
+			tree->Branch("taum_pt", &taum_pt);
+			tree->Branch("taup_ldgtrkpt", &taup_ldgtrkpt);
+			tree->Branch("taum_ldgtrkpt", &taum_ldgtrkpt);
+			tree->Branch("taup_ldgtrkE", &taup_ldgtrkE);
+			tree->Branch("taum_ldgtrkE", &taum_ldgtrkE);
+			tree->Branch("taup_tightWP", &taup_tightWP);
+			tree->Branch("taum_tightWP", &taum_tightWP);
+			tree->Branch("taup_upsilon", &taup_upsilon);
+			tree->Branch("taum_upsilon", &taum_upsilon);
 		}
 		else if (version_=="test") {
 			tree->Branch("taup_decaymode", &taup_decaymode);
@@ -232,10 +250,16 @@ void mvaNtuple::compute_variables(const std::vector<miniLepton>& leptons,
 			mT_met_lep0 = compute_mT_lep(leptons[0], MET, METphi);
 			met = MET;
 			HT = MHT; // FIXME
-			tau0_pt = taus[0].pt();
-			tau1_pt = taus[1].pt();
 			nbtags_loose = nbtagsloose;
 			nbtags_medium = nbtagsmedium;
+			tau0_pt = taus[0].pt();
+			tau1_pt = taus[1].pt();
+			tau0_tightWP = taus[0].passTightSel();
+			tau1_tightWP = taus[1].passTightSel();
+			tau0_ldgtrkpt = taus[0].leadtrackP4().Pt();
+			tau1_ldgtrkpt = taus[1].leadtrackP4().Pt();
+			tau0_ldgtrkE = taus[0].leadtrackP4().Energy();
+			tau1_ldgtrkE = taus[1].leadtrackP4().Energy();
 
 			compute_tauDecay_variables(taus);
 
@@ -313,7 +337,18 @@ void mvaNtuple::compute_tauDecay_variables(const std::vector<miniTau>& taus,bool
 	evisTaus_diff = (taus[im].p4().E()-taus[ip].p4().E());
 	evisTaus_sum = (taus[im].p4()+taus[ip].p4()).E();
 	evisTausAsym = evisTaus_diff / evisTaus_sum;
-
+	
+	taup_tightWP = taus[ip].passTightSel();
+	taum_tightWP = taus[im].passTightSel();
+	taup_pt = taus[ip].pt();
+	taum_pt = taus[im].pt();
+	taup_ldgtrkpt = taus[ip].leadtrackP4().Pt();
+	taum_ldgtrkpt = taus[im].leadtrackP4().Pt();
+	taup_ldgtrkE = taus[ip].leadtrackP4().Energy();
+	taum_ldgtrkE = taus[im].leadtrackP4().Energy();
+	taup_upsilon = compute_upsilon(taus[ip]);
+	taum_upsilon = compute_upsilon(taus[im]);
+	
 	if (test) {
 		// LorentzVectors of tau decay products
 		TLorentzVector pp1, pp2, pp3;
@@ -460,6 +495,14 @@ float mvaNtuple::compute_upsilon(const miniTau& tau)
 	auto p4_ldgtrk = tau.leadtrackP4();
 	auto p4_visible = tau.p4();
 	return (2.*p4_ldgtrk.Energy()/p4_visible.Energy() - 1);
+}
+
+float mvaNtuple::compute_upsilon_pt(const miniTau& tau)
+{
+	// (2*pt_ldgtrk - pt_vis) / pt_vis
+	auto p4_ldgtrk = tau.leadtrackP4();
+	auto p4_visible = tau.p4();
+	return (2.*p4_ldgtrk.Pt()/p4_visible.Pt() - 1);
 }
 
 float mvaNtuple::compute_cosPsi(const miniTau& tau, float mass)
