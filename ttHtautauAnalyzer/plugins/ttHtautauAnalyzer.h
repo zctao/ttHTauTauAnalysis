@@ -258,8 +258,8 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	edm::EDGetTokenT<reco::GenParticleCollection> genparticle_token_;
 	edm::EDGetTokenT<reco::GenJetCollection> genjets_token_;
 
-	edm::EDGetTokenT<edm::View<reco::Muon>> badMuons_token_;
-	edm::EDGetTokenT<edm::View<reco::Muon>> clonedMuons_token_;
+	//edm::EDGetTokenT<edm::View<reco::Muon>> badMuons_token_;
+	//edm::EDGetTokenT<edm::View<reco::Muon>> clonedMuons_token_;
 
 	/// Output file is opened/closed through CMS py config
 	edm::Service<TFileService> fs_;

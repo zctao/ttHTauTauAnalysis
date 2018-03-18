@@ -84,8 +84,8 @@ ttHtautauAnalyzer::ttHtautauAnalyzer(const edm::ParameterSet& iConfig):
 	genparticle_token_ = consumes<reco::GenParticleCollection>(iConfig.getParameter<edm::InputTag>("prunedgen"));
 	genjets_token_ = consumes<reco::GenJetCollection>(edm::InputTag("slimmedGenJets"));
 
-	badMuons_token_ = consumes<edm::View<reco::Muon>>(iConfig.getParameter<edm::InputTag>("badmu"));
-	clonedMuons_token_ = consumes<edm::View<reco::Muon>>(iConfig.getParameter<edm::InputTag>("clonemu"));
+	//badMuons_token_ = consumes<edm::View<reco::Muon>>(iConfig.getParameter<edm::InputTag>("badmu"));
+	//clonedMuons_token_ = consumes<edm::View<reco::Muon>>(iConfig.getParameter<edm::InputTag>("clonemu"));
 
 	// Trigger and filter
 	trig_helper_ = new TriggerHelper(anaType_, verbosity_);
@@ -161,15 +161,15 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	Handle<LHEEventProduct> event_lhe_info;
 	Handle<reco::GenParticleCollection> MC_particles;
 	Handle<reco::GenJetCollection> genJets;
-	Handle<View<reco::Muon>> badMuons;
-	Handle<View<reco::Muon>> clonedMuons;
+	//Handle<View<reco::Muon>> badMuons;
+	//Handle<View<reco::Muon>> clonedMuons;
 	if (not isdata_) {
 		iEvent.getByToken(geninfo_token_,event_gen_info);
 		iEvent.getByToken(lheinfo_token_,event_lhe_info);
 		iEvent.getByToken(genparticle_token_,MC_particles);		
 		iEvent.getByToken(genjets_token_,genJets);
-		iEvent.getByToken(badMuons_token_,badMuons);
-		iEvent.getByToken(clonedMuons_token_,clonedMuons);
+		//iEvent.getByToken(badMuons_token_,badMuons);
+		//iEvent.getByToken(clonedMuons_token_,clonedMuons);
 	}
 
 	/////////////////////////////////////////
@@ -511,7 +511,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 			}
 		}
 
-		evNtuple_.nBadMuons = badMuons->size() + clonedMuons->size();
+		//evNtuple_.nBadMuons = badMuons->size() + clonedMuons->size();
 	}
 
 	/// primary vertex
