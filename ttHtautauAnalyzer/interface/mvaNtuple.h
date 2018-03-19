@@ -33,6 +33,19 @@ class mvaNtuple
 						   const std::vector<TLorentzVector>&,
 						   float, float, float, int, int);
 
+	void compute_tauDecay_variables(const std::vector<miniTau>&, bool test=false);
+	float compute_average_dr(const std::vector<TLorentzVector>&);
+	float compute_max_dr(const std::vector<TLorentzVector>&);
+	float compute_min_dr(const TLorentzVector&, const std::vector<TLorentzVector>&);
+	float compute_cosThetaS(const TLorentzVector&);
+	float compute_mT_lep(const miniLepton&, float, float);
+	float compute_max_lep_eta(const std::vector<miniLepton>&);
+	float compute_upsilon(const miniTau&);
+	float compute_upsilon_pt(const miniTau&);
+	float compute_cosPsi(const miniTau&, float mass=0.139);
+	float compute_cosPsi(const TLorentzVector&, const TLorentzVector&,
+						 const TLorentzVector&, float mass=0.139);
+
 	//////////////////////////////
 	//// variables
 	//////////////////////////////
@@ -187,25 +200,12 @@ class mvaNtuple
 	double pm2_pm3;
 	double pm3_pm3;
 	
-
  protected:
 
 	Analysis_types anatype_;
 	bool dosystematics_;
 	std::string version_;
 
-	void compute_tauDecay_variables(const std::vector<miniTau>&, bool test=false);
-	float compute_average_dr(const std::vector<TLorentzVector>&);
-	float compute_max_dr(const std::vector<TLorentzVector>&);
-	float compute_min_dr(const TLorentzVector&, const std::vector<TLorentzVector>&);
-	float compute_cosThetaS(const TLorentzVector&);
-	float compute_mT_lep(const miniLepton&, float, float);
-	float compute_max_lep_eta(const std::vector<miniLepton>&);
-	float compute_upsilon(const miniTau&);
-	float compute_upsilon_pt(const miniTau&);
-	float compute_cosPsi(const miniTau&, float mass=0.139);
-	float compute_cosPsi(const TLorentzVector&, const TLorentzVector&,
-						 const TLorentzVector&, float mass=0.139);
 	float lam(float, float, float);
 };
 
