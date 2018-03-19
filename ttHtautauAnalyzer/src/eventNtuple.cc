@@ -257,6 +257,24 @@ TLorentzVector eventNtuple::buildFourVectorMET()
 	return met;
 }
 
+float eventNtuple::computeMHT()
+{
+	TLorentzVector mht;
+
+	auto looseleptons = buildLeptons(true);
+	auto loosetaus = buildTaus(true);
+	auto loosejets = buildFourVectorJets();
+
+	for (const auto l: looseleptons)
+		mht -= l.p4();
+	for (const auto t: loosetaus)
+		mht -= t.p4();
+	for (const auto j: loosejets)
+		mht -= j;
+
+	return mht.Pt();
+}
+
 void eventNtuple::initialize()
 {
 	// event variables

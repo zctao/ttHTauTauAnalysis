@@ -30,6 +30,7 @@ class eventNtuple
 	std::vector<TLorentzVector> buildFourVectorJets();
 	std::vector<TLorentzVector> buildFourVectorBtagJets();
 	TLorentzVector buildFourVectorMET();
+	float computeMHT();
 	
 	////////////////////////
 	//// variables
