@@ -1,5 +1,5 @@
-<bin name="makeMVANtuple" file="makeMVANtuple.cc">
-  <use name="boost_program_options"/>
-  <use name="root"/>
-  <use name="ttHTauTauAnalysis/ttHtautauAnalyzer"/>
-</bin>
+<bin name="makeMVANtuple" file="makeMVANtuple.cc"></bin>
+<bin name="makeSyncNtuple" file="makeSyncNtuple.cc"></bin>
+<use name="boost_program_options"/>
+<use name="root"/>
+<use name="ttHTauTauAnalysis/ttHtautauAnalyzer"/>

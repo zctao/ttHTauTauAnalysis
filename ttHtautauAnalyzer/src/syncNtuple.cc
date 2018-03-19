@@ -225,6 +225,7 @@ void syncNtuple::initialize()
 	mindr_lep2_jet = -9999.;
 	mindr_tau_jet = -9999.;
 	MT_met_lep0 = -9999.;
+	MT_met_lep2 = -9999.;
 	avg_dr_jet = -9999.;
 
 	dr_leps = -9999.;
@@ -547,6 +548,7 @@ void syncNtuple::set_up_branches(TTree *tree)
 	tree->Branch("mindr_lep2_jet", &mindr_lep2_jet);
 	tree->Branch("mindr_tau_jet", &mindr_tau_jet);
 	tree->Branch("MT_met_lep0", &MT_met_lep0);
+	tree->Branch("MT_met_lep2", &MT_met_lep2);
 	tree->Branch("avg_dr_jet", &avg_dr_jet);
 
 	tree->Branch("dr_leps", &dr_leps);
@@ -572,7 +574,7 @@ void syncNtuple::set_up_branches(TTree *tree)
 	tree->Branch("dR_l0tau", &dR_l0tau);
 	tree->Branch("dR_l1tau", &dR_l1tau);
 	tree->Branch("dR_l2tau", &dR_l2tau);
-	tree->Branch("mT_lep2", &mT_lep2);
+	//tree->Branch("mT_lep2", &mT_lep2);
 	tree->Branch("MVA_3l1tau_ttbar", &MVA_3l1tau_ttbar);
 	tree->Branch("MVA_3l1tau_ttV", &MVA_3l1tau_ttV);
 	tree->Branch("MVA_3l1tau_2Dbin", &MVA_3l1tau_2Dbin);
@@ -584,7 +586,7 @@ void syncNtuple::set_up_branches(TTree *tree)
 	tree->Branch("MEM_LR", &MEM_LR);
 	tree->Branch("dR_leps", &dR_leps);
 	tree->Branch("mvis_l0tau", &mvis_l0tau);
-	tree->Branch("mT_lep0", &mT_lep0);
+	//tree->Branch("mT_lep0", &mT_lep0);
 	tree->Branch("MVA_2lSS1tau_noMEM_ttbar", &MVA_2lSS1tau_noMEM_ttbar);
 	tree->Branch("MVA_2lSS1tau_noMEM_ttV", &MVA_2lSS1tau_noMEM_ttV);
 	tree->Branch("MVA_2lSS1tau_noMEM_2Dbin", &MVA_2lSS1tau_noMEM_2Dbin);

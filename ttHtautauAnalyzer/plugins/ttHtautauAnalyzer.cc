@@ -594,8 +594,16 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 				trig_helper_->pass_single_lep_triggers(evNtuple_.triggerBits);
 			bool hltXTriggered =
 				trig_helper_->pass_leptau_cross_triggers(evNtuple_.triggerBits);
-			write_ntuple_triggerSF((*lep_selected)[0], *tau_selected,
-								   hlt1LTriggered, hltXTriggered);
+			if (selType_==Control_fake_1l2tau) {
+				// not really matter since fake region always applies to data sample
+				// but include here anyway to run e.g. synchronization exercise
+				write_ntuple_triggerSF((*lep_selected)[0], tau_loose,
+									   hlt1LTriggered, hltXTriggered);
+			}
+			else {
+				write_ntuple_triggerSF((*lep_selected)[0], *tau_selected,
+									   hlt1LTriggered, hltXTriggered);
+			}
 		}
 	}
 	
