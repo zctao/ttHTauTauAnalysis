@@ -4,6 +4,7 @@ outdir=/uscms/home/ztao/nobackup/ttHTT_syncNtuple/94X/Test/
 
 echo 'producing sync ntuple with event selection turned off'
 cmsRun analyzer2017_cfg.py doSync=True TurnOffEvtSel=True doSystematics=False
+mv output_.root $outdir"output_sync.root"
 
 makeSyncNtuple -d $outdir -o syncNtuple_object.root --make1l2tau false --make2lss1tau false --make3l1tau false
 mv output_object.root $outdir.
