@@ -29,6 +29,7 @@ class TriggerHelper
 	bool pass_single_e_triggers(unsigned int);
 	bool pass_single_m_triggers(unsigned int);
 	bool pass_dilep_triggers(unsigned int);
+	bool pass_trilep_triggers(unsigned int);
 	
 	//bool pass_trigger(std::string&);  // Todo
 	//bool pass_filter(std::string&);   // Todo
@@ -40,23 +41,23 @@ class TriggerHelper
 							 HLTConfigProvider&, const std::vector<std::string>&);
 
 	static const std::vector<std::string> filter_paths_;
-	
-	static const std::vector<std::string> hlt_paths_e_2l1tau_;
-	static const std::vector<std::string> hlt_paths_m_2l1tau_;
-	static const std::vector<std::string> hlt_paths_2l_2l1tau_;
-	static const std::vector<std::string> hlt_paths_l_1l2tau_;
-	static const std::vector<std::string> hlt_paths_x_1l2tau_;
+
+	static const std::vector<std::string> hlt_paths_e_;
+	static const std::vector<std::string> hlt_paths_m_;
+	static const std::vector<std::string> hlt_paths_2l_;
+	static const std::vector<std::string> hlt_paths_ltau_;
+	static const std::vector<std::string> hlt_paths_3l_;
 	std::vector<std::string> hlt_paths_;
 	std::vector<std::string> hlt_paths_version_;
 
 	Analysis_types anaType_;
 	bool verbose_;
 
-	unsigned int bitmask_e_2l1tau_;
-	unsigned int bitmask_m_2l1tau_;
-	unsigned int bitmask_2l_2l1tau_;
-	unsigned int bitmask_l_1l2tau_;
-	unsigned int bitmask_x_1l2tau_;
+	unsigned int bitmask_e_;
+	unsigned int bitmask_m_;
+	unsigned int bitmask_2l_;
+	unsigned int bitmask_ltau_;
+	unsigned int bitmask_3l_;
 };
 
 #endif

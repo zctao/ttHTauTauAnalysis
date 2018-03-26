@@ -1,46 +1,39 @@
 #include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/TriggerHelper.h"
 
-// HLT paths for 2l1tau
-// single electron triggers
-const std::vector<std::string> TriggerHelper::hlt_paths_e_2l1tau_ = {
-	"HLT_Ele27_WPTight_Gsf_v",
-	"HLT_Ele27_eta2p1_WPLoose_Gsf_v",
-	"HLT_Ele25_eta2p1_WPTight_Gsf_v"
-};
-// single muon triggers
-const std::vector<std::string> TriggerHelper::hlt_paths_m_2l1tau_ = {
-	"HLT_IsoMu24_v",
-	"HLT_IsoTkMu24_v",
-	"HLT_IsoMu22_eta2p1_v",
-	"HLT_IsoTkMu22_eta2p1_v",
-	"HLT_IsoMu22_v",
-	"HLT_IsoTkMu22_v"
-};
-// di-lepton triggers
-const std::vector<std::string> TriggerHelper::hlt_paths_2l_2l1tau_ = {
-	"HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v",
-	//
-	"HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v",
-	"HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v",
-	//
-	"HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v"
+const std::vector<std::string> TriggerHelper::hlt_paths_e_ = {
+	"HLT_Ele32_WPTight_Gsf_v",
+	"HLT_Ele35_WPTight_Gsf_v"
 };
 
-// HLT paths for 1l2tau
-// single lepton triggers
-const std::vector<std::string> TriggerHelper::hlt_paths_l_1l2tau_ = {
-	"HLT_Ele25_eta2p1_WPTight_Gsf_v",
-	"HLT_IsoMu22_eta2p1_v",
-	"HLT_IsoTkMu22_eta2p1_v",
-	"HLT_IsoMu22_v",
-	"HLT_IsoTkMu22_v"
+const std::vector<std::string> TriggerHelper::hlt_paths_m_ = {
+	"HLT_IsoMu24_v",
+	"HLT_IsoMu27_v"
 };
-// lepton+tau cross triggers
-const std::vector<std::string> TriggerHelper::hlt_paths_x_1l2tau_ = {
-	"HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_v",
-	"HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1_v",
-	"HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30_v",
-	"HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1_v"
+
+const std::vector<std::string> TriggerHelper::hlt_paths_2l_ = {
+	// di e
+	"HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v",
+	"HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v",
+	// di mu
+	"HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v",
+	"HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v",
+	"HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v4",
+	// e mu
+	"HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v",
+	"HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v",
+	"HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v"
+};
+
+const std::vector<std::string> TriggerHelper::hlt_paths_ltau_ = {
+	"HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1_v",
+	"HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1_v"
+};
+
+const std::vector<std::string> TriggerHelper::hlt_paths_3l_ = {
+	"HLT_Ele16_Ele12_Ele8_CaloIdL_TrackIdL_v",
+	"HLT_TripleMu_12_10_5_v",
+	"HLT_Mu8_DiEle12_CaloIdL_TrackIdL_v",
+	"HLT_DiMu9_Ele9_CaloIdL_TrackIdL_DZ_v"
 };
 
 // Filters
@@ -61,27 +54,58 @@ TriggerHelper::TriggerHelper(Analysis_types analysis, bool verbose)
 	verbose_ = verbose;
 
 	hlt_paths_.clear();
+	
 	if (anaType_ == Analyze_2lss1tau) {
-		hlt_paths_.reserve(hlt_paths_e_2l1tau_.size()+hlt_paths_m_2l1tau_.size()+
-						   hlt_paths_2l_2l1tau_.size());
-		hlt_paths_.insert(hlt_paths_.end(), hlt_paths_e_2l1tau_.begin(),
-						  hlt_paths_e_2l1tau_.end());
-		hlt_paths_.insert(hlt_paths_.end(), hlt_paths_m_2l1tau_.begin(),
-						  hlt_paths_m_2l1tau_.end());
-		hlt_paths_.insert(hlt_paths_.end(), hlt_paths_2l_2l1tau_.begin(),
-						  hlt_paths_2l_2l1tau_.end());
-		bitmask_e_2l1tau_ = ((1<<hlt_paths_e_2l1tau_.size())-1) << (hlt_paths_m_2l1tau_.size()+hlt_paths_2l_2l1tau_.size());
-		bitmask_m_2l1tau_ = ((1<<hlt_paths_m_2l1tau_.size())-1) << hlt_paths_2l_2l1tau_.size();
-		bitmask_2l_2l1tau_ = (1<<hlt_paths_2l_2l1tau_.size())-1;
+		hlt_paths_.reserve(hlt_paths_e_.size()+hlt_paths_m_.size()+
+						   hlt_paths_2l_.size());
+		hlt_paths_.insert(hlt_paths_.end(), hlt_paths_e_.begin(),
+						  hlt_paths_e_.end());
+		hlt_paths_.insert(hlt_paths_.end(), hlt_paths_m_.begin(),
+						  hlt_paths_m_.end());
+		hlt_paths_.insert(hlt_paths_.end(), hlt_paths_2l_.begin(),
+						  hlt_paths_2l_.end());
+		
+		bitmask_e_ = ((1<<hlt_paths_e_.size())-1) << (hlt_paths_m_.size()+hlt_paths_2l_.size());
+		bitmask_m_ = ((1<<hlt_paths_m_.size())-1) << hlt_paths_2l_.size();
+		bitmask_2l_ = (1<<hlt_paths_2l_.size())-1;
+		bitmask_ltau_ = 0;
+		bitmask_3l_ = 0;
 	}
+	
 	if (anaType_ == Analyze_1l2tau) {
-		hlt_paths_.reserve(hlt_paths_l_1l2tau_.size()+hlt_paths_x_1l2tau_.size());
-		hlt_paths_.insert(hlt_paths_.end(), hlt_paths_l_1l2tau_.begin(),
-						  hlt_paths_l_1l2tau_.end());
-		hlt_paths_.insert(hlt_paths_.end(), hlt_paths_x_1l2tau_.begin(),
-						  hlt_paths_x_1l2tau_.end());
-		bitmask_l_1l2tau_ = ((1<<hlt_paths_l_1l2tau_.size())-1)<<hlt_paths_x_1l2tau_.size();
-		bitmask_x_1l2tau_ = (1<<hlt_paths_x_1l2tau_.size())-1;
+		hlt_paths_.reserve(hlt_paths_e_.size()+hlt_paths_m_.size()+
+						   hlt_paths_ltau_.size());
+		hlt_paths_.insert(hlt_paths_.end(), hlt_paths_e_.begin(),
+						  hlt_paths_e_.end());
+		hlt_paths_.insert(hlt_paths_.end(), hlt_paths_m_.begin(),
+						  hlt_paths_m_.end());
+		hlt_paths_.insert(hlt_paths_.end(), hlt_paths_ltau_.begin(),
+						  hlt_paths_ltau_.end());
+
+		bitmask_e_ = ((1<<hlt_paths_e_.size())-1) << (hlt_paths_m_.size()+hlt_paths_ltau_.size());
+		bitmask_m_ = ((1<<hlt_paths_m_.size())-1) << (hlt_paths_ltau_.size());
+		bitmask_ltau_ = (1<<hlt_paths_ltau_.size())-1;
+		bitmask_2l_ = 0;
+		bitmask_3l_ = 0;
+	}
+
+	if (anaType_ == Analyze_3l1tau) {
+		hlt_paths_.reserve(hlt_paths_e_.size()+hlt_paths_m_.size()+
+						   hlt_paths_2l_.size()+hlt_paths_3l_.size());
+		hlt_paths_.insert(hlt_paths_.end(), hlt_paths_e_.begin(),
+						  hlt_paths_e_.end());
+		hlt_paths_.insert(hlt_paths_.end(), hlt_paths_m_.begin(),
+						  hlt_paths_m_.end());
+		hlt_paths_.insert(hlt_paths_.end(), hlt_paths_2l_.begin(),
+						  hlt_paths_2l_.end());
+		hlt_paths_.insert(hlt_paths_.end(), hlt_paths_3l_.begin(),
+						  hlt_paths_3l_.end());
+
+		bitmask_e_ = ((1<<hlt_paths_e_.size())-1) << (hlt_paths_m_.size()+hlt_paths_2l_.size()+hlt_paths_3l_.size());
+		bitmask_m_ = ((1<<hlt_paths_m_.size())-1) << (hlt_paths_2l_.size()+hlt_paths_3l_.size());
+		bitmask_2l_ = ((1<<hlt_paths_2l_.size())-1) << (hlt_paths_3l_.size());
+		bitmask_3l_ = (1<<hlt_paths_3l_.size())-1;
+		bitmask_ltau_ = 0;
 	}
 }
 
@@ -127,12 +151,12 @@ unsigned int TriggerHelper::encode_bits(edm::Handle<edm::TriggerResults> results
 	for (const auto & name : vnames) {
 		unsigned int index = config.triggerIndex(name);
 
-		if ((index >= results->size()) and verbose_) {
-			std::cerr << "Failed to find " << name << std::endl;
-			++iname;
-			continue;
+		if (index >= results->size()) {
+			if (verbose_) std::cerr << "Failed to find " << name << std::endl;
 		}
-		if (results->accept(index)) bits |= 1 << iname;
+		else {
+			if (results->accept(index)) bits |= 1 << iname;
+		}
 
 		++iname;
 	}
@@ -143,29 +167,35 @@ unsigned int TriggerHelper::encode_bits(edm::Handle<edm::TriggerResults> results
 bool TriggerHelper::pass_leptau_cross_triggers(unsigned int triggerBits)
 {
 	assert(anaType_==Analyze_1l2tau);
-	return triggerBits & bitmask_x_1l2tau_;
-}
-
-bool TriggerHelper::pass_single_lep_triggers(unsigned int triggerBits)
-{
-	assert(anaType_==Analyze_1l2tau);
-	return triggerBits & bitmask_l_1l2tau_;
+	return triggerBits & bitmask_ltau_;
 }
 
 bool TriggerHelper::pass_single_e_triggers(unsigned int triggerBits)
 {
-	assert(anaType_==Analyze_2lss1tau);
-	return triggerBits & bitmask_e_2l1tau_;
+	//assert(anaType_==Analyze_2lss1tau);
+	return triggerBits & bitmask_e_;
 }
 
 bool TriggerHelper::pass_single_m_triggers(unsigned int triggerBits)
 {
-	assert(anaType_==Analyze_2lss1tau);
-	return triggerBits & bitmask_m_2l1tau_;
+	//assert(anaType_==Analyze_2lss1tau);
+	return triggerBits & bitmask_m_;
+}
+
+bool TriggerHelper::pass_single_lep_triggers(unsigned int triggerBits)
+{
+	//assert(anaType_==Analyze_1l2tau);
+	return pass_single_e_triggers(triggerBits) or pass_single_m_triggers(triggerBits);
 }
 
 bool TriggerHelper::pass_dilep_triggers(unsigned int triggerBits)
 {
-	assert(anaType_==Analyze_2lss1tau);
-	return triggerBits & bitmask_2l_2l1tau_;
+	assert(anaType_==Analyze_2lss1tau or anaType_==Analyze_3l1tau);
+	return triggerBits & bitmask_2l_;
+}
+
+bool TriggerHelper::pass_trilep_triggers(unsigned int triggerBits)
+{
+	assert(anaType_==Analyze_3l1tau);
+	return triggerBits & bitmask_3l_;
 }
