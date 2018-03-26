@@ -241,9 +241,12 @@ int main(int argc, char** argv)
 			if (leptons[0].charge()*leptons[1].charge()<0) continue;
 		}
 		else if (anaType == Analyze_1l2tau) {
-			if (leptons.size()<1) continue; passlep++;
-			if (taus.size()<2) continue; passtau++;
-			if (taus[0].charge()*taus[1].charge()>0) continue; passcharge++;
+			if (leptons.size()<1) continue;
+			passlep++;
+			if (taus.size()<2) continue;
+			passtau++;
+			if (taus[0].charge()*taus[1].charge()>0) continue;
+			passcharge++;
 		}
 		else if (anaType == Analyze_3l1tau) {
 		    if (leptons.size()<3) continue;
