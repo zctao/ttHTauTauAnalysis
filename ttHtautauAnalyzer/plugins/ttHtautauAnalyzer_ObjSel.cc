@@ -265,13 +265,48 @@ void ttHtautauAnalyzer::addIDFlagsTau(std::vector<pat::Tau>& taus)
 
 ///////////////////
 // jets
+bool ttHtautauAnalyzer::isTightJet(const pat::Jet& jet) const
+{
+	// https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVRun2017#Preliminary_Recommendations_for
+	
+	bool istight = false;
+	
+	if (fabs(jet.eta()) <= 2.7) {
+		istight =
+			jet.neutralHadronEnergyFraction() < 0.90 and
+			jet.neutralEmEnergyFraction() < 0.90 and
+		    jet.numberOfDaughters() > 1;
+		if (fabs(jet.eta()) <= 2.4) {
+			istight = istight and
+				jet.chargedHadronEnergyFraction() > 0 and
+				jet.chargedMultiplicity() > 0;
+		}																		  
+	}
+	else if (fabs(jet.eta()) <= 3.0) {
+		istight =
+			jet.neutralEmEnergyFraction() < 0.99 and
+		    jet.neutralEmEnergyFraction() > 0.02 and
+			jet.neutralMultiplicity() > 2;
+	}
+	else {
+		istight =
+			jet.neutralEmEnergyFraction() < 0.90 and
+			jet.neutralHadronEnergyFraction() > 0.02 and
+			jet.neutralMultiplicity() > 10;
+	}
+
+	return istight;
+}
+
 std::vector<pat::Jet> ttHtautauAnalyzer::getSelectedJets(const std::vector<pat::Jet>& jets)
 {
 	std::vector<pat::Jet> seljets;
-	for (auto & jet : jets) {
+	for (const auto & jet : jets) {
 		bool passKinematic = (jet.pt() > 25. and fabs(jet.eta()) < 2.4);
-		
-		// miniAODHelper
+
+		bool passID = isTightJet(jet);
+			
+		/*
 		bool looseID =
 		    jet.neutralHadronEnergyFraction() < 0.99 and
 		    jet.chargedEmEnergyFraction() < 0.99 and
@@ -279,7 +314,7 @@ std::vector<pat::Jet> ttHtautauAnalyzer::getSelectedJets(const std::vector<pat::
 			jet.numberOfDaughters() > 1 and
 			jet.chargedHadronEnergyFraction() > 0.0 and
 		    jet.chargedMultiplicity() > 0;
-		
+		*/
 		/*
 		bool looseID =
 			(jet.neutralHadronEnergyFraction()<0.99 and
@@ -293,7 +328,7 @@ std::vector<pat::Jet> ttHtautauAnalyzer::getSelectedJets(const std::vector<pat::
 			 or std::abs(jet.eta())>2.4
 			 ); 
 		*/
-		if (passKinematic and looseID)
+		if (passKinematic and passID)
 			seljets.push_back(jet);
 	}
 	return seljets;

@@ -123,6 +123,7 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	bool isTightID(const pat::Electron&) const;
 	bool isTightCharge(const pat::Muon&) const;
 	bool isTightCharge(const pat::Electron&) const;
+	bool isTightJet(const pat::Jet&) const;
 	std::vector<pat::Tau> getPreselTaus(const std::vector<pat::Tau>&);
 	std::vector<pat::Tau> getSelectedTaus(const std::vector<pat::Tau>&);
 	std::vector<pat::Tau> getCorrectedTaus(const std::vector<pat::Tau>&, double, const std::string&);
