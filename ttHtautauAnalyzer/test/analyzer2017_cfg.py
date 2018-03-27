@@ -276,8 +276,8 @@ process.ttHLeptons.rhoParam = "fixedGridRhoFastjetCentralNeutral"
 #process.ttHLeptons.taus = cms.InputTag("NewTauIDsEmbedded")
 #
 process.ttHLeptons.jets = cms.InputTag("updatedPatJetsUpdatedJEC")
-process.ttHLeptons.LooseCSVWP = cms.double(0.5803)
-process.ttHLeptons.MediumCSVWP = cms.double(0.8838)
+process.ttHLeptons.LooseCSVWP = cms.double(0.1522)
+process.ttHLeptons.MediumCSVWP = cms.double(0.4941)
 process.ttHLeptons.mvaValuesMap = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17IsoV1Values")
 process.ttHLeptons.mvaCategoriesMap = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17IsoV1Categories")
 #process.ttHLeptons.IsHIPSafe = cms.bool(options.HIPSafeMediumMuon)
@@ -302,9 +302,9 @@ process.ttHtaus.do_sync = cms.bool(options.doSync)
 process.ttHtaus.doCutFlow = cms.bool(options.doCutFlow)
 process.ttHtaus.doJERsmear = cms.bool(options.doJERSmearing)
 # CSV WPs 
-process.ttHtaus.csv_loose_wp = cms.double(0.5803)
-process.ttHtaus.csv_medium_wp = cms.double(0.8838)
-process.ttHtaus.csv_tight_wp = cms.double(0.9693)
+process.ttHtaus.csv_loose_wp = cms.double(0.1522)
+process.ttHtaus.csv_medium_wp = cms.double(0.4941)
+process.ttHtaus.csv_tight_wp = cms.double(0.8001)
 
 
 ### Output

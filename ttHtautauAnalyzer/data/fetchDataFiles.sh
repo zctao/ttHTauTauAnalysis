@@ -24,6 +24,8 @@ cp /afs/cern.ch/work/t/tstreble/public/triggerSF_weights/trigger_sf_*.root trigg
 ### tau ID efficiency and fake rate
 
 ### b-tagging
+#wget https://twiki.cern.ch/twiki/pub/CMS/BtagRecommendation94X/CSVv2_94XSF_V1_B_F.csv
+#wget https://twiki.cern.ch/twiki/pub/CMS/BtagRecommendation94X/DeepCSV_94XSF_V1_B_F.csv # not working
 
 ### pile up
 

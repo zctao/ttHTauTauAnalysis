@@ -60,7 +60,9 @@ void SFHelper::Set_up_BTagCalibration_Readers()
 	const std::string base =
 		std::string(getenv("CMSSW_BASE")) +  "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/data/";
 	
-	BTagCalibration calib_csvv2("csvv2", base + "CSVv2_Moriond17_B_H.csv");
+	//BTagCalibration calib_csvv2("csvv2", base + "CSVv2_Moriond17_B_H.csv");
+	//BTagCalibration calib_csvv2("csvv2", base + "CSVv2_94XSF_V1_B_F.csv");
+	BTagCalibration calib_deepcsv("deepcsv", base + "DeepCSV_94XSF_V1_B_F.csv");
 	
 	BTagCaliReader = new BTagCalibrationReader(
 	     BTagEntry::OP_RESHAPING, // operating point
@@ -71,9 +73,9 @@ void SFHelper::Set_up_BTagCalibration_Readers()
 				 "up_cferr1", "down_cferr1", "up_cferr2", "down_cferr2"}
 											   );
 	
-	BTagCaliReader->load(calib_csvv2,BTagEntry::FLAV_B,"iterativefit");
-	BTagCaliReader->load(calib_csvv2,BTagEntry::FLAV_C,"iterativefit");
-	BTagCaliReader->load(calib_csvv2,BTagEntry::FLAV_UDSG,"iterativefit");
+	BTagCaliReader->load(calib_deepcsv,BTagEntry::FLAV_B,"iterativefit");
+	BTagCaliReader->load(calib_deepcsv,BTagEntry::FLAV_C,"iterativefit");
+	BTagCaliReader->load(calib_deepcsv,BTagEntry::FLAV_UDSG,"iterativefit");
 }
 #endif
 
@@ -764,7 +766,8 @@ float SFHelper::Get_JetCSVWeight(const pat::Jet& jet, std::string sys/*pass by c
 {
 	double pt = jet.pt();
 	double eta = jet.eta();
-	double csv = jet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+	//double csv = jet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+	double csv = jet.bDiscriminator("pfDeepCSVDiscriminatorsJetTags:BvsAll");
 	int flavor = jet.hadronFlavour();
 	
 	BTagEntry::JetFlavor jf = BTagEntry::FLAV_UDSG;	

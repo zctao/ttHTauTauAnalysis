@@ -328,7 +328,8 @@ std::vector<pat::Jet> ttHtautauAnalyzer::getCorrectedJets(
 float ttHtautauAnalyzer::getJetCSV(const pat::Jet& jet)
 {
 	float defaultvalue = -0.1;
-	float csv = jet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+	//float csv = jet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+	float csv = jet.bDiscriminator("pfDeepCSVDiscriminatorsJetTags:BvsAll");
 	if (std::isnan(csv)) return defaultvalue;
 	if (csv > 1.) return 1.;
 	if (csv < 0.) return defaultvalue;
