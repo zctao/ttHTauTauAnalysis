@@ -138,7 +138,7 @@ updateJetCollection(
 from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
 switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
 
-my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_iso_V1_cff']
+my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_noIso_V1_cff', 'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_iso_V1_cff']
 for idmod in my_id_modules:
     setupAllVIDIdsInModule(process, idmod, setupVIDElectronSelection)
 
@@ -278,8 +278,8 @@ process.ttHLeptons.rhoParam = "fixedGridRhoFastjetCentralNeutral"
 process.ttHLeptons.jets = cms.InputTag("updatedPatJetsUpdatedJEC")
 process.ttHLeptons.LooseCSVWP = cms.double(0.1522)
 process.ttHLeptons.MediumCSVWP = cms.double(0.4941)
-process.ttHLeptons.mvaValuesMap = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17IsoV1Values")
-process.ttHLeptons.mvaCategoriesMap = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17IsoV1Categories")
+process.ttHLeptons.mvaValuesMap = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17NoIsoV1Values")
+process.ttHLeptons.mvaCategoriesMap = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17NoIsoV1Categories")
 #process.ttHLeptons.IsHIPSafe = cms.bool(options.HIPSafeMediumMuon)
 
 process.ttHtaus.electrons = cms.InputTag("ttHLeptons")
