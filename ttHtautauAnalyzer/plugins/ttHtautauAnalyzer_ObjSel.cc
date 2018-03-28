@@ -7,8 +7,10 @@
 // leptons
 template <typename T> float ttHtautauAnalyzer::ConePt(const T& lep)
 {
-	return (lep.userFloat("leptonMVA") > 0.75) ? lep.pt() :
-		(0.85 * lep.pt() / lep.userFloat("nearestJetPtRatio"));
+	//return (lep.userFloat("leptonMVA") > 0.75) ? lep.pt() :
+	//	(0.85 * lep.pt() / lep.userFloat("nearestJetPtRatio"));
+
+	return lep.userFloat("correctedPt");
 }
 template float ttHtautauAnalyzer::ConePt<pat::Electron>(const pat::Electron&);
 template float ttHtautauAnalyzer::ConePt<pat::Muon>(const pat::Muon&);
