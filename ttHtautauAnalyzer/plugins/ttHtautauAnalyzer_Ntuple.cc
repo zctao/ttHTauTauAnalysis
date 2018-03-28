@@ -125,7 +125,7 @@ void ttHtautauAnalyzer::write_ntuple_muons(const std::vector<pat::Muon>& muons)
 		evNtuple_.mu_isfakeablesel->push_back(mu.userInt("isFakeable"));
 		evNtuple_.mu_ismvasel->push_back(mu.userInt("isTight"));
 		evNtuple_.mu_jetNDauChargedMVASel->push_back(mu.userFloat("nearestJetNDauCharged"));
-		evNtuple_.mu_miniRelIso->push_back(mu.userFloat("miniIso"));
+		evNtuple_.mu_miniRelIso->push_back(mu.userFloat("miniRelIso"));
 		evNtuple_.mu_miniIsoCharged->push_back(mu.userFloat("miniAbsIsoCharged"));
 		evNtuple_.mu_miniIsoNeutral->push_back(mu.userFloat("miniAbsIsoNeutralcorr"));
 		evNtuple_.mu_jetPtRel->push_back(mu.userFloat("nearestJetPtRel"));
@@ -160,7 +160,7 @@ void ttHtautauAnalyzer::write_ntuple_electrons(const std::vector<pat::Electron>&
 		evNtuple_.ele_ismvasel->push_back(ele.userInt("isTight"));
 		evNtuple_.ele_jetNDauChargedMVASel->
 			push_back(ele.userFloat("nearestJetNDauCharged"));
-		evNtuple_.ele_miniRelIso->push_back(ele.userFloat("miniIso"));
+		evNtuple_.ele_miniRelIso->push_back(ele.userFloat("miniRelIso"));
 		evNtuple_.ele_miniIsoCharged->push_back(ele.userFloat("miniAbsIsoCharged"));
 		evNtuple_.ele_miniIsoNeutral->push_back(ele.userFloat("miniAbsIsoNeutralcorr"));
 		evNtuple_.ele_jetPtRel->push_back(ele.userFloat("nearestJetPtRel"));

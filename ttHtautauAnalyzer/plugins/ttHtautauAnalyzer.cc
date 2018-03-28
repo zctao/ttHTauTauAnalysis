@@ -144,8 +144,8 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	iEvent.getByToken(pu_token_,PU_info);
 	Handle<reco::BeamSpot> BS;
 	iEvent.getByToken(bs_token_,BS);
-	Handle<double> srcRho;
-	iEvent.getByToken(rho_token_,srcRho);
+	//Handle<double> srcRho;
+	//iEvent.getByToken(rho_token_,srcRho);
 	Handle<pat::ElectronCollection> electrons;
 	iEvent.getByToken(electrons_token_,electrons);
 	Handle<pat::MuonCollection> muons;

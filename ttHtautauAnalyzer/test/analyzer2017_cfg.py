@@ -271,7 +271,7 @@ process.load("ttH.LeptonID.ttHLeptons_cfi")
 process.load("ttHTauTauAnalysis.ttHtautauAnalyzer.ttHtaus_cfi")
 
 ### update parameter sets
-process.ttHLeptons.rhoParam = "fixedGridRhoFastjetCentralNeutral"
+process.ttHLeptons.rhoParam = "fixedGridRhoFastjetAll"
 # if rerun tauID
 #process.ttHLeptons.taus = cms.InputTag("NewTauIDsEmbedded")
 #
@@ -287,7 +287,7 @@ process.ttHtaus.muons = cms.InputTag("ttHLeptons")
 process.ttHtaus.taus = cms.InputTag("ttHLeptons")
 process.ttHtaus.jets = cms.InputTag("updatedPatJetsUpdatedJEC")
 process.ttHtaus.mets = cms.InputTag("slimmedMETs")
-process.ttHtaus.rho = cms.InputTag("fixedGridRhoFastjetCentralNeutral")
+#process.ttHtaus.rho = cms.InputTag("fixedGridRhoFastjetAll")
 process.ttHtaus.do_systematics = cms.bool(options.doSystematics)
 process.ttHtaus.turn_off_event_sel = cms.bool(options.TurnOffEvtSel)
 process.ttHtaus.sample_name = cms.string(options.SampleName)
