@@ -125,17 +125,17 @@ bool ttHtautauAnalyzer::isLooseID(const pat::Electron& ele) const
 
 bool ttHtautauAnalyzer::isFakeableID(const pat::Electron& ele) const
 {
-	return (ele.userFloat("idFakeable") > 0.5 and
-			ele.userFloat("numMissingHits") == 0 and
-			ele.passConversionVeto()
+	return (ele.userFloat("idFakeable") > 0.5 //and
+			//ele.userFloat("numMissingHits") == 0 and
+			//ele.passConversionVeto()
 			);
 }
 
 bool ttHtautauAnalyzer::isTightID(const pat::Electron& ele) const
 {
-	return (ele.userFloat("idMVABased") > 0.5 and
-			ele.userFloat("numMissingHits") == 0 and
-			ele.passConversionVeto()
+	return (ele.userFloat("idMVABased") > 0.5// and
+			//ele.userFloat("numMissingHits") == 0 and
+			//ele.passConversionVeto()
 			);
 }
 
