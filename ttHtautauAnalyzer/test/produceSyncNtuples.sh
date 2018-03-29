@@ -1,13 +1,13 @@
 #!/bin/bash
 
-outdir=/uscms/home/ztao/nobackup/ttHTT_syncNtuple/94X/Test/
+outdir=/uscms/home/ztao/nobackup/ttHTT_syncNtuple/94X/28mar2018/
 
 echo 'producing sync ntuple with event selection turned off'
 cmsRun analyzer2017_cfg.py doSync=True TurnOffEvtSel=True doSystematics=False
 mv output_.root $outdir"output_sync.root"
 
 makeSyncNtuple -d $outdir -o syncNtuple_object.root --make1l2tau false --make2lss1tau false --make3l1tau false
-mv output_object.root $outdir
+mv syncNtuple_object.root $outdir
 
 echo 'producing sync ntuple for 2lss1tau signal region'
 cmsRun analyzer2017_cfg.py doSync=True SampleName=sync_event_2lss1tau_sr doCutFlow=True
