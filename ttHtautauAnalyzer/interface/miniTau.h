@@ -15,10 +15,10 @@ class miniTau
 	miniTau(const pat::Tau&, bool addDaughters = false);
 #endif
 
-	miniTau(const TLorentzVector&, int, int, bool, bool);//, int);
-	miniTau(const TLorentzVector&, int, int, bool, bool, //int,
+	miniTau(const TLorentzVector&, int, int, bool, bool, int mcmatchtype=-9999);
+	miniTau(const TLorentzVector&, int, int, bool, bool, 
 			const std::vector<TLorentzVector>&,const std::vector<TLorentzVector>&,
-			const std::vector<TLorentzVector>&);
+			const std::vector<TLorentzVector>&, int mcmatchtype=-9999);
 
 	~miniTau(){};
 
@@ -35,6 +35,8 @@ class miniTau
 	void set_signalChargedHadrCands(std::vector<TLorentzVector>& ch) {signalChargedHadrCands_ = ch;}
 	void set_signalGammaCands(std::vector<TLorentzVector>& ga) {signalGammaCands_ = ga;}
 	void set_signalNeutrHadrCands(std::vector<TLorentzVector>& nh) {signalNeutrHadrCands_ = nh;}
+	void set_tauIDWPindex(int iWP) {tauIDMVAWP_ = iWP;}
+	void set_tauIDWPindex(bool, bool, bool, bool);
 
 	// TODO: check value was set before returning
 	float pt() const {return pt_;}
@@ -45,8 +47,10 @@ class miniTau
 	int decaymode() const {return decaymode_;}
 	//int pdgId() const {return pdgid_;}
 	bool passLooseSel() const {return isloose_;}
-	bool passTightSel() const {return istight_;}
+	bool passTightSel() const {return istight_;} // depend on analysis type
 	int MCMatchType() const {return mcmatchtype_;}
+	int tauIDMVAWPindex() const {return tauIDMVAWP_;}
+	bool passMVAID(char) const;
 	bool isGenMatched() const;
 	TLorentzVector p4() const;
 	TLorentzVector chargedDaughtersP4() const;
@@ -69,6 +73,8 @@ class miniTau
 	bool isloose_;
 	bool istight_;
 	int mcmatchtype_;
+	// tau ID MVA work point: 0='Loose', 1='Medium', 2='Tight', 3='VTight'
+	int tauIDMVAWP_;
 
 	std::vector<TLorentzVector> signalChargedHadrCands_;
 	std::vector<TLorentzVector> signalGammaCands_;

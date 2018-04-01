@@ -18,15 +18,25 @@ miniTau::miniTau(const pat::Tau& tau, bool addDaughters)
 
 	if (tau.hasUserInt("MCMatchType"))
 		mcmatchtype_ = tau.userInt("MCMatchType");
+	else
+		mcmatchtype_ = -9999;
+
+	// assign tauID MVA work point index
+	// tau ID MVA work point: 0='Loose', 1='Medium', 2='Tight', 3='VTight'
+	set_tauIDWPindex(tau.tauID("byLooseIsolationMVArun2v1DBdR03oldDMwLT")>0.5,
+					 tau.tauID("byMediumIsolationMVArun2v1DBdR03oldDMwLT")>0.5,
+					 tau.tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT")>0.5,
+					 tau.tauID("byVTightIsolationMVArun2v1DBdR03oldDMwLT")>0.5);
 
 	if (addDaughters) {
 		// TODO
+		assert(0);
 	}
 }
 #endif
 
 miniTau::miniTau(const TLorentzVector& t, int charge, int decaymode,
-				 bool isloose, bool istight)//, int mcmatchtype)
+				 bool isloose, bool istight, int mcmatchtype)
 {
 	pt_ = t.Pt();
 	eta_ = t.Eta();
@@ -36,14 +46,15 @@ miniTau::miniTau(const TLorentzVector& t, int charge, int decaymode,
 	decaymode_ = decaymode;
 	isloose_ = isloose;
 	istight_ = istight;
-	//mcmatchtype_ = mcmatchtype;
+	mcmatchtype_ = mcmatchtype;
 }
 
 miniTau::miniTau(const TLorentzVector& t, int charge, int decaymode,
-				 bool isloose, bool istight, //int mcmatchtype,
+				 bool isloose, bool istight,
 				 const std::vector<TLorentzVector>& signalChargedHadrCands,
 				 const std::vector<TLorentzVector>& signalGammaCands,
-				 const std::vector<TLorentzVector>& signalNeutrHadrCands)
+				 const std::vector<TLorentzVector>& signalNeutrHadrCands,
+				 int mcmatchtype)
 {
 	pt_ = t.Pt();
 	eta_ = t.Eta();
@@ -53,10 +64,37 @@ miniTau::miniTau(const TLorentzVector& t, int charge, int decaymode,
 	decaymode_ = decaymode;
 	isloose_ = isloose;
 	istight_ = istight;
-	//mcmatchtype_ = mcmatchtype;
+	mcmatchtype_ = mcmatchtype;
 	signalChargedHadrCands_ = signalChargedHadrCands;
 	signalGammaCands_ = signalGammaCands;
 	signalNeutrHadrCands_ = signalNeutrHadrCands;
+}
+
+void miniTau::set_tauIDWPindex(bool passLooseID, bool passMediumID, bool passTightID,
+					  bool passVTightID)
+{
+	// tau ID MVA work point: 0='Loose', 1='Medium', 2='Tight', 3='VTight'
+	tauIDMVAWP_ = -1;
+	if (passLooseID)  tauIDMVAWP_++;
+	if (passMediumID) tauIDMVAWP_++;
+	if (passTightID)  tauIDMVAWP_++;
+	if (passVTightID) tauIDMVAWP_++;
+}
+
+bool miniTau::passMVAID(char WP) const 
+{	
+	if (WP=='L')  // Loose
+		return tauIDMVAWP_ >= 0;
+	else if (WP=='M')  // Medium
+		return tauIDMVAWP_ >= 1;
+	else if (WP=='T')  // Tight
+		return tauIDMVAWP_ >= 2;
+	else if (WP=='V')  // VTight
+		return tauIDMVAWP_ >= 3;
+	else {
+		std::cout << "Unknown tauID WP : " << WP << std::endl;
+		return false;
+	}
 }
 
 TLorentzVector miniTau::p4() const
