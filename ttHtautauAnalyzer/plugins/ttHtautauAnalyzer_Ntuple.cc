@@ -84,6 +84,26 @@ void ttHtautauAnalyzer::write_ntuple_tauSF(const std::vector<pat::Tau>& taus)
 	evNtuple_.tauSF_weight = tauSF;
 }
 
+void ttHtautauAnalyzer::write_ntuple_tauSF(const std::vector<miniTau>& taus)
+{
+	size_t ntaus = 0;
+	if (anaType_==Analyze_1l2tau)
+		ntaus = 2;
+	else if (anaType_==Analyze_2lss1tau)
+		ntaus = 1;
+	else if (anaType_==Analyze_3l1tau)
+		ntaus = 1;
+
+	//assert(taus.size() >= ntaus);
+
+	float tauSF = 1.;
+	for (size_t itau = 0; itau < ntaus; itau++) {
+		tauSF *= sf_helper_->Get_TauIDSF(taus[itau], taus[itau].isGenMatched());
+	}
+
+	evNtuple_.tauSF_weight = tauSF;
+}
+
 void ttHtautauAnalyzer::write_ntuple_triggerSF(int lepCategory)
 {
 	if (anaType_==Analyze_2lss1tau)
@@ -102,6 +122,15 @@ void ttHtautauAnalyzer::write_ntuple_triggerSF(const miniLepton& lep,
 		sf_helper_->Get_HLTSF_1l2tau(lep, taus, LTriggered, XTriggered);
 }
 
+void ttHtautauAnalyzer::write_ntuple_triggerSF(const miniLepton& lep,
+											   const std::vector<miniTau>& taus,
+											   bool LTriggered, bool XTriggered)
+{
+	assert(anaType_==Analyze_1l2tau);
+	evNtuple_.triggerSF_weight =
+		sf_helper_->Get_HLTSF_1l2tau(lep, taus, LTriggered, XTriggered);
+}
+
 void ttHtautauAnalyzer::write_ntuple_frweight(const std::vector<miniLepton>& leps,
 											  const std::vector<pat::Tau>& taus)
 {
@@ -109,6 +138,12 @@ void ttHtautauAnalyzer::write_ntuple_frweight(const std::vector<miniLepton>& lep
 		evNtuple_.FR_weight = sf_helper_->Get_ChargeFlipWeight(leps, taus);
 	else
 		evNtuple_.FR_weight = sf_helper_->Get_FR_weight(leps, taus);
+}
+
+void ttHtautauAnalyzer::write_ntuple_frweight(const std::vector<miniLepton>& leps,
+											  const std::vector<miniTau>& taus)
+{
+	evNtuple_.FR_weight = sf_helper_->Get_FR_weight(leps, taus);
 }
 
 void ttHtautauAnalyzer::write_ntuple_muons(const std::vector<pat::Muon>& muons)

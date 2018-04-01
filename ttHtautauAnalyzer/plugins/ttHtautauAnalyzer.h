@@ -170,11 +170,16 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	void write_ntuple_bTagSF(const std::vector<pat::Jet>&);
 	void write_ntuple_leptonSF(const std::vector<miniLepton>&);
 	void write_ntuple_tauSF(const std::vector<pat::Tau>&);
+	void write_ntuple_tauSF(const std::vector<miniTau>&);
 	void write_ntuple_triggerSF(int category = -1);
 	void write_ntuple_triggerSF(const miniLepton&, const std::vector<pat::Tau>&,
 								bool, bool);
+	void write_ntuple_triggerSF(const miniLepton&, const std::vector<miniTau>&,
+								bool, bool);
 	void write_ntuple_frweight(const std::vector<miniLepton>&,
 							   const std::vector<pat::Tau>&);
+	void write_ntuple_frweight(const std::vector<miniLepton>&,
+							   const std::vector<miniTau>&);
 	void write_ntuple_muons(const std::vector<pat::Muon>&);
 	void write_ntuple_electrons(const std::vector<pat::Electron>&);
 	void write_ntuple_taus(const std::vector<pat::Tau>&);
@@ -197,7 +202,8 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	// event selection region
 	std::string selection_region_;
     Selection_types selType_;
-
+	bool looseSelection_;
+	
 	// sample
 	//std::string sample_name_;
 	TString sample_name_;
