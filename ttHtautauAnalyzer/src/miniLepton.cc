@@ -27,6 +27,8 @@ miniLepton::miniLepton(const pat::Electron& ele)
 
 	if (ele.hasUserInt("MCMatchType"))
 		mcmatchtype_ = ele.userInt("MCMatchType");
+	else
+		mcmatchtype_ = -9999;
 }
 
 miniLepton::miniLepton(const pat::Muon& mu)
@@ -55,28 +57,11 @@ miniLepton::miniLepton(const pat::Muon& mu)
 
 	if (mu.hasUserInt("MCMatchType"))
 		mcmatchtype_ = mu.userInt("MCMatchType");
+	else
+		mcmatchtype_ = -9999;
 }
 	
 #endif
-/*
-miniLepton::miniLepton(float pt, float eta, float phi, float mass, float conept,
-					   int charge, int pdgid, bool tightcharge, bool isloose,
-					   bool isfakeable, bool istight, int mcmatchtype)
-{
-	pt_ = pt;
-	eta_ = eta;
-	phi_ = phi;
-	mass_ = mass;
-	conept_ = conept;
-	charge_ = charge;
-	pdgid_ = pdgid;
-	tightcharge_ = tightcharge;
-	isloose_ = isloose;
-	isfakeable_ = isfakeable;
-	istight_ = istight;
-	mcmatchtype_ = mcmatchtype;
-}
-*/
 
 miniLepton::miniLepton(const TLorentzVector& l, float conept, int pdgid,
 					   int charge, bool isloose, bool isfakeable, bool istight,
@@ -101,4 +86,15 @@ TLorentzVector miniLepton::p4() const
 	TLorentzVector l;
 	l.SetPtEtaPhiM(pt_, eta_, phi_, mass_);
 	return l;
+}
+
+bool miniLepton::isGenMatched() const
+{
+	int isPrompt = abs(pdgid_)==11 ? 1 : 2;
+	int isPromptTauDecay = abs(pdgid_)==11 ? 3 : 4;
+
+	if (mcmatchtype_==isPrompt or mcmatchtype_==isPromptTauDecay)
+		return true;
+	else
+		return false;
 }

@@ -46,6 +46,7 @@ class miniLepton
 	bool passFakeableSel() const {return isfakeable_;}
 	bool passTightSel() const {return istight_;}
 	int MCMatchType() const {return mcmatchtype_;}
+	bool isGenMatched() const;
 	TLorentzVector p4() const;
 		
  private:
