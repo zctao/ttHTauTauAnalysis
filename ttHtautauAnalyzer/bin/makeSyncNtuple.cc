@@ -11,6 +11,8 @@
 #include "../interface/miniTau.h"
 #include "../interface/SFHelper.h"
 #include "../interface/mvaNtuple.h"
+#include "../interface/EventSelector.h"
+#include "../interface/TriggerHelper.h"
 
 #include <iostream>
 #include <vector>
@@ -18,7 +20,7 @@
 #include <string>
 
 TTree* makeSyncTree(const TString, const TString, Analysis_types anatype=Analyze_NA,
-					Selection_types seltype=Selection_NA,
+					Selection_types seltype=Selection_NA, bool debug=false,
 					const TString intreename="ttHtaus/eventTree");
 
 
@@ -29,16 +31,18 @@ int main(int argc, char** argv)
 
 	string dir, outname;
 	bool makeObjectNtuple, make1l2tau, make2lss1tau, make3l1tau;
+	bool debug;
 	
 	po::options_description desc("Options");
 	desc.add_options()
 		("help,h", "produce help message")
 		("directory,d", po::value<string>(&dir), "event ntuple directory")
 		("output,o", po::value<string>(&outname), "output name")
-		("makeObjectNtuple", po::value<bool>(&makeObjectNtuple)->default_value(true))
-		("make1l2tau", po::value<bool>(&make1l2tau)->default_value(true))
-		("make2lss1tau", po::value<bool>(&make2lss1tau)->default_value(true))
-		("make3l1tau", po::value<bool>(&make3l1tau)->default_value(true));
+		("makeObjectNtuple", po::value<bool>(&makeObjectNtuple)->default_value(false))
+		("make1l2tau", po::value<bool>(&make1l2tau)->default_value(false))
+		("make2lss1tau", po::value<bool>(&make2lss1tau)->default_value(false))
+		("make3l1tau", po::value<bool>(&make3l1tau)->default_value(false))
+		("debug", po::value<bool>(&debug)->default_value(false));
 
 	po::variables_map vm;
 	po::store(po::command_line_parser(argc, argv).options(desc).run(), vm);
@@ -77,14 +81,14 @@ int main(int argc, char** argv)
 
 	if (make1l2tau) {
 		cout << "1l2tau signal region ... " << endl;
-		synctree_1l2tau_sr = makeSyncTree(cdir+"output_sync_event_1l2tau_sr.root",
+		synctree_1l2tau_sr = makeSyncTree(cdir+"output_sync_event_1l2tau_incl.root",
 										  "syncTree_1l2tau_SR",
-										  Analyze_1l2tau, Signal_1l2tau);
+										  Analyze_1l2tau, Signal_1l2tau, debug);
 		
 		cout << "1l2tau fake extrapolation region ... " << endl;
-		synctree_1l2tau_fake = makeSyncTree(cdir+"output_sync_event_1l2tau_fake.root",
+		synctree_1l2tau_fake = makeSyncTree(cdir+"output_sync_event_1l2tau_incl.root",
 											"syncTree_1l2tau_Fake",
-											Analyze_1l2tau, Control_fake_1l2tau);
+											Analyze_1l2tau, Control_fake_1l2tau, debug);
 		
 		// event count
 		cout << "1l2tau : " << endl;
@@ -94,20 +98,22 @@ int main(int argc, char** argv)
 
 	if (make2lss1tau) {
 		cout << "2lss1tau signal region ... " << endl;
-		synctree_2lss1tau_sr = makeSyncTree(cdir+"output_sync_event_2lss1tau_sr.root",
-											"syncTree_2lSS1tau_SR",
-											Analyze_2lss1tau, Signal_2lss1tau);
+		synctree_2lss1tau_sr =
+			makeSyncTree(cdir+"output_sync_event_2lss1tau_incl.root",
+						 "syncTree_2lSS1tau_SR",
+						 Analyze_2lss1tau, Signal_2lss1tau, debug);
 		
 		cout << "2lss1tau fake extrapolation region ... " << endl;
 		synctree_2lss1tau_fake =
-			makeSyncTree(cdir+"output_sync_event_2lss1tau_fake.root",
+			makeSyncTree(cdir+"output_sync_event_2lss1tau_incl.root",
 						 "syncTree_2lSS1tau_Fake",
-						 Analyze_2lss1tau, Control_fake_2lss1tau);
+						 Analyze_2lss1tau, Control_fake_2lss1tau, debug);
 
 		cout << "2lss1tau charge flip region ... " << endl;
-		synctree_2lss1tau_flip = makeSyncTree(cdir+"output_sync_event_2lss1tau_flip.root",
-											  "syncTree_2lSS1tau_Flip",
-											  Analyze_2lss1tau, Control_2los1tau);
+		synctree_2lss1tau_flip =
+			makeSyncTree(cdir+"output_sync_event_2lss1tau_incl.root",
+						 "syncTree_2lSS1tau_Flip",
+						 Analyze_2lss1tau, Control_2los1tau, debug);
 		
 		// event count
 		cout << "2lSS1tau : " << endl;
@@ -118,14 +124,14 @@ int main(int argc, char** argv)
 
 	if (make3l1tau) {
 		cout << "3l1tau signal region ... " << endl;
-		synctree_3l1tau_sr = makeSyncTree(cdir+"output_sync_event_3l1tau_sr.root",
+		synctree_3l1tau_sr = makeSyncTree(cdir+"output_sync_event_3l1tau_incl.root",
 										  "syncTree_3l1tau_SR",
-										  Analyze_3l1tau, Signal_3l1tau);
+										  Analyze_3l1tau, Signal_3l1tau, debug);
 
 		cout << "3l1tau fake extrapolation region ... " << endl;
-		synctree_3l1tau_fake = makeSyncTree(cdir+"output_sync_event_3l1tau_fake.root",
+		synctree_3l1tau_fake = makeSyncTree(cdir+"output_sync_event_3l1tau_incl.root",
 											"syncTree_3l1tau_Fake",
-											Analyze_3l1tau, Control_fake_3l1tau);
+											Analyze_3l1tau, Control_fake_3l1tau, debug);
 
 		// event count
 		cout << "3l1tau : " << endl;
@@ -162,7 +168,7 @@ int main(int argc, char** argv)
 
 
 TTree* makeSyncTree(const TString input_file, const TString treename,
-					Analysis_types anatype, Selection_types seltype,
+					Analysis_types anatype, Selection_types seltype, bool debug,
 					const TString intreename)
 {
 	using namespace std;
@@ -183,12 +189,20 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 
 	//////////////////////////////////////////////
 	// Set up SFHelper
-	SFHelper sf_helper(anatype, seltype, false);
+	SFHelper sf_helper(anatype, seltype, false, debug);
+
+	//////////////////////////////////////////////
+	// trigger Helper
+	TriggerHelper trig_helper(anatype, false);
 
 	//////////////////////////////////////////////
 	// mva ntuple
 	mvaNtuple mvantuple(anatype, false, "2016");
 
+	//////////////////////////////////////////////
+	// event selector
+	EventSelector evt_selector(debug, true);
+	
 	//////////////////////////////////////////////
 	
 	// event loop
@@ -196,23 +210,20 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 	for (int i = 0; i < nEntries; ++i) {
 		tree_in -> GetEntry(i);
 
-		// addtional event selections
-		if (anatype==Analyze_1l2tau) {
-			// mc match
-			if (seltype==Signal_1l2tau and
-				not (evNtuple.isGenMatchedLep and evNtuple.isGenMatchedTau))
-				continue;
-			// tau pair charge
-			if (not evNtuple.passTauCharge) continue;
+		// reconstruct objects
+		auto leptons = evNtuple.buildLeptons();  // fakeable
+		auto taus = evNtuple.buildTaus(anatype==Analyze_1l2tau);
+		// fakeable taus for 1l2tau; tight taus otherwise
+
+		if (debug) {
+			std::cout << std::endl;
+			std::cout << "Event: " << evNtuple.run <<":"<< evNtuple.ls << ":"
+					  << evNtuple.nEvent << std::endl;
 		}
-		else if (anatype==Analyze_2lss1tau) {
-			// tau charge
-			if (not evNtuple.passTauCharge) continue;
-		}
-		else if (anatype==Analyze_3l1tau) {
-			// charge sum
-			if (not evNtuple.passTauCharge) continue;
-		}
+		
+		if (not evt_selector.pass_extra_event_selection(anatype, seltype,
+														leptons, taus))
+			continue;
 		
 		syncntuple.initialize();
 
@@ -434,8 +445,8 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		}
 
 		// mva variables
-		auto leptons = evNtuple.buildLeptons();
-		auto taus = evNtuple.buildTaus(seltype==Control_fake_1l2tau);
+		//auto leptons = evNtuple.buildLeptons();
+		//auto taus = evNtuple.buildTaus(seltype==Control_fake_1l2tau);
 		auto jets = evNtuple.buildFourVectorJets();
 
 		assert(leptons.size()>0);
@@ -476,10 +487,28 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		syncntuple.PU_weight = evNtuple.PU_weight;
 		syncntuple.MC_weight = evNtuple.MC_weight;
 		syncntuple.bTagSF_weight = evNtuple.bTagSF_weight;
-		syncntuple.FR_weight = evNtuple.FR_weight;
-		syncntuple.leptonSF_weight = evNtuple.leptonSF_weight;
-		syncntuple.tauSF_weight = evNtuple.tauSF_weight;
-		syncntuple.triggerSF_weight = evNtuple.triggerSF_weight;
+
+		// FR_weight
+		if (seltype==Control_fake_1l2tau or seltype==Control_fake_2lss1tau or
+			seltype==Control_fake_3l1tau)
+			syncntuple.FR_weight = sf_helper.Get_FR_weight(leptons,taus);
+		else if (seltype==Control_2los1tau)
+			syncntuple.FR_weight =
+				sf_helper.Get_ChargeFlipWeight(leptons, taus[0].charge());
+		
+		// leptonSF_weight
+		syncntuple.leptonSF_weight = sf_helper.Get_LeptonIDSF_weight(leptons);
+		
+		// tauSF_weight
+		syncntuple.tauSF_weight = sf_helper.Get_TauIDSF_weight(taus);
+		
+		// triggerSF_weight
+		bool hlt1LTriggered =
+				trig_helper.pass_single_lep_triggers(evNtuple.triggerBits);
+		bool hltXTriggered =
+			trig_helper.pass_leptau_cross_triggers(evNtuple.triggerBits);
+		syncntuple.triggerSF_weight =
+			sf_helper.Get_HLTSF(leptons, taus, hlt1LTriggered, hltXTriggered);
 		
 		tree_out->Fill();
 		
