@@ -20,15 +20,15 @@ class eventNtuple
 	void set_branch_address(TTree*);
 	void setup_branches(TTree*);
 	void initialize();
-	std::vector<miniLepton> buildLeptons(bool loose=false);
-	std::vector<TLorentzVector> buildFourVectorLeps(bool loose=false);
-	std::vector<TLorentzVector> buildFourVectorTaus(std::vector<int>&, bool loose=false);
-	std::vector<miniTau> buildTaus(bool loose=false, char WP='-');
-	std::vector<TLorentzVector> buildFourVectorTaus(bool loose=false);
-	std::vector<TLorentzVector> buildFourVectorTauDaugsCharged(bool loose=false);
-	std::vector<TLorentzVector> buildFourVectorTauDaugsNeutral(bool loose=false);
-	std::vector<TLorentzVector> buildFourVectorJets();
-	std::vector<TLorentzVector> buildFourVectorBtagJets();
+	std::vector<miniLepton> buildLeptons(bool loose=false) const;
+	std::vector<TLorentzVector> buildFourVectorLeps(bool loose=false) const;
+	std::vector<TLorentzVector> buildFourVectorTaus(std::vector<int>&, bool loose=false) const;
+	std::vector<miniTau> buildTaus(bool loose=false, char WP='-') const;
+	std::vector<TLorentzVector> buildFourVectorTaus(bool loose=false) const;
+	std::vector<TLorentzVector> buildFourVectorTauDaugsCharged(bool loose=false) const;
+	std::vector<TLorentzVector> buildFourVectorTauDaugsNeutral(bool loose=false) const;
+	std::vector<TLorentzVector> buildFourVectorJets() const;
+	std::vector<TLorentzVector> buildFourVectorBtagJets() const;
 	TLorentzVector buildFourVectorMET();
 	float computeMHT();
 	
@@ -139,6 +139,7 @@ class eventNtuple
 	std::vector<float> *mu_sip3D = 0;
 	std::vector<float> *mu_segmentCompatibility = 0;
 	std::vector<float> *mu_leptonMVA = 0;
+	std::vector<int>   *mu_istightcharge = 0;
 	std::vector<float> *mu_mediumID = 0;
 	std::vector<float> *mu_dpt_div_pt = 0;
 	std::vector<int>   *mu_mcMatchType = 0;
@@ -165,6 +166,7 @@ class eventNtuple
 	std::vector<float> *ele_sip3D = 0;
 	std::vector<float> *ele_ntMVAeleID = 0;
 	std::vector<float> *ele_leptonMVA = 0;
+	std::vector<int>   *ele_istightcharge = 0;
 	std::vector<int>   *ele_isChargeConsistent = 0;
 	std::vector<int>   *ele_passesConversionVeto = 0;
 	std::vector<int>   *ele_nMissingHits = 0;

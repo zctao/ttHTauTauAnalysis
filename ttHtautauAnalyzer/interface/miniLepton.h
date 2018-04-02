@@ -32,6 +32,7 @@ class miniLepton
 	void set_mass(float imass) {mass_ = imass;}
 	void set_charge(int icharge) {charge_ = icharge;}
 	void set_pdgId(int id) {pdgid_ = id;}
+	void set_MCMatchType(int imctype) {mcmatchtype_ = imctype;}
 
 	// TODO: check value was set before returning
 	float pt() const {return pt_;}

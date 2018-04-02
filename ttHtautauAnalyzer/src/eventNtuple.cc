@@ -3,7 +3,7 @@
 
 #include "../interface/eventNtuple.h"
 
-std::vector<miniLepton> eventNtuple::buildLeptons(bool loose)
+std::vector<miniLepton> eventNtuple::buildLeptons(bool loose) const
 {
 	std::vector<miniLepton> leptons;
 
@@ -14,7 +14,8 @@ std::vector<miniLepton> eventNtuple::buildLeptons(bool loose)
 		mu.SetPtEtaPhiE(mu_pt->at(l),mu_eta->at(l),mu_phi->at(l),mu_E->at(l));
 		miniLepton lep(mu, mu_conept->at(l), -13*mu_charge->at(l),
 					   mu_charge->at(l), true, mu_isfakeablesel->at(l),
-					   mu_ismvasel->at(l));
+					   mu_ismvasel->at(l), mu_istightcharge->at(l));
+		if (mu_mcMatchType->size()>0) lep.set_MCMatchType(mu_mcMatchType->at(l));
 		leptons.push_back(lep);
 	}
 
@@ -25,7 +26,8 @@ std::vector<miniLepton> eventNtuple::buildLeptons(bool loose)
 		ele.SetPtEtaPhiE(ele_pt->at(l),ele_eta->at(l),ele_phi->at(l),ele_E->at(l));
 		miniLepton lep(ele, ele_conept->at(l), -11*ele_charge->at(l),
 					   ele_charge->at(l), true, ele_isfakeablesel->at(l),
-					   ele_ismvasel->at(l));
+					   ele_ismvasel->at(l), ele_istightcharge->at(l));
+		if (ele_mcMatchType->size()>0) lep.set_MCMatchType(ele_mcMatchType->at(l));
 		leptons.push_back(lep);
 	}
 	// sort by conept
@@ -35,7 +37,7 @@ std::vector<miniLepton> eventNtuple::buildLeptons(bool loose)
 	return leptons;
 }
 
-std::vector<TLorentzVector> eventNtuple::buildFourVectorLeps(bool loose)
+std::vector<TLorentzVector> eventNtuple::buildFourVectorLeps(bool loose) const
 {
 	auto leptons = buildLeptons(loose);
 	
@@ -46,11 +48,12 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorLeps(bool loose)
 	return lepsP4;
 }
 
-std::vector<miniTau> eventNtuple::buildTaus(bool loose, char WP)
+std::vector<miniTau> eventNtuple::buildTaus(bool loose, char WP) const
 {
 	std::vector<miniTau> taus;
 		
 	for (unsigned int t = 0; t < tau_pt->size(); ++t) {
+		/*
 		if (WP=='L') {
 			if (tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT->at(t)<1) continue;
 		}
@@ -64,6 +67,7 @@ std::vector<miniTau> eventNtuple::buildTaus(bool loose, char WP)
 			// require tight tau if not loose selection
 			if (!loose and !(tau_idSelection->at(t))) continue;
 		}
+		*/
 		
 		TLorentzVector tauP4;
 		tauP4.SetPtEtaPhiE(tau_pt->at(t),tau_eta->at(t),tau_phi->at(t),tau_E->at(t));
@@ -71,7 +75,19 @@ std::vector<miniTau> eventNtuple::buildTaus(bool loose, char WP)
 					tau_idPreselection->at(t), tau_idSelection->at(t));
 		if (tau_mcMatchType->size()>0)
 			tau.set_MCMatchType(tau_mcMatchType->at(t));
-
+		
+		tau.set_tauIDWPindex(tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT->at(t)>0,
+							 tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT->at(t)>0,
+							 tau_byTightIsolationMVArun2v1DBdR03oldDMwLT->at(t)>0,
+							 tau_byVTightIsolationMVArun2v1DBdR03oldDMwLT->at(t)>0);
+		
+		if (WP!='-') {
+			if (not tau.passMVAID(WP)) continue;
+		}
+		else {// if WP is not explicitly set
+			if (!loose and !(tau_idSelection->at(t))) continue;
+		}			
+		
 		// Tau decay products
 		// charged hadron
 		std::vector<TLorentzVector> chP4;		
@@ -115,7 +131,7 @@ std::vector<miniTau> eventNtuple::buildTaus(bool loose, char WP)
 	return taus;
 }
 
-std::vector<TLorentzVector> eventNtuple::buildFourVectorTaus(std::vector<int>& decaymode, bool loose)
+std::vector<TLorentzVector> eventNtuple::buildFourVectorTaus(std::vector<int>& decaymode, bool loose) const
 {
 	
 	std::vector<TLorentzVector> tausP4;
@@ -135,13 +151,13 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorTaus(std::vector<int>& d
 	return tausP4;
 }
 
-std::vector<TLorentzVector> eventNtuple::buildFourVectorTaus(bool loose)
+std::vector<TLorentzVector> eventNtuple::buildFourVectorTaus(bool loose) const
 {
 	std::vector<int> dummy;
 	return buildFourVectorTaus(dummy, loose);
 }
 
-std::vector<TLorentzVector> eventNtuple::buildFourVectorTauDaugsCharged(bool loose)
+std::vector<TLorentzVector> eventNtuple::buildFourVectorTauDaugsCharged(bool loose) const
 {
 	std::vector<TLorentzVector> tauDaugsChargedP4;
 
@@ -167,7 +183,7 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorTauDaugsCharged(bool loo
 	return tauDaugsChargedP4;
 }
 
-std::vector<TLorentzVector> eventNtuple::buildFourVectorTauDaugsNeutral(bool loose)
+std::vector<TLorentzVector> eventNtuple::buildFourVectorTauDaugsNeutral(bool loose) const
 {
 	std::vector<TLorentzVector> tauDaugsNeutralP4;
 
@@ -203,7 +219,7 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorTauDaugsNeutral(bool loo
 	return tauDaugsNeutralP4;
 }
 
-std::vector<TLorentzVector> eventNtuple::buildFourVectorJets()
+std::vector<TLorentzVector> eventNtuple::buildFourVectorJets() const
 {
 	std::vector<TLorentzVector> jetsP4;
 	
@@ -216,7 +232,7 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorJets()
 	return jetsP4;
 }
 
-std::vector<TLorentzVector> eventNtuple::buildFourVectorBtagJets()
+std::vector<TLorentzVector> eventNtuple::buildFourVectorBtagJets() const
 {
 	std::vector<TLorentzVector> btagsP4;
 	btagsP4.reserve(2);
@@ -394,6 +410,7 @@ void eventNtuple::initialize()
 	mu_sip3D->clear();
 	mu_segmentCompatibility->clear();
 	mu_leptonMVA->clear();
+	mu_istightcharge->clear();
 	mu_mediumID->clear();
 	mu_dpt_div_pt->clear();
 	mu_mcMatchType->clear();
@@ -421,6 +438,7 @@ void eventNtuple::initialize()
 	ele_sip3D->clear();
 	ele_ntMVAeleID->clear();
 	ele_leptonMVA->clear();
+	ele_istightcharge->clear();
 	ele_isChargeConsistent->clear();
 	ele_passesConversionVeto->clear();
 	ele_nMissingHits->clear();
@@ -585,6 +603,7 @@ void eventNtuple::setup_branches(TTree* tree)
 	tree->Branch("mu_dz",                   &mu_dz);
 	tree->Branch("mu_segmentCompatibility", &mu_segmentCompatibility);
 	tree->Branch("mu_leptonMVA",            &mu_leptonMVA);
+	tree->Branch("mu_istightcharge",        &mu_istightcharge);
 	tree->Branch("mu_mediumID",             &mu_mediumID);
 	tree->Branch("mu_dpt_div_pt",           &mu_dpt_div_pt);
 	tree->Branch("mu_ismvasel",             &mu_ismvasel);
@@ -610,6 +629,7 @@ void eventNtuple::setup_branches(TTree* tree)
 	tree->Branch("ele_dz",                   &ele_dz);
 	tree->Branch("ele_ntMVAeleID",           &ele_ntMVAeleID);
 	tree->Branch("ele_leptonMVA",            &ele_leptonMVA);
+	tree->Branch("ele_istightcharge",        &ele_istightcharge);
 	tree->Branch("ele_isChargeConsistent",   &ele_isChargeConsistent);
 	tree->Branch("ele_passesConversionVeto", &ele_passesConversionVeto);
 	tree->Branch("ele_nMissingHits",         &ele_nMissingHits);
@@ -771,6 +791,7 @@ void eventNtuple::set_branch_address(TTree* tree)
 	tree->SetBranchAddress("mu_dz",                   &mu_dz);
 	tree->SetBranchAddress("mu_segmentCompatibility", &mu_segmentCompatibility);
 	tree->SetBranchAddress("mu_leptonMVA",            &mu_leptonMVA);
+	tree->SetBranchAddress("mu_istightcharge",        &mu_istightcharge);
 	tree->SetBranchAddress("mu_mediumID",             &mu_mediumID);
 	tree->SetBranchAddress("mu_dpt_div_pt",           &mu_dpt_div_pt);
 	tree->SetBranchAddress("mu_ismvasel",             &mu_ismvasel);
@@ -796,6 +817,7 @@ void eventNtuple::set_branch_address(TTree* tree)
 	tree->SetBranchAddress("ele_dz",                   &ele_dz);
 	tree->SetBranchAddress("ele_ntMVAeleID",           &ele_ntMVAeleID);
 	tree->SetBranchAddress("ele_leptonMVA",            &ele_leptonMVA);
+	tree->SetBranchAddress("ele_istightcharge",        &ele_istightcharge);
 	tree->SetBranchAddress("ele_isChargeConsistent",   &ele_isChargeConsistent);
 	tree->SetBranchAddress("ele_passesConversionVeto", &ele_passesConversionVeto);
 	tree->SetBranchAddress("ele_nMissingHits",         &ele_nMissingHits);
