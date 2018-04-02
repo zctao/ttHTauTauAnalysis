@@ -352,6 +352,33 @@ void SFHelper::Delete_BTagCalibration_Readers()
 }
 #endif
 
+float SFHelper::Get_HLTSF(const std::vector<miniLepton>& leptons,
+						 const std::vector<miniTau>& taus,
+						 bool hlt1LTriggered, bool hltXTriggered)
+{
+	if (_analysis==Analyze_2lss1tau) {
+		assert(leptons.size()>1);
+		int lepcat = -1;
+		if (abs(leptons[0].pdgId())==13 and abs(leptons[1].pdgId())==13)
+			lepcat = 0;
+		else if (abs(leptons[0].pdgId())==11 and abs(leptons[1].pdgId())==11)
+			lepcat = 1;
+		else lepcat = 2;
+		return Get_HLTSF_2l1tau(lepcat);
+	}
+	else if (_analysis==Analyze_1l2tau) {
+		assert(leptons.size()>0);
+		return Get_HLTSF_1l2tau(leptons[0], taus, hlt1LTriggered, hltXTriggered);
+	}
+	else if (_analysis==Analyze_3l1tau) {
+		return Get_HLTSF_3l1tau();
+	}
+	else {
+		std::cout << "WARNING! analysis type not supported." << std::endl;
+		return 1.;
+	}
+}
+
 float SFHelper::Get_HLTSF_2l1tau(int lepCategory)
 {
 	assert(_analysis==Analyze_2lss1tau);
