@@ -166,8 +166,10 @@ unsigned int TriggerHelper::encode_bits(edm::Handle<edm::TriggerResults> results
 
 bool TriggerHelper::pass_leptau_cross_triggers(unsigned int triggerBits)
 {
-	assert(anaType_==Analyze_1l2tau);
-	return triggerBits & bitmask_ltau_;
+	if (anaType_==Analyze_1l2tau)
+		return triggerBits & bitmask_ltau_;
+	else
+		return false;
 }
 
 bool TriggerHelper::pass_single_e_triggers(unsigned int triggerBits)
