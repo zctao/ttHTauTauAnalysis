@@ -49,7 +49,7 @@ class miniTau
 	bool passLooseSel() const {return isloose_;}
 	bool passTightSel() const {return istight_;} // depend on analysis type
 	int MCMatchType() const {return mcmatchtype_;}
-	int tauIDMVAWPindex() const {return tauIDMVAWP_;}
+	int tauIDMVAWPindex() const {assert(mvawp_set_); return tauIDMVAWP_;}
 	bool passMVAID(char) const;
 	bool isGenMatched() const;
 	TLorentzVector p4() const;
@@ -75,6 +75,7 @@ class miniTau
 	int mcmatchtype_;
 	// tau ID MVA work point: 0='Loose', 1='Medium', 2='Tight', 3='VTight'
 	int tauIDMVAWP_;
+	bool mvawp_set_;
 
 	std::vector<TLorentzVector> signalChargedHadrCands_;
 	std::vector<TLorentzVector> signalGammaCands_;

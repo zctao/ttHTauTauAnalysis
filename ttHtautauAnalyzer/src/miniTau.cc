@@ -47,6 +47,7 @@ miniTau::miniTau(const TLorentzVector& t, int charge, int decaymode,
 	isloose_ = isloose;
 	istight_ = istight;
 	mcmatchtype_ = mcmatchtype;
+	mvawp_set_ = false;
 }
 
 miniTau::miniTau(const TLorentzVector& t, int charge, int decaymode,
@@ -68,6 +69,7 @@ miniTau::miniTau(const TLorentzVector& t, int charge, int decaymode,
 	signalChargedHadrCands_ = signalChargedHadrCands;
 	signalGammaCands_ = signalGammaCands;
 	signalNeutrHadrCands_ = signalNeutrHadrCands;
+	mvawp_set_ = false;
 }
 
 void miniTau::set_tauIDWPindex(bool passLooseID, bool passMediumID, bool passTightID,
@@ -79,10 +81,12 @@ void miniTau::set_tauIDWPindex(bool passLooseID, bool passMediumID, bool passTig
 	if (passMediumID) tauIDMVAWP_++;
 	if (passTightID)  tauIDMVAWP_++;
 	if (passVTightID) tauIDMVAWP_++;
+	mvawp_set_ = true;
 }
 
 bool miniTau::passMVAID(char WP) const 
-{	
+{
+	assert(mvawp_set_);
 	if (WP=='L')  // Loose
 		return tauIDMVAWP_ >= 0;
 	else if (WP=='M')  // Medium
