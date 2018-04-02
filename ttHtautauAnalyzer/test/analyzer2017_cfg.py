@@ -66,10 +66,10 @@ options.register('SelectionRegion', 'signal_2lss1tau',
                  VarParsing.VarParsing.varType.string,
                  "Which selection region to apply: signal_2lss1tau, control_2los1tau, control_fake_2lss1tau, signal_1l2tau, control_fake_1l2tau, signal_3l1tau, control_fake_3l1tau, loose_2lss1tau, loose_1l2tau")
 
-options.register('doSystematics', True,
-                 VarParsing.VarParsing.multiplicity.singleton,
-                 VarParsing.VarParsing.varType.bool,
-                 "Include systematics or not")
+#options.register('doSystematics', True,
+#                 VarParsing.VarParsing.multiplicity.singleton,
+#                 VarParsing.VarParsing.varType.bool,
+#                 "Include systematics or not")
 
 options.register('doCutFlow', False,
                  VarParsing.VarParsing.multiplicity.singleton,
@@ -288,7 +288,7 @@ process.ttHtaus.taus = cms.InputTag("ttHLeptons")
 process.ttHtaus.jets = cms.InputTag("updatedPatJetsUpdatedJEC")
 process.ttHtaus.mets = cms.InputTag("slimmedMETs")
 #process.ttHtaus.rho = cms.InputTag("fixedGridRhoFastjetAll")
-process.ttHtaus.do_systematics = cms.bool(options.doSystematics)
+#process.ttHtaus.do_systematics = cms.bool(options.doSystematics)
 process.ttHtaus.turn_off_event_sel = cms.bool(options.TurnOffEvtSel)
 process.ttHtaus.sample_name = cms.string(options.SampleName)
 process.ttHtaus.TauESType = cms.string(options.TauESType)
