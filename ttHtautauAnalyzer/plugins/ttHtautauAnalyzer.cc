@@ -37,11 +37,12 @@ ttHtautauAnalyzer::ttHtautauAnalyzer(const edm::ParameterSet& iConfig):
 	config_analysis_type_ (iConfig.getParameter<string>("analysis_type")),
 	// Selection type
 	selection_region_ (iConfig.getParameter<string>("selection_region")),
+	looseSelection_ (iConfig.getParameter<bool>("looseSelection")),
 	// Sample
 	sample_name_ (iConfig.getParameter<string>("sample_name")),
 	// Generic parameters
 	verbosity_ (iConfig.getParameter<int>("verbosity")),
-	isdata_ (iConfig.getParameter<bool>("using_real_data")),
+	isdata_ (iConfig.getParameter<bool>("using_collision_data")),
 	debug_ (iConfig.getParameter<bool>("debug_mode")),
 	doSystematics_ (iConfig.getParameter<bool>("do_systematics")),
 	doSync_ (iConfig.getParameter<bool>("do_sync")),
@@ -95,9 +96,10 @@ ttHtautauAnalyzer::ttHtautauAnalyzer(const edm::ParameterSet& iConfig):
 	// trees
 	Set_up_tree();
 	// scale factor helper
-	sf_helper_ = new SFHelper(anaType_, selType_, isdata_);
+	sf_helper_ = new SFHelper(anaType_, selType_, isdata_); // TODO
 	// event selection
-	evt_selector_ = new EventSelector(anaType_, selType_, debug_);
+	//evt_selector_ = new EventSelector(anaType_, selType_, debug_);
+	evt_selector_ = new EventSelector(debug_, not isdata_);
 }
 
 
@@ -314,9 +316,6 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	SortByConept(lep_loose);	
 	SortByConept(lep_fakeable);
 	SortByConept(lep_tight);
-    //std::sort(lep_loose.begin(), lep_loose.end(), [] (miniLepton l1, miniLepton l2) {return ptr(l1)->conept() > ptr(l2)->conept();})
-	//std::sort(lep_fakeable.begin(), lep_fakeable.end(), [] (miniLepton l1, miniLepton l2) {return ptr(l1)->conept() > ptr(l2)->conept();});
-	//std::sort(lep_tight.begin(), lep_tight.end(), [] (miniLepton l1, miniLepton l2) {return ptr(l1)->conept() > ptr(l2)->conept();});
 
 	if (debug_) {
 		std::cout << "n_lep_loose : " << lep_loose.size() << std::endl;
@@ -344,12 +343,20 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		for (auto & tau : tau_loose)
 			tau.addUserInt("MCMatchType", getMCMatchType(tau, *MC_particles));
 	}
-	// tight
-	std::vector<pat::Tau> tau_tight = getSelectedTaus(tau_loose);
+
+	std::vector<miniTau> minitau_loose;
+	std::vector<miniTau> minitau_tight;
+	for (const auto & tau : tau_loose) {
+		miniTau mt(tau);
+		minitau_loose.push_back(mt);
+
+		if (mt.passTightSel())
+			minitau_tight.push_back(mt);
+	}
 
 	if (debug_) {
-		std::cout << "n_tau_loose : " << tau_loose.size() << std::endl;
-		std::cout << "n_tau : " << tau_tight.size() << std::endl; 
+		std::cout << "n_tau_loose : " << minitau_loose.size() << std::endl;
+		std::cout << "n_tau : " << minitau_tight.size() << std::endl; 
 	}
 	
 	/////////////////////////////////////////
@@ -413,47 +420,28 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	float metLD = 0.00397 * MET + 0.00265 * MHT;
 
 	/////////////////////////////////////////
-	// Determine which object collection to use in event selection and to write to
-	// ntuples according to the selection type
-	std::vector<miniLepton>* lep_selected;
-	std::vector<pat::Tau>* tau_selected;
-
-	if (selType_==Loose_2lss1tau) {
-		lep_selected = &lep_loose;
-		tau_selected = &tau_loose;
-	}
-	else if (selType_==Loose_1l2tau) {
-		lep_selected = &lep_fakeable;
-		tau_selected = &tau_loose;
-	}
-	else {
-		lep_selected = &lep_fakeable;
-		tau_selected = &tau_tight;
-	}
-	
-	/////////////////////////////////////////
 	// Event selection
 	/////////////////////////////////////////
 
 	bool pass_event_sel = false;
 	
 	if (anaType_==Analyze_2lss1tau) {
-		pass_event_sel =
-			pass_event_sel_2lss1tau(lep_loose, *lep_selected, lep_tight,
-									*tau_selected, jet_selected.size(),
-									n_btags_loose, n_btags_medium, metLD);
+		std::vector<miniLepton> *lep_selected =
+			looseSelection_ ? &lep_loose : &lep_fakeable;  // need to double check
+		
+		pass_event_sel = evt_selector_ -> pass_2l1tau_inclusive_selection(
+		    lep_loose, *lep_selected, lep_tight, minitau_loose,
+			jet_selected.size(), n_btags_loose, n_btags_medium, metLD, h_CutFlow_);
 	}
-	else if (anaType_==Analyze_1l2tau) {
-		pass_event_sel =
-			pass_event_sel_1l2tau(lep_loose, *lep_selected, lep_tight,
-								  tau_loose, *tau_selected, jet_selected.size(),
-								  n_btags_loose, n_btags_medium);
+	else if (anaType_==Analyze_1l2tau) {		
+		pass_event_sel = evt_selector_ -> pass_1l2tau_inclusive_selection(
+		    lep_loose, lep_fakeable, lep_tight, minitau_loose,
+			jet_selected.size(), n_btags_loose, n_btags_medium, h_CutFlow_);
 	}
 	else if (anaType_==Analyze_3l1tau) {
-		pass_event_sel =
-			pass_event_sel_3l1tau(lep_loose, *lep_selected, lep_tight,
-								  *tau_selected, jet_selected.size(),
-								  n_btags_loose, n_btags_medium, metLD);
+		pass_event_sel = evt_selector_ -> pass_3l1tau_inclusive_selection(
+		    lep_loose, lep_fakeable, minitau_loose, jet_selected.size(),
+			n_btags_loose, n_btags_medium, metLD, h_CutFlow_);
 	}
 
 	if (not (pass_event_sel or event_selection_off_))
@@ -483,34 +471,6 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		if (sample_name_.Contains("ttH") or doSync_)
 			evNtuple_.HiggsDecayType = HiggsDaughterPdgId(*MC_particles);
 
-		// mc matching flags
-		if (not event_selection_off_) {
-			if (anaType_==Analyze_2lss1tau) {
-				evNtuple_.isGenMatchedLep =
-					evt_selector_->pass_lep_mc_match(*lep_selected);
-				
-				assert(tau_selected->size() > 0);
-				evNtuple_.isGenMatchedTau =
-					evt_selector_->pass_tau_mc_match((*tau_selected)[0]);
-			}
-			else if (anaType_==Analyze_1l2tau) {
-				assert(lep_selected->size() > 0);
-				evNtuple_.isGenMatchedLep =
-					evt_selector_->pass_lep_mc_match((*lep_selected)[0]);
-
-				evNtuple_.isGenMatchedTau =
-					evt_selector_->pass_tau_mc_match(*tau_selected);
-			}
-			else if (anaType_==Analyze_3l1tau) {
-				evNtuple_.isGenMatchedLep =
-					evt_selector_->pass_lep_mc_match(*lep_selected, 3);
-
-				assert(tau_selected->size() > 0);
-				evNtuple_.isGenMatchedTau =
-					evt_selector_->pass_tau_mc_match((*tau_selected)[0]);
-			}
-		}
-
 		//evNtuple_.nBadMuons = badMuons->size() + clonedMuons->size();
 	}
 
@@ -520,43 +480,21 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	evNtuple_.pvy = pv.y();
 	evNtuple_.pvz = pv.z();
 
+	/*
 	if (not event_selection_off_) {
 		if (anaType_==Analyze_2lss1tau) {
-			assert(tau_selected->size() > 0);
-			evNtuple_.passTauCharge = evt_selector_->pass_tau_charge(
-								     (*tau_selected)[0].charge(),*lep_selected);
-			assert(lep_selected->size() >= 2);
-			if (abs((*lep_selected)[0].pdgId())==13 and
-				abs((*lep_selected)[1].pdgId())==13)
+			assert(lep_fakeable.size() >= 2);
+			if (abs(lep_fakeable[0].pdgId())==13 and
+				abs(lep_fakeable[1].pdgId())==13)
 				evNtuple_.lepCategory = 0;  // mumu
-			else if (abs((*lep_selected)[0].pdgId())==11 and
-					 abs((*lep_selected)[1].pdgId())==11)
+			else if (abs(lep_fakeable[0].pdgId())==11 and
+					 abs(lep_fakeable[1].pdgId())==11)
 				evNtuple_.lepCategory = 1;  // ee
 			else
 				evNtuple_.lepCategory = 2;  // emu
 		}
-		else if (anaType_==Analyze_1l2tau) {
-			if (selType_==Signal_1l2tau or selType_==Loose_1l2tau) {
-				assert(tau_selected->size() > 1);
-				evNtuple_.passTauCharge =
-					evt_selector_->pass_taupair_charge((*tau_selected)[0].charge(),
-													   (*tau_selected)[1].charge());
-			}
-			else if (selType_==Control_fake_1l2tau) {
-				assert(tau_loose.size() > 1);
-				evNtuple_.passTauCharge =
-					evt_selector_->pass_taupair_charge(tau_loose[0].charge(),
-													   tau_loose[1].charge());
-			}
-		}
-		else if (anaType_==Analyze_3l1tau) {
-			assert(tau_selected->size() > 0);
-			evNtuple_.passTauCharge = evt_selector_->pass_charge_sum(
-									  (*tau_selected)[0].charge(), *lep_selected);
-		}
-		
-		evNtuple_.btagCategory = n_btags_medium >= 2 ? 1 : 0;
 	}
+	*/
 	
 	evNtuple_.n_presel_mu = mu_preselected.size();
 	evNtuple_.n_fakeable_mu = n_muon_fakeable;
@@ -564,8 +502,8 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	evNtuple_.n_presel_ele = ele_preselected.size();
 	evNtuple_.n_fakeable_ele = n_ele_fakeable;
 	evNtuple_.n_mvasel_ele = n_ele_tight;
-	evNtuple_.n_presel_tau = tau_loose.size();
-	evNtuple_.n_tau = tau_selected->size();
+	evNtuple_.n_presel_tau = minitau_loose.size();
+	evNtuple_.n_tau = minitau_tight.size();
 	evNtuple_.n_jet = jet_selected.size();
 	evNtuple_.n_btag_loose = n_btags_loose;
 	evNtuple_.n_btag_medium = n_btags_medium;
@@ -579,12 +517,10 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	/// scale factors
 	if (!isdata_ and !event_selection_off_) {
 		write_ntuple_bTagSF(jet_selected);
-		write_ntuple_leptonSF(*lep_selected);
-		if (selType_ == Signal_2lss1tau or selType_ == Loose_2lss1tau or
-			selType_ == Signal_1l2tau or selType_ == Loose_1l2tau or
-			selType_ == Signal_3l1tau)
-			write_ntuple_tauSF(*tau_selected); //only actually useful for signal region
-		
+		/*
+		write_ntuple_leptonSF(lep_fakeable);
+		write_ntuple_tauSF(minitau_loose);
+
 		if (anaType_==Analyze_2lss1tau)
 			write_ntuple_triggerSF(evNtuple_.lepCategory);
 		else if (anaType_==Analyze_3l1tau)
@@ -594,26 +530,16 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 				trig_helper_->pass_single_lep_triggers(evNtuple_.triggerBits);
 			bool hltXTriggered =
 				trig_helper_->pass_leptau_cross_triggers(evNtuple_.triggerBits);
-			if (selType_==Control_fake_1l2tau) {
-				// not really matter since fake region always applies to data sample
-				// but include here anyway to run e.g. synchronization exercise
-				write_ntuple_triggerSF((*lep_selected)[0], tau_loose,
-									   hlt1LTriggered, hltXTriggered);
-			}
-			else {
-				write_ntuple_triggerSF((*lep_selected)[0], *tau_selected,
-									   hlt1LTriggered, hltXTriggered);
-			}
+			write_ntuple_triggerSF(lep_fakeable[0], minitau_loose,
+								   hlt1LTriggered, hltXTriggered);
 		}
+		*/
 	}
 	
 	/// fake rate weights
-	if (!event_selection_off_) {
-		if (anaType_==Analyze_1l2tau)
-			write_ntuple_frweight(*lep_selected, tau_loose);
-		else
-			write_ntuple_frweight(*lep_selected, *tau_selected);
-	}
+	//if (!event_selection_off_) {
+	//	write_ntuple_frweight(lep_fakeable, minitau_loose);
+	//}
 	
 	/// event weights
 	if (not isdata_) {
@@ -625,6 +551,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		evNtuple_.MC_weight_scale_muR2 = mc_weight_scale_muR2;
 	}
 	
+	/*
 	if (selType_ == Signal_2lss1tau or selType_ == Loose_2lss1tau or
 		selType_ == Signal_1l2tau or selType_ == Loose_1l2tau or
 		selType_ == Signal_3l1tau) {
@@ -640,6 +567,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	else if (selType_==Control_fake_2lss1tau or selType_==Control_2los1tau or
 			 selType_==Control_fake_1l2tau or selType_==Control_fake_3l1tau)
 		evNtuple_.event_weight = evNtuple_.FR_weight;
+	*/
 	
 	/// muons
 	write_ntuple_muons(mu_preselected);

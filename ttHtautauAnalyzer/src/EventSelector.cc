@@ -17,11 +17,55 @@ void EventSelector::fill_cutflow(TH1* h, int ibin, const char* name)
 		// set bin label first
 		h->GetXaxis()->SetBinLabel(ibin, name);
 	}
-
-	assert((h->GetXaxis()->GetBinLabel(ibin))==name);
+	
+	//assert(h->GetXaxis()->GetBinLabel(ibin)).c_str()==name.c_str());
 	h->AddBinContent(ibin);
 
 	return;
+}
+
+bool EventSelector::pass_extra_event_selection(
+    Analysis_types anatype, Selection_types seltype,
+	const std::vector<miniLepton>& fakeableLeps,
+	const std::vector<miniTau>& selectedTaus)
+{
+	// assume already passed inclusive selection
+
+	bool pass=false;
+
+	if (verbose_) std::cout << std::endl;
+	
+	if (anatype == Analyze_1l2tau) {
+		//auto fakeableLeps = evntuple.buildLeptons();
+		//auto fakeableTaus = evntuple.buildTaus(true); // fakeable taus
+		
+		if (seltype == Signal_1l2tau)
+			pass = pass_1l2tau_SR_selection(fakeableLeps, selectedTaus);
+		else if (seltype == Control_fake_1l2tau)
+			pass = pass_1l2tau_FakeAR_selection(fakeableLeps, selectedTaus);
+	}
+	else if (anatype == Analyze_2lss1tau) {
+		//auto fakeableLeps = evntuple.buildLeptons();
+		//auto selectedTaus = evntuple.buildTaus();  // tight taus
+
+		if (seltype == Signal_2lss1tau)
+			pass = pass_2lss1tau_SR_selection(fakeableLeps, selectedTaus);
+		else if (seltype == Control_fake_2lss1tau)
+			pass = pass_2lss1tau_FakeAR_selection(fakeableLeps, selectedTaus);
+		else if (seltype == Control_2los1tau)
+			pass = pass_2lss1tau_FlipAR_selection(fakeableLeps, selectedTaus);
+    }
+	else if (anatype == Analyze_3l1tau) {
+		//auto fakeableLeps = evntuple.buildLeptons();
+		//auto selectedTaus = evntuple.buildTaus();  // tight taus
+
+		if (seltype == Signal_3l1tau)
+			pass = pass_3l1tau_SR_selection(fakeableLeps, selectedTaus);
+		else if (seltype == Control_fake_3l1tau)
+			pass = pass_3l1tau_FakeAR_selection(fakeableLeps, selectedTaus);
+	}
+
+	return pass;
 }
 
 /////////////////////////////////
@@ -182,8 +226,8 @@ bool EventSelector::pass_1l2tau_tightID(const std::vector<miniLepton>& fakeableL
 
 	// SR: tight lepton; VTight MVA taus
 	bool passID = fakeableLeps[0].passTightSel() and
-		fakeableTaus[0].passMVAID('V') and fakeableTaus[1].passMVAID('V');
-		//fakeableTaus[0].passTightSel() and fakeableTaus[1].passTightSel();
+		//fakeableTaus[0].passMVAID('T') and fakeableTaus[1].passMVAID('T');
+		fakeableTaus[0].passTightSel() and fakeableTaus[1].passTightSel();
 
 	return passID;
 }
@@ -215,7 +259,17 @@ bool EventSelector::pass_1l2tau_SR_selection(
 		bool passMCMatch = fakeableLeps[0].isGenMatched() and
 			fakeableTaus[0].isGenMatched() and fakeableTaus[1].isGenMatched();
 		if (not passMCMatch) {
-			if (verbose_) std::cout << "FAIL MC Matching" << std::endl;
+			if (verbose_) {
+				std::cout << "isGenMatched lep tau1 tau2 : "
+						  << fakeableLeps[0].isGenMatched() << " "
+						  << fakeableTaus[0].isGenMatched() << " "
+						  << fakeableTaus[1].isGenMatched() << std::endl;
+				std::cout << "mcMatchType lep tau1 tau2 : "
+						  << fakeableLeps[0].MCMatchType() << " "
+						  << fakeableTaus[0].MCMatchType() << " "
+						  << fakeableTaus[1].MCMatchType() << std::endl;
+				std::cout << "FAIL MC Matching" << std::endl;
+			}
 			return false;
 		}
 	}
@@ -228,7 +282,7 @@ bool EventSelector::pass_1l2tau_SR_selection(
 	}
 		
 	///////////////////////////////
-	// tau charges
+	// tau chargesControl_fake_1l2tau
 	if ( not pass_1l2tau_charge(fakeableTaus) ) {
 		if (verbose_) std::cout << "FAIL tau charge requirement" << std::endl;
 		return false;
@@ -559,10 +613,12 @@ bool EventSelector::pass_2lss1tau_FakeAR_selection(
     const std::vector<miniLepton>& fakeableLeps,
 	const std::vector<miniTau>& selectedTaus)
 {
+	if (not pass_2lss1tau_tauNumber(selectedTaus))
+		return false;
+	
 	assert(fakeableLeps.size()>1 and selectedTaus.size()>0);
 	
-	return ( pass_2lss1tau_tauNumber(selectedTaus) and
-			 pass_2lss1tau_2lss(fakeableLeps) and
+	return ( pass_2lss1tau_2lss(fakeableLeps) and
 			 pass_2lss1tau_taucharge(selectedTaus[0], fakeableLeps[0]) and
 			 not pass_2lss1tau_tightLepID(fakeableLeps) );
 }
@@ -571,6 +627,9 @@ bool EventSelector::pass_2lss1tau_FlipAR_selection(
     const std::vector<miniLepton>& fakeableLeps,
 	const std::vector<miniTau>& selectedTaus)
 {
+	if (not pass_2lss1tau_tauNumber(selectedTaus))
+		return false;
+	
 	assert(fakeableLeps.size()>1 and selectedTaus.size()>0);
 
 	bool lep1IsElectron = abs(fakeableLeps[0].pdgId())==11;
@@ -584,8 +643,7 @@ bool EventSelector::pass_2lss1tau_FlipAR_selection(
 	if (lep2IsElectron and fakeableLeps[1].charge()== selectedTaus[0].charge())
 		passTauCharge = true;
 	
-	return ( pass_2lss1tau_tauNumber(selectedTaus) and
-			 (lep1IsElectron or lep2IsElectron) and
+	return ( (lep1IsElectron or lep2IsElectron) and
 			 pass_2lss1tau_tightLepID(fakeableLeps) and
 			 not pass_2lss1tau_2lss(fakeableLeps) and
 			 passTauCharge );
@@ -797,7 +855,7 @@ bool EventSelector::pass_3l1tau_charge(
 		std::cout << "charge tau : " << taus[0].charge() << std::endl;
 	}
 	// SR: charge sum of the three leptons and tau is zero
-	int chargesum = leptons[0].charge() + leptons[0].charge() + leptons[0].charge()
+	int chargesum = leptons[0].charge() + leptons[1].charge() + leptons[2].charge()
 		+ taus[0].charge();
 	return chargesum==0;
 }
@@ -851,8 +909,10 @@ bool EventSelector::pass_3l1tau_FakeAR_selection(
     const std::vector<miniLepton>& fakeableLeps,
 	const std::vector<miniTau>& selectedTaus)
 {
-	return ( pass_3l1tau_tauNumber(selectedTaus) and 
-			 not pass_3l1tau_tightID(fakeableLeps) and
+	if (not pass_3l1tau_tauNumber(selectedTaus))
+		return false;
+	
+	return ( not pass_3l1tau_tightID(fakeableLeps) and
 			 pass_3l1tau_charge(fakeableLeps, selectedTaus));
 }
 
@@ -860,8 +920,10 @@ bool EventSelector::pass_3l1tau_CR_selection(
     const std::vector<miniLepton>& fakeableLeps,
 	const std::vector<miniTau>& selectedTaus)
 {
-	return ( pass_3l1tau_tauNumber(selectedTaus) and
-			 pass_3l1tau_tightID(fakeableLeps) and 
+	if (not pass_3l1tau_tauNumber(selectedTaus))
+		return false;
+	
+	return ( pass_3l1tau_tightID(fakeableLeps) and 
 			 not pass_3l1tau_charge(fakeableLeps, selectedTaus));
 }
 
@@ -869,8 +931,10 @@ bool EventSelector::pass_3l1tau_FakeARCR_selection(
     const std::vector<miniLepton>& fakeableLeps,
 	const std::vector<miniTau>& selectedTaus)
 {
-	return ( pass_3l1tau_tauNumber(selectedTaus) and 
-			 not pass_3l1tau_tightID(fakeableLeps) and 
+	if (not pass_3l1tau_tauNumber(selectedTaus))
+		return false;
+	
+	return ( not pass_3l1tau_tightID(fakeableLeps) and 
 			 not pass_3l1tau_charge(fakeableLeps, selectedTaus));
 }
 /*

@@ -10,11 +10,12 @@ ttHtaus = cms.EDAnalyzer('ttHtautauAnalyzer',
                          analysis_type = cms.string("2lss1tau"),
                          # Selection type:
                          # signal_2lss1tau, signal_1l2tau, signal_3l1tau, control_2los1tau, control_fake_2lss1tau, control_fake_1l2tau, control_fake_3l1tau, loose_2lss1tau
-                         selection_region = cms.string('signal_2lss1tau'),
+                         selection_region = cms.string(''),
+                         looseSelection = cms.bool(False),
                          # Generic parameters
                          sample_name = cms.string(''),
                          verbosity = cms.int32(0),
-                         using_real_data = cms.bool(False),
+                         using_collision_data = cms.bool(False),
                          debug_mode = cms.bool(False),
                          do_systematics = cms.bool(True),
                          do_sync = cms.bool(False),
