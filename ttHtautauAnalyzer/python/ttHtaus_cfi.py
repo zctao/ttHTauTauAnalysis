@@ -7,7 +7,7 @@ import FWCore.ParameterSet.Config as cms
 
 ttHtaus = cms.EDAnalyzer('ttHtautauAnalyzer',
                          # Analysis type: 2lss1tau, 1l2tau, 3l1tau
-                         analysis_type = cms.string("2lss1tau"),
+                         analysis_type = cms.string(""),
                          # Selection type:
                          # signal_2lss1tau, signal_1l2tau, signal_3l1tau, control_2los1tau, control_fake_2lss1tau, control_fake_1l2tau, control_fake_3l1tau, loose_2lss1tau
                          selection_region = cms.string(''),
@@ -17,7 +17,7 @@ ttHtaus = cms.EDAnalyzer('ttHtautauAnalyzer',
                          verbosity = cms.int32(0),
                          using_collision_data = cms.bool(False),
                          debug_mode = cms.bool(False),
-                         do_systematics = cms.bool(True),
+                         #do_systematics = cms.bool(True),
                          do_sync = cms.bool(False),
                          turn_off_event_sel = cms.bool(False),
                          doCutFlow = cms.bool(True),

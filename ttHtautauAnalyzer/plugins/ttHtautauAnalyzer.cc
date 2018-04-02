@@ -44,7 +44,7 @@ ttHtautauAnalyzer::ttHtautauAnalyzer(const edm::ParameterSet& iConfig):
 	verbosity_ (iConfig.getParameter<int>("verbosity")),
 	isdata_ (iConfig.getParameter<bool>("using_collision_data")),
 	debug_ (iConfig.getParameter<bool>("debug_mode")),
-	doSystematics_ (iConfig.getParameter<bool>("do_systematics")),
+	//doSystematics_ (iConfig.getParameter<bool>("do_systematics")),
 	doSync_ (iConfig.getParameter<bool>("do_sync")),
 	event_selection_off_ (iConfig.getParameter<bool>("turn_off_event_sel")),
 	doCutflow_ (iConfig.getParameter<bool>("doCutFlow")),

@@ -212,7 +212,7 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	int verbosity_;
 	bool isdata_;
 	bool debug_;
-	bool doSystematics_;
+	//bool doSystematics_;
 	bool doSync_;
 	bool event_selection_off_;
 	bool doCutflow_;
