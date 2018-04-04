@@ -211,9 +211,10 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		tree_in -> GetEntry(i);
 
 		// reconstruct objects
-		auto leptons = evNtuple.buildLeptons();  // fakeable
-		auto taus = evNtuple.buildTaus(anatype==Analyze_1l2tau);
-		// fakeable taus for 1l2tau; tight taus otherwise
+	    auto leptons = evNtuple.buildLeptons();  // fakeable
+		auto taus_tight = evNtuple.buildTaus(); // tight taus
+		// fakeable taus for 1l2tau fake AR
+	    auto taus_fakeable = evNtuple.buildTaus(true);
 
 		if (debug) {
 			std::cout << std::endl;
@@ -221,9 +222,13 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 					  << evNtuple.nEvent << std::endl;
 		}
 		
-		if (not evt_selector.pass_extra_event_selection(anatype, seltype,
-														leptons, taus))
+		if (not evt_selector.pass_extra_event_selection(anatype, seltype, &leptons,
+														&taus_tight, &taus_fakeable))
 			continue;
+
+		std::vector<miniTau> * taus = &taus_tight;
+		if (seltype==Control_fake_1l2tau)
+			taus = &taus_fakeable;
 		
 		syncntuple.initialize();
 
@@ -455,32 +460,32 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		
 		syncntuple.lep0_conept = leptons[0].conept();
 		syncntuple.mindr_lep0_jet = mvantuple.compute_min_dr(leptons[0].p4(),jets);
-		syncntuple.mindr_tau_jet = mvantuple.compute_min_dr(taus[0].p4(),jets);
+		syncntuple.mindr_tau_jet = mvantuple.compute_min_dr(taus->at(0).p4(),jets);
 		syncntuple.MT_met_lep0 = mvantuple.compute_mT_lep(leptons[0], syncntuple.PFMET, syncntuple.PFMETphi);
 		syncntuple.avg_dr_jet = mvantuple.compute_average_dr(jets);
 		syncntuple.max_dr_jet = mvantuple.compute_max_dr(jets);
 		syncntuple.HT = syncntuple.MHT;
-		syncntuple.dR_l0tau = leptons[0].p4().DeltaR(taus[0].p4());
-		syncntuple.mvis_l0tau = (leptons[0].p4()+taus[0].p4()).M();
+		syncntuple.dR_l0tau = leptons[0].p4().DeltaR(taus->at(0).p4());
+		syncntuple.mvis_l0tau = (leptons[0].p4()+taus->at(0).p4()).M();
 		
 		if (leptons.size()>1) {
 			syncntuple.lep1_conept = leptons[1].conept();
 			syncntuple.mindr_lep1_jet = mvantuple.compute_min_dr(leptons[1].p4(),jets);
-			syncntuple.mvis_l1tau = (leptons[1].p4()+taus[0].p4()).M();
-			syncntuple.dR_l1tau = leptons[1].p4().DeltaR(taus[0].p4());
+			syncntuple.mvis_l1tau = (leptons[1].p4()+taus->at(0).p4()).M();
+			syncntuple.dR_l1tau = leptons[1].p4().DeltaR(taus->at(0).p4());
 			syncntuple.dR_leps = leptons[0].p4().DeltaR(leptons[1].p4());
 		}
 
 		if (leptons.size()>2) {
 			syncntuple.mindr_lep2_jet = mvantuple.compute_min_dr(leptons[2].p4(),jets);
-			syncntuple.dR_l2tau = leptons[2].p4().DeltaR(taus[0].p4());
+			syncntuple.dR_l2tau = leptons[2].p4().DeltaR(taus->at(0).p4());
 			syncntuple.MT_met_lep2 = mvantuple.compute_mT_lep(leptons[2], syncntuple.PFMET, syncntuple.PFMETphi);;
 		}
 
-		if (taus.size()>1) {
-			syncntuple.tt_deltaR = taus[0].p4().DeltaR(taus[1].p4());
-			syncntuple.tt_mvis = (taus[0].p4()+taus[1].p4()).M();
-			syncntuple.tt_pt = (taus[0].p4()+taus[1].p4()).Pt();
+		if (taus->size()>1) {
+			syncntuple.tt_deltaR = taus->at(0).p4().DeltaR(taus->at(1).p4());
+			syncntuple.tt_mvis = (taus->at(0).p4()+taus->at(1).p4()).M();
+			syncntuple.tt_pt = (taus->at(0).p4()+taus->at(1).p4()).Pt();
 		}		
 
 		// weights
@@ -491,16 +496,16 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		// FR_weight
 		if (seltype==Control_fake_1l2tau or seltype==Control_fake_2lss1tau or
 			seltype==Control_fake_3l1tau)
-			syncntuple.FR_weight = sf_helper.Get_FR_weight(leptons,taus);
+			syncntuple.FR_weight = sf_helper.Get_FR_weight(leptons,*taus);
 		else if (seltype==Control_2los1tau)
 			syncntuple.FR_weight =
-				sf_helper.Get_ChargeFlipWeight(leptons, taus[0].charge());
+				sf_helper.Get_ChargeFlipWeight(leptons, taus->at(0).charge());
 		
 		// leptonSF_weight
 		syncntuple.leptonSF_weight = sf_helper.Get_LeptonIDSF_weight(leptons);
 		
 		// tauSF_weight
-		syncntuple.tauSF_weight = sf_helper.Get_TauIDSF_weight(taus);
+		syncntuple.tauSF_weight = sf_helper.Get_TauIDSF_weight(*taus);
 		
 		// triggerSF_weight
 		bool hlt1LTriggered =
@@ -508,7 +513,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		bool hltXTriggered =
 			trig_helper.pass_leptau_cross_triggers(evNtuple.triggerBits);
 		syncntuple.triggerSF_weight =
-			sf_helper.Get_HLTSF(leptons, taus, hlt1LTriggered, hltXTriggered);
+			sf_helper.Get_HLTSF(leptons, *taus, hlt1LTriggered, hltXTriggered);
 		
 		tree_out->Fill();
 		
