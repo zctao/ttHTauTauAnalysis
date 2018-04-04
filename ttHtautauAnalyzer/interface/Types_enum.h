@@ -30,6 +30,7 @@ enum Selection_types {
 	Control_WZ,
 	Loose_2lss1tau,  // for training
 	Loose_1l2tau,
+	Loose_3l1tau,
 	Inclusive_1l2tau,
 	Inclusive_2lss1tau,
 	Inclusive_3l1tau,

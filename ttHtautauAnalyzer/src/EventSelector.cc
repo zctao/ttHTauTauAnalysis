@@ -235,7 +235,7 @@ bool EventSelector::pass_1l2tau_inclusive_selection(
 
 bool EventSelector::pass_1l2tau_tightID(const std::vector<miniLepton>& fakeableLeps,
 										const std::vector<miniTau>& tightTaus)
-{
+{	
 	// SR: tight lepton; both taus pass tight selection (VTight MVA)
 	if (verbose_) {
 		std::cout << "number of tight taus : " << tightTaus.size() << std::endl;
@@ -284,7 +284,7 @@ bool EventSelector::pass_1l2tau_charge(const std::vector<miniTau>& taus)
 bool EventSelector::pass_1l2tau_SR_selection(
     const std::vector<miniLepton>& fakeableLeps,
 	const std::vector<miniTau>& tightTaus)
-{
+{	
 	// event is assumed to already pass 1l2tau inclusive selection
 	if (verbose_) std::cout << "start 1l2tau signal region selection" << std::endl;
 	
@@ -336,6 +336,8 @@ bool EventSelector::pass_1l2tau_FakeAR_selection(
 	const std::vector<miniTau>& tightTaus,
 	const std::vector<miniTau>& fakeableTaus)
 {
+	assert(not looseselection_);
+	
 	if ( pass_1l2tau_tightID(fakeableLeps, tightTaus) ) return false;
 	if ( not pass_1l2tau_charge(fakeableTaus) ) return false;
 	return true;
@@ -345,6 +347,8 @@ bool EventSelector::pass_1l2tau_CR_selection(
     const std::vector<miniLepton>& fakeableLeps,
 	const std::vector<miniTau>& tightTaus)
 {
+	assert(not looseselection_);
+	
 	if ( not pass_1l2tau_tightID(fakeableLeps, tightTaus) ) return false;
 	if ( pass_1l2tau_charge(tightTaus) ) return false;
 	return true;
@@ -355,6 +359,8 @@ bool EventSelector::pass_1l2tau_FakeARCR_selection(
 	const std::vector<miniTau>& tightTaus,
 	const std::vector<miniTau>& fakeableTaus)
 {
+	assert(not looseselection_);
+	
 	if ( pass_1l2tau_tightID(fakeableLeps, tightTaus) ) return false;
 	if ( pass_1l2tau_charge(fakeableTaus) ) return false;
     return true;
@@ -551,8 +557,11 @@ bool EventSelector::pass_2l1tau_inclusive_selection(
 }
 
 bool EventSelector::pass_2lss1tau_tightLepID(const std::vector<miniLepton>& leptons)
-{
+{	
 	assert(leptons.size()>1);
+
+	if (looseselection_) return true;
+	
 	if (verbose_) {
 		std::cout << "isTight lep1 lep2 : " << leptons[0].passTightSel()
 				  << " " << leptons[1].passTightSel() << std::endl;
@@ -599,7 +608,7 @@ bool EventSelector::pass_2lss1tau_tauNumber(const std::vector<miniTau>& selected
 	// At most one tau passing VTight MVA (avoid overlap with 2l2tau)
 	int nvtighttau = 0;
 	for (const auto & tau : selectedTaus) {
-		assert(tau.passMVAID('M'));
+		if (not looseselection_) assert(tau.passMVAID('M'));
 		if (tau.passMVAID('V')) nvtighttau++;
 	}
 	if ( nvtighttau > 1 ) {
@@ -672,6 +681,8 @@ bool EventSelector::pass_2lss1tau_FakeAR_selection(
     const std::vector<miniLepton>& fakeableLeps,
 	const std::vector<miniTau>& selectedTaus)
 {
+	assert(not looseselection_);
+	
 	if (not pass_2lss1tau_tauNumber(selectedTaus))
 		return false;
 	
@@ -686,6 +697,8 @@ bool EventSelector::pass_2lss1tau_FlipAR_selection(
     const std::vector<miniLepton>& fakeableLeps,
 	const std::vector<miniTau>& selectedTaus)
 {
+	assert(not looseselection_);
+	
 	if (not pass_2lss1tau_tauNumber(selectedTaus))
 		return false;
 	
@@ -890,8 +903,11 @@ bool EventSelector::pass_3l1tau_inclusive_selection(
 }
 
 bool EventSelector::pass_3l1tau_tightID(const std::vector<miniLepton>& leptons)
-{
+{	
 	assert(leptons.size()>2);
+
+	if (looseselection_) return true;
+	
 	if (verbose_) {
 		std::cout << "isTight lep1 lep2 lep3 : " << leptons[0].passTightSel()
 				  << " " << leptons[1].passTightSel() << " "
@@ -921,11 +937,13 @@ bool EventSelector::pass_3l1tau_charge(
 
 bool EventSelector::pass_3l1tau_tauNumber(const std::vector<miniTau>& selectedTaus)
 {
+	assert(not looseselection_);
+	
 	if (verbose_)
 		std::cout << "number of taus : " << selectedTaus.size() << std::endl;
 	
 	for (const auto & tau : selectedTaus)
-		assert(tau.passMVAID('M'));
+		if (not looseselection_) assert(tau.passMVAID('M'));
 
 	return selectedTaus.size() > 0;
 }
@@ -933,7 +951,7 @@ bool EventSelector::pass_3l1tau_tauNumber(const std::vector<miniTau>& selectedTa
 bool EventSelector::pass_3l1tau_SR_selection(
     const std::vector<miniLepton>& fakeableLeps,
 	const std::vector<miniTau>& selectedTaus)
-{
+{	
 	// event is assumed to already pass 3l1tau inclusive selection
 	if (verbose_) std::cout << "start 3l1tau signal region selection" << std::endl;
 
@@ -986,6 +1004,8 @@ bool EventSelector::pass_3l1tau_FakeAR_selection(
     const std::vector<miniLepton>& fakeableLeps,
 	const std::vector<miniTau>& selectedTaus)
 {
+	assert(not looseselection_);
+	
 	if (not pass_3l1tau_tauNumber(selectedTaus))
 		return false;
 	
@@ -997,6 +1017,8 @@ bool EventSelector::pass_3l1tau_CR_selection(
     const std::vector<miniLepton>& fakeableLeps,
 	const std::vector<miniTau>& selectedTaus)
 {
+	assert(not looseselection_);
+	
 	if (not pass_3l1tau_tauNumber(selectedTaus))
 		return false;
 	
@@ -1008,6 +1030,8 @@ bool EventSelector::pass_3l1tau_FakeARCR_selection(
     const std::vector<miniLepton>& fakeableLeps,
 	const std::vector<miniTau>& selectedTaus)
 {
+	assert(not looseselection_);
+	
 	if (not pass_3l1tau_tauNumber(selectedTaus))
 		return false;
 	

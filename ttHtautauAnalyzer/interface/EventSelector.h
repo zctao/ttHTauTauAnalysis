@@ -26,9 +26,10 @@ class EventSelector
 		isMC_ = isMC;
 	}
 
-	EventSelector(bool verbose, bool isMC) {
+	EventSelector(bool verbose, bool isMC, bool looseSelection=false) {
 		verbose_ = verbose;
 		isMC_ = isMC;
+		looseselection_ = looseSelection;
 		anaType_ = Analyze_NA;
 		selType_ = Selection_NA;
 	}
@@ -154,6 +155,7 @@ class EventSelector
 	Selection_types selType_;
 	bool verbose_;
 	bool isMC_;
+	bool looseselection_;
 };
 
 #endif
