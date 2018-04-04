@@ -266,7 +266,7 @@ bool EventSelector::pass_1l2tau_SR_selection(
 	}
 		
 	///////////////////////////////
-	// tau chargesControl_fake_1l2tau
+	// tau charges
 	assert(tightTaus.size()>1);
 	if ( not pass_1l2tau_charge(tightTaus) ) {
 		if (verbose_) std::cout << "FAIL tau charge requirement" << std::endl;
@@ -615,6 +615,23 @@ bool EventSelector::pass_2lss1tau_SR_selection(
 		return false;
 	}
 
+	///////////////////////////////
+	// MC Matching
+	if (isMC_) {
+		assert(fakeableLeps.size()>1);
+		bool passMCMatch = fakeableLeps[0].isGenMatched() and
+			fakeableLeps[1].isGenMatched();
+		if (not passMCMatch) {
+			if (verbose_) {
+				std::cout << "mcMatchType lep1 lep2 : "
+						  << fakeableLeps[0].MCMatchType() << " "
+						  << fakeableLeps[1].MCMatchType() << std::endl;
+				std::cout << "FAIL MC Matching" << std::endl;
+			}
+			return false;
+		}
+	}
+	
 	/////////////////////////////////
 	if (verbose_) std::cout << "PASSED 2lss1tau signal region selection!" << std::endl;
 	
@@ -911,6 +928,24 @@ bool EventSelector::pass_3l1tau_SR_selection(
 		return false;
 	}
 
+	///////////////////////////////
+	// MC Matching
+	if (isMC_) {
+		assert(fakeableLeps.size()>2);
+		bool passMCMatch = fakeableLeps[0].isGenMatched() and
+			fakeableLeps[1].isGenMatched() and fakeableLeps[2].isGenMatched();
+		if (not passMCMatch) {
+			if (verbose_) {
+				std::cout << "mcMatchType lep1 lep2 lep3 : "
+						  << fakeableLeps[0].MCMatchType() << " "
+						  << fakeableLeps[1].MCMatchType() << " "
+						  << fakeableLeps[2].MCMatchType() << std::endl;
+				std::cout << "FAIL MC Matching" << std::endl;
+			}
+			return false;
+		}
+	}
+	
 	/////////////////////////////////
 	if (verbose_) std::cout << "PASSED 3l1tau signal region selection!" << std::endl;
 	
