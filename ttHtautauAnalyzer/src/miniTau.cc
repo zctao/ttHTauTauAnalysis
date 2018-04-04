@@ -146,3 +146,12 @@ bool miniTau::isGenMatched() const
 	return (mcmatchtype_==1 or mcmatchtype_==2 or mcmatchtype_==3 or
 			mcmatchtype_==4 or mcmatchtype_==5);
 }
+
+void miniTau::dump() const
+{
+    std::cout << " pt: " << pt() << " eta: " << eta() << " phi: " << phi()
+			  << " mass: " << mass() << " charge: " << charge()
+			  << " decaymode: " << decaymode() << " passLoose: " << passLooseSel()
+			  << " passTight: " << passTightSel()
+			  << " mcMatchType: " << MCMatchType() << std::endl;
+}

@@ -145,6 +145,10 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	// vertices
 	bool isGoodPV(const reco::Vertex&);
 	reco::Vertex getPrimaryVertex(edm::Handle<reco::VertexCollection>);
+
+	void dumpLeptons(const std::vector<miniLepton>&);
+	void dumpTaus(const std::vector<miniTau>&);
+	void dumpJets(const std::vector<pat::Jet>&);
 	
 	// Event selection
 	EventSelector* evt_selector_;

@@ -321,6 +321,8 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		std::cout << "n_lep_loose : " << lep_loose.size() << std::endl;
 		std::cout << "n_lep_fakeable : " << lep_fakeable.size() << std::endl;
 		std::cout << "n_lep_tight : " << lep_tight.size() << std::endl;
+		std::cout << "loose leptons : " << std::endl;
+		dumpLeptons(lep_loose);
 	}
 	
 	/////////////////////////////////////////
@@ -356,7 +358,9 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 
 	if (debug_) {
 		std::cout << "n_tau_loose : " << minitau_loose.size() << std::endl;
-		std::cout << "n_tau : " << minitau_tight.size() << std::endl; 
+		std::cout << "n_tau : " << minitau_tight.size() << std::endl;
+		std::cout << "loose taus : " << std::endl;
+		dumpTaus(minitau_loose);
 	}
 	
 	/////////////////////////////////////////
@@ -387,6 +391,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 
 	if (debug_) {
 		std::cout << "n_jets : " << jet_selected.size() << std::endl;
+		dumpJets(jet_selected);
 	}
 
 	//////////////////

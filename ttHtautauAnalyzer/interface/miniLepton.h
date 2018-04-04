@@ -49,6 +49,8 @@ class miniLepton
 	int MCMatchType() const {return mcmatchtype_;}
 	bool isGenMatched() const;
 	TLorentzVector p4() const;
+
+	void dump() const;
 		
  private:
 

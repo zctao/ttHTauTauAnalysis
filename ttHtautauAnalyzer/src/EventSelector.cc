@@ -707,6 +707,10 @@ bool EventSelector::pass_2lss1tau_FlipAR_selection(
 	bool lep1IsElectron = abs(fakeableLeps[0].pdgId())==11;
 	bool lep2IsElectron = abs(fakeableLeps[1].pdgId())==11;
 
+	if (verbose_ and not (lep1IsElectron or lep2IsElectron)) {
+		std::cout << "FAIL: both leptons are not electrons" << std::endl;
+	}
+	
 	// The lepton that has the same sign as tau has to be a electron
 	// And the charge flip rate is only applied to this electron
 	bool passTauCharge = false;
@@ -714,6 +718,15 @@ bool EventSelector::pass_2lss1tau_FlipAR_selection(
 		passTauCharge = true;
 	if (lep2IsElectron and fakeableLeps[1].charge()== selectedTaus[0].charge())
 		passTauCharge = true;
+
+	if (verbose_ and not passTauCharge) {
+		std::cout << "lep1 isElectron charge : " << lep1IsElectron << " "
+				  << fakeableLeps[0].charge() << std::endl;
+		std::cout << "lep2 isElectron charge : " << lep2IsElectron << " "
+				  << fakeableLeps[1].charge() << std::endl;
+		std::cout << "tau charge : " << selectedTaus[0].charge() << std::endl;
+		std::cout << "FAIL tau charge requirement" << std::endl;
+	}
 	
 	return ( (lep1IsElectron or lep2IsElectron) and
 			 pass_2lss1tau_tightLepID(fakeableLeps) and

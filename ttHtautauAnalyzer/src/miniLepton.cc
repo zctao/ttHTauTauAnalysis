@@ -98,3 +98,15 @@ bool miniLepton::isGenMatched() const
 	else
 		return false;
 }
+
+void miniLepton::dump() const
+{
+	std::cout << "lep pdgid: " << pdgId() << " pt: " << pt()
+			  << " conept: " << conept() << " eta: " << eta() << " phi: " << phi()
+			  << " mass: " << mass()
+			  << " charge: " << charge() << " passTightCharge: " << passTightCharge()
+			  << " passLoose: " << passLooseSel()
+			  << " passFakeable: " << passFakeableSel()
+			  << " passTight: " << passTightSel()
+			  << " mcMatchType: " << MCMatchType() << std::endl;
+}

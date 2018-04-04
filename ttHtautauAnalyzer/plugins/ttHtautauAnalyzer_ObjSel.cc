@@ -144,6 +144,9 @@ bool ttHtautauAnalyzer::isTightCharge(const pat::Electron& ele) const
 	bool tightcharge =
 		ele.isGsfCtfScPixChargeConsistent()+ele.isGsfScPixChargeConsistent() > 1;
 	
+	//std::cout << "elel tight charge : " << ele.isGsfCtfScPixChargeConsistent()
+	//		  << " " << ele.isGsfScPixChargeConsistent() << std::endl;
+	
 	return tightcharge;
 }
 
@@ -609,6 +612,29 @@ reco::Vertex ttHtautauAnalyzer::getPrimaryVertex(edm::Handle<reco::VertexCollect
 	}
 
 	return pv;
+}
+
+/////////////////////
+// Printout
+void ttHtautauAnalyzer::dumpLeptons(const std::vector<miniLepton>& leptons)
+{
+	for (const auto & lep : leptons)
+		lep.dump();
+}
+
+void ttHtautauAnalyzer::dumpTaus(const std::vector<miniTau>& taus)
+{
+	for (const auto & tau : taus)
+		tau.dump();
+}
+
+void ttHtautauAnalyzer::dumpJets(const std::vector<pat::Jet>& jets)
+{
+	for (const auto & j : jets) {
+		std::cout << " pt: " << j.pt() << " eta: " << j.eta() << " phi: " << j.phi()
+				  << " energy: " << j.energy() << " csv: " << getJetCSV(j)
+				  << " flavor: " << j.hadronFlavour() << std::endl;
+	}
 }
 
 #endif
