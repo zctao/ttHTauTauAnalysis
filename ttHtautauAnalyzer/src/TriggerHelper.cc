@@ -52,7 +52,7 @@ TriggerHelper::TriggerHelper(Analysis_types analysis, bool verbose)
 {
 	anaType_ = analysis;
 	verbose_ = verbose;
-
+	
 	hlt_paths_.clear();
 	
 	if (anaType_ == Analyze_2lss1tau) {

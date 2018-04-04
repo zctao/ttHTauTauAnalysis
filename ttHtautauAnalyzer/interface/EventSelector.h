@@ -12,6 +12,7 @@
 #include "Types_enum.h"
 #include "miniLepton.h"
 #include "miniTau.h"
+#include "TriggerHelper.h"
 
 class EventSelector
 {
@@ -35,6 +36,16 @@ class EventSelector
 	~EventSelector(){};
 
 	// member functions
+	void fill_cutflow(TH1*, int ibin, const char*);
+	bool pass_hlt_paths(Analysis_types, TriggerHelper * const, unsigned int);
+	//bool pass_extra_event_selection(Analysis_types, Selection_types,
+	//								const std::vector<miniLepton>&,
+	//								const std::vector<miniTau>&);
+	bool pass_extra_event_selection(Analysis_types, Selection_types,
+									std::vector<miniLepton> const * const,
+									std::vector<miniTau> const * const,
+									std::vector<miniTau> const *const fakeabletau=0);
+	
 	bool pass_1l2tau_inclusive_selection(const std::vector<miniLepton>&,
 										 const std::vector<miniLepton>&,
 										 const std::vector<miniLepton>&,
@@ -108,15 +119,6 @@ class EventSelector
 	bool pass_3l_inclusive_CR_selection();
 	bool pass_3l_ttZ_CR_selection();
 	bool pass_3l_WZ_CR_selection();
-
-	void fill_cutflow(TH1*, int ibin, const char*);
-	//bool pass_extra_event_selection(Analysis_types, Selection_types,
-	//								const std::vector<miniLepton>&,
-	//								const std::vector<miniTau>&);
-	bool pass_extra_event_selection(Analysis_types, Selection_types,
-									std::vector<miniLepton> const * const,
-									std::vector<miniTau> const * const,
-									std::vector<miniTau> const * const fakeabletau=0);
 
 	bool pass_pairMass_veto(const std::vector<miniLepton>&);
 	bool pass_Zmass_veto(const std::vector<miniLepton>&, bool, bool);

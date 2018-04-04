@@ -24,6 +24,36 @@ void EventSelector::fill_cutflow(TH1* h, int ibin, const char* name)
 	return;
 }
 
+bool EventSelector::pass_hlt_paths(Analysis_types anatype,
+								   TriggerHelper* const trighelper,
+								   unsigned int triggerBits)
+{
+	bool passhlt = false;
+	if (anatype == Analyze_1l2tau) {
+		passhlt =
+			trighelper->pass_single_lep_triggers(triggerBits) or
+			trighelper->pass_leptau_cross_triggers(triggerBits);
+	}
+	else if (anatype == Analyze_2lss1tau) {
+		passhlt =
+			trighelper->pass_single_lep_triggers(triggerBits) or
+			trighelper->pass_dilep_triggers(triggerBits);
+	}
+	else if (anatype == Analyze_3l1tau) {
+		passhlt =
+			trighelper->pass_single_lep_triggers(triggerBits) or
+			trighelper->pass_dilep_triggers(triggerBits) or
+			trighelper->pass_trilep_triggers(triggerBits);
+	}
+
+	if (not passhlt and verbose_) {
+		std::cout << "FAIL HLT" << std::endl;
+		std::cout << "trigger bits : " << triggerBits << std::endl;
+	}
+	
+	return passhlt;
+}
+
 bool EventSelector::pass_extra_event_selection(
     Analysis_types anatype, Selection_types seltype,
     std::vector<miniLepton> const * const fakeableLeps,
