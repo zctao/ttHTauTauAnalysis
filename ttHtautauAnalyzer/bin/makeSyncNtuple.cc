@@ -221,17 +221,21 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			std::cout << "Event: " << evNtuple.run <<":"<< evNtuple.ls << ":"
 					  << evNtuple.nEvent << std::endl;
 		}
+
+		if (anatype != Analyze_NA) {
 		
-		////////////////////////////////////////
-		if (not evt_selector.pass_extra_event_selection(anatype, seltype, &leptons,
-														&taus_tight, &taus_fakeable))
+			////////////////////////////////////////
+			if (not evt_selector.pass_extra_event_selection(anatype, seltype,
+															&leptons, &taus_tight,
+															&taus_fakeable))
 			continue;
 
-		////////////////////////////////////////
-		// HLT path
-		if (not evt_selector.pass_hlt_paths(anatype, &trig_helper,
-											evNtuple.triggerBits))
-			continue;
+			////////////////////////////////////////
+			// HLT path
+			if (not evt_selector.pass_hlt_paths(anatype, &trig_helper,
+												evNtuple.triggerBits))
+				continue;
+		}
 		
 		////////////////////////////////////////
 		std::vector<miniTau> * taus = &taus_tight;
