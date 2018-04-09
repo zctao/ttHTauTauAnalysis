@@ -468,6 +468,7 @@ void eventNtuple::initialize()
 	tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT->clear();
 	tau_byTightIsolationMVArun2v1DBdR03oldDMwLT->clear();
 	tau_byVTightIsolationMVArun2v1DBdR03oldDMwLT->clear();
+	tau_byIsolationMVArun2v1DBdR03oldDMwLTraw->clear();
 	tau_againstMuonLoose3->clear();
 	tau_againstMuonTight3->clear();
 	tau_againstElectronVLooseMVA6->clear();
@@ -659,6 +660,7 @@ void eventNtuple::setup_branches(TTree* tree)
 	tree->Branch("tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT", &tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT);
 	tree->Branch("tau_byTightIsolationMVArun2v1DBdR03oldDMwLT", &tau_byTightIsolationMVArun2v1DBdR03oldDMwLT);
 	tree->Branch("tau_byVTightIsolationMVArun2v1DBdR03oldDMwLT", &tau_byVTightIsolationMVArun2v1DBdR03oldDMwLT);
+	tree->Branch("tau_byIsolationMVArun2v1DBdR03oldDMwLTraw", &tau_byIsolationMVArun2v1DBdR03oldDMwLTraw);
 	tree->Branch("tau_againstMuonLoose3", &tau_againstMuonLoose3);
 	tree->Branch("tau_againstMuonTight3", &tau_againstMuonTight3);
 	tree->Branch("tau_againstElectronVLooseMVA6", &tau_againstElectronVLooseMVA6);
@@ -847,6 +849,7 @@ void eventNtuple::set_branch_address(TTree* tree)
 	tree->SetBranchAddress("tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT", &tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT);
 	tree->SetBranchAddress("tau_byTightIsolationMVArun2v1DBdR03oldDMwLT", &tau_byTightIsolationMVArun2v1DBdR03oldDMwLT);
 	tree->SetBranchAddress("tau_byVTightIsolationMVArun2v1DBdR03oldDMwLT", &tau_byVTightIsolationMVArun2v1DBdR03oldDMwLT);
+	tree->SetBranchAddress("tau_byIsolationMVArun2v1DBdR03oldDMwLTraw", &tau_byIsolationMVArun2v1DBdR03oldDMwLTraw);
 	tree->SetBranchAddress("tau_againstMuonLoose3", &tau_againstMuonLoose3);
 	tree->SetBranchAddress("tau_againstMuonTight3", &tau_againstMuonTight3);
 	tree->SetBranchAddress("tau_againstElectronVLooseMVA6", &tau_againstElectronVLooseMVA6);

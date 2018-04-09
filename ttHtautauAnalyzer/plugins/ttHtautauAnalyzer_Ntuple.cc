@@ -239,6 +239,7 @@ void ttHtautauAnalyzer::write_ntuple_taus(const std::vector<pat::Tau>& taus)
 		evNtuple_.tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT->push_back(tau.tauID("byMediumIsolationMVArun2v1DBdR03oldDMwLT"));
 		evNtuple_.tau_byTightIsolationMVArun2v1DBdR03oldDMwLT->push_back(tau.tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT"));
 		evNtuple_.tau_byVTightIsolationMVArun2v1DBdR03oldDMwLT->push_back(tau.tauID("byVTightIsolationMVArun2v1DBdR03oldDMwLT"));
+		evNtuple_.tau_byIsolationMVArun2v1DBdR03oldDMwLTraw->push_back(tau.tauID("byIsolationMVArun2v1DBdR03oldDMwLTraw"));
 		evNtuple_.tau_againstMuonLoose3->push_back(tau.tauID("againstMuonLoose3"));
 		evNtuple_.tau_againstMuonTight3->push_back(tau.tauID("againstMuonTight3"));
 		evNtuple_.tau_againstElectronVLooseMVA6->push_back(tau.tauID("againstElectronVLooseMVA6"));

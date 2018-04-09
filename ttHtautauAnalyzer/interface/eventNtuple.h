@@ -195,6 +195,7 @@ class eventNtuple
 	std::vector<int>   *tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT = 0;
 	std::vector<int>   *tau_byTightIsolationMVArun2v1DBdR03oldDMwLT = 0;
 	std::vector<int>   *tau_byVTightIsolationMVArun2v1DBdR03oldDMwLT = 0;
+	std::vector<float> *tau_byIsolationMVArun2v1DBdR03oldDMwLTraw = 0;
 	std::vector<int>   *tau_againstMuonLoose3 = 0;
 	std::vector<int>   *tau_againstMuonTight3 = 0;
 	std::vector<int>   *tau_againstElectronVLooseMVA6 = 0;
