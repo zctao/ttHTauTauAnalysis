@@ -263,7 +263,13 @@ for idmod in my_id_modules:
 # setattr(process, "NewTauIDsEmbedded", embedID)
 
 # ##################################################
-    
+
+### MET correction 
+from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
+runMetCorAndUncFromMiniAOD(process,
+                           isData=options.isData,
+                           )
+
 ### load the analysis
 # LeptonID producer from ttH Multi-lepton group
 process.load("ttH.LeptonID.ttHLeptons_cfi")
@@ -286,7 +292,7 @@ process.ttHtaus.electrons = cms.InputTag("ttHLeptons")
 process.ttHtaus.muons = cms.InputTag("ttHLeptons")
 process.ttHtaus.taus = cms.InputTag("ttHLeptons")
 process.ttHtaus.jets = cms.InputTag("updatedPatJetsUpdatedJEC")
-process.ttHtaus.mets = cms.InputTag("slimmedMETs")
+process.ttHtaus.mets = cms.InputTag("slimmedMETs","","ttH")
 #process.ttHtaus.rho = cms.InputTag("fixedGridRhoFastjetAll")
 #process.ttHtaus.do_systematics = cms.bool(options.doSystematics)
 process.ttHtaus.turn_off_event_sel = cms.bool(options.TurnOffEvtSel)
@@ -332,6 +338,7 @@ if options.isData:
         process.patJetCorrFactorsUpdatedJEC * process.updatedPatJetsUpdatedJEC *
         process.egmGsfElectronIDSequence *
         #process.rerunMvaIsolation2SeqRun2 * getattr(process, "NewTauIDsEmbedded") *
+        process.fullPatMetSequence *
         process.ttHLeptons *
         process.ttHtaus
     )
@@ -340,6 +347,7 @@ else:
         process.patJetCorrFactorsUpdatedJEC * process.updatedPatJetsUpdatedJEC *
         process.egmGsfElectronIDSequence *
         #process.rerunMvaIsolation2SeqRun2 * getattr(process, "NewTauIDsEmbedded") *
+        process.fullPatMetSequence *
         process.ttHLeptons *
         process.ttHtaus
     )
