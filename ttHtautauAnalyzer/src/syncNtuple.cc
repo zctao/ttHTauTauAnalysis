@@ -42,6 +42,7 @@ void syncNtuple::initialize()
 	mu0_jetCSV = -9999.;
 	mu0_sip3D = -9999.;
 	mu0_dxy = -9999.;
+	mu0_dxyAbs = -9999.;
 	mu0_dz = -9999.;
 	mu0_segmentCompatibility = -9999.;
 	mu0_leptonMVA = -9999.;
@@ -66,6 +67,7 @@ void syncNtuple::initialize()
 	mu1_jetCSV = -9999.;
 	mu1_sip3D = -9999.;
 	mu1_dxy = -9999.;
+	mu1_dxyAbs = -9999.;
 	mu1_dz = -9999.;
 	mu1_segmentCompatibility = -9999.;
 	mu1_leptonMVA = -9999.;
@@ -92,6 +94,7 @@ void syncNtuple::initialize()
 	ele0_jetCSV = -9999.;
 	ele0_sip3D = -9999.;
 	ele0_dxy = -9999.;
+	ele0_dxyAbs = -9999.;
 	ele0_dz = -9999.;
 	ele0_ntMVAeleID = -9999.;
 	ele0_leptonMVA = -9999.;
@@ -116,6 +119,7 @@ void syncNtuple::initialize()
 	ele1_jetCSV = -9999.;
 	ele1_sip3D = -9999.;
 	ele1_dxy = -9999.;
+	ele1_dxyAbs = -9999.;
 	ele1_dz = -9999.;
 	ele1_ntMVAeleID = -9999.;
 	ele1_leptonMVA = -9999.;
@@ -360,6 +364,7 @@ void syncNtuple::set_up_branches(TTree *tree)
 	tree->Branch("mu0_jetCSV",               &mu0_jetCSV);
 	tree->Branch("mu0_sip3D",                &mu0_sip3D);
 	tree->Branch("mu0_dxy",                  &mu0_dxy);
+	tree->Branch("mu0_dxyAbs",               &mu0_dxyAbs);
 	tree->Branch("mu0_dz",                   &mu0_dz);
 	tree->Branch("mu0_segmentCompatibility", &mu0_segmentCompatibility);
 	tree->Branch("mu0_leptonMVA",            &mu0_leptonMVA);
@@ -384,6 +389,7 @@ void syncNtuple::set_up_branches(TTree *tree)
 	tree->Branch("mu1_jetCSV",               &mu1_jetCSV);
 	tree->Branch("mu1_sip3D",                &mu1_sip3D);
 	tree->Branch("mu1_dxy",                  &mu1_dxy);
+	tree->Branch("mu1_dxyAbs",               &mu1_dxyAbs);
 	tree->Branch("mu1_dz",                   &mu1_dz);
 	tree->Branch("mu1_segmentCompatibility", &mu1_segmentCompatibility);
 	tree->Branch("mu1_leptonMVA",            &mu1_leptonMVA);
@@ -409,6 +415,7 @@ void syncNtuple::set_up_branches(TTree *tree)
 	tree->Branch("ele0_jetCSV",               &ele0_jetCSV);
 	tree->Branch("ele0_sip3D",                &ele0_sip3D);
 	tree->Branch("ele0_dxy",                  &ele0_dxy);
+	tree->Branch("ele0_dxyAbs",               &ele0_dxyAbs);
 	tree->Branch("ele0_dz",                   &ele0_dz);
 	tree->Branch("ele0_ntMVAeleID",           &ele0_ntMVAeleID);
 	tree->Branch("ele0_leptonMVA",            &ele0_leptonMVA);
@@ -433,6 +440,7 @@ void syncNtuple::set_up_branches(TTree *tree)
 	tree->Branch("ele1_jetCSV",               &ele1_jetCSV);
 	tree->Branch("ele1_sip3D",                &ele1_sip3D);
 	tree->Branch("ele1_dxy",                  &ele1_dxy);
+	tree->Branch("ele1_dxyAbs",               &ele1_dxyAbs);
 	tree->Branch("ele1_dz",                   &ele1_dz);
 	tree->Branch("ele1_ntMVAeleID",           &ele1_ntMVAeleID);
 	tree->Branch("ele1_leptonMVA",            &ele1_leptonMVA);

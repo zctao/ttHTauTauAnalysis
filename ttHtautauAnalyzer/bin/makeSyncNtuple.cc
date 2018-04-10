@@ -266,6 +266,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			syncntuple.mu0_E = evNtuple.mu_E->at(0);
 			syncntuple.mu0_charge = evNtuple.mu_charge->at(0);
 			syncntuple.mu0_dxy = evNtuple.mu_dxy->at(0);
+			syncntuple.mu0_dxyAbs = fabs(evNtuple.mu_dxy->at(0));
 			syncntuple.mu0_dz = evNtuple.mu_dz->at(0);
 			syncntuple.mu0_isfakeablesel = evNtuple.mu_isfakeablesel->at(0);
 			syncntuple.mu0_ismvasel = evNtuple.mu_ismvasel->at(0);
@@ -290,6 +291,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			syncntuple.mu1_E = evNtuple.mu_E->at(1);
 			syncntuple.mu1_charge = evNtuple.mu_charge->at(1);
 			syncntuple.mu1_dxy = evNtuple.mu_dxy->at(1);
+			syncntuple.mu1_dxyAbs = fabs(evNtuple.mu_dxy->at(1));
 			syncntuple.mu1_dz = evNtuple.mu_dz->at(1);
 			syncntuple.mu1_isfakeablesel = evNtuple.mu_isfakeablesel->at(1);
 			syncntuple.mu1_ismvasel = evNtuple.mu_ismvasel->at(1);
@@ -316,6 +318,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			syncntuple.ele0_E = evNtuple.ele_E->at(0);
 			syncntuple.ele0_charge = evNtuple.ele_charge->at(0);
 			syncntuple.ele0_dxy = evNtuple.ele_dxy->at(0);
+			syncntuple.ele0_dxyAbs = fabs(evNtuple.ele_dxy->at(0));
 			syncntuple.ele0_dz = evNtuple.ele_dz->at(0);
 			syncntuple.ele0_isfakeablesel = evNtuple.ele_isfakeablesel->at(0);
 			syncntuple.ele0_ismvasel = evNtuple.ele_ismvasel->at(0);
@@ -341,6 +344,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			syncntuple.ele1_E = evNtuple.ele_E->at(1);
 			syncntuple.ele1_charge = evNtuple.ele_charge->at(1);
 			syncntuple.ele1_dxy = evNtuple.ele_dxy->at(1);
+			syncntuple.ele1_dxyAbs = fabs(evNtuple.ele_dxy->at(1));
 			syncntuple.ele1_dz = evNtuple.ele_dz->at(1);
 			syncntuple.ele1_isfakeablesel = evNtuple.ele_isfakeablesel->at(1);
 			syncntuple.ele1_ismvasel = evNtuple.ele_ismvasel->at(1);

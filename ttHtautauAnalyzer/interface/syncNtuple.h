@@ -45,6 +45,7 @@ class syncNtuple
 	float mu0_jetCSV;
 	float mu0_sip3D;
 	float mu0_dxy;
+	float mu0_dxyAbs;
 	float mu0_dz;
 	float mu0_segmentCompatibility;
 	float mu0_leptonMVA;
@@ -69,6 +70,7 @@ class syncNtuple
 	float mu1_jetCSV;
 	float mu1_sip3D;
 	float mu1_dxy;
+	float mu1_dxyAbs;
 	float mu1_dz;
 	float mu1_segmentCompatibility;
 	float mu1_leptonMVA;
@@ -95,6 +97,7 @@ class syncNtuple
 	float ele0_jetCSV;
 	float ele0_sip3D;
 	float ele0_dxy;
+	float ele0_dxyAbs;
 	float ele0_dz;
 	float ele0_ntMVAeleID;
 	float ele0_leptonMVA;
@@ -119,6 +122,7 @@ class syncNtuple
 	float ele1_jetCSV;
 	float ele1_sip3D;
 	float ele1_dxy;
+	float ele1_dxyAbs;
 	float ele1_dz;
 	float ele1_ntMVAeleID;
 	float ele1_leptonMVA;
