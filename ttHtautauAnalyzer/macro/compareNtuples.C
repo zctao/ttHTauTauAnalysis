@@ -13,11 +13,11 @@
 #include <vector>
 #include <string>
 
-void compareNtuples(TString Region="",
-					TString inputFile1="", const string treename1="",
-					TString inputFile2="", const string treename2="",
-					TString inputFile3="", const string treename3="",
-					TString inputFile4="", const string treename4="",		
+void compareNtuples(TString inputFile1="", TString label1="",
+					TString inputFile2="", TString label2="",
+					TString inputFile3="", TString label3="",
+					TString inputFile4="", TString label4="",
+					const string treename="",
 					TString outputDir=""
 					)
 {
@@ -35,48 +35,48 @@ void compareNtuples(TString Region="",
 	options.reserve(4);
 	
 	if (f1->IsOpen()) {
-		TTree* tree1 = (TTree*) f1->Get(treename1.data());
+		TTree* tree1 = (TTree*) f1->Get(treename.data());
 		//tree1->SetFillColor(5);
 		tree1->SetLineColor(1);
 		
 		trees.push_back(tree1);
-		names.push_back("Cornell");
+		names.push_back(label1);
 		options.push_back("l");
 	}
 	else
 		cout << "Cannot open " << inputFile1 << endl;
 
 	if (f2->IsOpen()) {
-		TTree* tree2 = (TTree*) f2->Get(treename2.data());
+		TTree* tree2 = (TTree*) f2->Get(treename.data());
 		tree2->SetLineColor(4);
 		tree2->SetLineWidth(2);
 
 		trees.push_back(tree2);
-		names.push_back("LLR");
+		names.push_back(label2);
 		options.push_back("l");
 	}
 	else
 		cout << "Cannot open " << inputFile2 << endl;
 
 	if (f3->IsOpen()) {
-		TTree* tree3 = (TTree*) f3->Get(treename3.data());
+		TTree* tree3 = (TTree*) f3->Get(treename.data());
 		tree3->SetLineColor(2);
 		//tree3->SetLineWidth(2);
 
 		trees.push_back(tree3);
-		names.push_back("Tallinn");
+		names.push_back(label3);
 		options.push_back("l");
 	}
 	else
 		cout << "Cannot open " << inputFile3 << endl;
 
 	if (f4->IsOpen()) {
-		TTree* tree4 = (TTree*) f4->Get(treename4.data());
+		TTree* tree4 = (TTree*) f4->Get(treename.data());
 		tree4->SetLineColor(8);
 		//tree4->SetLineWidth(2);
 
 		trees.push_back(tree4);
-		names.push_back("ND");
+		names.push_back(label4);
 		options.push_back("l");
 	}
 	else
@@ -139,11 +139,11 @@ void compareNtuples(TString Region="",
 		
 		l.Draw("same");
 
-		c.SaveAs(outputDir+Region+bname+".png");
+		c.SaveAs(outputDir+bname+".png");
 		//c.SaveAs("~ztao/www/"+Region+"/"+bname+"_"+type+".png");
 	}
 
-	std::cout << "\t";
+	std::cout << "\t\t";
 	for (auto name : names)
 		std::cout << name << "\t";
 	std::cout << std::endl;
