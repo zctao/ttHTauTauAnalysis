@@ -165,7 +165,7 @@ void ttHtautauAnalyzer::write_ntuple_muons(const std::vector<pat::Muon>& muons)
 		evNtuple_.mu_miniIsoNeutral->push_back(mu.userFloat("miniAbsIsoNeutralcorr"));
 		evNtuple_.mu_jetPtRel->push_back(mu.userFloat("nearestJetPtRel"));
 		evNtuple_.mu_jetPtRatio->push_back(mu.userFloat("nearestJetPtRatio"));
-		evNtuple_.mu_jetCSV->push_back(mu.userFloat("nearestJetCsv"));
+		evNtuple_.mu_jetCSV->push_back(std::max(mu.userFloat("nearestJetCsv"), 0.f));
 		evNtuple_.mu_sip3D->push_back(mu.userFloat("sip3D"));
 		evNtuple_.mu_segmentCompatibility->push_back(mu.segmentCompatibility());
 		evNtuple_.mu_leptonMVA->push_back(mu.userFloat("leptonMVA"));
@@ -201,7 +201,7 @@ void ttHtautauAnalyzer::write_ntuple_electrons(const std::vector<pat::Electron>&
 		evNtuple_.ele_miniIsoNeutral->push_back(ele.userFloat("miniAbsIsoNeutralcorr"));
 		evNtuple_.ele_jetPtRel->push_back(ele.userFloat("nearestJetPtRel"));
 		evNtuple_.ele_jetPtRatio->push_back(ele.userFloat("nearestJetPtRatio"));
-		evNtuple_.ele_jetCSV->push_back(ele.userFloat("nearestJetCsv"));
+		evNtuple_.ele_jetCSV->push_back(std::max(ele.userFloat("nearestJetCsv"), 0.f));
 		evNtuple_.ele_sip3D->push_back(ele.userFloat("sip3D"));
 		evNtuple_.ele_ntMVAeleID->push_back(ele.userFloat("eleMvaId"));
 		evNtuple_.ele_leptonMVA->push_back(ele.userFloat("leptonMVA"));
