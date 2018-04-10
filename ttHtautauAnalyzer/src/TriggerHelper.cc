@@ -38,14 +38,15 @@ const std::vector<std::string> TriggerHelper::hlt_paths_3l_ = {
 
 // Filters
 const std::vector<std::string> TriggerHelper::filter_paths_ = {
+	"Flag_goodVertices",
+	"Flag_globalTightHalo2016Filter",
 	"Flag_HBHENoiseFilter",
 	"Flag_HBHENoiseIsoFilter",
 	"Flag_EcalDeadCellTriggerPrimitiveFilter",
-	"Flag_goodVertices",
+	"Flag_BadPFMuonFilter",
+	"Flag_BadChargedCandidateFilter",
 	"Flag_eeBadScFilter",
-	"Flag_globalTightHalo2016Filter",
-	"Flag_muonBadTrackFilter",
-	"Flag_chargedHadronTrackResolutionFilter"
+	"Flag_ecalBadCalibFilter"
 };
 
 TriggerHelper::TriggerHelper(Analysis_types analysis, bool verbose)
