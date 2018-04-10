@@ -139,6 +139,7 @@ class eventNtuple
 	std::vector<float> *mu_sip3D = 0;
 	std::vector<float> *mu_segmentCompatibility = 0;
 	std::vector<float> *mu_leptonMVA = 0;
+	std::vector<float> *mu_pfRelIso04 = 0;
 	std::vector<int>   *mu_istightcharge = 0;
 	std::vector<float> *mu_mediumID = 0;
 	std::vector<float> *mu_dpt_div_pt = 0;
@@ -166,6 +167,7 @@ class eventNtuple
 	std::vector<float> *ele_sip3D = 0;
 	std::vector<float> *ele_ntMVAeleID = 0;
 	std::vector<float> *ele_leptonMVA = 0;
+	std::vector<float> *ele_pfRelIso04 = 0;
 	std::vector<int>   *ele_istightcharge = 0;
 	std::vector<int>   *ele_isChargeConsistent = 0;
 	std::vector<int>   *ele_passesConversionVeto = 0;

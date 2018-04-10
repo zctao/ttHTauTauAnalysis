@@ -53,6 +53,7 @@ class syncNtuple
 	float mu0_dpt_div_pt;
 	int   mu0_ismvasel;
 	int   mu0_isfakeablesel;
+	float mu0_PFRelIso04;
 	//int   mu0_mcMatchType;
 	//int   mu0_isPFMuon;
 	float mu1_pt;
@@ -78,6 +79,7 @@ class syncNtuple
 	float mu1_dpt_div_pt;
 	int   mu1_ismvasel;
 	int   mu1_isfakeablesel;
+	float mu1_PFRelIso04;
 	//int   mu1_mcMatchType;
 	//int   mu1_isPFMuon;
 	
@@ -106,6 +108,7 @@ class syncNtuple
 	int   ele0_nMissingHits;
 	int   ele0_ismvasel;
 	int   ele0_isfakeablesel;
+	float ele0_PFRelIso04;
 	//int   ele0_mcMatchType;
 	float ele1_pt;
 	float ele1_conept;
@@ -131,6 +134,7 @@ class syncNtuple
 	int   ele1_nMissingHits;
 	int   ele1_ismvasel;
 	int   ele1_isfakeablesel;
+	float ele1_PFRelIso04;
 	//int   ele1_mcMatchType;
 	
 	// taus

@@ -410,6 +410,7 @@ void eventNtuple::initialize()
 	mu_sip3D->clear();
 	mu_segmentCompatibility->clear();
 	mu_leptonMVA->clear();
+	mu_pfRelIso04->clear();
 	mu_istightcharge->clear();
 	mu_mediumID->clear();
 	mu_dpt_div_pt->clear();
@@ -438,6 +439,7 @@ void eventNtuple::initialize()
 	ele_sip3D->clear();
 	ele_ntMVAeleID->clear();
 	ele_leptonMVA->clear();
+	ele_pfRelIso04->clear();
 	ele_istightcharge->clear();
 	ele_isChargeConsistent->clear();
 	ele_passesConversionVeto->clear();
@@ -604,6 +606,7 @@ void eventNtuple::setup_branches(TTree* tree)
 	tree->Branch("mu_dz",                   &mu_dz);
 	tree->Branch("mu_segmentCompatibility", &mu_segmentCompatibility);
 	tree->Branch("mu_leptonMVA",            &mu_leptonMVA);
+	tree->Branch("mu_pfRelIso04",           &mu_pfRelIso04);
 	tree->Branch("mu_istightcharge",        &mu_istightcharge);
 	tree->Branch("mu_mediumID",             &mu_mediumID);
 	tree->Branch("mu_dpt_div_pt",           &mu_dpt_div_pt);
@@ -630,6 +633,7 @@ void eventNtuple::setup_branches(TTree* tree)
 	tree->Branch("ele_dz",                   &ele_dz);
 	tree->Branch("ele_ntMVAeleID",           &ele_ntMVAeleID);
 	tree->Branch("ele_leptonMVA",            &ele_leptonMVA);
+	tree->Branch("ele_pfRelIso04",           &ele_pfRelIso04);
 	tree->Branch("ele_istightcharge",        &ele_istightcharge);
 	tree->Branch("ele_isChargeConsistent",   &ele_isChargeConsistent);
 	tree->Branch("ele_passesConversionVeto", &ele_passesConversionVeto);
@@ -793,6 +797,7 @@ void eventNtuple::set_branch_address(TTree* tree)
 	tree->SetBranchAddress("mu_dz",                   &mu_dz);
 	tree->SetBranchAddress("mu_segmentCompatibility", &mu_segmentCompatibility);
 	tree->SetBranchAddress("mu_leptonMVA",            &mu_leptonMVA);
+	tree->SetBranchAddress("mu_pfRelIso04",           &mu_pfRelIso04);
 	tree->SetBranchAddress("mu_istightcharge",        &mu_istightcharge);
 	tree->SetBranchAddress("mu_mediumID",             &mu_mediumID);
 	tree->SetBranchAddress("mu_dpt_div_pt",           &mu_dpt_div_pt);
@@ -819,6 +824,7 @@ void eventNtuple::set_branch_address(TTree* tree)
 	tree->SetBranchAddress("ele_dz",                   &ele_dz);
 	tree->SetBranchAddress("ele_ntMVAeleID",           &ele_ntMVAeleID);
 	tree->SetBranchAddress("ele_leptonMVA",            &ele_leptonMVA);
+	tree->SetBranchAddress("ele_pfRelIso04",           &ele_pfRelIso04);
 	tree->SetBranchAddress("ele_istightcharge",        &ele_istightcharge);
 	tree->SetBranchAddress("ele_isChargeConsistent",   &ele_isChargeConsistent);
 	tree->SetBranchAddress("ele_passesConversionVeto", &ele_passesConversionVeto);

@@ -169,6 +169,7 @@ void ttHtautauAnalyzer::write_ntuple_muons(const std::vector<pat::Muon>& muons)
 		evNtuple_.mu_sip3D->push_back(mu.userFloat("sip3D"));
 		evNtuple_.mu_segmentCompatibility->push_back(mu.segmentCompatibility());
 		evNtuple_.mu_leptonMVA->push_back(mu.userFloat("leptonMVA"));
+		evNtuple_.mu_pfRelIso04->push_back(mu.userFloat("relIso04"));
 		evNtuple_.mu_istightcharge->push_back(mu.userInt("isTightCharge"));
 		//
 		evNtuple_.mu_mediumID->push_back(mu.isMediumMuon());
@@ -205,6 +206,7 @@ void ttHtautauAnalyzer::write_ntuple_electrons(const std::vector<pat::Electron>&
 		evNtuple_.ele_sip3D->push_back(ele.userFloat("sip3D"));
 		evNtuple_.ele_ntMVAeleID->push_back(ele.userFloat("eleMvaId"));
 		evNtuple_.ele_leptonMVA->push_back(ele.userFloat("leptonMVA"));
+		evNtuple_.ele_pfRelIso04->push_back(ele.userFloat("relIso04"));
 		evNtuple_.ele_istightcharge->push_back(ele.userInt("isTightCharge"));
 		evNtuple_.ele_isChargeConsistent->push_back(ele.isGsfCtfScPixChargeConsistent() + ele.isGsfScPixChargeConsistent() > 1);
 		evNtuple_.ele_passesConversionVeto->push_back(ele.passConversionVeto());

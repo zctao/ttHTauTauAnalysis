@@ -280,6 +280,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			syncntuple.mu0_sip3D = evNtuple.mu_sip3D->at(0);
 			syncntuple.mu0_segmentCompatibility = evNtuple.mu_segmentCompatibility->at(0);
 			syncntuple.mu0_leptonMVA = evNtuple.mu_leptonMVA->at(0);
+			syncntuple.mu0_PFRelIso04 = evNtuple.mu_pfRelIso04->at(0);
 			syncntuple.mu0_mediumID = evNtuple.mu_mediumID->at(0);
 			syncntuple.mu0_dpt_div_pt = evNtuple.mu_dpt_div_pt->at(0);
 		}
@@ -305,6 +306,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			syncntuple.mu1_sip3D = evNtuple.mu_sip3D->at(1);
 			syncntuple.mu1_segmentCompatibility = evNtuple.mu_segmentCompatibility->at(1);
 			syncntuple.mu1_leptonMVA = evNtuple.mu_leptonMVA->at(1);
+			syncntuple.mu1_PFRelIso04 = evNtuple.mu_pfRelIso04->at(1);
 			syncntuple.mu1_mediumID = evNtuple.mu_mediumID->at(1);
 			syncntuple.mu1_dpt_div_pt = evNtuple.mu_dpt_div_pt->at(1);
 		}
@@ -332,6 +334,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			syncntuple.ele0_sip3D = evNtuple.ele_sip3D->at(0);
 			syncntuple.ele0_ntMVAeleID = evNtuple.ele_ntMVAeleID->at(0);
 			syncntuple.ele0_leptonMVA = evNtuple.ele_leptonMVA->at(0);
+			syncntuple.ele0_PFRelIso04 = evNtuple.ele_pfRelIso04->at(0);
 			syncntuple.ele0_isChargeConsistent = evNtuple.ele_isChargeConsistent->at(0);
 			syncntuple.ele0_passesConversionVeto = evNtuple.ele_passesConversionVeto->at(0);
 			syncntuple.ele0_nMissingHits = evNtuple.ele_nMissingHits->at(0);
@@ -358,6 +361,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			syncntuple.ele1_sip3D = evNtuple.ele_sip3D->at(1);
 			syncntuple.ele1_ntMVAeleID = evNtuple.ele_ntMVAeleID->at(1);
 			syncntuple.ele1_leptonMVA = evNtuple.ele_leptonMVA->at(1);
+			syncntuple.ele1_PFRelIso04 = evNtuple.ele_pfRelIso04->at(1);
 			syncntuple.ele1_isChargeConsistent = evNtuple.ele_isChargeConsistent->at(1);
 			syncntuple.ele1_passesConversionVeto = evNtuple.ele_passesConversionVeto->at(1);
 			syncntuple.ele1_nMissingHits = evNtuple.ele_nMissingHits->at(1);

@@ -50,6 +50,7 @@ void syncNtuple::initialize()
 	mu0_dpt_div_pt = -9999.;
 	mu0_ismvasel = 0;//-9999;
 	mu0_isfakeablesel = 0;//-9999;
+	mu0_PFRelIso04 = -9999.;
 	//mu0_mcMatchType = -9999;
 	//mu0_isPFMuon = -9999;
 	mu1_pt = -9999.;
@@ -75,6 +76,7 @@ void syncNtuple::initialize()
 	mu1_dpt_div_pt = -9999.;
 	mu1_ismvasel = 0;//-9999;
 	mu1_isfakeablesel = 0;//-9999;
+	mu1_PFRelIso04 = -9999.;
 	//mu1_mcMatchType = -9999;
 	//mu1_isPFMuon = -9999;
 	
@@ -103,6 +105,7 @@ void syncNtuple::initialize()
 	ele0_nMissingHits = -9999;
 	ele0_ismvasel = 0;//-9999;
 	ele0_isfakeablesel = 0;//-9999;
+	ele0_PFRelIso04 = -9999.;
 	//ele0_mcMatchType = -9999;
 	ele1_pt = -9999.;
 	ele1_conept = -9999.;
@@ -128,6 +131,7 @@ void syncNtuple::initialize()
 	ele1_nMissingHits = -9999;
 	ele1_ismvasel = 0;//-9999;
 	ele1_isfakeablesel = 0;//-9999;
+	ele1_PFRelIso04 = -9999.;
 	//ele1_mcMatchType = -9999;
 	
 	// taus
@@ -372,6 +376,7 @@ void syncNtuple::set_up_branches(TTree *tree)
 	tree->Branch("mu0_dpt_div_pt",           &mu0_dpt_div_pt);
 	tree->Branch("mu0_ismvasel",             &mu0_ismvasel);
 	tree->Branch("mu0_isfakeablesel",        &mu0_isfakeablesel);
+	tree->Branch("mu0_PFRelIso04",           &mu0_PFRelIso04);
 	//tree->Branch("mu0_mcMatchType",          &mu0_mcMatchType);
 	//tree->Branch("mu0_isPFMuon",             &mu0_isPFMuon);
 	tree->Branch("mu1_pt",                   &mu1_pt);
@@ -397,6 +402,7 @@ void syncNtuple::set_up_branches(TTree *tree)
 	tree->Branch("mu1_dpt_div_pt",           &mu1_dpt_div_pt);
 	tree->Branch("mu1_ismvasel",             &mu1_ismvasel);
 	tree->Branch("mu1_isfakeablesel",        &mu1_isfakeablesel);
+	tree->Branch("mu1_PFRelIso04",           &mu1_PFRelIso04);
 	//tree->Branch("mu1_mcMatchType",          &mu1_mcMatchType);
 	//tree->Branch("mu1_isPFMuon",             &mu1_isPFMuon);
 	// electrons
@@ -419,11 +425,12 @@ void syncNtuple::set_up_branches(TTree *tree)
 	tree->Branch("ele0_dz",                   &ele0_dz);
 	tree->Branch("ele0_ntMVAeleID",           &ele0_ntMVAeleID);
 	tree->Branch("ele0_leptonMVA",            &ele0_leptonMVA);
-	tree->Branch("ele0_isChargeConsistent", &ele0_isChargeConsistent);
+	tree->Branch("ele0_isChargeConsistent",   &ele0_isChargeConsistent);
 	tree->Branch("ele0_passesConversionVeto", &ele0_passesConversionVeto);
-	tree->Branch("ele0_nMissingHits", &ele0_nMissingHits);
-	tree->Branch("ele0_ismvasel", &ele0_ismvasel);
-	tree->Branch("ele0_isfakeablesel", &ele0_isfakeablesel);
+	tree->Branch("ele0_nMissingHits",         &ele0_nMissingHits);
+	tree->Branch("ele0_ismvasel",             &ele0_ismvasel);
+	tree->Branch("ele0_isfakeablesel",        &ele0_isfakeablesel);
+	tree->Branch("ele0_PFRelIso04",           &ele0_PFRelIso04);
 	//tree->Branch("ele0_mcMatchType", &ele0_mcMatchType);
 	tree->Branch("ele1_pt",                   &ele1_pt);
 	tree->Branch("ele1_conept",               &ele1_conept);
@@ -444,11 +451,12 @@ void syncNtuple::set_up_branches(TTree *tree)
 	tree->Branch("ele1_dz",                   &ele1_dz);
 	tree->Branch("ele1_ntMVAeleID",           &ele1_ntMVAeleID);
 	tree->Branch("ele1_leptonMVA",            &ele1_leptonMVA);
-	tree->Branch("ele1_isChargeConsistent", &ele1_isChargeConsistent);
+	tree->Branch("ele1_isChargeConsistent",   &ele1_isChargeConsistent);
 	tree->Branch("ele1_passesConversionVeto", &ele1_passesConversionVeto);
-	tree->Branch("ele1_nMissingHits", &ele1_nMissingHits);
-	tree->Branch("ele1_ismvasel", &ele1_ismvasel);
-	tree->Branch("ele1_isfakeablesel", &ele1_isfakeablesel);
+	tree->Branch("ele1_nMissingHits",         &ele1_nMissingHits);
+	tree->Branch("ele1_ismvasel",             &ele1_ismvasel);
+	tree->Branch("ele1_isfakeablesel",        &ele1_isfakeablesel);
+	tree->Branch("ele1_PFRelIso04",           &ele1_PFRelIso04);
 	//tree->Branch("ele1_mcMatchType", &ele1_mcMatchType);
 	// taus
 	tree->Branch("tau0_pt", &tau0_pt);
