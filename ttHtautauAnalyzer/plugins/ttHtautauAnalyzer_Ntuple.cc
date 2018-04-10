@@ -234,12 +234,12 @@ void ttHtautauAnalyzer::write_ntuple_taus(const std::vector<pat::Tau>& taus)
 		//evNtuple_.tau_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03->push_back(tau.tauID("byLooseCombinedIsolationDeltaBetaCorr3HitsdR03"));
 		//evNtuple_.tau_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03->push_back(tau.tauID("byMediumCombinedIsolationDeltaBetaCorr3HitsdR03"));
 		//evNtuple_.tau_byTightCombinedIsolationDeltaBetaCorr3HitsdR03->push_back(tau.tauID("byTightCombinedIsolationDeltaBetaCorr3HitsdR03"));
-		evNtuple_.tau_byVLooseIsolationMVArun2v1DBdR03oldDMwLT->push_back(tau.tauID("byVLooseIsolationMVArun2v1DBdR03oldDMwLT"));
-		evNtuple_.tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT->push_back(tau.tauID("byLooseIsolationMVArun2v1DBdR03oldDMwLT"));
-		evNtuple_.tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT->push_back(tau.tauID("byMediumIsolationMVArun2v1DBdR03oldDMwLT"));
-		evNtuple_.tau_byTightIsolationMVArun2v1DBdR03oldDMwLT->push_back(tau.tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT"));
-		evNtuple_.tau_byVTightIsolationMVArun2v1DBdR03oldDMwLT->push_back(tau.tauID("byVTightIsolationMVArun2v1DBdR03oldDMwLT"));
-		evNtuple_.tau_byIsolationMVArun2v1DBdR03oldDMwLTraw->push_back(tau.tauID("byIsolationMVArun2v1DBdR03oldDMwLTraw"));
+		evNtuple_.tau_byVLooseIsolationMVArun2v1DBdR03oldDMwLT->push_back(tau.tauID("byVLooseIsolationMVArun2017v2DBoldDMdR0p3wLT2017"));
+		evNtuple_.tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT->push_back(tau.tauID("byLooseIsolationMVArun2017v2DBoldDMdR0p3wLT2017"));
+		evNtuple_.tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT->push_back(tau.tauID("byMediumIsolationMVArun2017v2DBoldDMdR0p3wLT2017"));
+		evNtuple_.tau_byTightIsolationMVArun2v1DBdR03oldDMwLT->push_back(tau.tauID("byTightIsolationMVArun2017v2DBoldDMdR0p3wLT2017"));
+		evNtuple_.tau_byVTightIsolationMVArun2v1DBdR03oldDMwLT->push_back(tau.tauID("byVTightIsolationMVArun2017v2DBoldDMdR0p3wLT2017"));
+		evNtuple_.tau_byIsolationMVArun2v1DBdR03oldDMwLTraw->push_back(tau.tauID("byIsolationMVArun2017v2DBoldDMdR0p3wLTraw2017"));
 		evNtuple_.tau_againstMuonLoose3->push_back(tau.tauID("againstMuonLoose3"));
 		evNtuple_.tau_againstMuonTight3->push_back(tau.tauID("againstMuonTight3"));
 		evNtuple_.tau_againstElectronVLooseMVA6->push_back(tau.tauID("againstElectronVLooseMVA6"));

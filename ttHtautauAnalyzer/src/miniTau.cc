@@ -23,10 +23,10 @@ miniTau::miniTau(const pat::Tau& tau, bool addDaughters)
 
 	// assign tauID MVA work point index
 	// tau ID MVA work point: 0='Loose', 1='Medium', 2='Tight', 3='VTight'
-	set_tauIDWPindex(tau.tauID("byLooseIsolationMVArun2v1DBdR03oldDMwLT")>0.5,
-					 tau.tauID("byMediumIsolationMVArun2v1DBdR03oldDMwLT")>0.5,
-					 tau.tauID("byTightIsolationMVArun2v1DBdR03oldDMwLT")>0.5,
-					 tau.tauID("byVTightIsolationMVArun2v1DBdR03oldDMwLT")>0.5);
+	set_tauIDWPindex(tau.tauID("byLooseIsolationMVArun2017v2DBoldDMdR0p3wLT2017")>0.5,
+					 tau.tauID("byMediumIsolationMVArun2017v2DBoldDMdR0p3wLT2017")>0.5,
+					 tau.tauID("byTightIsolationMVArun2017v2DBoldDMdR0p3wLT2017")>0.5,
+					 tau.tauID("byVTightIsolationMVArun2017v2DBoldDMdR0p3wLT2017")>0.5);
 
 	if (addDaughters) {
 		// TODO
