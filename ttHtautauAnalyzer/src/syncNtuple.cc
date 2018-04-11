@@ -156,6 +156,7 @@ void syncNtuple::initialize()
 	tau0_byMediumIsolationMVArun2v1DBdR03oldDMwLT = -9999;
 	tau0_byTightIsolationMVArun2v1DBdR03oldDMwLT = -9999;
 	tau0_byVTightIsolationMVArun2v1DBdR03oldDMwLT = -9999;
+	tau0_rawMVArun2v1DBdR03oldDMwLT = -9999.;
 	tau0_againstMuonLoose3 = -9999;
 	tau0_againstMuonTight3 = -9999;
 	tau0_againstElectronVLooseMVA6 = -9999;
@@ -184,6 +185,7 @@ void syncNtuple::initialize()
 	tau1_byMediumIsolationMVArun2v1DBdR03oldDMwLT = -9999;
 	tau1_byTightIsolationMVArun2v1DBdR03oldDMwLT = -9999;
 	tau1_byVTightIsolationMVArun2v1DBdR03oldDMwLT = -9999;
+	tau1_rawMVArun2v1DBdR03oldDMwLT = -9999.;
 	tau1_againstMuonLoose3 = -9999;
 	tau1_againstMuonTight3 = -9999;
 	tau1_againstElectronVLooseMVA6 = -9999;
@@ -480,6 +482,7 @@ void syncNtuple::set_up_branches(TTree *tree)
 	tree->Branch("tau0_byMediumIsolationMVArun2v1DBdR03oldDMwLT", &tau0_byMediumIsolationMVArun2v1DBdR03oldDMwLT);
 	tree->Branch("tau0_byTightIsolationMVArun2v1DBdR03oldDMwLT", &tau0_byTightIsolationMVArun2v1DBdR03oldDMwLT);
 	tree->Branch("tau0_byVTightIsolationMVArun2v1DBdR03oldDMwLT", &tau0_byVTightIsolationMVArun2v1DBdR03oldDMwLT);
+	tree->Branch("tau0_rawMVArun2v1DBdR03oldDMwLT", &tau0_rawMVArun2v1DBdR03oldDMwLT);
 	tree->Branch("tau0_againstMuonLoose3", &tau0_againstMuonLoose3);
 	tree->Branch("tau0_againstMuonTight3", &tau0_againstMuonTight3);
 	tree->Branch("tau0_againstElectronVLooseMVA6", &tau0_againstElectronVLooseMVA6);
@@ -508,6 +511,7 @@ void syncNtuple::set_up_branches(TTree *tree)
 	tree->Branch("tau1_byMediumIsolationMVArun2v1DBdR03oldDMwLT", &tau1_byMediumIsolationMVArun2v1DBdR03oldDMwLT);
 	tree->Branch("tau1_byTightIsolationMVArun2v1DBdR03oldDMwLT", &tau1_byTightIsolationMVArun2v1DBdR03oldDMwLT);
 	tree->Branch("tau1_byVTightIsolationMVArun2v1DBdR03oldDMwLT", &tau1_byVTightIsolationMVArun2v1DBdR03oldDMwLT);
+	tree->Branch("tau1_rawMVArun2v1DBdR03oldDMwLT", &tau1_rawMVArun2v1DBdR03oldDMwLT);
 	tree->Branch("tau1_againstMuonLoose3", &tau1_againstMuonLoose3);
 	tree->Branch("tau1_againstMuonTight3", &tau1_againstMuonTight3);
 	tree->Branch("tau1_againstElectronVLooseMVA6", &tau1_againstElectronVLooseMVA6);

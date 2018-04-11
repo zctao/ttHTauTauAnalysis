@@ -159,6 +159,7 @@ class syncNtuple
 	int   tau0_byMediumIsolationMVArun2v1DBdR03oldDMwLT;
 	int   tau0_byTightIsolationMVArun2v1DBdR03oldDMwLT;
 	int   tau0_byVTightIsolationMVArun2v1DBdR03oldDMwLT;
+	float tau0_rawMVArun2v1DBdR03oldDMwLT;
 	int   tau0_againstMuonLoose3;
 	int   tau0_againstMuonTight3;
 	int   tau0_againstElectronVLooseMVA6;
@@ -187,6 +188,7 @@ class syncNtuple
 	int   tau1_byMediumIsolationMVArun2v1DBdR03oldDMwLT;
 	int   tau1_byTightIsolationMVArun2v1DBdR03oldDMwLT;
 	int   tau1_byVTightIsolationMVArun2v1DBdR03oldDMwLT;
+	float tau1_rawMVArun2v1DBdR03oldDMwLT;
 	int   tau1_againstMuonLoose3;
 	int   tau1_againstMuonTight3;
 	int   tau1_againstElectronVLooseMVA6;

@@ -386,6 +386,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			syncntuple.tau0_byMediumIsolationMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT->at(0);
 			syncntuple.tau0_byTightIsolationMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byTightIsolationMVArun2v1DBdR03oldDMwLT->at(0);
 			syncntuple.tau0_byVTightIsolationMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byVTightIsolationMVArun2v1DBdR03oldDMwLT->at(0);
+			syncntuple.tau0_rawMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byIsolationMVArun2v1DBdR03oldDMwLTraw->at(0);
 			syncntuple.tau0_againstMuonLoose3 = evNtuple.tau_againstMuonLoose3->at(0);
 			syncntuple.tau0_againstMuonTight3 = evNtuple.tau_againstMuonTight3->at(0);
 			syncntuple.tau0_againstElectronVLooseMVA6 = evNtuple.tau_againstElectronVLooseMVA6->at(0);
@@ -411,6 +412,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			syncntuple.tau1_byMediumIsolationMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT->at(1);
 			syncntuple.tau1_byTightIsolationMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byTightIsolationMVArun2v1DBdR03oldDMwLT->at(1);
 			syncntuple.tau1_byVTightIsolationMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byVTightIsolationMVArun2v1DBdR03oldDMwLT->at(1);
+			syncntuple.tau1_rawMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byIsolationMVArun2v1DBdR03oldDMwLTraw->at(1);
 			syncntuple.tau1_againstMuonLoose3 = evNtuple.tau_againstMuonLoose3->at(1);
 			syncntuple.tau1_againstMuonTight3 = evNtuple.tau_againstMuonTight3->at(1);
 			syncntuple.tau1_againstElectronVLooseMVA6 = evNtuple.tau_againstElectronVLooseMVA6->at(1);
@@ -460,9 +462,6 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		//syncntuple.metLD = evNtuple.metLD;
 		syncntuple.MHT = evNtuple.computeMHT();
 		syncntuple.metLD = 0.00397 * syncntuple.PFMET + 0.00265 * syncntuple.MHT;
-
-		syncntuple.isGenMatched =
-			evNtuple.isGenMatchedLep * evNtuple.isGenMatchedTau;
 
 		if (anatype==Analyze_NA or seltype==Selection_NA) {
 			tree_out->Fill();
@@ -534,6 +533,9 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			trig_helper.pass_leptau_cross_triggers(evNtuple.triggerBits);
 		syncntuple.triggerSF_weight =
 			sf_helper.Get_HLTSF(leptons, *taus, hlt1LTriggered, hltXTriggered);
+
+		//syncntuple.isGenMatched =
+			//evNtuple.isGenMatchedLep * evNtuple.isGenMatchedTau;
 		
 		tree_out->Fill();
 		
