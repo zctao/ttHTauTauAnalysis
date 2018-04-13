@@ -259,196 +259,196 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 
 		// muons
 		if (evNtuple.mu_pt->size()>0) {
-			syncntuple.mu0_pt = evNtuple.mu_pt->at(0);
-			syncntuple.mu0_conept = evNtuple.mu_conept->at(0);
-			syncntuple.mu0_eta = evNtuple.mu_eta->at(0);
-			syncntuple.mu0_phi = evNtuple.mu_phi->at(0);
-			syncntuple.mu0_E = evNtuple.mu_E->at(0);
-			syncntuple.mu0_charge = evNtuple.mu_charge->at(0);
-			syncntuple.mu0_dxy = evNtuple.mu_dxy->at(0);
-			syncntuple.mu0_dxyAbs = fabs(evNtuple.mu_dxy->at(0));
-			syncntuple.mu0_dz = evNtuple.mu_dz->at(0);
-			syncntuple.mu0_isfakeablesel = evNtuple.mu_isfakeablesel->at(0);
-			syncntuple.mu0_ismvasel = evNtuple.mu_ismvasel->at(0);
-			syncntuple.mu0_jetNDauChargedMVASel = evNtuple.mu_jetNDauChargedMVASel->at(0);
-			syncntuple.mu0_miniRelIso = evNtuple.mu_miniRelIso->at(0);
-			syncntuple.mu0_miniIsoCharged = evNtuple.mu_miniIsoCharged->at(0);
-			syncntuple.mu0_miniIsoNeutral = evNtuple.mu_miniIsoNeutral->at(0);
-			syncntuple.mu0_jetPtRel = evNtuple.mu_jetPtRel->at(0);
-			syncntuple.mu0_jetPtRatio = evNtuple.mu_jetPtRatio->at(0);
-			syncntuple.mu0_jetCSV = evNtuple.mu_jetCSV->at(0);
-			syncntuple.mu0_sip3D = evNtuple.mu_sip3D->at(0);
-			syncntuple.mu0_segmentCompatibility = evNtuple.mu_segmentCompatibility->at(0);
-			syncntuple.mu0_leptonMVA = evNtuple.mu_leptonMVA->at(0);
-			syncntuple.mu0_PFRelIso04 = evNtuple.mu_pfRelIso04->at(0);
-			syncntuple.mu0_mediumID = evNtuple.mu_mediumID->at(0);
-			syncntuple.mu0_dpt_div_pt = evNtuple.mu_dpt_div_pt->at(0);
+			syncntuple.mu1_pt = evNtuple.mu_pt->at(0);
+			syncntuple.mu1_conept = evNtuple.mu_conept->at(0);
+			syncntuple.mu1_eta = evNtuple.mu_eta->at(0);
+			syncntuple.mu1_phi = evNtuple.mu_phi->at(0);
+			syncntuple.mu1_E = evNtuple.mu_E->at(0);
+			syncntuple.mu1_charge = evNtuple.mu_charge->at(0);
+			syncntuple.mu1_dxy = evNtuple.mu_dxy->at(0);
+			syncntuple.mu1_dxyAbs = fabs(evNtuple.mu_dxy->at(0));
+			syncntuple.mu1_dz = evNtuple.mu_dz->at(0);
+			syncntuple.mu1_isfakeablesel = evNtuple.mu_isfakeablesel->at(0);
+			syncntuple.mu1_ismvasel = evNtuple.mu_ismvasel->at(0);
+			syncntuple.mu1_jetNDauChargedMVASel = evNtuple.mu_jetNDauChargedMVASel->at(0);
+			syncntuple.mu1_miniRelIso = evNtuple.mu_miniRelIso->at(0);
+			syncntuple.mu1_miniIsoCharged = evNtuple.mu_miniIsoCharged->at(0);
+			syncntuple.mu1_miniIsoNeutral = evNtuple.mu_miniIsoNeutral->at(0);
+			syncntuple.mu1_jetPtRel = evNtuple.mu_jetPtRel->at(0);
+			syncntuple.mu1_jetPtRatio = evNtuple.mu_jetPtRatio->at(0);
+			syncntuple.mu1_jetCSV = evNtuple.mu_jetCSV->at(0);
+			syncntuple.mu1_sip3D = evNtuple.mu_sip3D->at(0);
+			syncntuple.mu1_segmentCompatibility = evNtuple.mu_segmentCompatibility->at(0);
+			syncntuple.mu1_leptonMVA = evNtuple.mu_leptonMVA->at(0);
+			syncntuple.mu1_PFRelIso04 = evNtuple.mu_pfRelIso04->at(0);
+			syncntuple.mu1_mediumID = evNtuple.mu_mediumID->at(0);
+			syncntuple.mu1_dpt_div_pt = evNtuple.mu_dpt_div_pt->at(0);
 		}
 		if (evNtuple.mu_pt->size()>1) {
-			syncntuple.mu1_pt = evNtuple.mu_pt->at(1);
-			syncntuple.mu1_conept = evNtuple.mu_conept->at(1);
-			syncntuple.mu1_eta = evNtuple.mu_eta->at(1);
-			syncntuple.mu1_phi = evNtuple.mu_phi->at(1);
-			syncntuple.mu1_E = evNtuple.mu_E->at(1);
-			syncntuple.mu1_charge = evNtuple.mu_charge->at(1);
-			syncntuple.mu1_dxy = evNtuple.mu_dxy->at(1);
-			syncntuple.mu1_dxyAbs = fabs(evNtuple.mu_dxy->at(1));
-			syncntuple.mu1_dz = evNtuple.mu_dz->at(1);
-			syncntuple.mu1_isfakeablesel = evNtuple.mu_isfakeablesel->at(1);
-			syncntuple.mu1_ismvasel = evNtuple.mu_ismvasel->at(1);
-			syncntuple.mu1_jetNDauChargedMVASel = evNtuple.mu_jetNDauChargedMVASel->at(1);
-			syncntuple.mu1_miniRelIso = evNtuple.mu_miniRelIso->at(1);
-			syncntuple.mu1_miniIsoCharged = evNtuple.mu_miniIsoCharged->at(1);
-			syncntuple.mu1_miniIsoNeutral = evNtuple.mu_miniIsoNeutral->at(1);
-			syncntuple.mu1_jetPtRel = evNtuple.mu_jetPtRel->at(1);
-			syncntuple.mu1_jetPtRatio = evNtuple.mu_jetPtRatio->at(1);
-			syncntuple.mu1_jetCSV = evNtuple.mu_jetCSV->at(1);
-			syncntuple.mu1_sip3D = evNtuple.mu_sip3D->at(1);
-			syncntuple.mu1_segmentCompatibility = evNtuple.mu_segmentCompatibility->at(1);
-			syncntuple.mu1_leptonMVA = evNtuple.mu_leptonMVA->at(1);
-			syncntuple.mu1_PFRelIso04 = evNtuple.mu_pfRelIso04->at(1);
-			syncntuple.mu1_mediumID = evNtuple.mu_mediumID->at(1);
-			syncntuple.mu1_dpt_div_pt = evNtuple.mu_dpt_div_pt->at(1);
+			syncntuple.mu2_pt = evNtuple.mu_pt->at(1);
+			syncntuple.mu2_conept = evNtuple.mu_conept->at(1);
+			syncntuple.mu2_eta = evNtuple.mu_eta->at(1);
+			syncntuple.mu2_phi = evNtuple.mu_phi->at(1);
+			syncntuple.mu2_E = evNtuple.mu_E->at(1);
+			syncntuple.mu2_charge = evNtuple.mu_charge->at(1);
+			syncntuple.mu2_dxy = evNtuple.mu_dxy->at(1);
+			syncntuple.mu2_dxyAbs = fabs(evNtuple.mu_dxy->at(1));
+			syncntuple.mu2_dz = evNtuple.mu_dz->at(1);
+			syncntuple.mu2_isfakeablesel = evNtuple.mu_isfakeablesel->at(1);
+			syncntuple.mu2_ismvasel = evNtuple.mu_ismvasel->at(1);
+			syncntuple.mu2_jetNDauChargedMVASel = evNtuple.mu_jetNDauChargedMVASel->at(1);
+			syncntuple.mu2_miniRelIso = evNtuple.mu_miniRelIso->at(1);
+			syncntuple.mu2_miniIsoCharged = evNtuple.mu_miniIsoCharged->at(1);
+			syncntuple.mu2_miniIsoNeutral = evNtuple.mu_miniIsoNeutral->at(1);
+			syncntuple.mu2_jetPtRel = evNtuple.mu_jetPtRel->at(1);
+			syncntuple.mu2_jetPtRatio = evNtuple.mu_jetPtRatio->at(1);
+			syncntuple.mu2_jetCSV = evNtuple.mu_jetCSV->at(1);
+			syncntuple.mu2_sip3D = evNtuple.mu_sip3D->at(1);
+			syncntuple.mu2_segmentCompatibility = evNtuple.mu_segmentCompatibility->at(1);
+			syncntuple.mu2_leptonMVA = evNtuple.mu_leptonMVA->at(1);
+			syncntuple.mu2_PFRelIso04 = evNtuple.mu_pfRelIso04->at(1);
+			syncntuple.mu2_mediumID = evNtuple.mu_mediumID->at(1);
+			syncntuple.mu2_dpt_div_pt = evNtuple.mu_dpt_div_pt->at(1);
 		}
 		
 		// electrons
 		if (evNtuple.ele_pt->size()>0) {
-			syncntuple.ele0_pt = evNtuple.ele_pt->at(0);
-			syncntuple.ele0_conept = evNtuple.ele_conept->at(0);
-			syncntuple.ele0_eta = evNtuple.ele_eta->at(0);
-			syncntuple.ele0_phi = evNtuple.ele_phi->at(0);
-			syncntuple.ele0_E = evNtuple.ele_E->at(0);
-			syncntuple.ele0_charge = evNtuple.ele_charge->at(0);
-			syncntuple.ele0_dxy = evNtuple.ele_dxy->at(0);
-			syncntuple.ele0_dxyAbs = fabs(evNtuple.ele_dxy->at(0));
-			syncntuple.ele0_dz = evNtuple.ele_dz->at(0);
-			syncntuple.ele0_isfakeablesel = evNtuple.ele_isfakeablesel->at(0);
-			syncntuple.ele0_ismvasel = evNtuple.ele_ismvasel->at(0);
-			syncntuple.ele0_jetNDauChargedMVASel = evNtuple.ele_jetNDauChargedMVASel->at(0);
-			syncntuple.ele0_miniRelIso = evNtuple.ele_miniRelIso->at(0);
-			syncntuple.ele0_miniIsoCharged = evNtuple.ele_miniIsoCharged->at(0);
-			syncntuple.ele0_miniIsoNeutral = evNtuple.ele_miniIsoNeutral->at(0);
-			syncntuple.ele0_jetPtRel = evNtuple.ele_jetPtRel->at(0);
-			syncntuple.ele0_jetPtRatio = evNtuple.ele_jetPtRatio->at(0);
-			syncntuple.ele0_jetCSV = evNtuple.ele_jetCSV->at(0);
-			syncntuple.ele0_sip3D = evNtuple.ele_sip3D->at(0);
-			syncntuple.ele0_ntMVAeleID = evNtuple.ele_ntMVAeleID->at(0);
-			syncntuple.ele0_leptonMVA = evNtuple.ele_leptonMVA->at(0);
-			syncntuple.ele0_PFRelIso04 = evNtuple.ele_pfRelIso04->at(0);
-			syncntuple.ele0_isChargeConsistent = evNtuple.ele_isChargeConsistent->at(0);
-			syncntuple.ele0_passesConversionVeto = evNtuple.ele_passesConversionVeto->at(0);
-			syncntuple.ele0_nMissingHits = evNtuple.ele_nMissingHits->at(0);
+			syncntuple.ele1_pt = evNtuple.ele_pt->at(0);
+			syncntuple.ele1_conept = evNtuple.ele_conept->at(0);
+			syncntuple.ele1_eta = evNtuple.ele_eta->at(0);
+			syncntuple.ele1_phi = evNtuple.ele_phi->at(0);
+			syncntuple.ele1_E = evNtuple.ele_E->at(0);
+			syncntuple.ele1_charge = evNtuple.ele_charge->at(0);
+			syncntuple.ele1_dxy = evNtuple.ele_dxy->at(0);
+			syncntuple.ele1_dxyAbs = fabs(evNtuple.ele_dxy->at(0));
+			syncntuple.ele1_dz = evNtuple.ele_dz->at(0);
+			syncntuple.ele1_isfakeablesel = evNtuple.ele_isfakeablesel->at(0);
+			syncntuple.ele1_ismvasel = evNtuple.ele_ismvasel->at(0);
+			syncntuple.ele1_jetNDauChargedMVASel = evNtuple.ele_jetNDauChargedMVASel->at(0);
+			syncntuple.ele1_miniRelIso = evNtuple.ele_miniRelIso->at(0);
+			syncntuple.ele1_miniIsoCharged = evNtuple.ele_miniIsoCharged->at(0);
+			syncntuple.ele1_miniIsoNeutral = evNtuple.ele_miniIsoNeutral->at(0);
+			syncntuple.ele1_jetPtRel = evNtuple.ele_jetPtRel->at(0);
+			syncntuple.ele1_jetPtRatio = evNtuple.ele_jetPtRatio->at(0);
+			syncntuple.ele1_jetCSV = evNtuple.ele_jetCSV->at(0);
+			syncntuple.ele1_sip3D = evNtuple.ele_sip3D->at(0);
+			syncntuple.ele1_ntMVAeleID = evNtuple.ele_ntMVAeleID->at(0);
+			syncntuple.ele1_leptonMVA = evNtuple.ele_leptonMVA->at(0);
+			syncntuple.ele1_PFRelIso04 = evNtuple.ele_pfRelIso04->at(0);
+			syncntuple.ele1_isChargeConsistent = evNtuple.ele_isChargeConsistent->at(0);
+			syncntuple.ele1_passesConversionVeto = evNtuple.ele_passesConversionVeto->at(0);
+			syncntuple.ele1_nMissingHits = evNtuple.ele_nMissingHits->at(0);
 		}
 		if (evNtuple.ele_pt->size()>1) {
-			syncntuple.ele1_pt = evNtuple.ele_pt->at(1);
-			syncntuple.ele1_conept = evNtuple.ele_conept->at(1);
-			syncntuple.ele1_eta = evNtuple.ele_eta->at(1);
-			syncntuple.ele1_phi = evNtuple.ele_phi->at(1);
-			syncntuple.ele1_E = evNtuple.ele_E->at(1);
-			syncntuple.ele1_charge = evNtuple.ele_charge->at(1);
-			syncntuple.ele1_dxy = evNtuple.ele_dxy->at(1);
-			syncntuple.ele1_dxyAbs = fabs(evNtuple.ele_dxy->at(1));
-			syncntuple.ele1_dz = evNtuple.ele_dz->at(1);
-			syncntuple.ele1_isfakeablesel = evNtuple.ele_isfakeablesel->at(1);
-			syncntuple.ele1_ismvasel = evNtuple.ele_ismvasel->at(1);
-			syncntuple.ele1_jetNDauChargedMVASel = evNtuple.ele_jetNDauChargedMVASel->at(1);
-			syncntuple.ele1_miniRelIso = evNtuple.ele_miniRelIso->at(1);
-			syncntuple.ele1_miniIsoCharged = evNtuple.ele_miniIsoCharged->at(1);
-			syncntuple.ele1_miniIsoNeutral = evNtuple.ele_miniIsoNeutral->at(1);
-			syncntuple.ele1_jetPtRel = evNtuple.ele_jetPtRel->at(1);
-			syncntuple.ele1_jetPtRatio = evNtuple.ele_jetPtRatio->at(1);
-			syncntuple.ele1_jetCSV = evNtuple.ele_jetCSV->at(1);
-			syncntuple.ele1_sip3D = evNtuple.ele_sip3D->at(1);
-			syncntuple.ele1_ntMVAeleID = evNtuple.ele_ntMVAeleID->at(1);
-			syncntuple.ele1_leptonMVA = evNtuple.ele_leptonMVA->at(1);
-			syncntuple.ele1_PFRelIso04 = evNtuple.ele_pfRelIso04->at(1);
-			syncntuple.ele1_isChargeConsistent = evNtuple.ele_isChargeConsistent->at(1);
-			syncntuple.ele1_passesConversionVeto = evNtuple.ele_passesConversionVeto->at(1);
-			syncntuple.ele1_nMissingHits = evNtuple.ele_nMissingHits->at(1);
+			syncntuple.ele2_pt = evNtuple.ele_pt->at(1);
+			syncntuple.ele2_conept = evNtuple.ele_conept->at(1);
+			syncntuple.ele2_eta = evNtuple.ele_eta->at(1);
+			syncntuple.ele2_phi = evNtuple.ele_phi->at(1);
+			syncntuple.ele2_E = evNtuple.ele_E->at(1);
+			syncntuple.ele2_charge = evNtuple.ele_charge->at(1);
+			syncntuple.ele2_dxy = evNtuple.ele_dxy->at(1);
+			syncntuple.ele2_dxyAbs = fabs(evNtuple.ele_dxy->at(1));
+			syncntuple.ele2_dz = evNtuple.ele_dz->at(1);
+			syncntuple.ele2_isfakeablesel = evNtuple.ele_isfakeablesel->at(1);
+			syncntuple.ele2_ismvasel = evNtuple.ele_ismvasel->at(1);
+			syncntuple.ele2_jetNDauChargedMVASel = evNtuple.ele_jetNDauChargedMVASel->at(1);
+			syncntuple.ele2_miniRelIso = evNtuple.ele_miniRelIso->at(1);
+			syncntuple.ele2_miniIsoCharged = evNtuple.ele_miniIsoCharged->at(1);
+			syncntuple.ele2_miniIsoNeutral = evNtuple.ele_miniIsoNeutral->at(1);
+			syncntuple.ele2_jetPtRel = evNtuple.ele_jetPtRel->at(1);
+			syncntuple.ele2_jetPtRatio = evNtuple.ele_jetPtRatio->at(1);
+			syncntuple.ele2_jetCSV = evNtuple.ele_jetCSV->at(1);
+			syncntuple.ele2_sip3D = evNtuple.ele_sip3D->at(1);
+			syncntuple.ele2_ntMVAeleID = evNtuple.ele_ntMVAeleID->at(1);
+			syncntuple.ele2_leptonMVA = evNtuple.ele_leptonMVA->at(1);
+			syncntuple.ele2_PFRelIso04 = evNtuple.ele_pfRelIso04->at(1);
+			syncntuple.ele2_isChargeConsistent = evNtuple.ele_isChargeConsistent->at(1);
+			syncntuple.ele2_passesConversionVeto = evNtuple.ele_passesConversionVeto->at(1);
+			syncntuple.ele2_nMissingHits = evNtuple.ele_nMissingHits->at(1);
 		}
 
 		// taus
 		if (evNtuple.tau_pt->size()>0) {
-			syncntuple.tau0_pt = evNtuple.tau_pt->at(0);
-			syncntuple.tau0_eta = evNtuple.tau_eta->at(0);
-			syncntuple.tau0_phi = evNtuple.tau_phi->at(0);
-			syncntuple.tau0_E = evNtuple.tau_E->at(0);
-			syncntuple.tau0_charge = evNtuple.tau_charge->at(0);
-			syncntuple.tau0_dxy = evNtuple.tau_dxy->at(0);
-			syncntuple.tau0_dz = evNtuple.tau_dz->at(0);
-			syncntuple.tau0_decayModeFindingOldDMs = evNtuple.tau_decayModeFindingOldDMs->at(0);
-			syncntuple.tau0_decayModeFindingNewDMs = evNtuple.tau_decayModeFindingNewDMs->at(0);
-			syncntuple.tau0_byCombinedIsolationDeltaBetaCorr3Hits = evNtuple.tau_byCombinedIsolationDeltaBetaCorr3Hits->at(0);
-			syncntuple.tau0_byLooseCombinedIsolationDeltaBetaCorr3Hits = evNtuple.tau_byLooseCombinedIsolationDeltaBetaCorr3Hits->at(0);
-			syncntuple.tau0_byMediumCombinedIsolationDeltaBetaCorr3Hits = evNtuple.tau_byMediumCombinedIsolationDeltaBetaCorr3Hits->at(0);
-			syncntuple.tau0_byTightCombinedIsolationDeltaBetaCorr3Hits = evNtuple.tau_byTightCombinedIsolationDeltaBetaCorr3Hits->at(0);
-			syncntuple.tau0_byLooseIsolationMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT->at(0);
-			syncntuple.tau0_byMediumIsolationMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT->at(0);
-			syncntuple.tau0_byTightIsolationMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byTightIsolationMVArun2v1DBdR03oldDMwLT->at(0);
-			syncntuple.tau0_byVTightIsolationMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byVTightIsolationMVArun2v1DBdR03oldDMwLT->at(0);
-			syncntuple.tau0_rawMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byIsolationMVArun2v1DBdR03oldDMwLTraw->at(0);
-			syncntuple.tau0_againstMuonLoose3 = evNtuple.tau_againstMuonLoose3->at(0);
-			syncntuple.tau0_againstMuonTight3 = evNtuple.tau_againstMuonTight3->at(0);
-			syncntuple.tau0_againstElectronVLooseMVA6 = evNtuple.tau_againstElectronVLooseMVA6->at(0);
-			syncntuple.tau0_againstElectronLooseMVA6 = evNtuple.tau_againstElectronLooseMVA6->at(0);
-			syncntuple.tau0_againstElectronMediumMVA6 = evNtuple.tau_againstElectronMediumMVA6->at(0);
-			syncntuple.tau0_againstElectronTightMVA6 = evNtuple.tau_againstElectronTightMVA6->at(0);
+			syncntuple.tau1_pt = evNtuple.tau_pt->at(0);
+			syncntuple.tau1_eta = evNtuple.tau_eta->at(0);
+			syncntuple.tau1_phi = evNtuple.tau_phi->at(0);
+			syncntuple.tau1_E = evNtuple.tau_E->at(0);
+			syncntuple.tau1_charge = evNtuple.tau_charge->at(0);
+			syncntuple.tau1_dxy = evNtuple.tau_dxy->at(0);
+			syncntuple.tau1_dz = evNtuple.tau_dz->at(0);
+			syncntuple.tau1_decayModeFindingOldDMs = evNtuple.tau_decayModeFindingOldDMs->at(0);
+			syncntuple.tau1_decayModeFindingNewDMs = evNtuple.tau_decayModeFindingNewDMs->at(0);
+			syncntuple.tau1_byCombinedIsolationDeltaBetaCorr3Hits = evNtuple.tau_byCombinedIsolationDeltaBetaCorr3Hits->at(0);
+			syncntuple.tau1_byLooseCombinedIsolationDeltaBetaCorr3Hits = evNtuple.tau_byLooseCombinedIsolationDeltaBetaCorr3Hits->at(0);
+			syncntuple.tau1_byMediumCombinedIsolationDeltaBetaCorr3Hits = evNtuple.tau_byMediumCombinedIsolationDeltaBetaCorr3Hits->at(0);
+			syncntuple.tau1_byTightCombinedIsolationDeltaBetaCorr3Hits = evNtuple.tau_byTightCombinedIsolationDeltaBetaCorr3Hits->at(0);
+			syncntuple.tau1_byLooseIsolationMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT->at(0);
+			syncntuple.tau1_byMediumIsolationMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT->at(0);
+			syncntuple.tau1_byTightIsolationMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byTightIsolationMVArun2v1DBdR03oldDMwLT->at(0);
+			syncntuple.tau1_byVTightIsolationMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byVTightIsolationMVArun2v1DBdR03oldDMwLT->at(0);
+			syncntuple.tau1_rawMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byIsolationMVArun2v1DBdR03oldDMwLTraw->at(0);
+			syncntuple.tau1_againstMuonLoose3 = evNtuple.tau_againstMuonLoose3->at(0);
+			syncntuple.tau1_againstMuonTight3 = evNtuple.tau_againstMuonTight3->at(0);
+			syncntuple.tau1_againstElectronVLooseMVA6 = evNtuple.tau_againstElectronVLooseMVA6->at(0);
+			syncntuple.tau1_againstElectronLooseMVA6 = evNtuple.tau_againstElectronLooseMVA6->at(0);
+			syncntuple.tau1_againstElectronMediumMVA6 = evNtuple.tau_againstElectronMediumMVA6->at(0);
+			syncntuple.tau1_againstElectronTightMVA6 = evNtuple.tau_againstElectronTightMVA6->at(0);
 		}
 		if (evNtuple.tau_pt->size()>1) {
-			syncntuple.tau1_pt = evNtuple.tau_pt->at(1);
-			syncntuple.tau1_eta = evNtuple.tau_eta->at(1);
-			syncntuple.tau1_phi = evNtuple.tau_phi->at(1);
-			syncntuple.tau1_E = evNtuple.tau_E->at(1);
-			syncntuple.tau1_charge = evNtuple.tau_charge->at(1);
-			syncntuple.tau1_dxy = evNtuple.tau_dxy->at(1);
-			syncntuple.tau1_dz = evNtuple.tau_dz->at(1);
-			syncntuple.tau1_decayModeFindingOldDMs = evNtuple.tau_decayModeFindingOldDMs->at(1);
-			syncntuple.tau1_decayModeFindingNewDMs = evNtuple.tau_decayModeFindingNewDMs->at(1);
-			syncntuple.tau1_byCombinedIsolationDeltaBetaCorr3Hits = evNtuple.tau_byCombinedIsolationDeltaBetaCorr3Hits->at(1);
-			syncntuple.tau1_byLooseCombinedIsolationDeltaBetaCorr3Hits = evNtuple.tau_byLooseCombinedIsolationDeltaBetaCorr3Hits->at(1);
-			syncntuple.tau1_byMediumCombinedIsolationDeltaBetaCorr3Hits = evNtuple.tau_byMediumCombinedIsolationDeltaBetaCorr3Hits->at(1);
-			syncntuple.tau1_byTightCombinedIsolationDeltaBetaCorr3Hits = evNtuple.tau_byTightCombinedIsolationDeltaBetaCorr3Hits->at(1);
-			syncntuple.tau1_byLooseIsolationMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT->at(1);
-			syncntuple.tau1_byMediumIsolationMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT->at(1);
-			syncntuple.tau1_byTightIsolationMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byTightIsolationMVArun2v1DBdR03oldDMwLT->at(1);
-			syncntuple.tau1_byVTightIsolationMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byVTightIsolationMVArun2v1DBdR03oldDMwLT->at(1);
-			syncntuple.tau1_rawMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byIsolationMVArun2v1DBdR03oldDMwLTraw->at(1);
-			syncntuple.tau1_againstMuonLoose3 = evNtuple.tau_againstMuonLoose3->at(1);
-			syncntuple.tau1_againstMuonTight3 = evNtuple.tau_againstMuonTight3->at(1);
-			syncntuple.tau1_againstElectronVLooseMVA6 = evNtuple.tau_againstElectronVLooseMVA6->at(1);
-			syncntuple.tau1_againstElectronLooseMVA6 = evNtuple.tau_againstElectronLooseMVA6->at(1);
-			syncntuple.tau1_againstElectronMediumMVA6 = evNtuple.tau_againstElectronMediumMVA6->at(1);
-			syncntuple.tau1_againstElectronTightMVA6 = evNtuple.tau_againstElectronTightMVA6->at(1);
+			syncntuple.tau2_pt = evNtuple.tau_pt->at(1);
+			syncntuple.tau2_eta = evNtuple.tau_eta->at(1);
+			syncntuple.tau2_phi = evNtuple.tau_phi->at(1);
+			syncntuple.tau2_E = evNtuple.tau_E->at(1);
+			syncntuple.tau2_charge = evNtuple.tau_charge->at(1);
+			syncntuple.tau2_dxy = evNtuple.tau_dxy->at(1);
+			syncntuple.tau2_dz = evNtuple.tau_dz->at(1);
+			syncntuple.tau2_decayModeFindingOldDMs = evNtuple.tau_decayModeFindingOldDMs->at(1);
+			syncntuple.tau2_decayModeFindingNewDMs = evNtuple.tau_decayModeFindingNewDMs->at(1);
+			syncntuple.tau2_byCombinedIsolationDeltaBetaCorr3Hits = evNtuple.tau_byCombinedIsolationDeltaBetaCorr3Hits->at(1);
+			syncntuple.tau2_byLooseCombinedIsolationDeltaBetaCorr3Hits = evNtuple.tau_byLooseCombinedIsolationDeltaBetaCorr3Hits->at(1);
+			syncntuple.tau2_byMediumCombinedIsolationDeltaBetaCorr3Hits = evNtuple.tau_byMediumCombinedIsolationDeltaBetaCorr3Hits->at(1);
+			syncntuple.tau2_byTightCombinedIsolationDeltaBetaCorr3Hits = evNtuple.tau_byTightCombinedIsolationDeltaBetaCorr3Hits->at(1);
+			syncntuple.tau2_byLooseIsolationMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT->at(1);
+			syncntuple.tau2_byMediumIsolationMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT->at(1);
+			syncntuple.tau2_byTightIsolationMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byTightIsolationMVArun2v1DBdR03oldDMwLT->at(1);
+			syncntuple.tau2_byVTightIsolationMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byVTightIsolationMVArun2v1DBdR03oldDMwLT->at(1);
+			syncntuple.tau2_rawMVArun2v1DBdR03oldDMwLT = evNtuple.tau_byIsolationMVArun2v1DBdR03oldDMwLTraw->at(1);
+			syncntuple.tau2_againstMuonLoose3 = evNtuple.tau_againstMuonLoose3->at(1);
+			syncntuple.tau2_againstMuonTight3 = evNtuple.tau_againstMuonTight3->at(1);
+			syncntuple.tau2_againstElectronVLooseMVA6 = evNtuple.tau_againstElectronVLooseMVA6->at(1);
+			syncntuple.tau2_againstElectronLooseMVA6 = evNtuple.tau_againstElectronLooseMVA6->at(1);
+			syncntuple.tau2_againstElectronMediumMVA6 = evNtuple.tau_againstElectronMediumMVA6->at(1);
+			syncntuple.tau2_againstElectronTightMVA6 = evNtuple.tau_againstElectronTightMVA6->at(1);
 		}
 
 		// jets
 		if (evNtuple.jet_pt->size()>0) {
-			syncntuple.jet0_pt = evNtuple.jet_pt->at(0);
-			syncntuple.jet0_eta = evNtuple.jet_eta->at(0);
-			syncntuple.jet0_phi = evNtuple.jet_phi->at(0);
-			syncntuple.jet0_E = evNtuple.jet_E->at(0);
-			syncntuple.jet0_CSV = evNtuple.jet_csv->at(0);
+			syncntuple.jet1_pt = evNtuple.jet_pt->at(0);
+			syncntuple.jet1_eta = evNtuple.jet_eta->at(0);
+			syncntuple.jet1_phi = evNtuple.jet_phi->at(0);
+			syncntuple.jet1_E = evNtuple.jet_E->at(0);
+			syncntuple.jet1_CSV = evNtuple.jet_csv->at(0);
 		}
 		if (evNtuple.jet_pt->size()>1) {
-			syncntuple.jet1_pt = evNtuple.jet_pt->at(1);
-			syncntuple.jet1_eta = evNtuple.jet_eta->at(1);
-			syncntuple.jet1_phi = evNtuple.jet_phi->at(1);
-			syncntuple.jet1_E = evNtuple.jet_E->at(1);
-			syncntuple.jet1_CSV = evNtuple.jet_csv->at(1);
+			syncntuple.jet2_pt = evNtuple.jet_pt->at(1);
+			syncntuple.jet2_eta = evNtuple.jet_eta->at(1);
+			syncntuple.jet2_phi = evNtuple.jet_phi->at(1);
+			syncntuple.jet2_E = evNtuple.jet_E->at(1);
+			syncntuple.jet2_CSV = evNtuple.jet_csv->at(1);
 		}
 		if (evNtuple.jet_pt->size()>2) {
-			syncntuple.jet2_pt = evNtuple.jet_pt->at(2);
-			syncntuple.jet2_eta = evNtuple.jet_eta->at(2);
-			syncntuple.jet2_phi = evNtuple.jet_phi->at(2);
-			syncntuple.jet2_E = evNtuple.jet_E->at(2);
-			syncntuple.jet2_CSV = evNtuple.jet_csv->at(2);
+			syncntuple.jet3_pt = evNtuple.jet_pt->at(2);
+			syncntuple.jet3_eta = evNtuple.jet_eta->at(2);
+			syncntuple.jet3_phi = evNtuple.jet_phi->at(2);
+			syncntuple.jet3_E = evNtuple.jet_E->at(2);
+			syncntuple.jet3_CSV = evNtuple.jet_csv->at(2);
 		}
 		if (evNtuple.jet_pt->size()>3) {
-			syncntuple.jet3_pt = evNtuple.jet_pt->at(3);
-			syncntuple.jet3_eta = evNtuple.jet_eta->at(3);
-			syncntuple.jet3_phi = evNtuple.jet_phi->at(3);
-			syncntuple.jet3_E = evNtuple.jet_E->at(3);
-			syncntuple.jet3_CSV = evNtuple.jet_csv->at(3);
+			syncntuple.jet4_pt = evNtuple.jet_pt->at(3);
+			syncntuple.jet4_eta = evNtuple.jet_eta->at(3);
+			syncntuple.jet4_phi = evNtuple.jet_phi->at(3);
+			syncntuple.jet4_E = evNtuple.jet_E->at(3);
+			syncntuple.jet4_CSV = evNtuple.jet_csv->at(3);
 		}
 
 		syncntuple.ntags = evNtuple.n_btag_medium;
@@ -477,10 +477,10 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		assert(leptons.size()>0);
 		assert(jets.size()>0);
 		
-		syncntuple.lep0_conept = leptons[0].conept();
-		syncntuple.mindr_lep0_jet = mvantuple.compute_min_dr(leptons[0].p4(),jets);
+		syncntuple.lep1_conept = leptons[0].conept();
+		syncntuple.mindr_lep1_jet = mvantuple.compute_min_dr(leptons[0].p4(),jets);
 		syncntuple.mindr_tau_jet = mvantuple.compute_min_dr(taus->at(0).p4(),jets);
-		syncntuple.MT_met_lep0 = mvantuple.compute_mT_lep(leptons[0], syncntuple.PFMET, syncntuple.PFMETphi);
+		syncntuple.MT_met_lep1 = mvantuple.compute_mT_lep(leptons[0], syncntuple.PFMET, syncntuple.PFMETphi);
 		syncntuple.avg_dr_jet = mvantuple.compute_average_dr(jets);
 		syncntuple.max_dr_jet = mvantuple.compute_max_dr(jets);
 		syncntuple.HT = syncntuple.MHT;
@@ -488,17 +488,17 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		syncntuple.mvis_l0tau = (leptons[0].p4()+taus->at(0).p4()).M();
 		
 		if (leptons.size()>1) {
-			syncntuple.lep1_conept = leptons[1].conept();
-			syncntuple.mindr_lep1_jet = mvantuple.compute_min_dr(leptons[1].p4(),jets);
+			syncntuple.lep2_conept = leptons[1].conept();
+			syncntuple.mindr_lep2_jet = mvantuple.compute_min_dr(leptons[1].p4(),jets);
 			syncntuple.mvis_l1tau = (leptons[1].p4()+taus->at(0).p4()).M();
 			syncntuple.dR_l1tau = leptons[1].p4().DeltaR(taus->at(0).p4());
 			syncntuple.dR_leps = leptons[0].p4().DeltaR(leptons[1].p4());
 		}
 
 		if (leptons.size()>2) {
-			syncntuple.mindr_lep2_jet = mvantuple.compute_min_dr(leptons[2].p4(),jets);
+			syncntuple.mindr_lep3_jet = mvantuple.compute_min_dr(leptons[2].p4(),jets);
 			syncntuple.dR_l2tau = leptons[2].p4().DeltaR(taus->at(0).p4());
-			syncntuple.MT_met_lep2 = mvantuple.compute_mT_lep(leptons[2], syncntuple.PFMET, syncntuple.PFMETphi);;
+			syncntuple.MT_met_lep3 = mvantuple.compute_mT_lep(leptons[2], syncntuple.PFMET, syncntuple.PFMETphi);;
 		}
 
 		if (taus->size()>1) {
