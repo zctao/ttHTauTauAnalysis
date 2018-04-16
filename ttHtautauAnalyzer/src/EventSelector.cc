@@ -260,12 +260,6 @@ bool EventSelector::pass_1l2tau_tightID(const std::vector<miniLepton>& fakeableL
 	//	std::cout << "tauID WP tau1 tau2 : " << selectedTaus[0].tauIDMVAWPindex()
 	//			  << " " << selectedTaus[1].tauIDMVAWPindex() << std::endl;
 	//}
-	
-	//bool passID = fakeableLeps[0].passTightSel() and
-	//	//fakeableTaus[0].passMVAID('T') and fakeableTaus[1].passMVAID('T');
-	//	selectedTaus[0].passTightSel() and selectedTaus[1].passTightSel();
-	//
-	//return passID;
 }
 
 bool EventSelector::pass_1l2tau_charge(const std::vector<miniTau>& taus)
@@ -605,11 +599,11 @@ bool EventSelector::pass_2lss1tau_tauNumber(const std::vector<miniTau>& selected
 		return false;
 	}
 	
-	// At most one tau passing VTight MVA (avoid overlap with 2l2tau)
+	// At most one tau passing Medium MVA (avoid overlap with 2l2tau)
 	int nvtighttau = 0;
 	for (const auto & tau : selectedTaus) {
-		if (not looseselection_) assert(tau.passMVAID('M'));
-		if (tau.passMVAID('V')) nvtighttau++;
+		if (not looseselection_) assert(tau.passMVAID("L"));
+		if (tau.passMVAID("M")) nvtighttau++;
 	}
 	if ( nvtighttau > 1 ) {
 		if (verbose_) std::cout << "FAIL: more than one VTight taus" << std::endl;
@@ -956,7 +950,7 @@ bool EventSelector::pass_3l1tau_tauNumber(const std::vector<miniTau>& selectedTa
 		std::cout << "number of taus : " << selectedTaus.size() << std::endl;
 	
 	for (const auto & tau : selectedTaus)
-		if (not looseselection_) assert(tau.passMVAID('M'));
+		if (not looseselection_) assert(tau.passMVAID("L"));
 
 	return selectedTaus.size() > 0;
 }

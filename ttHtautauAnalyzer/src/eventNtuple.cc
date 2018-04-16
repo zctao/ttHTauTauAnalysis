@@ -48,26 +48,11 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorLeps(bool loose) const
 	return lepsP4;
 }
 
-std::vector<miniTau> eventNtuple::buildTaus(bool loose, char WP) const
+std::vector<miniTau> eventNtuple::buildTaus(bool loose, std::string WP) const
 {
 	std::vector<miniTau> taus;
 		
 	for (unsigned int t = 0; t < tau_pt->size(); ++t) {
-		/*
-		if (WP=='L') {
-			if (tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT->at(t)<1) continue;
-		}
-		else if (WP=='M') {
-			if (tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT->at(t)<1) continue;
-		}
-		else if (WP=='T') {
-			if (tau_byTightIsolationMVArun2v1DBdR03oldDMwLT->at(t)<1) continue;
-		}
-		else { // if WP is not explicitly set
-			// require tight tau if not loose selection
-			if (!loose and !(tau_idSelection->at(t))) continue;
-		}
-		*/
 		
 		TLorentzVector tauP4;
 		tauP4.SetPtEtaPhiE(tau_pt->at(t),tau_eta->at(t),tau_phi->at(t),tau_E->at(t));
@@ -76,12 +61,13 @@ std::vector<miniTau> eventNtuple::buildTaus(bool loose, char WP) const
 		if (tau_mcMatchType->size()>0)
 			tau.set_MCMatchType(tau_mcMatchType->at(t));
 		
-		tau.set_tauIDWPindex(tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT->at(t)>0,
+		tau.set_tauIDWPindex(tau_byVLooseIsolationMVArun2v1DBdR03oldDMwLT->at(t)>0,
+							 tau_byLooseIsolationMVArun2v1DBdR03oldDMwLT->at(t)>0,
 							 tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT->at(t)>0,
 							 tau_byTightIsolationMVArun2v1DBdR03oldDMwLT->at(t)>0,
 							 tau_byVTightIsolationMVArun2v1DBdR03oldDMwLT->at(t)>0);
 		
-		if (WP!='-') {
+		if (WP!="-") {
 			if (not tau.passMVAID(WP)) continue;
 		}
 		else {// if WP is not explicitly set

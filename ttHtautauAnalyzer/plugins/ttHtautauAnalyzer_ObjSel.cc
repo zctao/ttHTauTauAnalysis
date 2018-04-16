@@ -220,6 +220,7 @@ bool ttHtautauAnalyzer::isLooseID(const pat::Tau& tau) const
 	bool passKinematic = tau.pt() > 20. and std::abs(tau.eta()) < 2.3;
 
 	// tauID("byLooseIsolationMVArun2017v2DBoldDMdR0p3wLT2017")
+	// tauID("byVLooseIsolationMVArun2017v2DBoldDMdR0p3wLT2017")
 	bool passID = tau.userFloat("idPreselection") > 0.5;
 
 	return (passKinematic and passID);
@@ -238,10 +239,12 @@ bool ttHtautauAnalyzer::isTightID(const pat::Tau& tau) const
 	
 	if (anaType_==Analyze_1l2tau) {
 		// tauID("byVTightIsolationMVArun2017v2DBoldDMdR0p3wLT2017")
-		return tau.tauID("byVTightIsolationMVArun2017v2DBoldDMdR0p3wLT2017")>0.5;
+		// tauID("byMediumIsolationMVArun2017v2DBoldDMdR0p3wLT2017")
+		return tau.tauID("byMediumIsolationMVArun2017v2DBoldDMdR0p3wLT2017")>0.5;
 	}
 	else {
 		// tauID("byMediumIsolationMVArun2017v2DBoldDMdR0p3wLT2017")
+		// tauID("byLooseIsolationMVArun2017v2DBoldDMdR0p3wLT2017")
 		return tau.userFloat("idSelection") > 0.5;
 	}
 }

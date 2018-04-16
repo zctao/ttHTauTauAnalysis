@@ -22,8 +22,10 @@ miniTau::miniTau(const pat::Tau& tau, bool addDaughters)
 		mcmatchtype_ = -9999;
 
 	// assign tauID MVA work point index
-	// tau ID MVA work point: 0='Loose', 1='Medium', 2='Tight', 3='VTight'
-	set_tauIDWPindex(tau.tauID("byLooseIsolationMVArun2017v2DBoldDMdR0p3wLT2017")>0.5,
+	// tau ID MVA work point:
+	// 0='VLoose', 1='Loose', 2='Medium', 3='Tight', 4='VTight'
+	set_tauIDWPindex(tau.tauID("byVLooseIsolationMVArun2017v2DBoldDMdR0p3wLT2017")>0.5,
+					 tau.tauID("byLooseIsolationMVArun2017v2DBoldDMdR0p3wLT2017")>0.5,
 					 tau.tauID("byMediumIsolationMVArun2017v2DBoldDMdR0p3wLT2017")>0.5,
 					 tau.tauID("byTightIsolationMVArun2017v2DBoldDMdR0p3wLT2017")>0.5,
 					 tau.tauID("byVTightIsolationMVArun2017v2DBoldDMdR0p3wLT2017")>0.5);
@@ -72,11 +74,14 @@ miniTau::miniTau(const TLorentzVector& t, int charge, int decaymode,
 	mvawp_set_ = false;
 }
 
-void miniTau::set_tauIDWPindex(bool passLooseID, bool passMediumID, bool passTightID,
-					  bool passVTightID)
+void miniTau::set_tauIDWPindex(bool passVLooseID, bool passLooseID,
+							   bool passMediumID, bool passTightID,
+							   bool passVTightID)
 {
-	// tau ID MVA work point: 0='Loose', 1='Medium', 2='Tight', 3='VTight'
+	// tau ID MVA work point:
+	// 0='VLoose', 1='Loose', 2='Medium', 3='Tight', 4='VTight'
 	tauIDMVAWP_ = -1;
+	if (passVLooseID) tauIDMVAWP_++;
 	if (passLooseID)  tauIDMVAWP_++;
 	if (passMediumID) tauIDMVAWP_++;
 	if (passTightID)  tauIDMVAWP_++;
@@ -84,17 +89,19 @@ void miniTau::set_tauIDWPindex(bool passLooseID, bool passMediumID, bool passTig
 	mvawp_set_ = true;
 }
 
-bool miniTau::passMVAID(char WP) const 
+bool miniTau::passMVAID(std::string WP) const 
 {
 	assert(mvawp_set_);
-	if (WP=='L')  // Loose
+	if (WP=="VL")  // VLoose
 		return tauIDMVAWP_ >= 0;
-	else if (WP=='M')  // Medium
+	else if (WP=="L") // Loose
 		return tauIDMVAWP_ >= 1;
-	else if (WP=='T')  // Tight
+	else if (WP=="M")  // Medium
 		return tauIDMVAWP_ >= 2;
-	else if (WP=='V')  // VTight
+	else if (WP=="T")  // Tight
 		return tauIDMVAWP_ >= 3;
+	else if (WP=="VT")  // VTight
+		return tauIDMVAWP_ >= 4;
 	else {
 		std::cout << "Unknown tauID WP : " << WP << std::endl;
 		return false;
