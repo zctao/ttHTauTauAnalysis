@@ -420,8 +420,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	pat::MET pfMET = mets->front();
 	float MET = pfMET.pt();
 	// MHT
-	//float MHT = getMHT(mu_fakeable, ele_fakeable, tau_selected, jet_selected);
-	float MHT = getMHT(lep_loose, tau_loose, jet_selected);
+	float MHT = getMHT(lep_fakeable, tau_loose, jet_selected);
 	float metLD = 0.00397 * MET + 0.00265 * MHT;
 
 	/////////////////////////////////////////
