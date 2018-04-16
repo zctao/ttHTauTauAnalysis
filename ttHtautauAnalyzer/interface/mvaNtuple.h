@@ -32,11 +32,22 @@ class mvaNtuple
 						   const std::vector<miniTau>&,
 						   const std::vector<TLorentzVector>&,
 						   float, float, float, int, int);
+	void compute_variables(const std::vector<miniLepton>&,
+						   const std::vector<miniTau>&,
+						   const std::vector<TLorentzVector>&,
+						   float, float, float, int, int,
+						   const std::vector<TLorentzVector>&);
 
 	void compute_tauDecay_variables(const std::vector<miniTau>&, bool test=false);
 	float compute_average_dr(const std::vector<TLorentzVector>&);
+	float compute_average_dr(const std::vector<TLorentzVector>&,
+							 const std::vector<TLorentzVector>&);
 	float compute_max_dr(const std::vector<TLorentzVector>&);
+	float compute_max_dr(const std::vector<TLorentzVector>&,
+						 const std::vector<TLorentzVector>&);
 	float compute_min_dr(const TLorentzVector&, const std::vector<TLorentzVector>&);
+	float compute_min_dr(const std::vector<TLorentzVector>&,
+						 const std::vector<TLorentzVector>&);
 	float compute_cosThetaS(const TLorentzVector&);
 	float compute_mT_lep(const miniLepton&, float, float);
 	float compute_max_lep_eta(const std::vector<miniLepton>&);
@@ -67,13 +78,16 @@ class mvaNtuple
 	float met;
 	float mht;
 	float mT_met_lep0;
+	float mT_met_lep1;
 	float lep0_conept;
 	float lep1_conept;
 	float lep2_conept;
+	float lep3_conept;
 	float costS_tau;
 	float dr_leps;
 	float tau0_pt;
 	float tau1_pt;
+	float tau1_eta;
 	float dr_lep0_tau;
 	float dr_lep1_tau;
 	float dr_lep_tau_ss;
@@ -88,6 +102,13 @@ class mvaNtuple
 	float HT;
 	int nbtags_medium;
 	int nbtags_loose;
+	float mbb;
+	int is_OS;
+	float min_dr_lep_jet;
+	float mindr_tau_jet;
+	float max_dr_lep_tau;
+	float min_dr_lep_tau;
+	float avg_dr_lep_tau;
 
 	int tau0_decaymode;
 	int tau1_decaymode;

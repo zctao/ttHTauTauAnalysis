@@ -234,6 +234,8 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorJets() const
 
 std::vector<TLorentzVector> eventNtuple::buildFourVectorBtagJets() const
 {
+	// return two jets with the highest csv score
+	
 	std::vector<TLorentzVector> btagsP4;
 	btagsP4.reserve(2);
 
@@ -275,6 +277,8 @@ TLorentzVector eventNtuple::buildFourVectorMET()
 
 float eventNtuple::computeMHT()
 {
+	// FIXME: use fakeable leptons
+	
 	TLorentzVector mht;
 
 	auto looseleptons = buildLeptons(true);

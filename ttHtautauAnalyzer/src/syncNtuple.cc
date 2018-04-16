@@ -17,15 +17,6 @@ void syncNtuple::initialize()
 	//n_tau = -9999;
 	n_presel_jet = -9999;
 	
-	//event_weight = -9999.;
-	PU_weight = -9999.;
-	MC_weight = -9999.;
-	bTagSF_weight = -9999.;
-	leptonSF_weight = -9999.;
-	tauSF_weight = -9999.;
-	triggerSF_weight = -9999.;
-	FR_weight = -9999.;
-	
 	// muons
 	mu1_pt = -9999.;
 	mu1_conept = -9999.;
@@ -220,114 +211,77 @@ void syncNtuple::initialize()
 	//METCov10 = -9999.;
 	//METCov11 = -9999.;
 
-	// event-level MVA variables
+	// event-level MVA input variables
 	isGenMatched = -9999;
 	lep1_conept = -9999.;
 	lep2_conept = -9999.;
+	lep3_conept = -9999.;
 	mindr_lep1_jet = -9999.;
 	mindr_lep2_jet = -9999.;
 	mindr_lep3_jet = -9999.;
-	mindr_tau_jet = -9999.;
-	MT_met_lep1 = -9999.;
-	MT_met_lep3 = -9999.;
+	mindr_tau1_jet = -9999.;
+	mindr_tau2_jet = -9999.;
 	avg_dr_jet = -9999.;
-
+	avg_dr_lep_tau = -9999.;
+	max_dr_lep_tau = -9999.;
+	mindr_tau_jet = -9999.;
+	min_dr_lep_tau = -9999.;
+	min_dr_lep_jet = -9999.;
 	dr_leps = -9999.;
-	mvis_lep1_tau = -9999.;
-	mvis_lep2_tau = -9999.;
-	max_lep_eta = -9999.;
+	dr_taus = -9999.;
+	dR_lep_tau_ss = -9999.;
 	dr_lep1_tau = -9999.;
-	
-	MVA_2lss_ttV = -9999.;
-	MVA_2lss_ttbar = -9999.;
-	tt_deltaR = -9999.;
-	ntags = -9999;
-	ntags_loose = -9999;
-	tt_mvis = -9999.;
-	tt_pt = -9999.;
-	max_dr_jet = -9999.;
-	HT = -9999.;
-	MVA_1l2tau_ttbar = -9999.;
-	MVA_1l2tau_ttbar_v2 = -9999.;
-	MVA_1l2tau_ttZ_v2 = -9999.;
-	MVA_1l2tau_2Dbin_v2 = -9999;
-	mvis_l1tau = -9999.;
-	dR_l0tau = -9999.;
-	dR_l1tau = -9999.;
-	dR_l2tau = -9999.;
-	mT_lep3 = -9999.;
-	MVA_3l1tau_ttbar = -9999.;
-	MVA_3l1tau_ttV = -9999.;
-	MVA_3l1tau_2Dbin = -9999;
+	dr_lep2_tau = -9999.;
+	max_lep_eta = -9999.;
+	mT_lep1 = -9999.;
+	mT_lep2 = -9999.;
+	mTauTauVis = -9999.;
+	mTauTauVis1 = -9999.;
+	mTauTauVis2 = -9999.;
+	mbb = -9999.;
+	mbb_loose = -9999.;
+	cosThetaS_hadTau = -9999.;
+	HTT = -9999.;
+	HadTop_pt = -9999.;
+	Hj_tagger = -9999.;
+	nBJetLoose = -9999;
 
+	// event-level MVA output variables
+	mvaOutput_plainKin_ttV = -9999.;
+	mvaOutput_plainKin_ttbar = -9999.;
+	mvaOutput_1l_2tau_HTT_SUM_VT = -9999.;
+	mvaOutput_2l_2tau_plainKin_1B_VT = -9999.;
+	mvaOutput_2l_2tau_plainKin_SUM_VT = -9999.;
+	mvaOutput_2lss_ttV = -9999.;
+	mvaOutput_2lss_ttbar = -9999.;
+	mvaOutput_2lss_1tau_plainKin_ttbar = -9999.;
+	mvaOutput_2lss_1tau_plainKin_ttV = -9999.;
+	mvaOutput_2lss_1tau_plainKin_1B_M = -9999.;
+	mvaOutput_2lss_1tau_plainKin_SUM_M = -9999.;
+	mvaOutput_2lss_1tau_HTT_SUM_M = -9999.;
+	mvaOutput_2lss_1tau_HTTMEM_SUM_M = -9999.;
+	mvaOutput_3l_ttV = -9999.;
+	mvaOutput_3l_ttbar = -9999.;
+	mvaOutput_3l_1tau_plainKin_SUM_M = -9999.;
+	mvaOutput_3l_1tau_plainKin_1B_M = -9999.;
+
+	// event weight
+	//event_weight = -9999.;
+	FR_weight = -9999.;
+	triggerSF_weight = -9999.;
+	leptonSF_weight = -9999.;
+	tauSF_weight = -9999.;
+	bTagSF_weight = -9999.;
+	PU_weight = -9999.;
+	MC_weight = -9999.;
+	
 	// MEM variables
 	Integral_ttH = -9999.;
 	Integral_ttZ = -9999.;
 	Integral_ttZ_Zll = -9999.;
 	Integral_ttbar = -9999.;
 	Integration_type = -9999;
-	MEM_LR = -9999.;
-	dR_leps = -9999.;
-	mvis_l0tau = -9999.;
-	mT_lep1 = -9999.;
-	MVA_2lSS1tau_noMEM_ttbar = -9999.;
-	MVA_2lSS1tau_noMEM_ttV = -9999.;
-	MVA_2lSS1tau_noMEM_2Dbin = -9999;
-	MVA_2lSS1tau_MEM_ttbar = -9999.;
-	MVA_2lSS1tau_MEM_ttV = -9999.;
-	MVA_2lSS1tau_MEM_2Dbin = -9999;
-
-
-
-	
-
-
-	/*
-	MC_weight_scale_muF0p5 = -9999.;
-	MC_weight_scale_muF2 = -9999.;
-	MC_weight_scale_muR0p5 = -9999.;
-	MC_weight_scale_muR2 = -9999.;
-    btagSF_weight_LFUp = -9999.;
-	btagSF_weight_LFDown = -9999.;
-	btagSF_weight_HFUp = -9999.;
-	btagSF_weight_HFDown = -9999.;
-	btagSF_weight_HFStats1Up = -9999.;
-	btagSF_weight_HFStats1Down = -9999.;
-	btagSF_weight_HFStats2Up = -9999.;
-	btagSF_weight_HFStats2Down = -9999.;
-	btagSF_weight_LFStats1Up = -9999.;
-	btagSF_weight_LFStats1Down = -9999.;
-	btagSF_weight_LFStats2Up = -9999.;
-	btagSF_weight_LFStats2Down = -9999.;
-	btagSF_weight_cErr1Up = -9999.;
-	btagSF_weight_cErr1Down = -9999.;
-	btagSF_weight_cErr2Up = -9999.;
-	btagSF_weight_cErr2Down = -9999.;
-	
-	HiggsDecayType = -9999;
-	lepCategory = -9999;
-	btagCategory = -9999;
-	npuTrue = -9999.;
-	npuInTime = -9999.;
-	
-	pass_single_mu = -9999;
-	pass_single_e = -9999;
-	pass_double_mu = -9999;
-	pass_double_e = -9999;
-	pass_elemu = -9999;
-	matchHLTPath = -9999;
-	triggerBits = 0;
-	filterBits = 0;
-
-	nBadMuons = -9999;
-
-	ibin = -9999;
-	lepXtauCharge = -9999;
-
-	n_jet35_recl = -9999;
-	
-	max_lep_eta = -9999.;
-	*/
+	memOutput_LR = -9999.;
 }
 
 void syncNtuple::set_up_branches(TTree *tree)
@@ -544,106 +498,72 @@ void syncNtuple::set_up_branches(TTree *tree)
 	//tree->Branch("METCov01", &METCov01);
 	//tree->Branch("METCov10", &METCov10);
 	//tree->Branch("METCov11", &METCov11);
-	// event weights	
-	//tree->Branch("event_weight", &event_weight);
-	tree->Branch("PU_weight", &PU_weight);
-	tree->Branch("MC_weight", &MC_weight);
-	tree->Branch("bTagSF_weight", &bTagSF_weight);
-	tree->Branch("leptonSF_weight", &leptonSF_weight);
-	tree->Branch("tauSF_weight", &tauSF_weight);
-	tree->Branch("triggerSF_weight", &triggerSF_weight);
-	tree->Branch("FR_weight", &FR_weight);
-	// additional event-level MVA variables
+	// event-level MVA input variables
 	tree->Branch("isGenMatched", &isGenMatched);
-	tree->Branch("lep1_conept", &lep1_conept);
-	tree->Branch("lep2_conept", &lep2_conept);
+	tree->Branch("lep1_conePt", &lep1_conept);
+	tree->Branch("lep2_conePt", &lep2_conept);
+	tree->Branch("lep3_conePt", &lep3_conept);
 	tree->Branch("mindr_lep1_jet", &mindr_lep1_jet);
 	tree->Branch("mindr_lep2_jet", &mindr_lep2_jet);
 	tree->Branch("mindr_lep3_jet", &mindr_lep3_jet);
-	tree->Branch("mindr_tau_jet", &mindr_tau_jet);
-	tree->Branch("MT_met_lep1", &MT_met_lep1);
-	tree->Branch("MT_met_lep3", &MT_met_lep3);
+	tree->Branch("mindr_tau1_jet", &mindr_tau1_jet);
+	tree->Branch("mindr_tau2_jet", &mindr_tau2_jet);
 	tree->Branch("avg_dr_jet", &avg_dr_jet);
-
+	tree->Branch("avg_dr_lep_tau", &avg_dr_lep_tau);
+	tree->Branch("max_dr_lep_tau", &max_dr_lep_tau);
+	tree->Branch("mindr_tau_jet", &mindr_tau_jet);
+	tree->Branch("min_dr_lep_tau", &min_dr_lep_tau);
+	tree->Branch("min_dr_lep_jet", &min_dr_lep_jet);
 	tree->Branch("dr_leps", &dr_leps);
-	tree->Branch("mvis_lep1_tau", &mvis_lep1_tau);
-	tree->Branch("mvis_lep2_tau", &mvis_lep2_tau);
-	tree->Branch("max_lep_eta", &max_lep_eta);
+	tree->Branch("dr_taus", &dr_taus);
+	tree->Branch("dR_lep_tau_ss", &dR_lep_tau_ss);
 	tree->Branch("dr_lep1_tau", &dr_lep1_tau);
-	
-	tree->Branch("MVA_2lss_ttV", &MVA_2lss_ttV);
-	tree->Branch("MVA_2lss_ttbar", &MVA_2lss_ttbar);
-	tree->Branch("tt_deltaR", &tt_deltaR);
-	tree->Branch("ntags", &ntags);
-	tree->Branch("ntags_loose", &ntags_loose);
-	tree->Branch("tt_mvis", &tt_mvis);
-	tree->Branch("tt_pt", &tt_pt);
-	tree->Branch("max_dr_jet", &max_dr_jet);
-	tree->Branch("HT", &HT);
-	tree->Branch("MVA_1l2tau_ttbar", &MVA_1l2tau_ttbar);
-	tree->Branch("MVA_1l2tau_ttbar_v2", &MVA_1l2tau_ttbar_v2);
-    tree->Branch("MVA_1l2tau_ttZ_v2", &MVA_1l2tau_ttZ_v2);
-	tree->Branch("MVA_1l2tau_2Dbin_v2", &MVA_1l2tau_2Dbin_v2);
-	tree->Branch("mvis_l1tau", &mvis_l1tau);
-	tree->Branch("dR_l0tau", &dR_l0tau);
-	tree->Branch("dR_l1tau", &dR_l1tau);
-	tree->Branch("dR_l2tau", &dR_l2tau);
-	//tree->Branch("mT_lep3", &mT_lep3);
-	tree->Branch("MVA_3l1tau_ttbar", &MVA_3l1tau_ttbar);
-	tree->Branch("MVA_3l1tau_ttV", &MVA_3l1tau_ttV);
-	tree->Branch("MVA_3l1tau_2Dbin", &MVA_3l1tau_2Dbin);
+	tree->Branch("dr_lep2_tau", &dr_lep2_tau);
+	tree->Branch("max_lep_eta", &max_lep_eta);
+	tree->Branch("mT_lep1", &mT_lep1);
+	tree->Branch("mT_lep2", &mT_lep2);
+	tree->Branch("mTauTauVis", &mTauTauVis);
+	tree->Branch("mTauTauVis1", &mTauTauVis1);
+	tree->Branch("mTauTauVis2", &mTauTauVis2);
+	tree->Branch("mbb", &mbb);
+	tree->Branch("mbb_loose", &mbb_loose);
+	tree->Branch("cosThetaS_hadTau", &cosThetaS_hadTau);
+	tree->Branch("HTT", &HTT);
+	tree->Branch("HadTop_pt",&HadTop_pt);
+	tree->Branch("Hj_tagger", &Hj_tagger);
+	tree->Branch("nBJetLoose", &nBJetLoose);
+	// event-level MVA output variables
+	tree->Branch("mvaOutput_plainKin_ttV", &mvaOutput_plainKin_ttV);
+	tree->Branch("mvaOutput_plainKin_ttbar", &mvaOutput_plainKin_ttbar);
+	tree->Branch("mvaOutput_1l_2tau_HTT_SUM_VT", &mvaOutput_1l_2tau_HTT_SUM_VT);
+	tree->Branch("mvaOutput_2l_2tau_plainKin_1B_VT", &mvaOutput_2l_2tau_plainKin_1B_VT);
+	tree->Branch("mvaOutput_2l_2tau_plainKin_SUM_VT", &mvaOutput_2l_2tau_plainKin_SUM_VT);
+	tree->Branch("mvaOutput_2lss_ttV", &mvaOutput_2lss_ttV);
+	tree->Branch("mvaOutput_2lss_ttbar", &mvaOutput_2lss_ttbar);
+	tree->Branch("mvaOutput_2lss_1tau_plainKin_ttbar", &mvaOutput_2lss_1tau_plainKin_ttbar);
+	tree->Branch("mvaOutput_2lss_1tau_plainKin_ttV", &mvaOutput_2lss_1tau_plainKin_ttV);
+	tree->Branch("mvaOutput_2lss_1tau_plainKin_1B_M", &mvaOutput_2lss_1tau_plainKin_1B_M);
+	tree->Branch("mvaOutput_2lss_1tau_plainKin_SUM_M", &mvaOutput_2lss_1tau_plainKin_SUM_M);
+	tree->Branch("mvaOutput_2lss_1tau_HTT_SUM_M", &mvaOutput_2lss_1tau_HTT_SUM_M);
+	tree->Branch("mvaOutput_2lss_1tau_HTTMEM_SUM_M", &mvaOutput_2lss_1tau_HTTMEM_SUM_M);
+	tree->Branch("mvaOutput_3l_ttV", &mvaOutput_3l_ttV);
+	tree->Branch("mvaOutput_3l_ttbar", &mvaOutput_3l_ttbar);
+	tree->Branch("mvaOutput_3l_1tau_plainKin_SUM_M", &mvaOutput_3l_1tau_plainKin_SUM_M);
+	tree->Branch("mvaOutput_3l_1tau_plainKin_1B_M", &mvaOutput_3l_1tau_plainKin_1B_M);
+	// event weights	
+	//tree->Branch("event_weight", &event_weight);
+	tree->Branch("FR_weight", &FR_weight);
+	tree->Branch("triggerSF_weight", &triggerSF_weight);
+	tree->Branch("leptonSF_weight", &leptonSF_weight);
+	tree->Branch("tauSF_weight", &tauSF_weight);
+	tree->Branch("bTagSF_weight", &bTagSF_weight);
+	tree->Branch("PU_weight", &PU_weight);
+	tree->Branch("MC_weight", &MC_weight);
+	// MEM variables
 	tree->Branch("Integral_ttH", &Integral_ttH);
 	tree->Branch("Integral_ttZ", &Integral_ttZ);
 	tree->Branch("Integral_ttZ_Zll", &Integral_ttZ_Zll);
 	tree->Branch("Integral_ttbar", &Integral_ttbar);
 	tree->Branch("Integration_type", &Integration_type);
-	tree->Branch("MEM_LR", &MEM_LR);
-	tree->Branch("dR_leps", &dR_leps);
-	tree->Branch("mvis_l0tau", &mvis_l0tau);
-	//tree->Branch("mT_lep1", &mT_lep1);
-	tree->Branch("MVA_2lSS1tau_noMEM_ttbar", &MVA_2lSS1tau_noMEM_ttbar);
-	tree->Branch("MVA_2lSS1tau_noMEM_ttV", &MVA_2lSS1tau_noMEM_ttV);
-	tree->Branch("MVA_2lSS1tau_noMEM_2Dbin", &MVA_2lSS1tau_noMEM_2Dbin);
-	tree->Branch("MVA_2lSS1tau_MEM_ttbar", &MVA_2lSS1tau_MEM_ttbar);
-	tree->Branch("MVA_2lSS1tau_MEM_ttV", &MVA_2lSS1tau_MEM_ttV);
-	tree->Branch("MVA_2lSS1tau_MEM_2Dbin", &MVA_2lSS1tau_MEM_2Dbin);	
-
-	/*	
-	tree->Branch("MC_weight_scale_muF0p5", &MC_weight_scale_muF0p5);
-	tree->Branch("MC_weight_scale_muF2", &MC_weight_scale_muF2);
-	tree->Branch("MC_weight_scale_muR0p5", &MC_weight_scale_muR0p5);
-	tree->Branch("MC_weight_scale_muR2", &MC_weight_scale_muR2);
-	tree->Branch("btagSF_weight_LFUp", &btagSF_weight_LFUp);
-	tree->Branch("btagSF_weight_LFDown", &btagSF_weight_LFDown);
-	tree->Branch("btagSF_weight_HFUp", &btagSF_weight_HFUp);
-	tree->Branch("btagSF_weight_HFDown", &btagSF_weight_HFDown);
-	tree->Branch("btagSF_weight_HFStats1Up", &btagSF_weight_HFStats1Up);
-	tree->Branch("btagSF_weight_HFStats1Down", &btagSF_weight_HFStats1Down);
-	tree->Branch("btagSF_weight_HFStats2Up", &btagSF_weight_HFStats2Up);
-	tree->Branch("btagSF_weight_HFStats2Down", &btagSF_weight_HFStats2Down);
-	tree->Branch("btagSF_weight_LFStats1Up", &btagSF_weight_LFStats1Up);
-	tree->Branch("btagSF_weight_LFStats1Down", &btagSF_weight_LFStats1Down);
-	tree->Branch("btagSF_weight_LFStats2Up", &btagSF_weight_LFStats2Up);
-	tree->Branch("btagSF_weight_LFStats2Down", &btagSF_weight_LFStats2Down);
-	tree->Branch("btagSF_weight_cErr1Up", &btagSF_weight_cErr1Up);
-	tree->Branch("btagSF_weight_cErr1Down", &btagSF_weight_cErr1Down);
-	tree->Branch("btagSF_weight_cErr2Up", &btagSF_weight_cErr2Up);
-	tree->Branch("btagSF_weight_cErr2Down", &btagSF_weight_cErr2Down);
-	tree->Branch("HiggsDecayType", &HiggsDecayType);
-	tree->Branch("lepCategory", &lepCategory);
-	tree->Branch("btagCategory", &btagCategory);
-	tree->Branch("npuTrue", &npuTrue);
-	tree->Branch("npuInTime", &npuInTime);
-	tree->Branch("pass_single_e", &pass_single_e);
-	tree->Branch("pass_single_mu", &pass_single_mu);
-	tree->Branch("pass_double_e", &pass_double_e);
-	tree->Branch("pass_double_mu", &pass_double_mu);
-	tree->Branch("pass_elemu", &pass_elemu);
-	tree->Branch("matchHLTPath", &matchHLTPath);
-	tree->Branch("triggerBits", &triggerBits);
-	tree->Branch("nBadMuons", &nBadMuons);
-	tree->Branch("filterBits", &filterBits);
-	tree->Branch("ibin", &ibin);
-	tree->Branch("lepXtauCharge", &lepXtauCharge);
-	*/
+	tree->Branch("memOutput_LR", &memOutput_LR);
 }

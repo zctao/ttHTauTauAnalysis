@@ -229,127 +229,78 @@ class syncNtuple
 	//float METCov10;
 	//float METCov01;
 	//float METCov11;
-	
-	// event weights	
-	//float event_weight;
-	float PU_weight;
-	float MC_weight;
-	float bTagSF_weight; //csv_weight;
-	float leptonSF_weight;
-	float tauSF_weight;
-	float triggerSF_weight;//hltSF;
-	float FR_weight;
 
-	// additional event-level MVA variables
+	// event-level MVA input variables
 	int isGenMatched;	
 	float lep1_conept;
 	float lep2_conept;
+	float lep3_conept;
 	float mindr_lep1_jet;
 	float mindr_lep2_jet;
 	float mindr_lep3_jet;
-	float mindr_tau_jet;
-	float MT_met_lep1;
-	float MT_met_lep3;
+	float mindr_tau1_jet;
+	float mindr_tau2_jet;
 	float avg_dr_jet;
-
+	float avg_dr_lep_tau;
+	float max_dr_lep_tau;
+	float mindr_tau_jet;
+	float min_dr_lep_tau;
+	float min_dr_lep_jet;
 	float dr_leps;
-	float mvis_lep1_tau;
-	float mvis_lep2_tau;
-	float max_lep_eta;
+	float dr_taus;
+	float dR_lep_tau_ss;
 	float dr_lep1_tau;
+	float dr_lep2_tau;
+	float max_lep_eta;
+	float mT_lep1;
+	float mT_lep2;
+	float mTauTauVis;
+	float mTauTauVis1;
+	float mTauTauVis2;
+	float mbb;
+	float mbb_loose;
+	float cosThetaS_hadTau;
+	float HTT;
+	float HadTop_pt;
+	float Hj_tagger;
+	int nBJetLoose;
 
-	float MVA_2lss_ttV;
-	float MVA_2lss_ttbar;
-	float tt_deltaR;
-	int ntags;
-	int ntags_loose;
-	float tt_mvis;
-	float tt_pt;
-	float max_dr_jet;
-	float HT;
-	float MVA_1l2tau_ttbar;
-	float MVA_1l2tau_ttbar_v2;
-	float MVA_1l2tau_ttZ_v2;
-	int   MVA_1l2tau_2Dbin_v2;
-	float mvis_l1tau;
-	float dR_l0tau;
-	float dR_l1tau;
-	float dR_l2tau;
-	float mT_lep3;
-	float MVA_3l1tau_ttbar;
-	float MVA_3l1tau_ttV;
-	int   MVA_3l1tau_2Dbin;
+	// event-level MVA output variables
+	float mvaOutput_plainKin_ttV;
+	float mvaOutput_plainKin_ttbar;
+	float mvaOutput_1l_2tau_HTT_SUM_VT;
+	float mvaOutput_2l_2tau_plainKin_1B_VT;
+	float mvaOutput_2l_2tau_plainKin_SUM_VT;
+	float mvaOutput_2lss_ttV;
+	float mvaOutput_2lss_ttbar;
+	float mvaOutput_2lss_1tau_plainKin_ttbar;
+	float mvaOutput_2lss_1tau_plainKin_ttV;
+	float mvaOutput_2lss_1tau_plainKin_1B_M;
+	float mvaOutput_2lss_1tau_plainKin_SUM_M;
+	float mvaOutput_2lss_1tau_HTT_SUM_M;
+	float mvaOutput_2lss_1tau_HTTMEM_SUM_M;
+	float mvaOutput_3l_ttV;
+	float mvaOutput_3l_ttbar;
+	float mvaOutput_3l_1tau_plainKin_SUM_M;
+	float mvaOutput_3l_1tau_plainKin_1B_M;
 
+	// event weights
+	//float event_weight;
+	float FR_weight;
+	float triggerSF_weight;//hltSF;
+	float leptonSF_weight;
+	float tauSF_weight;
+	float bTagSF_weight; //csv_weight;
+	float PU_weight;
+	float MC_weight;
+	
 	// MEM variables
 	float Integral_ttH;
 	float Integral_ttZ;
 	float Integral_ttZ_Zll;
 	float Integral_ttbar;
 	int   Integration_type;
-	float MEM_LR;
-	float dR_leps;
-	float mvis_l0tau;
-	float mT_lep1;
-	float MVA_2lSS1tau_noMEM_ttbar;
-	float MVA_2lSS1tau_noMEM_ttV;
-	int   MVA_2lSS1tau_noMEM_2Dbin;
-	float MVA_2lSS1tau_MEM_ttbar;
-	float MVA_2lSS1tau_MEM_ttV;
-	int   MVA_2lSS1tau_MEM_2Dbin;
-	
-	/*
-	/////////////////////////////
-	// systematics
-	float MC_weight_scale_muF0p5;
-	float MC_weight_scale_muF2;
-	float MC_weight_scale_muR0p5;
-	float MC_weight_scale_muR2;
-	float btagSF_weight_LFUp;
-	float btagSF_weight_LFDown;
-	float btagSF_weight_HFUp;
-	float btagSF_weight_HFDown;
-	float btagSF_weight_HFStats1Up;
-	float btagSF_weight_HFStats1Down;
-	float btagSF_weight_HFStats2Up;
-	float btagSF_weight_HFStats2Down;
-	float btagSF_weight_LFStats1Up;
-	float btagSF_weight_LFStats1Down;
-	float btagSF_weight_LFStats2Up;
-	float btagSF_weight_LFStats2Down;
-	float btagSF_weight_cErr1Up;
-	float btagSF_weight_cErr1Down;
-	float btagSF_weight_cErr2Up;
-	float btagSF_weight_cErr2Down;
-	/////////////////////////////
-	
-	int HiggsDecayType;   // Higgs decay product pdgId
-
-	int lepCategory;   // 0: mumu; 1: ee; 2: emu
-	int btagCategory;  // 0: loose; 1: medium (>=2 medium btags)
-	
-	float npuTrue;
-	float npuInTime;
-	
-	int pass_single_mu;
-	int pass_single_e;
-	int pass_double_mu;
-	int pass_double_e;
-	int pass_elemu;
-	int matchHLTPath;
-	// trigger and filter bits
-	unsigned int triggerBits;
-	unsigned int filterBits;
-
-	int nBadMuons;
-
-	int ibin;  // bin index in 1D BDT shape template
-
-	int lepXtauCharge;
-
-	int    n_jet25_recl;
-
-	float max_lep_eta;
-	*/	
+	float memOutput_LR;
    	
 	//ClassDef(CU_ttH_EDA_Ntuple,1);
 };

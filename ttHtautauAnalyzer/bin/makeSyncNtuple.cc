@@ -197,7 +197,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 
 	//////////////////////////////////////////////
 	// mva ntuple
-	mvaNtuple mvantuple(anatype, false, "2016");
+	mvaNtuple mvantuple(anatype, false, "2017");
 
 	//////////////////////////////////////////////
 	// event selector
@@ -450,16 +450,10 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			syncntuple.jet4_E = evNtuple.jet_E->at(3);
 			syncntuple.jet4_CSV = evNtuple.jet_csv->at(3);
 		}
-
-		syncntuple.ntags = evNtuple.n_btag_medium;
-		syncntuple.ntags_loose = evNtuple.n_btag_loose;
 		
 		// met
 		syncntuple.PFMET = evNtuple.PFMET;
 		syncntuple.PFMETphi = evNtuple.PFMETphi;
-		//
-		//syncntuple.MHT = evNtuple.MHT;
-		//syncntuple.metLD = evNtuple.metLD;
 		syncntuple.MHT = evNtuple.computeMHT();
 		syncntuple.metLD = 0.00397 * syncntuple.PFMET + 0.00265 * syncntuple.MHT;
 
@@ -469,43 +463,104 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		}
 
 		// mva variables
-		//auto leptons = evNtuple.buildLeptons();
-		//auto taus = evNtuple.buildTaus(seltype==Control_fake_1l2tau);
-		auto jets = evNtuple.buildFourVectorJets();
+		auto jetsp4 = evNtuple.buildFourVectorJets();
+		auto btagsp4 = evNtuple.buildFourVectorBtagJets();
 
-		assert(leptons.size()>0);
-		assert(leptons.size()>0);
-		assert(jets.size()>0);
+		assert(leptons.size()>0 and taus->size()>0);
 		
-		syncntuple.lep1_conept = leptons[0].conept();
-		syncntuple.mindr_lep1_jet = mvantuple.compute_min_dr(leptons[0].p4(),jets);
-		syncntuple.mindr_tau_jet = mvantuple.compute_min_dr(taus->at(0).p4(),jets);
-		syncntuple.MT_met_lep1 = mvantuple.compute_mT_lep(leptons[0], syncntuple.PFMET, syncntuple.PFMETphi);
-		syncntuple.avg_dr_jet = mvantuple.compute_average_dr(jets);
-		syncntuple.max_dr_jet = mvantuple.compute_max_dr(jets);
-		syncntuple.HT = syncntuple.MHT;
-		syncntuple.dR_l0tau = leptons[0].p4().DeltaR(taus->at(0).p4());
-		syncntuple.mvis_l0tau = (leptons[0].p4()+taus->at(0).p4()).M();
-		
-		if (leptons.size()>1) {
-			syncntuple.lep2_conept = leptons[1].conept();
-			syncntuple.mindr_lep2_jet = mvantuple.compute_min_dr(leptons[1].p4(),jets);
-			syncntuple.mvis_l1tau = (leptons[1].p4()+taus->at(0).p4()).M();
-			syncntuple.dR_l1tau = leptons[1].p4().DeltaR(taus->at(0).p4());
-			syncntuple.dR_leps = leptons[0].p4().DeltaR(leptons[1].p4());
+		mvantuple.compute_variables(leptons, *taus, jetsp4, syncntuple.PFMET,
+									syncntuple.PFMETphi, syncntuple.MHT,
+									evNtuple.n_btag_loose, evNtuple.n_btag_medium,
+									btagsp4);
+
+		if (anatype==Analyze_1l2tau) {
+			assert(taus->size()>1);
+			syncntuple.isGenMatched = leptons[0].isGenMatched() and
+				taus->at(0).isGenMatched() and taus->at(1).isGenMatched();
+			syncntuple.avg_dr_jet = mvantuple.avg_dr_jet;
+			syncntuple.dr_taus = mvantuple.dr_taus;
+			//mvantuple.met;
+			syncntuple.lep1_conept = mvantuple.lep0_conept;
+			syncntuple.mT_lep1 = mvantuple.mT_met_lep0;
+			syncntuple.mTauTauVis = mvantuple.mTauTauVis;
+			syncntuple.mindr_lep1_jet = mvantuple.mindr_lep0_jet;
+			syncntuple.mindr_tau1_jet = mvantuple.mindr_tau0_jet;
+			syncntuple.mindr_tau2_jet = mvantuple.mindr_tau1_jet;
+			syncntuple.dr_lep1_tau = mvantuple.dr_lep_tau_lead;
+			//mvantuple.nbtags_loose;
+			//mvantuple.tau0_pt;
+			//mvantuple.tau1_pt;
+			syncntuple.dR_lep_tau_ss = mvantuple.dr_lep_tau_ss;
+			syncntuple.cosThetaS_hadTau = mvantuple.costS_tau;
 		}
 
-		if (leptons.size()>2) {
-			syncntuple.mindr_lep3_jet = mvantuple.compute_min_dr(leptons[2].p4(),jets);
-			syncntuple.dR_l2tau = leptons[2].p4().DeltaR(taus->at(0).p4());
-			syncntuple.MT_met_lep3 = mvantuple.compute_mT_lep(leptons[2], syncntuple.PFMET, syncntuple.PFMETphi);;
+		if (anatype==Analyze_2lss1tau) {
+			assert(leptons.size()>1);
+			syncntuple.isGenMatched = leptons[0].isGenMatched() and
+				leptons[1].isGenMatched() and taus->at(0).isGenMatched();
+			syncntuple.avg_dr_jet = mvantuple.avg_dr_jet;
+			syncntuple.dr_lep1_tau = mvantuple.dr_lep0_tau;
+			syncntuple.dr_lep2_tau = mvantuple.dr_lep1_tau;
+			syncntuple.dr_leps = mvantuple.dr_leps;
+			syncntuple.lep1_conept = mvantuple.lep0_conept;
+			syncntuple.lep2_conept = mvantuple.lep1_conept;
+			syncntuple.mT_lep1 = mvantuple.mT_met_lep0;
+			syncntuple.mT_lep2 = mvantuple.mT_met_lep1;
+			syncntuple.mTauTauVis1 = mvantuple.mvis_lep0_tau;
+			syncntuple.mTauTauVis2 = mvantuple.mvis_lep1_tau;
+			syncntuple.max_lep_eta = mvantuple.max_lep_eta;
+			syncntuple.mbb = mvantuple.mbb;
+			syncntuple.mindr_lep1_jet = mvantuple.mindr_lep0_jet;
+			syncntuple.mindr_lep2_jet = mvantuple.mindr_lep1_jet;
+			syncntuple.mindr_tau1_jet = mvantuple.mindr_tau0_jet;
+			//mvantuple.nJet;
+			//mvantuple.met;
+			//mvantuple.tau0_pt;
+			
+			// HTT
+			// Hj_tagger
+			// HadTop_pt
+			// memOutput_LR
 		}
 
-		if (taus->size()>1) {
-			syncntuple.tt_deltaR = taus->at(0).p4().DeltaR(taus->at(1).p4());
-			syncntuple.tt_mvis = (taus->at(0).p4()+taus->at(1).p4()).M();
-			syncntuple.tt_pt = (taus->at(0).p4()+taus->at(1).p4()).Pt();
-		}		
+		if (anatype==Analyze_3l1tau) {
+			assert(leptons.size()>2);
+			syncntuple.isGenMatched = leptons[0].isGenMatched() and
+				leptons[1].isGenMatched() and leptons[2].isGenMatched() and
+				taus->at(0).isGenMatched();
+			syncntuple.mTauTauVis1 = mvantuple.mvis_lep0_tau;
+			syncntuple.mTauTauVis2 = mvantuple.mvis_lep1_tau;
+			syncntuple.max_lep_eta = mvantuple.max_lep_eta;
+			//mvantuple.met;
+			//mvantuple.tau0_pt;
+			syncntuple.dr_leps = mvantuple.dr_leps;
+			syncntuple.mindr_lep1_jet = mvantuple.mindr_lep0_jet;
+			syncntuple.mindr_lep2_jet = mvantuple.mindr_lep1_jet;
+			syncntuple.mindr_lep3_jet = mvantuple.mindr_lep2_jet;
+			syncntuple.mT_lep1 = mvantuple.mT_met_lep0;
+			syncntuple.mT_lep2 = mvantuple.mT_met_lep1;
+			syncntuple.avg_dr_jet = mvantuple.avg_dr_jet;
+			syncntuple.mindr_tau1_jet = mvantuple.mindr_tau0_jet;
+			syncntuple.mbb_loose = mvantuple.mbb;
+			syncntuple.lep1_conept = mvantuple.lep1_conept;
+			syncntuple.lep2_conept = mvantuple.lep2_conept;
+			syncntuple.lep3_conept = mvantuple.lep3_conept;
+			//mvantuple.nJet;
+		}
+
+		if (anatype==Analyze_2l2tau) {
+			//syncntuple.avg_dr_lep_tau = mvantuple.compute_average_dr(lepsp4,tausp4);
+			//syncntuple.max_dr_lep_tau = mvantuple.compute_max_dr(lepsp4,tausp4);
+			//syncntuple.mindr_tau_jet = mvantuple.compute_min_dr(tausp4,jets);
+			//syncntuple.min_dr_lep_tau = mvantuple.compute_min_dr(lepsp4,tausp4);
+			//syncntuple.min_dr_lep_jet = mvantuple.compute_min_dr(lepsp4,jets);
+		}
+		
+		//syncntuple.HTT;
+		//syncntuple.HadTop_pt;
+		//syncntuple.Hj_tagger;
+		
+		syncntuple.nBJetLoose = evNtuple.n_btag_loose;
 
 		// weights
 		syncntuple.PU_weight = evNtuple.PU_weight;
@@ -533,9 +588,6 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			trig_helper.pass_leptau_cross_triggers(evNtuple.triggerBits);
 		syncntuple.triggerSF_weight =
 			sf_helper.Get_HLTSF(leptons, *taus, hlt1LTriggered, hltXTriggered);
-
-		//syncntuple.isGenMatched =
-			//evNtuple.isGenMatchedLep * evNtuple.isGenMatchedTau;
 		
 		tree_out->Fill();
 		

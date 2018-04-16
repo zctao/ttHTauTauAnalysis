@@ -31,6 +31,9 @@ class eventNtuple
 	std::vector<TLorentzVector> buildFourVectorBtagJets() const;
 	TLorentzVector buildFourVectorMET();
 	float computeMHT();
+
+	template <typename T>
+		std::vector<TLorentzVector> buildFourVectors(const std::vector<T>&);
 	
 	////////////////////////
 	//// variables
@@ -246,5 +249,15 @@ class eventNtuple
 	float METCov11 = -9999.;
 	
 };
+
+template <typename T> std::vector<TLorentzVector>
+eventNtuple::buildFourVectors(const std::vector<T>& miniObjects)
+{
+	std::vector<TLorentzVector> vecp4;
+	for (const auto & obj : miniObjects) {
+		vecp4.push_back(obj.p4());
+	}
+	return vecp4;
+}
 
 #endif
