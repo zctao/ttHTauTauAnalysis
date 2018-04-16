@@ -93,7 +93,7 @@ options.parseArguments()
 process.load('Configuration.StandardSequences.Services_cff')
 process.load( "Configuration.StandardSequences.FrontierConditions_GlobalTag_cff" )
 
-MCGT = '94X_mc2017_realistic_v14'
+MCGT = '94X_mc2017_realistic_v13'
 DATAGT = '94X_dataRun2_v6'
 
 process.GlobalTag.globaltag = DATAGT if options.isData else MCGT
