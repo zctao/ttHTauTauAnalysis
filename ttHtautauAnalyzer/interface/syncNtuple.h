@@ -155,6 +155,7 @@ class syncNtuple
 	int   tau1_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03;
 	int   tau1_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03;
 	int   tau1_byTightCombinedIsolationDeltaBetaCorr3HitsdR03;
+	int   tau1_byVLooseIsolationMVArun2v1DBdR03oldDMwLT;
 	int   tau1_byLooseIsolationMVArun2v1DBdR03oldDMwLT;
 	int   tau1_byMediumIsolationMVArun2v1DBdR03oldDMwLT;
 	int   tau1_byTightIsolationMVArun2v1DBdR03oldDMwLT;
@@ -184,6 +185,7 @@ class syncNtuple
 	int   tau2_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03;
 	int   tau2_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03;
 	int   tau2_byTightCombinedIsolationDeltaBetaCorr3HitsdR03;
+	int   tau2_byVLooseIsolationMVArun2v1DBdR03oldDMwLT;
 	int   tau2_byLooseIsolationMVArun2v1DBdR03oldDMwLT;
 	int   tau2_byMediumIsolationMVArun2v1DBdR03oldDMwLT;
 	int   tau2_byTightIsolationMVArun2v1DBdR03oldDMwLT;

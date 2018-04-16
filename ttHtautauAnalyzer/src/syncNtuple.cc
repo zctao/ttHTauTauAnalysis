@@ -139,6 +139,7 @@ void syncNtuple::initialize()
 	tau1_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03 = -9999;
 	tau1_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03 = -9999;
 	tau1_byTightCombinedIsolationDeltaBetaCorr3HitsdR03 = -9999;
+	tau1_byVLooseIsolationMVArun2v1DBdR03oldDMwLT = -9999;
 	tau1_byLooseIsolationMVArun2v1DBdR03oldDMwLT = -9999;
 	tau1_byMediumIsolationMVArun2v1DBdR03oldDMwLT = -9999;
 	tau1_byTightIsolationMVArun2v1DBdR03oldDMwLT = -9999;
@@ -167,6 +168,7 @@ void syncNtuple::initialize()
 	tau2_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03 = -9999;
 	tau2_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03 = -9999;
 	tau2_byTightCombinedIsolationDeltaBetaCorr3HitsdR03 = -9999;
+	tau2_byVLooseIsolationMVArun2v1DBdR03oldDMwLT = -9999;
 	tau2_byLooseIsolationMVArun2v1DBdR03oldDMwLT = -9999;
 	tau2_byMediumIsolationMVArun2v1DBdR03oldDMwLT = -9999;
 	tau2_byTightIsolationMVArun2v1DBdR03oldDMwLT = -9999;
@@ -426,6 +428,7 @@ void syncNtuple::set_up_branches(TTree *tree)
 	tree->Branch("tau1_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03", &tau1_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03);
 	tree->Branch("tau1_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03", &tau1_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03);
 	tree->Branch("tau1_byTightCombinedIsolationDeltaBetaCorr3HitsdR03", &tau1_byTightCombinedIsolationDeltaBetaCorr3HitsdR03);
+	tree->Branch("tau1_byVLooseIsolationMVArun2v1DBdR03oldDMwLT", &tau1_byVLooseIsolationMVArun2v1DBdR03oldDMwLT);
 	tree->Branch("tau1_byLooseIsolationMVArun2v1DBdR03oldDMwLT", &tau1_byLooseIsolationMVArun2v1DBdR03oldDMwLT);
 	tree->Branch("tau1_byMediumIsolationMVArun2v1DBdR03oldDMwLT", &tau1_byMediumIsolationMVArun2v1DBdR03oldDMwLT);
 	tree->Branch("tau1_byTightIsolationMVArun2v1DBdR03oldDMwLT", &tau1_byTightIsolationMVArun2v1DBdR03oldDMwLT);
@@ -455,6 +458,7 @@ void syncNtuple::set_up_branches(TTree *tree)
 	tree->Branch("tau2_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03", &tau2_byLooseCombinedIsolationDeltaBetaCorr3HitsdR03);
 	tree->Branch("tau2_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03", &tau2_byMediumCombinedIsolationDeltaBetaCorr3HitsdR03);
 	tree->Branch("tau2_byTightCombinedIsolationDeltaBetaCorr3HitsdR03", &tau2_byTightCombinedIsolationDeltaBetaCorr3HitsdR03);
+	tree->Branch("tau2_byVLooseIsolationMVArun2v1DBdR03oldDMwLT", &tau2_byVLooseIsolationMVArun2v1DBdR03oldDMwLT);
 	tree->Branch("tau2_byLooseIsolationMVArun2v1DBdR03oldDMwLT", &tau2_byLooseIsolationMVArun2v1DBdR03oldDMwLT);
 	tree->Branch("tau2_byMediumIsolationMVArun2v1DBdR03oldDMwLT", &tau2_byMediumIsolationMVArun2v1DBdR03oldDMwLT);
 	tree->Branch("tau2_byTightIsolationMVArun2v1DBdR03oldDMwLT", &tau2_byTightIsolationMVArun2v1DBdR03oldDMwLT);
