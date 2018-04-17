@@ -190,6 +190,9 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 			}
 		}
 
+		h_npuTrue_->Fill(npuTrue);
+		h_npuInTime_->Fill(npuInTime);
+		
 		// pileup weight
 	    pu_weight = sf_helper_->Get_PUWeight(npuTrue);
 	}

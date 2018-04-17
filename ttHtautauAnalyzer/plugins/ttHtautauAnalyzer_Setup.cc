@@ -80,6 +80,10 @@ void ttHtautauAnalyzer::Set_up_histograms()
 
 	// cut flow
 	h_CutFlow_ = fs_->make<TH1D>("h_CutFlow","",15,0,15);
+
+	// pileup
+	h_npuTrue_ = fs_->make<TH1D>("h_npuTrue","",80,0,80);
+	h_npuInTime_ = fs_->make<TH1D>("h_npuInTime","",80,0,80);
 }
 
 void ttHtautauAnalyzer::Set_up_tree()

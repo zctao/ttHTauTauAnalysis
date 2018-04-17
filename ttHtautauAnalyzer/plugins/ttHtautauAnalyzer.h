@@ -294,6 +294,9 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	TH1D* h_SumGenWeightxPU_;
 	// cut flow
 	TH1D* h_CutFlow_;
+	// pileup
+	TH1D* h_npuTrue_;
+	TH1D* h_npuInTime_;
 };
 
 template <typename T1, typename T2>
