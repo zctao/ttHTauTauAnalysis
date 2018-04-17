@@ -1,12 +1,14 @@
 #! /bin/sh
 
-cornell_ntuple_obj="/afs/cern.ch/user/z/ztao/public/ttHTT_Sync/2017/syncNtuple_object.root"
-llr_ntuple_obj="/afs/cern.ch/user/c/cmartinp/public/sync_2017/syncNtuple_ttH_object_v3.root"
-tallinn_ntuple_obj="/afs/cern.ch/user/k/kaehatah/public/sync_2017/sync_Tallinn_v9.root"
+cornell_ntuple_obj="/afs/cern.ch/user/z/ztao/public/ttHTT_Sync/2017/syncNtuple_object_cornell_v3.root"
+llr_ntuple_obj="/afs/cern.ch/user/c/cmartinp/public/sync_2017/syncNtuple_ttH_object_v5.root"
+tallinn_ntuple_obj="/afs/cern.ch/user/k/kaehatah/public/sync_2017/sync_Tallinn_v13.root"
+ihep_ntuple_obj="/afs/cern.ch/user/b/binghuan/public/TTHLep/2018Sync/IHEP_ttHsyncV3_0415.root"
 
 scp ztao@lxplus.cern.ch:$cornell_ntuple_obj cornell_obj.root
 scp ztao@lxplus.cern.ch:$llr_ntuple_obj llr_obj.root
 scp ztao@lxplus.cern.ch:$tallinn_ntuple_obj tallinn_obj.root
+scp ztao@lxplus.cern.ch:$ihep_ntuple_obj ihep_obj.root
 
 echo 'Object Selection'
 root -b <<EOF
@@ -14,8 +16,9 @@ root -b <<EOF
 "cornell_obj.root","Cornell",\
 "llr_obj.root","LLR",\
 "tallinn_obj.root","Tallinn",\
-"","",\
-"syncTree","~/public_html/syncNtuples/2018Apr10/syncObjSel/")
+"ihep_obj.root","IHEP",\
+"syncTree","~/public_html/syncNtuples/2018Apr16/syncObjSel/",\
+false)
 EOF
 
 # Signal Region

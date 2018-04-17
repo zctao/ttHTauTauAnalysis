@@ -18,7 +18,8 @@ void compareNtuples(TString inputFile1="", TString label1="",
 					TString inputFile3="", TString label3="",
 					TString inputFile4="", TString label4="",
 					const string treename="",
-					TString outputDir=""
+					TString outputDir="",
+					bool logScale=false
 					)
 {
 	
@@ -96,6 +97,8 @@ void compareNtuples(TString inputFile1="", TString label1="",
 		TCanvas c;
 		gStyle->SetOptStat(0);
 		gStyle->SetOptTitle(0);
+
+		if (logScale) gPad->SetLogy();
 		
 		bool badbranch = false;
 		TString bname = branch->GetName();
@@ -107,11 +110,11 @@ void compareNtuples(TString inputFile1="", TString label1="",
 				l.AddEntry(trees[it], names[it], options[it]);
 			}
 
-			if (trees[it]->GetEntries(bname+">-233") != 0) {
+			if (trees[it]->GetEntries(bname+">-3") != 0) {
 				if (it == 0)
-					trees[it]->Draw(bname, bname+">-233");
+					trees[it]->Draw(bname, bname+">-3");
 				else
-					trees[it]->Draw(bname, bname+">-233", "same");
+					trees[it]->Draw(bname, bname+">-3", "same");
 
 				gPad->Update();
 
@@ -139,6 +142,8 @@ void compareNtuples(TString inputFile1="", TString label1="",
 		
 		l.Draw("same");
 
+		if (logScale) bname += "_log";
+		
 		c.SaveAs(outputDir+bname+".png");
 		//c.SaveAs("~ztao/www/"+Region+"/"+bname+"_"+type+".png");
 	}
