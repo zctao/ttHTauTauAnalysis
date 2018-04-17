@@ -235,6 +235,17 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			if (not evt_selector.pass_hlt_paths(anatype, &trig_helper,
 												evNtuple.triggerBits))
 				continue;
+
+			// Match HLT path with number of offline objects
+			int nfakeableEle = 0, nfkaeableMu = 0;
+			for (const auto & lep : leptons) {
+				if (abs(lep.pdgId())==11) nfakeableEle++;
+				if (abs(lep.pdgId())==13) nfkaeableMu++;
+			}
+			if (not evt_selector.pass_hlt_match(anatype, &trig_helper,
+												evNtuple.triggerBits, nfakeableEle,
+												nfkaeableMu))
+				continue;
 		}
 		
 		////////////////////////////////////////

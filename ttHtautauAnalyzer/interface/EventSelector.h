@@ -39,6 +39,7 @@ class EventSelector
 	// member functions
 	void fill_cutflow(TH1*, int ibin, const char*);
 	bool pass_hlt_paths(Analysis_types, TriggerHelper * const, unsigned int);
+	bool pass_hlt_match(Analysis_types, TriggerHelper * const, unsigned int,int,int);
 	//bool pass_extra_event_selection(Analysis_types, Selection_types,
 	//								const std::vector<miniLepton>&,
 	//								const std::vector<miniTau>&);

@@ -54,6 +54,43 @@ bool EventSelector::pass_hlt_paths(Analysis_types anatype,
 	return passhlt;
 }
 
+bool EventSelector::pass_hlt_match(Analysis_types anatype,
+								   TriggerHelper* const trighelper,
+								   unsigned int triggerBits,
+								   int nfakeableEle, int nfakeableMu)
+{
+	bool pass = false;
+
+	bool pass_e = trighelper->pass_single_e_triggers(triggerBits);
+	bool pass_m = trighelper->pass_single_m_triggers(triggerBits);
+	
+	if (anatype == Analyze_1l2tau) {		
+		bool pass_etau = trighelper->pass_etau_triggers(triggerBits);
+		bool pass_mtau = trighelper->pass_mtau_triggers(triggerBits);
+
+		pass = ((pass_e or pass_etau) and nfakeableEle>0) or
+			((pass_m or pass_mtau) and nfakeableMu>0);
+	}
+	else if (anatype == Analyze_2lss1tau) {
+		pass = true;
+		//bool pass_2e = trighelper->pass_2e_triggers(triggerBits);
+		//bool pass_2m = trighelper->pass_2m_triggers(triggerBits);
+		//bool pass_em = trighelper->pass_em_triggers(triggerBits);
+	}
+	else if (anatype == Analyze_3l1tau) {
+		pass = true;
+	}
+
+	if (not pass and verbose_) {
+		std::cout << "FAIL to match the number of offline objects to HLT paths" << std::endl;
+		std::cout << "trigger bits : " << triggerBits << std::endl;
+		std::cout << "nfakeableEle = " << nfakeableEle;
+		std::cout << "nfakeableMu = " << nfakeableMu << std::endl;
+	}
+	
+	return pass;
+}
+
 bool EventSelector::pass_extra_event_selection(
     Analysis_types anatype, Selection_types seltype,
     std::vector<miniLepton> const * const fakeableLeps,
