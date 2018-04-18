@@ -366,6 +366,15 @@ float ttHtautauAnalyzer::getJetCSV(const pat::Jet& jet)
 	return csv;
 }
 
+void ttHtautauAnalyzer::addJetQGLikelihood(std::vector<pat::Jet>& jets,
+										   const edm::ValueMap<float>& QGL_valuemap)
+{
+	for (size_t i=0; i<jets.size(); ++i) {
+		float qgLikelihood = QGL_valuemap.get(i);
+		jets[i].addUserFloat("qgLikelihood", qgLikelihood);
+	}
+}
+
 /////////////////////
 // MHT
 float ttHtautauAnalyzer::getMHT(std::vector<pat::Muon>& muons,

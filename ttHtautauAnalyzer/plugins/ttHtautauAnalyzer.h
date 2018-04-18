@@ -34,6 +34,7 @@
 #include "DataFormats/ParticleFlowCandidate/interface/PFCandidateFwd.h"
 #include "DataFormats/ParticleFlowCandidate/interface/PFCandidate.h"
 #include "DataFormats/Common/interface/TriggerResults.h"
+#include "DataFormats/Common/interface/ValueMap.h"
 #include "DataFormats/L1Trigger/interface/L1EmParticle.h"
 #include "DataFormats/L1Trigger/interface/L1JetParticle.h"
 #include "DataFormats/L1Trigger/interface/L1MuonParticle.h"
@@ -130,11 +131,13 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	std::vector<pat::Jet> getSelectedJets(const std::vector<pat::Jet>&);
 	std::vector<pat::Jet> getCorrectedJets(const std::vector<pat::Jet>&, JetCorrectionUncertainty*, const std::string&);
 	float getJetCSV(const pat::Jet&);
+	void addJetQGLikelihood(std::vector<pat::Jet>&,
+							const edm::ValueMap<float>&);
 	float getMHT(std::vector<pat::Muon>&, std::vector<pat::Electron>&,
 				 std::vector<pat::Tau>&, std::vector<pat::Jet>&);
 	float getMHT(std::vector<miniLepton>&, std::vector<pat::Tau>&,
 				 std::vector<pat::Jet>&);
-
+	
 	const reco::GenParticle* getMatchedGenParticle(const pat::Muon&, const std::vector<reco::GenParticle>&);
 	const reco::GenParticle* getMatchedGenParticle(const pat::Electron&, const std::vector<reco::GenParticle>&);
 	const reco::GenParticle* getMatchedGenParticle(const pat::Tau&, const std::vector<reco::GenParticle>&);
@@ -268,6 +271,7 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	edm::EDGetTokenT<pat::METCollection> mets_token_;
 	edm::EDGetTokenT<reco::GenParticleCollection> genparticle_token_;
 	edm::EDGetTokenT<reco::GenJetCollection> genjets_token_;
+	edm::EDGetTokenT<edm::ValueMap<float>> qg_token_;
 
 	//edm::EDGetTokenT<edm::View<reco::Muon>> badMuons_token_;
 	//edm::EDGetTokenT<edm::View<reco::Muon>> clonedMuons_token_;

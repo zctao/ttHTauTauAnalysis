@@ -497,6 +497,7 @@ void eventNtuple::initialize()
 	jet_E->clear();
 	jet_csv->clear();
 	jet_flavor->clear();
+	jet_qgLikelihood->clear();
 
 	// met
 	//std::cout << "eventNtuple::initialize(): met" << std::endl;
@@ -690,6 +691,7 @@ void eventNtuple::setup_branches(TTree* tree)
 	tree->Branch("jet_E",      &jet_E);
 	tree->Branch("jet_csv",    &jet_csv);
 	tree->Branch("jet_flavor", &jet_flavor);
+	tree->Branch("jet_qgLikelihood", &jet_qgLikelihood);
 
 	tree->Branch("PFMET", &PFMET);
 	tree->Branch("PFMETphi", &PFMETphi);
@@ -880,6 +882,7 @@ void eventNtuple::set_branch_address(TTree* tree)
 	tree->SetBranchAddress("jet_E",      &jet_E);
 	tree->SetBranchAddress("jet_csv",    &jet_csv);
 	tree->SetBranchAddress("jet_flavor", &jet_flavor);
+	tree->SetBranchAddress("jet_qgLikelihood", &jet_qgLikelihood);
 
 	tree->SetBranchAddress("PFMET", &PFMET);
 	tree->SetBranchAddress("PFMETphi", &PFMETphi);

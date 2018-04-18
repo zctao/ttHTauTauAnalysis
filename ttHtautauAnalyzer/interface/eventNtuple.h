@@ -237,6 +237,7 @@ class eventNtuple
 	std::vector<float> *jet_E = 0;
 	std::vector<float> *jet_csv = 0;
 	std::vector<float> *jet_flavor = 0;
+	std::vector<float> *jet_qgLikelihood = 0;
 
 	// met
 	float PFMET = -9999.;

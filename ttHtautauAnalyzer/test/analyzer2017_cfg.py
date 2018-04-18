@@ -133,6 +133,30 @@ updateJetCollection(
     jetCorrections = ('AK4PFchs', JECLevel, 'None')
 )
 
+## Quark-gluon likelihood
+# add the database object
+#qgDatabaseVersion = 'v2b'
+
+#from CondCore.CondDB.CondDB_cfi import *
+#CondDB.connect = cms.string('frontier://FrontierProd/CMS_COND_PAT_000')
+#process.QGPoolDBESSource = cms.ESSource("PoolDBESSource", CondDB,
+#                                toGet = cms.VPSet(),
+#)
+
+#for type in ['AK4PFchs','AK4PFchs_antib']:
+#    process.QGPoolDBESSource.toGet.extend(cms.VPSet(cms.PSet(
+#        record = cms.string('QGLikelihoodRcd'),
+#        tag    = cms.string('QGLikelihoodObject_'+qgDatabaseVersion+'_'+type),
+#        label  = cms.untracked.string('QGL_'+type)
+#    )))
+
+#process.es_prefer_QGL = cms.ESPrefer("PoolDBESSource","QGPoolDBESSource")
+  
+# load QGTagger
+process.load('RecoJets.JetProducers.QGTagger_cfi')
+process.QGTagger.srcJets = cms.InputTag("updatedPatJetsUpdatedJEC")
+process.QGTagger.srcVertexCollection=cms.InputTag("offlineSlimmedPrimaryVertices")
+process.QGTagger.jetsLabel = cms.string('QGL_AK4PFchs')
 
 ### Electron MVA VID-based receipe
 from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
@@ -227,6 +251,7 @@ if options.isData:
         process.rerunMvaIsolationSequence * process.NewTauIDsEmbedded * # *getattr(process, "NewTauIDsEmbedded")
         process.fullPatMetSequence *
         process.ttHLeptons *
+        process.QGTagger *
         process.ttHtaus
     )
 else:
@@ -236,5 +261,6 @@ else:
         process.rerunMvaIsolationSequence * process.NewTauIDsEmbedded * # *getattr(process, "NewTauIDsEmbedded")
         process.fullPatMetSequence *
         process.ttHLeptons *
+        process.QGTagger *
         process.ttHtaus
     )
