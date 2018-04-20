@@ -205,6 +205,21 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorTauDaugsNeutral(bool loo
 	return tauDaugsNeutralP4;
 }
 
+std::vector<miniJet> eventNtuple::buildJets() const
+{
+	std::vector<miniJet> jets;
+
+	for (unsigned int j = 0; j < jet_pt->size(); ++j) {
+		TLorentzVector jp4;
+		jp4.SetPtEtaPhiE(jet_pt->at(j),jet_eta->at(j),jet_phi->at(j),jet_E->at(j));
+		
+		miniJet jet(jp4, jet_csv->at(j), jet_flavor->at(j), jet_qgLikelihood->at(j));
+		jets.push_back(jet);
+	}
+	
+	return jets;
+}
+
 std::vector<TLorentzVector> eventNtuple::buildFourVectorJets() const
 {
 	std::vector<TLorentzVector> jetsP4;
