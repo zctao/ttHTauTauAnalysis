@@ -5,6 +5,7 @@
 *.png
 *tmp*
 #*#
+ttHtautauAnalyzer/python/__init__.py
 
 ttHtautauAnalyzer/test/*.root
 ttHtautauAnalyzer/test/crab/

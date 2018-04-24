@@ -24,10 +24,12 @@ enum Selection_types {
 	Signal_2lss1tau,
 	Signal_1l2tau,
 	Signal_3l1tau,
+	Signal_2l2tau,
 	Control_2los1tau,
 	Control_fake_2lss1tau,
 	Control_fake_1l2tau,
 	Control_fake_3l1tau,
+	Control_fake_2l2tau,
 	Control_WZ,
 	Loose_2lss1tau,  // for training
 	Loose_1l2tau,
@@ -35,6 +37,7 @@ enum Selection_types {
 	Inclusive_1l2tau,
 	Inclusive_2lss1tau,
 	Inclusive_3l1tau,
+	Inclusive_2l2tau,
 	Selection_NA
 };
 

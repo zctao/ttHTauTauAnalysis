@@ -458,6 +458,11 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		    lep_loose, *lep_selected, minitau_loose, jet_selected.size(),
 			n_btags_loose, n_btags_medium, metLD, h_CutFlow_);
 	}
+	else if (anaType_==Analyze_2l2tau) {
+		pass_event_sel = evt_selector_ -> pass_2l2tau_inclusive_selection(
+		    lep_loose, lep_fakeable, minitau_loose, jet_selected.size(),
+			n_btags_loose, n_btags_medium, metLD, h_CutFlow_);
+	}
 
 	if (not (pass_event_sel or event_selection_off_))
 		return;

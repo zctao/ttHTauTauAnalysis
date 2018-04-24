@@ -122,6 +122,25 @@ class EventSelector
 	bool pass_3l_ttZ_CR_selection();
 	bool pass_3l_WZ_CR_selection();
 
+	bool pass_2l2tau_inclusive_selection(const std::vector<miniLepton>&,
+										 const std::vector<miniLepton>&,
+										 const std::vector<miniTau>&,
+										 int, int, int, float, TH1* h_cutflow=0);
+	bool pass_2l2tau_SR_selection(const std::vector<miniLepton>&,
+								  const std::vector<miniTau>&);
+	bool pass_2l2tau_FakeAR_selection(const std::vector<miniLepton>&,
+									  const std::vector<miniTau>&,
+									  const std::vector<miniTau>&);
+	bool pass_2l2tau_CR_selection(const std::vector<miniLepton>&,
+								  const std::vector<miniTau>&);
+	bool pass_2l2tau_FakeARCR_selection(const std::vector<miniLepton>&,
+										const std::vector<miniTau>&,
+										const std::vector<miniTau>&);
+	bool pass_2l2tau_tightID(const std::vector<miniLepton>&,
+							 const std::vector<miniTau>&);
+	bool pass_2l2tau_charge(const std::vector<miniLepton>&,
+							const std::vector<miniTau>&);
+
 	bool pass_pairMass_veto(const std::vector<miniLepton>&);
 	bool pass_Zmass_veto(const std::vector<miniLepton>&, bool, bool);
 	bool pass_metLD_3l(float, const std::vector<miniLepton>&, int);

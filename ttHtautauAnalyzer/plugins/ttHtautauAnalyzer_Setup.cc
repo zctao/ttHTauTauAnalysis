@@ -16,6 +16,12 @@ void ttHtautauAnalyzer::Set_up_AnaType(const std::string& anatype)
 	else if (anatype == "3l1tau") {
 		anaType_ = Analysis_types::Analyze_3l1tau;
 	}
+	else if (anatype == "2l2tau") {
+		anaType_ = Analysis_types::Analyze_2l2tau;
+	}
+	else if (anatype == "NA") {
+		anaType_ = Analysis_types::Analyze_NA;
+	}
 	else {
 		std::cerr << "Not valid analysis type!" << std::endl;
 		assert(0);
@@ -63,6 +69,12 @@ void ttHtautauAnalyzer::Set_up_SelType(const std::string& seltype)
 	}
 	else if (seltype == "inclusive_3l1tau") {
 		selType_ = Selection_types::Inclusive_3l1tau;
+	}
+	else if (seltype == "inclusive_2l2tau") {
+		selType_ = Selection_types::Inclusive_2l2tau;
+	}
+	else if (seltype == "NA") {
+		selType_ = Selection_types::Selection_NA;
 	}
 	else {
 		std::cerr << "Not valid selection region!" << std::endl;

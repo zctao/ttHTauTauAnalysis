@@ -30,7 +30,7 @@ int main(int argc, char** argv)
 	namespace po = boost::program_options;
 
 	string dir, outname;
-	bool makeObjectNtuple, make1l2tau, make2lss1tau, make3l1tau;
+	bool makeObjectNtuple, make1l2tau, make2lss1tau, make3l1tau, make2l2tau;
 	bool debug;
 	
 	po::options_description desc("Options");
@@ -42,6 +42,7 @@ int main(int argc, char** argv)
 		("make1l2tau", po::value<bool>(&make1l2tau)->default_value(false))
 		("make2lss1tau", po::value<bool>(&make2lss1tau)->default_value(false))
 		("make3l1tau", po::value<bool>(&make3l1tau)->default_value(false))
+		("make2l2tau", po::value<bool>(&make2l2tau)->default_value(false))
 		("debug", po::value<bool>(&debug)->default_value(false));
 
 	po::variables_map vm;
@@ -63,6 +64,8 @@ int main(int argc, char** argv)
 	TTree *synctree_2lss1tau_flip = 0;
 	TTree *synctree_3l1tau_sr = 0;
 	TTree *synctree_3l1tau_fake = 0;
+	TTree *synctree_2l2tau_sr = 0;
+	TTree *synctree_2l2tau_fake = 0;
 
 	if (makeObjectNtuple) {
 		cout << "Object ntuple ... " << endl;
@@ -132,13 +135,28 @@ int main(int argc, char** argv)
 		synctree_3l1tau_fake = makeSyncTree(cdir+"output_sync_event_3l1tau_incl.root",
 											"syncTree_3l1tau_Fake",
 											Analyze_3l1tau, Control_fake_3l1tau, debug);
-
 		// event count
 		cout << "3l1tau : " << endl;
 		cout << "SR : " << synctree_3l1tau_sr->GetEntries() << endl;
 		cout << "Fake : " << synctree_3l1tau_fake->GetEntries() << endl;
 	}
 
+	if (make2l2tau) {
+		cout << "2l2tau signal region ... " << endl;
+		synctree_2l2tau_sr = makeSyncTree(cdir+"output_sync_event_2l2tau_incl.root",
+										  "syncTree_2l2tau_SR",
+										  Analyze_2l2tau, Signal_2l2tau, debug);
+
+		cout << "2l2tau fake extrapolation region ... " << endl;
+		synctree_2l2tau_fake = makeSyncTree(cdir+"output_sync_event_2l2tau_incl.root",
+											"syncTree_2l2tau_Fake",
+											Analyze_2l2tau, Control_fake_2l2tau, debug);
+		// event count
+		cout << "2l2tau : " << endl;
+		cout << "SR : " << synctree_2l2tau_sr->GetEntries() << endl;
+		cout << "Fake : " << synctree_2l2tau_fake->GetEntries() << endl;
+	}
+	
 	// create output file
 	TFile* fileout = new TFile(outname.c_str(), "recreate");
 
@@ -157,6 +175,10 @@ int main(int argc, char** argv)
 	if (make3l1tau) {
 		synctree_3l1tau_sr->Write();
 		synctree_3l1tau_fake->Write();
+	}
+	if (make2l2tau) {
+		synctree_2l2tau_sr->Write();
+		synctree_2l2tau_fake->Write();
 	}
 	
 	fileout->Close();
@@ -213,7 +235,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		// reconstruct objects
 	    auto leptons = evNtuple.buildLeptons();  // fakeable
 		auto taus_tight = evNtuple.buildTaus(); // tight taus
-		// fakeable taus for 1l2tau fake AR
+		// fakeable taus for 1l2tau and 2l2tau fake AR
 	    auto taus_fakeable = evNtuple.buildTaus(true);
 
 		if (debug) {
@@ -250,7 +272,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		
 		////////////////////////////////////////
 		std::vector<miniTau> * taus = &taus_tight;
-		if (seltype==Control_fake_1l2tau)
+		if (seltype==Control_fake_1l2tau or seltype==Control_fake_2l2tau)
 			taus = &taus_fakeable;
 		
 		syncntuple.initialize();
@@ -476,15 +498,16 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		}
 
 		// mva variables
+		auto jets = evNtuple.buildJets();
 		auto jetsp4 = evNtuple.buildFourVectorJets();
 		auto btagsp4 = evNtuple.buildFourVectorBtagJets();
 
 		assert(leptons.size()>0 and taus->size()>0);
 		
-		mvantuple.compute_variables(leptons, *taus, jetsp4, syncntuple.PFMET,
-									syncntuple.PFMETphi, syncntuple.MHT,
-									evNtuple.n_btag_loose, evNtuple.n_btag_medium,
-									btagsp4);
+		mvantuple.compute_mva_variables(leptons, *taus, jetsp4, syncntuple.PFMET,
+										syncntuple.PFMETphi, syncntuple.MHT,
+										evNtuple.n_btag_loose,evNtuple.n_btag_medium,
+										btagsp4);
 
 		if (anatype==Analyze_1l2tau) {
 			assert(taus->size()>1);
@@ -505,6 +528,9 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			//mvantuple.tau1_pt;
 			syncntuple.dR_lep_tau_ss = mvantuple.dr_lep_tau_ss;
 			syncntuple.cosThetaS_hadTau = mvantuple.costS_tau;
+			//mvantuple.compute_HTT(jets);
+			//syncntuple.HTT = mvantuple.HTT;
+			//syncntuple.HadTop_pt = mvantuple.HadTop_pt;
 		}
 
 		if (anatype==Analyze_2lss1tau) {
@@ -529,10 +555,11 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			//mvantuple.nJet;
 			//mvantuple.met;
 			//mvantuple.tau0_pt;
-			
-			// HTT
+
+			//mvantuple.compute_HTT(jets);
+			//syncntuple.HTT = mvantuple.HTT;
+			//syncntuple.HadTop_pt = mvantuple.HadTop_pt;
 			// Hj_tagger
-			// HadTop_pt
 			// memOutput_LR
 		}
 
@@ -555,18 +582,30 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			syncntuple.avg_dr_jet = mvantuple.avg_dr_jet;
 			syncntuple.mindr_tau1_jet = mvantuple.mindr_tau0_jet;
 			syncntuple.mbb_loose = mvantuple.mbb;
-			syncntuple.lep1_conept = mvantuple.lep1_conept;
-			syncntuple.lep2_conept = mvantuple.lep2_conept;
-			syncntuple.lep3_conept = mvantuple.lep3_conept;
+			syncntuple.lep1_conept = mvantuple.lep0_conept;
+			syncntuple.lep2_conept = mvantuple.lep1_conept;
+			syncntuple.lep3_conept = mvantuple.lep2_conept;
 			//mvantuple.nJet;
 		}
 
 		if (anatype==Analyze_2l2tau) {
-			//syncntuple.avg_dr_lep_tau = mvantuple.compute_average_dr(lepsp4,tausp4);
-			//syncntuple.max_dr_lep_tau = mvantuple.compute_max_dr(lepsp4,tausp4);
-			//syncntuple.mindr_tau_jet = mvantuple.compute_min_dr(tausp4,jets);
-			//syncntuple.min_dr_lep_tau = mvantuple.compute_min_dr(lepsp4,tausp4);
-			//syncntuple.min_dr_lep_jet = mvantuple.compute_min_dr(lepsp4,jets);
+			assert(taus->size()>1 and leptons.size()>1);
+			syncntuple.mTauTauVis = mvantuple.mTauTauVis;
+			syncntuple.cosThetaS_hadTau = mvantuple.costS_tau;
+			syncntuple.min_dr_lep_jet = mvantuple.min_dr_lep_jet;
+			syncntuple.mindr_tau_jet = mvantuple.mindr_tau_jet;
+			syncntuple.mT_lep1 = mvantuple.mT_met_lep0;
+			syncntuple.mT_lep2 = mvantuple.mT_met_lep1;	
+			syncntuple.mindr_lep1_jet = mvantuple.mindr_lep0_jet;
+			syncntuple.max_dr_lep_tau = mvantuple.max_dr_lep_tau;
+			syncntuple.nBJetLoose = mvantuple.nbtags_loose;
+			syncntuple.dr_taus = mvantuple.dr_taus;
+			syncntuple.avg_dr_jet = mvantuple.avg_dr_jet;
+			syncntuple.lep1_conept = mvantuple.lep0_conept;
+			syncntuple.lep2_conept = mvantuple.lep1_conept;
+			syncntuple.min_dr_lep_tau = mvantuple.min_dr_lep_tau;
+			syncntuple.mindr_tau1_jet = mvantuple.mindr_tau0_jet;
+			syncntuple.avg_dr_lep_tau = mvantuple.avg_dr_lep_tau;
 		}
 		
 		//syncntuple.HTT;
@@ -582,7 +621,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 
 		// FR_weight
 		if (seltype==Control_fake_1l2tau or seltype==Control_fake_2lss1tau or
-			seltype==Control_fake_3l1tau)
+			seltype==Control_fake_3l1tau or seltype==Control_fake_2l2tau)
 			syncntuple.FR_weight = sf_helper.Get_FR_weight(leptons,*taus);
 		else if (seltype==Control_2los1tau)
 			syncntuple.FR_weight =

@@ -243,9 +243,9 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("avg_dr_jet", &avg_dr_jet);
 			tree->Branch("mindr_tau_jet", &mindr_tau0_jet);
 			tree->Branch("mbb_loose", &mbb);
-			tree->Branch("lep1_conePt", &lep1_conept);
-			tree->Branch("lep2_conePt", &lep2_conept);
-			tree->Branch("lep3_conePt", &lep3_conept);
+			tree->Branch("lep1_conePt", &lep0_conept);
+			tree->Branch("lep2_conePt", &lep1_conept);
+			tree->Branch("lep3_conePt", &lep2_conept);
 			tree->Branch("mindr_lep3_jet", &mindr_lep2_jet);
 			tree->Branch("nJet", &nJet);
 		}
@@ -278,7 +278,6 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("min_dr_lep_tau", &min_dr_lep_tau);
 			tree->Branch("mindr_tau1_jet", &mindr_tau0_jet);
 			tree->Branch("avg_dr_lep_tau", &avg_dr_lep_tau);
-			tree->Branch("nBJetLoose", &nbtags_loose);
 		}
 		else {
 			std::cout << "WARNING: Version " << version_
@@ -288,25 +287,25 @@ void mvaNtuple::setup_branches(TTree* tree)
 	}
 }
 
-void mvaNtuple::compute_variables(const std::vector<miniLepton>& leptons,
-								  const std::vector<miniTau>& taus,
-								  const std::vector<TLorentzVector>& jets,
-								  float MET, float METphi, float MHT,
-								  int nbtagsloose, int nbtagsmedium)
+void mvaNtuple::compute_mva_variables(const std::vector<miniLepton>& leptons,
+									  const std::vector<miniTau>& taus,
+									  const std::vector<TLorentzVector>& jets,
+									  float MET, float METphi, float MHT,
+									  int nbtagsloose, int nbtagsmedium)
 {
 	assert(version_=="2016");
 	std::vector<TLorentzVector> dummy;
-	compute_variables(leptons, taus, jets, MET, METphi, MHT, nbtagsloose,
-					  nbtagsmedium, dummy);
+	compute_mva_variables(leptons, taus, jets, MET, METphi, MHT, nbtagsloose,
+						  nbtagsmedium, dummy);
 }
 	
 
-void mvaNtuple::compute_variables(const std::vector<miniLepton>& leptons,
-								  const std::vector<miniTau>& taus,
-								  const std::vector<TLorentzVector>& jets,
-								  float MET, float METphi, float MHT,
-								  int nbtagsloose, int nbtagsmedium,
-								  const std::vector<TLorentzVector>& bjets)
+void mvaNtuple::compute_mva_variables(const std::vector<miniLepton>& leptons,
+									  const std::vector<miniTau>& taus,
+									  const std::vector<TLorentzVector>& jets,
+									  float MET, float METphi, float MHT,
+									  int nbtagsloose, int nbtagsmedium,
+									  const std::vector<TLorentzVector>& bjets)
 {
 	// common variables in all categories
 	nJet = jets.size();
@@ -445,10 +444,40 @@ void mvaNtuple::compute_variables(const std::vector<miniLepton>& leptons,
 			mT_met_lep1 = compute_mT_lep(leptons[1], MET, METphi);
 			mindr_tau0_jet = compute_min_dr(taus[0].p4(),jets);;
 			mbb = (nbtagsloose>1) ? (bjets[0]+bjets[1]).M() : -1.;
-			lep1_conept = leptons[0].conept();
-			lep2_conept = leptons[1].conept();
-			lep3_conept = leptons[2].conept();
+			lep0_conept = leptons[0].conept();
+			lep1_conept = leptons[1].conept();
+			lep2_conept = leptons[2].conept();
 			mindr_lep2_jet = compute_min_dr(leptons[2].p4(),jets);
+		}
+		break;
+	case Analyze_2l2tau:
+		assert(taus.size()>1);
+		assert(leptons.size()>1);
+		if (version_=="2017") {
+			mTauTauVis = (taus[0].p4()+taus[1].p4()).M();
+			costS_tau = compute_cosThetaS(taus[0].p4());
+			is_OS = (taus[0].charge() * taus[1].charge() < 0);  // double check this
+			min_dr_lep_jet = std::min(compute_min_dr(leptons[0].p4(),jets),
+									  compute_min_dr(leptons[1].p4(),jets));
+			mindr_tau_jet = std::min(compute_min_dr(taus[0].p4(),jets),
+									 compute_min_dr(taus[1].p4(),jets));
+			mT_met_lep0 = compute_mT_lep(leptons[0], MET, METphi);
+			mT_met_lep1 = compute_mT_lep(leptons[1], MET, METphi);
+			mindr_lep0_jet = compute_min_dr(leptons[0].p4(),jets);
+			tau0_pt = taus[0].pt();
+			tau1_pt = taus[1].pt();
+			tau1_eta = taus[1].eta();
+			max_dr_lep_tau = compute_max_dr({leptons[0].p4(),leptons[1].p4()},
+											{taus[0].p4(),taus[1].p4()});
+			nbtags_loose = nbtagsloose;
+			dr_taus = taus[0].p4().DeltaR(taus[1].p4());
+			lep0_conept = leptons[0].conept();
+			lep1_conept = leptons[1].conept();
+			min_dr_lep_tau = compute_min_dr({leptons[0].p4(),leptons[1].p4()},
+											{taus[0].p4(),taus[1].p4()});
+			mindr_tau0_jet = compute_min_dr(taus[0].p4(),jets);
+			avg_dr_lep_tau = compute_average_dr({leptons[0].p4(),leptons[1].p4()},
+												{taus[0].p4(),taus[1].p4()});
 		}
 		break;
 	default:
@@ -729,6 +758,52 @@ float mvaNtuple::compute_cosPsi(const TLorentzVector& p1, const TLorentzVector& 
 float mvaNtuple::lam(float a, float b, float c)
 {
 	return a*a + b*b + c*c - 2*a*b - 2*b*c - 2*a*c;
+}
+
+void mvaNtuple::compute_HTT_input_variables(const miniJet& bjet,
+											const miniJet& wjet1,
+											const miniJet& wjet2)
+{
+	assert(doHTT_);
+	
+	CSV_b = bjet.csv();
+	qg_Wj2 = wjet2.qgLikelihood();
+	pT_bWj1Wj2 = (bjet.p4()+wjet1.p4()+wjet2.p4()).Pt();
+	pT_Wj2 = wjet2.pt();
+	m_Wj1Wj2 = (wjet1.p4()+wjet2.p4()).M();
+
+	kinFit_->fit(bjet.p4(), wjet1.p4(), wjet2.p4());
+	nllKinFit = kinFit_->nll();
+	pT_b_o_kinFit_pT_b = (bjet.pt()) / (kinFit_->fittedBJet().Pt());
+}
+
+void mvaNtuple::compute_HTT(const std::vector<miniJet>& jets)
+{
+	assert(doHTT_);
+	
+	HTT = -9999.;
+	HadTop_pt = -9999.;
+	
+	for (auto bjet = jets.begin(); bjet != jets.end(); ++bjet) {
+		for (auto wjet1 = jets.begin(); wjet1 != jets.end(); ++wjet1) {
+			if (wjet1 == bjet) continue;
+			for (auto wjet2 = wjet1+1; wjet2 != jets.end(); ++wjet2) {
+				if (wjet2 == bjet) continue;
+				if (wjet2 == wjet1) continue;
+
+				compute_HTT_input_variables(*bjet, *wjet1, *wjet2);
+
+				float vars[7] = {CSV_b, qg_Wj2, pT_bWj1Wj2, pT_Wj2, m_Wj1Wj2,
+								 nllKinFit, pT_b_o_kinFit_pT_b};
+				
+				float htt = mva_eval_->evaluate_bdt_HTT(vars);
+				if (htt > HTT) {
+					HTT = htt;
+					HadTop_pt = (bjet->p4() + wjet1->p4() + wjet2->p4()).Pt();
+				}
+			}
+		}
+	}
 }
 
 #endif

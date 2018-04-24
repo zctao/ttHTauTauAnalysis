@@ -13,32 +13,52 @@
 
 #include "miniLepton.h"
 #include "miniTau.h"
+#include "miniJet.h"
 #include "Types_enum.h"
+#include "MVAEvaluator.h"
+
+#include "HadTop/HTT_kinfit/interface/HadTopKinFit.h"
 
 class mvaNtuple
 {
  public:
 
     mvaNtuple(Analysis_types anaType, bool doSystematics,
-			  const std::string& version="2017") :
-	anatype_(anaType),dosystematics_(doSystematics),
-		version_(version){};
+			  const std::string& version="2017", bool doHTT=false, bool eval=false) {
+		anatype_ = anaType;
+		dosystematics_ = doSystematics;
+		version_ = version;
+		doHTT_ = doHTT;
+		evalMVA_ = eval;
+		
+		if (doHTT) {
+			const std::string tf_fileName = std::string(getenv("CMSSW_BASE")) +
+				"/src/HadTop/HTT_kinfit/data/TF_jets.root";
+			kinFit_ = new HadTopKinFit(1, tf_fileName);
+		}
+
+		if (doHTT_ or evalMVA_) {
+			mva_eval_ = new MVAEvaluator();
+		}
+	}
 	
 	~mvaNtuple(){};
 
 	//void set_branch_address(TTree*);
 	void setup_branches(TTree*);
-	void compute_variables(const std::vector<miniLepton>&,
-						   const std::vector<miniTau>&,
-						   const std::vector<TLorentzVector>&,
-						   float, float, float, int, int);
-	void compute_variables(const std::vector<miniLepton>&,
-						   const std::vector<miniTau>&,
-						   const std::vector<TLorentzVector>&,
-						   float, float, float, int, int,
-						   const std::vector<TLorentzVector>&);
-
+	void compute_mva_variables(const std::vector<miniLepton>&,
+							   const std::vector<miniTau>&,
+							   const std::vector<TLorentzVector>&,
+							   float, float, float, int, int);
+	void compute_mva_variables(const std::vector<miniLepton>&,
+							   const std::vector<miniTau>&,
+							   const std::vector<TLorentzVector>&,
+							   float, float, float, int, int,
+							   const std::vector<TLorentzVector>&);
 	void compute_tauDecay_variables(const std::vector<miniTau>&, bool test=false);
+	void compute_HTT_input_variables(const miniJet&, const miniJet&, const miniJet&);
+	void compute_HTT(const std::vector<miniJet>&);
+	
 	float compute_average_dr(const std::vector<TLorentzVector>&);
 	float compute_average_dr(const std::vector<TLorentzVector>&,
 							 const std::vector<TLorentzVector>&);
@@ -82,7 +102,6 @@ class mvaNtuple
 	float lep0_conept;
 	float lep1_conept;
 	float lep2_conept;
-	float lep3_conept;
 	float costS_tau;
 	float dr_leps;
 	float tau0_pt;
@@ -220,12 +239,29 @@ class mvaNtuple
 	double pm2_pm2;
 	double pm2_pm3;
 	double pm3_pm3;
+
+	// HTT and input variables
+	float HTT;
+	float HadTop_pt;
+	
+	float CSV_b;
+	float qg_Wj2;
+	float pT_bWj1Wj2;
+	float pT_Wj2;
+	float m_Wj1Wj2;
+	float nllKinFit;
+	float pT_b_o_kinFit_pT_b;
 	
  protected:
 
 	Analysis_types anatype_;
 	bool dosystematics_;
 	std::string version_;
+
+	bool doHTT_;
+	bool evalMVA_;
+	HadTopKinFit *kinFit_;
+	MVAEvaluator *mva_eval_;
 
 	float lam(float, float, float);
 };

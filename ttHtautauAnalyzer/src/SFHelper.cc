@@ -9,7 +9,8 @@ SFHelper::SFHelper(Analysis_types analysis, Selection_types selection,
 	_isdata = isdata;
 	_debug = debug;
 
-	TString tauIDWP = (analysis==Analyze_1l2tau)?"dR03mvaTight":"dR03mvaMedium";
+	TString tauIDWP = (analysis==Analyze_1l2tau or analysis==Analyze_2l2tau) ?
+		"dR03mvaTight" : "dR03mvaMedium";
 	
 	if (not _isdata) {
 		Set_up_TauSF_Lut(tauIDWP);
@@ -23,7 +24,7 @@ SFHelper::SFHelper(Analysis_types analysis, Selection_types selection,
 	}
 
 	if (_selection == Control_fake_2lss1tau or _selection == Control_fake_1l2tau
-		or _selection == Control_fake_3l1tau) {
+		or _selection == Control_fake_3l1tau or _selection == Control_fake_2l2tau) {
 		Set_up_FakeRate_Lut(tauIDWP);
 	}
 
@@ -374,7 +375,8 @@ float SFHelper::Get_HLTSF(const std::vector<miniLepton>& leptons,
 		return Get_HLTSF_3l1tau();
 	}
 	else {
-		std::cout << "WARNING! analysis type not supported." << std::endl;
+		std::cout << "SFHelper::Get_HLTSF() : WARNING! analysis type not supported."
+				  << std::endl;
 		return 1.;
 	}
 }
@@ -1111,8 +1113,8 @@ float SFHelper::Get_FR_weight(const std::vector<miniLepton>& leps,
 							  const std::vector<miniTau>& taus,
 							  TString syst)
 {
-	float F1, F2, F3 = -1.;
-	float f1, f2, f3 = 0.;
+	float F1=-1., F2=-1., F3=-1.,F4=-1.;
+	float f1=0., f2=0., f3=0., f4=0.;
 	float FR_weight = 0.;
 	
 	if (_selection==Control_fake_1l2tau) {
@@ -1187,9 +1189,41 @@ float SFHelper::Get_FR_weight(const std::vector<miniLepton>& leps,
 			std::cout << "f3 F3 : " << f3 << " " << F3 << std::endl;
 		}
 
-	    FR_weight = F1 * F2 * F3;
+		FR_weight = F1 * F2 * F3;
 		if (_debug) std::cout << "FR_weight : " << F1 * F2 * F3 << std::endl;
 	}
+	else if (_selection==Control_fake_2l2tau) {
+		assert(leps.size() >= 2);
+		assert(taus.size() >= 2);
+		
+		f1 = Get_FakeRate_lep(leps[0], syst);
+		f2 = Get_FakeRate_lep(leps[1], syst);
+		f3 = Get_FakeRate_tau(taus[0].pt(), taus[0].eta(), syst);
+		f4 = Get_FakeRate_tau(taus[1].pt(), taus[1].eta(), syst);
+		
+		F1 = leps[0].passTightSel() ? -1. : f1/(1.-f1);
+		F2 = leps[1].passTightSel() ? -1. : f2/(1.-f2);
+		F3 = taus[0].passTightSel() ? -1. : f3/(1.-f3);
+		F4 = taus[1].passTightSel() ? -1. : f4/(1.-f4);
+		
+		if (_debug) {
+			std::cout << "lep0 pdgid passTight? : " << leps[0].pdgId() << " "
+					  << leps[0].passTightSel() << std::endl;
+			std::cout << "f1 F1 : " << f1 << " " << F1 << std::endl;
+			std::cout << "lep1 pdgid passTight? : " << leps[1].pdgId() << " "
+					  << leps[1].passTightSel() << std::endl;
+			std::cout << "f2 F2 : " << f2 << " " << F2 << std::endl;
+			std::cout << "tau0 passTight? : " << taus[0].passTightSel()
+					  << std::endl;
+			std::cout << "f3 F3 : " << f3 << " " << F3 << std::endl;
+			std::cout << "tau1 passTight? : " << taus[1].passTightSel()
+					  << std::endl;
+			std::cout << "f4 F4 : " << f4 << " " << F4 << std::endl;
+		}
+
+		FR_weight = -1 * F1 * F2 * F3 * F4;
+		if (_debug) std::cout << "FR_weight : " << (-1*F1*F2*F3*F4) << std::endl;
+	}	
 
 	return FR_weight;
 }
