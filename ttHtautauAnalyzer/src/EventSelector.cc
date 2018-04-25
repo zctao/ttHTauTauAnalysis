@@ -736,10 +736,24 @@ bool EventSelector::pass_2lss1tau_FakeAR_selection(
 		return false;
 	
 	assert(fakeableLeps.size()>1 and selectedTaus.size()>0);
-	
-	return ( pass_2lss1tau_2lss(fakeableLeps) and
-			 pass_2lss1tau_taucharge(selectedTaus[0], fakeableLeps[0]) and
-			 not pass_2lss1tau_tightLepID(fakeableLeps) );
+
+	if (not pass_2lss1tau_2lss(fakeableLeps)) {
+		if (verbose_) std::cout << "FAIL lepton same sign requirement" << std::endl;
+		return false;
+	}
+
+	if (not pass_2lss1tau_taucharge(selectedTaus[0], fakeableLeps[0])) {
+		if (verbose_) std::cout << "FAIL tau charge requirement" << std::endl;
+		return false;
+	}
+
+	if (pass_2lss1tau_tightLepID(fakeableLeps)) {
+		if (verbose_) std::cout << "FAIL lepton ID requirement" << std::endl;
+		return false;
+	}
+
+	if (verbose_) std::cout << "PASSED 2lss1tau Fake AR selection!" << std::endl;
+	return true;
 }
 
 bool EventSelector::pass_2lss1tau_FlipAR_selection(
@@ -1068,11 +1082,23 @@ bool EventSelector::pass_3l1tau_FakeAR_selection(
 {
 	assert(not looseselection_);
 	
-	if (not pass_3l1tau_tauNumber(selectedTaus))
+	if (not pass_3l1tau_tauNumber(selectedTaus)) {
+		if (verbose_) std::cout << "FAIL tau number requirement" << std::endl;
 		return false;
-	
-	return ( not pass_3l1tau_tightID(fakeableLeps) and
-			 pass_3l1tau_charge(fakeableLeps, selectedTaus));
+	}
+
+	if (pass_3l1tau_tightID(fakeableLeps)) {
+		if (verbose_) std::cout << "FAIL lepton ID requirement" << std::endl;
+		return false;
+	}
+
+	if (not pass_3l1tau_charge(fakeableLeps, selectedTaus)) {
+		if (verbose_) std::cout << "FAIL charge sum" << std::endl;
+		return false;
+	}
+
+	if (verbose_) std::cout << "PASSED 2l2tau Fake AR selection!" << std::endl;
+	return true;
 }
 
 bool EventSelector::pass_3l1tau_CR_selection(
@@ -1335,8 +1361,15 @@ bool EventSelector::pass_2l2tau_FakeAR_selection(
 	const std::vector<miniTau>& fakeableTaus)
 {
 	assert(not looseselection_);
-	if (pass_2l2tau_tightID(fakeableLeps, tightTaus)) return false;
-	if (not pass_2l2tau_charge(fakeableLeps, fakeableTaus)) return false;
+	if (pass_2l2tau_tightID(fakeableLeps, tightTaus)) {
+		if (verbose_) std::cout << "FAIL lepton and tau ID requirement" << std::endl;
+		return false;
+	}
+	
+	if (not pass_2l2tau_charge(fakeableLeps, fakeableTaus)) {
+		if (verbose_) std::cout << "FAIL charge sum requirement" << std::endl;
+		return false;
+	}
 
 	if (verbose_) std::cout << "PASSED 2l2tau Fake AR selection!" << std::endl;
 	return true;
