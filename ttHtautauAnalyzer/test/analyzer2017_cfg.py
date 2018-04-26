@@ -135,22 +135,23 @@ updateJetCollection(
 
 ## Quark-gluon likelihood
 # add the database object
-#qgDatabaseVersion = 'v2b'
+qgDatabaseVersion = 'cmssw8020_v2'
 
-#from CondCore.CondDB.CondDB_cfi import *
+from CondCore.CondDB.CondDB_cfi import *
 #CondDB.connect = cms.string('frontier://FrontierProd/CMS_COND_PAT_000')
-#process.QGPoolDBESSource = cms.ESSource("PoolDBESSource", CondDB,
-#                                toGet = cms.VPSet(),
-#)
+CondDB.connect = cms.string('sqlite:../data/qg/QGL_'+qgDatabaseVersion+'.db')
+process.QGPoolDBESSource = cms.ESSource("PoolDBESSource", CondDB,
+                                toGet = cms.VPSet(),
+)
 
-#for type in ['AK4PFchs','AK4PFchs_antib']:
-#    process.QGPoolDBESSource.toGet.extend(cms.VPSet(cms.PSet(
-#        record = cms.string('QGLikelihoodRcd'),
-#        tag    = cms.string('QGLikelihoodObject_'+qgDatabaseVersion+'_'+type),
-#        label  = cms.untracked.string('QGL_'+type)
-#    )))
+for type in ['AK4PFchs','AK4PFchs_antib']:
+    process.QGPoolDBESSource.toGet.extend(cms.VPSet(cms.PSet(
+        record = cms.string('QGLikelihoodRcd'),
+        tag    = cms.string('QGLikelihoodObject_'+qgDatabaseVersion+'_'+type),
+        label  = cms.untracked.string('QGL_'+type)
+    )))
 
-#process.es_prefer_QGL = cms.ESPrefer("PoolDBESSource","QGPoolDBESSource")
+process.es_prefer_QGL = cms.ESPrefer("PoolDBESSource","QGPoolDBESSource")
   
 # load QGTagger
 process.load('RecoJets.JetProducers.QGTagger_cfi')

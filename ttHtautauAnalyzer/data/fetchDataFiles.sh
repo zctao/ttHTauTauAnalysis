@@ -29,6 +29,8 @@ cp /afs/cern.ch/work/t/tstreble/public/triggerSF_weights/trigger_sf_*.root trigg
 
 ### pile up
 
+wget https://raw.githubusercontent.com/cms-jet/QGLDatabase/master/SQLiteFiles/QGL_cmssw8020_v2.db
+
 ### event BDT weights
 if [ ! -d "evtMVAWeights" ]; then
 	mkdir evtMVAWeights
@@ -39,7 +41,7 @@ cd evtMVAWeights
 if [ ! -d "1l2tau" ]; then
 	mkdir 1l2tau
 fi
-wget hwget https://raw.githubusercontent.com/cms-ttH/ttH-TauRoast/master/data/bdt.vvt/sklearn_tt.xml -O 1l2tau/sklearn_tt.xml
+wget https://raw.githubusercontent.com/cms-ttH/ttH-TauRoast/master/data/bdt.vvt/sklearn_tt.xml -O 1l2tau/sklearn_tt.xml
 wget https://raw.githubusercontent.com/cms-ttH/ttH-TauRoast/master/data/bdt.vvt/sklearn_ttZ.xml -O 1l2tau/sklearn_ttZ.xml
 
 # 2lss1tau
