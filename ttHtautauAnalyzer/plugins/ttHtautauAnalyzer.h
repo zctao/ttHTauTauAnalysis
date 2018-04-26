@@ -74,7 +74,7 @@
 /// event ntuple
 #include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/eventNtuple.h"
 /// scale helper
-#include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/SFHelper.h"
+//#include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/SFHelper.h"
 /// trigger helper
 #include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/TriggerHelper.h"
 /// event selector
@@ -174,6 +174,7 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	void fill_CutFlow(int, const char*);
 
 	// Write ntuple
+	/*
 	void write_ntuple_bTagSF(const std::vector<pat::Jet>&);
 	void write_ntuple_leptonSF(const std::vector<miniLepton>&);
 	void write_ntuple_tauSF(const std::vector<pat::Tau>&);
@@ -187,6 +188,7 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 							   const std::vector<pat::Tau>&);
 	void write_ntuple_frweight(const std::vector<miniLepton>&,
 							   const std::vector<miniTau>&);
+	*/
 	void write_ntuple_muons(const std::vector<pat::Muon>&);
 	void write_ntuple_electrons(const std::vector<pat::Electron>&);
 	void write_ntuple_taus(const std::vector<pat::Tau>&);
@@ -251,7 +253,7 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	eventNtuple evNtuple_;
 	
 	// helper class
-	SFHelper* sf_helper_;
+	//SFHelper* sf_helper_;
 	
 	// tokens
 	edm::EDGetTokenT<GenEventInfoProduct> geninfo_token_;

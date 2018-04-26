@@ -97,7 +97,7 @@ ttHtautauAnalyzer::ttHtautauAnalyzer(const edm::ParameterSet& iConfig):
 	// trees
 	Set_up_tree();
 	// scale factor helper
-	sf_helper_ = new SFHelper(anaType_, selType_, isdata_); // TODO
+	//sf_helper_ = new SFHelper(anaType_, selType_, isdata_);
 	// event selection
 	//evt_selector_ = new EventSelector(anaType_, selType_, debug_);
 	evt_selector_ = new EventSelector(debug_, not isdata_);
@@ -111,7 +111,7 @@ ttHtautauAnalyzer::~ttHtautauAnalyzer()
 	// (e.g. close files, deallocate resources etc.)
 
 	delete trig_helper_;
-	delete sf_helper_;
+	//delete sf_helper_;
 	delete evt_selector_;
 }
 
@@ -181,7 +181,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	// Pile up
 	float npuTrue = -9999.;
 	float npuInTime = -9999.;
-	float pu_weight = -9999.;
+	//float pu_weight = -9999.;
 	if (not isdata_) {
 		std::vector<PileupSummaryInfo>::const_iterator PVI;
 		for (PVI = PU_info->begin(); PVI != PU_info->end(); ++PVI){
@@ -197,7 +197,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		h_npuInTime_->Fill(npuInTime);
 		
 		// pileup weight
-	    pu_weight = sf_helper_->Get_PUWeight(npuTrue);
+	    //pu_weight = sf_helper_->Get_PUWeight(npuTrue);
 	}
 
 	/////////////////////////////////////////
@@ -233,7 +233,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	// event counts before cuts
 	if (not isdata_) {
 		h_SumGenWeight_->Fill(1, mc_weight);
-		h_SumGenWeightxPU_->Fill(1, mc_weight * pu_weight);
+		//h_SumGenWeightxPU_->Fill(1, mc_weight * pu_weight);
 	}
 	
 	/////////////////////////////////////////	
@@ -437,11 +437,11 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	/////////////////////////////////////////
 
 	bool pass_event_sel = false;
+
+	std::vector<miniLepton> *lep_selected =
+			looseSelection_ ? &lep_loose : &lep_fakeable;
 	
 	if (anaType_==Analyze_2lss1tau) {
-		std::vector<miniLepton> *lep_selected =
-			looseSelection_ ? &lep_loose : &lep_fakeable;
-		
 		pass_event_sel = evt_selector_ -> pass_2l1tau_inclusive_selection(
 		    lep_loose, *lep_selected, lep_tight, minitau_loose,
 			jet_selected.size(), n_btags_loose, n_btags_medium, metLD, h_CutFlow_);
@@ -452,8 +452,6 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 			jet_selected.size(), n_btags_loose, n_btags_medium, h_CutFlow_);
 	}
 	else if (anaType_==Analyze_3l1tau) {
-		std::vector<miniLepton> *lep_selected =
-			looseSelection_ ? &lep_loose : &lep_fakeable;
 		pass_event_sel = evt_selector_ -> pass_3l1tau_inclusive_selection(
 		    lep_loose, *lep_selected, minitau_loose, jet_selected.size(),
 			n_btags_loose, n_btags_medium, metLD, h_CutFlow_);
@@ -563,7 +561,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	
 	/// event weights
 	if (not isdata_) {
-		evNtuple_.PU_weight = pu_weight;
+		//evNtuple_.PU_weight = pu_weight;
 		evNtuple_.MC_weight = mc_weight;
 		evNtuple_.MC_weight_scale_muF0p5 = mc_weight_scale_muF0p5;
 		evNtuple_.MC_weight_scale_muF2 = mc_weight_scale_muF2;
