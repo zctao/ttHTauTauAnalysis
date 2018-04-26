@@ -12,7 +12,7 @@
 class miniJet {
  public:
 	// constructors and destructors	
-	miniJet(const TLorentzVector&, float, float, float);
+	miniJet(const TLorentzVector&, float, float, float qgLikelihood=-999.);
 	
 	~miniJet(){};
 	

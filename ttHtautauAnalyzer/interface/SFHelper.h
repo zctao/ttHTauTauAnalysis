@@ -7,10 +7,11 @@
 #include "CondFormats/BTauObjects/interface/BTagCalibration.h"
 #include "CondTools/BTau/interface/BTagCalibrationReader.h"
 #endif
-#include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/miniLepton.h"
-#include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/miniTau.h"
+#include "miniLepton.h"
+#include "miniTau.h"
+#include "miniJet.h"
 
-#include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/Types_enum.h"
+#include "Types_enum.h"
 // Root
 #include "TFile.h"
 #include "TH1.h"
@@ -66,11 +67,11 @@ class SFHelper
 
 #if !defined(__ACLIC__) && !defined(__ROOTCLING__)
 	float Get_EvtCSVWeight(const std::vector<pat::Jet> &, const std::string &);
-	float Get_JetCSVWeight(const pat::Jet&, std::string);
-	
 	float Get_ChargeFlipWeight(const std::vector<miniLepton>&,
 							   const std::vector<pat::Tau>&);
 #endif
+	float Get_EvtCSVWeight(const std::vector<miniJet>&, const std::string&);
+	float Get_JetCSVWeight(const miniJet&, std::string);
 	
 	float Get_ChargeFlipWeight(const std::vector<miniLepton>&, int);
 	float Get_EleChargeMisIDProb(float,float,int,int);

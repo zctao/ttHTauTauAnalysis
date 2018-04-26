@@ -536,8 +536,8 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	
 	/// scale factors
 	if (!isdata_ and !event_selection_off_) {
-		write_ntuple_bTagSF(jet_selected);
 		/*
+		write_ntuple_bTagSF(jet_selected);
 		write_ntuple_leptonSF(lep_fakeable);
 		write_ntuple_tauSF(minitau_loose);
 

@@ -779,25 +779,46 @@ float SFHelper::Get_LeptonSF_tight_vs_loose(float lepPt, float lepEta,
 float SFHelper::Get_EvtCSVWeight(const std::vector<pat::Jet>& jets,
 								 const std::string& sys)
 {
+	std::vector<miniJet> minijets;
+	
+	for (const auto & j : jets) {
+		TLorentzVector jp4;
+		jp4.SetPtEtaPhiE(j.pt(), j.eta(), j.phi(), j.energy());
+		double csv = j.bDiscriminator("pfDeepCSVDiscriminatorsJetTags:BvsAll");
+		
+		miniJet mj(jp4, csv, j.hadronFlavour());
+		minijets.push_back(mj);
+	}
+
+	return Get_EvtCSVWeight(minijets, sys);
+}
+#endif
+
+float SFHelper::Get_EvtCSVWeight(const std::vector<miniJet>& jets,
+								 const std::string& sys)
+{
 	assert(not _isdata);
-	
+
 	double weight_evt = 1.;
-	
-	for (const auto & j : jets) {		
+
+	for (const auto & j : jets) {
 		double w = Get_JetCSVWeight(j, sys);
 		weight_evt *= w;
 	}
-	
+
 	return weight_evt;
 }
 
-float SFHelper::Get_JetCSVWeight(const pat::Jet& jet, std::string sys/*pass by copy*/)
+float SFHelper::Get_JetCSVWeight(const miniJet& jet, std::string sys/*pass by copy*/)
 {
 	double pt = jet.pt();
 	double eta = jet.eta();
 	//double csv = jet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
-	double csv = jet.bDiscriminator("pfDeepCSVDiscriminatorsJetTags:BvsAll");
-	int flavor = jet.hadronFlavour();
+	//double csv = jet.bDiscriminator("pfDeepCSVDiscriminatorsJetTags:BvsAll");	
+	//int flavor = jet.hadronFlavour();
+
+	double csv = jet.csv();
+	int flavor = jet.flavor();
 	
 	BTagEntry::JetFlavor jf = BTagEntry::FLAV_UDSG;	
 	if ( std::abs(flavor) == 5 )
@@ -852,7 +873,6 @@ float SFHelper::Get_JetCSVWeight(const pat::Jet& jet, std::string sys/*pass by c
 
 	return weight_jet;
 }
-#endif
 
 float SFHelper::Get_PUWeight(int nPU)
 {
