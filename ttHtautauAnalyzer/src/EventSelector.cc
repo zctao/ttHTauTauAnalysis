@@ -159,6 +159,7 @@ bool EventSelector::pass_ttH_ltau_inclusive_selection(
 		return false;
 	}
 
+	/*
 	/////////////////////////////////
 	// Dilepton mass of any loose lepton pair > 12 GeV
 	bool passMll = pass_pairMass_veto(looseLeps);
@@ -167,6 +168,7 @@ bool EventSelector::pass_ttH_ltau_inclusive_selection(
 	}
 	else
 		return false;
+	*/
 
 	
 	/////////////////////////////////

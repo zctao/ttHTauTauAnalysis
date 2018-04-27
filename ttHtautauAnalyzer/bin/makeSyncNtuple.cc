@@ -230,6 +230,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		tree_in -> GetEntry(i);
 
 		// reconstruct objects
+		auto leptons_loose = evNtuple.buildLeptons('L');  // loose
 	    auto leptons = evNtuple.buildLeptons('F');  // fakeable
 		auto leptons_tight = evNtuple.buildLeptons('T'); // tight
 		
@@ -252,15 +253,8 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		if (anatype != Analyze_NA) {
 
 			////////////////////////////////////////
-
-			// dummy loose lepton collection
-			std::vector<miniLepton> looseleptons;
-			// loose lepton only used in pair mass veto, which should already be
-			// applied in the previous stage
-			// otherwise build loose lepton collection from evNtuple.buildLeptons('L')
-			
 			bool passEvtSel = evt_selector.pass_full_event_selection(
-			    anatype, seltype, looseleptons, leptons, leptons_tight,
+			    anatype, seltype, leptons_loose, leptons, leptons_tight,
 				taus_fakeable, taus_tight, evNtuple.n_jet, evNtuple.n_btag_loose,
 				evNtuple.n_btag_medium, metld);
 			
