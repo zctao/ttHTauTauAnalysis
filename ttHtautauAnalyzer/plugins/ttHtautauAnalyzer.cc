@@ -441,7 +441,12 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	std::vector<miniLepton> *lep_selected =
 			looseSelection_ ? &lep_loose : &lep_fakeable;
 	
-	if (anaType_==Analyze_2lss1tau) {
+	if (anaType_==Analyze_inclusive) {
+		pass_event_sel = evt_selector_ -> pass_ttH_ltau_inclusive_selection(
+		    lep_loose, *lep_selected, minitau_loose,
+			jet_selected.size(), n_btags_loose, n_btags_medium, h_CutFlow_);
+	}
+	else if (anaType_==Analyze_2lss1tau) {
 		pass_event_sel = evt_selector_ -> pass_2l1tau_inclusive_selection(
 		    lep_loose, *lep_selected, lep_tight, minitau_loose,
 			jet_selected.size(), n_btags_loose, n_btags_medium, metLD, h_CutFlow_);

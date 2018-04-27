@@ -71,7 +71,9 @@ TriggerHelper::TriggerHelper(Analysis_types analysis, bool verbose)
 	
 	hlt_paths_.clear();
 
-	if (anaType_ == Analyze_1l2tau)
+	if (anaType_ == Analyze_inclusive)
+		set_up_paths_all();
+	else if (anaType_ == Analyze_1l2tau)
 		set_up_paths_1l2tau();
 	else if (anaType_ == Analyze_2lss1tau)
 		set_up_paths_2lss1tau();
@@ -79,6 +81,8 @@ TriggerHelper::TriggerHelper(Analysis_types analysis, bool verbose)
 		set_up_paths_3l1tau();
 	else if (anaType_ == Analyze_2l2tau)
 		set_up_paths_2l2tau();
+	else
+		set_up_paths_all();
 }
 
 void TriggerHelper::set_up_paths_1l2tau()
@@ -172,6 +176,30 @@ void TriggerHelper::set_up_paths_2l2tau()
 	bitmask_m2e_ = 0;
 	bitmask_2me_ = 0;
 	bitmask_3m_ = 0;
+
+	assert(hlt_paths_.size()==totalsize);
+}
+
+void TriggerHelper::set_up_paths_all()
+{
+	//assert(anaType_ == Analyze_inclusive);
+	unsigned int totalsize = hlt_paths_e_.size() + hlt_paths_m_.size() +
+		hlt_paths_2e_.size() + hlt_paths_2m_.size() + hlt_paths_em_.size() +
+		hlt_paths_3e_.size() + hlt_paths_m2e_.size() + hlt_paths_2me_.size() +
+		hlt_paths_3m_.size() + hlt_paths_mtau_.size() + hlt_paths_etau_.size();
+	hlt_paths_.reserve(totalsize);
+
+	bitmask_e_ = add_paths(hlt_paths_e_, totalsize);
+	bitmask_m_ = add_paths(hlt_paths_m_, totalsize);
+	bitmask_2e_ = add_paths(hlt_paths_2e_, totalsize);
+	bitmask_2m_ = add_paths(hlt_paths_2m_, totalsize);
+	bitmask_em_ = add_paths(hlt_paths_em_, totalsize);
+    bitmask_3e_ = add_paths(hlt_paths_3e_, totalsize);
+	bitmask_m2e_ = add_paths(hlt_paths_m2e_, totalsize);
+	bitmask_2me_ = add_paths(hlt_paths_2me_, totalsize);
+	bitmask_3m_ = add_paths(hlt_paths_3m_, totalsize);
+	bitmask_mtau_ = add_paths(hlt_paths_mtau_, totalsize);
+	bitmask_etau_ = add_paths(hlt_paths_etau_, totalsize);
 
 	assert(hlt_paths_.size()==totalsize);
 }

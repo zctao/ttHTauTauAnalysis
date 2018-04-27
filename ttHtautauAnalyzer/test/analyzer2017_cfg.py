@@ -59,12 +59,12 @@ options.register('TurnOffHLTCut', True,
 options.register('AnalysisType', 'NA',
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
-                 "Analysis type currently supported: 1l2tau, 2lss1tau, 3l1tau, 2l2tau")
+                 "Analysis type currently supported: inclusive, 1l2tau, 2lss1tau, 3l1tau, 2l2tau")
 
 options.register('SelectionRegion', 'NA',
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
-                 "Which selection region to apply: inclusive_1l2tau, inclusive_2lss1tau, inclusive_3l1tau, inclusive_2l2tau")
+                 "Which selection region to apply: NA, inclusive_1l2tau, inclusive_2lss1tau, inclusive_3l1tau, inclusive_2l2tau")
 
 #options.register('doSystematics', True,
 #                 VarParsing.VarParsing.multiplicity.singleton,

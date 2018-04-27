@@ -93,13 +93,89 @@ bool EventSelector::pass_hlt_match(Analysis_types anatype,
 	if (not pass and verbose_) {
 		std::cout << "FAIL to match the number of offline objects to HLT paths" << std::endl;
 		std::cout << "trigger bits : " << triggerBits << std::endl;
-		std::cout << "nfakeableEle = " << nfakeableEle;
+		std::cout << "nfakeableEle = " << nfakeableEle << " ";
 		std::cout << "nfakeableMu = " << nfakeableMu << std::endl;
 	}
 	
 	return pass;
 }
 
+/////////////////////////////////
+// ttH l+tau inclusive
+/////////////////////////////////
+bool EventSelector::pass_ttH_ltau_inclusive_selection(
+    const std::vector<miniLepton>& looseLeps,
+	const std::vector<miniLepton>& fakeableLeps,
+	const std::vector<miniTau>& fakeableTaus,
+	int njets, int nbtags_loose, int nbtags_medium,
+	TH1* h_cutflow)
+{
+	if (verbose_) std::cout << "start inclusive event selection" << std::endl;
+	
+	int ibin = 1;
+	if (h_cutflow and ibin==1) fill_cutflow(h_cutflow, ibin++, "total");
+
+	/////////////////////////////////
+	// lepton and tau number
+	if (verbose_) {
+		std::cout << "nFakeableLeps = " << fakeableLeps.size() << std::endl;
+		std::cout << "nFakeableTaus = " << fakeableTaus.size() << std::endl;
+	}
+	// nlep + ntau >= 3
+	if (fakeableLeps.size()+fakeableTaus.size() >= 3) {
+		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "nlep+ntau>2");
+	}
+	else {
+		if (verbose_) std::cout << "FAIL nlepton+ntau >= 3" << std::endl;
+		return false;
+	}
+
+	// nlep >=1 and leading lep pt>20
+	if (fakeableLeps.size() > 0) {
+		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "nlep>0");
+	}
+	else {
+		if (verbose_) std::cout << "FAIL nlep >= 1" << std::endl;
+		return false;
+	}
+
+	assert(fakeableLeps.size() > 0);
+	if (fakeableLeps[0].conept() >= 20.) {
+		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "lep0_pt>20");
+	}
+	else {
+		if (verbose_) std::cout << "FAIL leading lepton pt cut" << std::endl;
+		return false;
+	}
+
+	/////////////////////////////////
+	// At least 2 jets
+	if (verbose_) std::cout << "nJets = " << njets << std::endl;
+	if (njets >= 2) {
+		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "njet>1");
+	}
+	else {
+		if (verbose_) std::cout << "FAIL jet number requirement" << std::endl;
+		return false;
+	}
+
+	/////////////////////////////////
+	// Dilepton mass of any loose lepton pair > 12 GeV
+	bool passMll = pass_pairMass_veto(looseLeps);
+	if (passMll) {
+		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "Mll>12GeV");
+	}
+	else
+		return false;
+
+	
+	/////////////////////////////////
+	if (verbose_) std::cout << "PASSED ttH inclusive event selection!" << std::endl;
+
+	return true;
+}
+
+/////////////////////////////////
 bool EventSelector::pass_extra_event_selection(
     Analysis_types anatype, Selection_types seltype,
     std::vector<miniLepton> const * const fakeableLeps,
@@ -141,6 +217,76 @@ bool EventSelector::pass_extra_event_selection(
 												*fakeableTaus);
 	}
 	
+	return pass;
+}
+
+/////////////////////////////////
+bool EventSelector::pass_full_event_selection(
+    Analysis_types anatype, Selection_types seltype,
+	const std::vector<miniLepton>& looseLeps,
+	const std::vector<miniLepton>& fakeableLeps,
+	const std::vector<miniLepton>& tightLeps,
+	const std::vector<miniTau>& fakeableTaus,
+	const std::vector<miniTau>& selectedTaus,
+	int njets, int nbtags_loose, int nbtags_medium, float metLD,
+	TH1* h_cutflow)
+{
+	bool pass=false;
+	if (verbose_) std::cout << std::endl;
+
+	if (anatype == Analyze_1l2tau) {
+		if (not pass_1l2tau_inclusive_selection(looseLeps, fakeableLeps, tightLeps,
+												fakeableTaus, njets, nbtags_loose,
+												nbtags_medium, h_cutflow) )
+			return false;
+
+		if (seltype == Signal_1l2tau)
+			pass = pass_1l2tau_SR_selection(fakeableLeps, selectedTaus);
+		else if (seltype == Control_fake_1l2tau)
+			pass = pass_1l2tau_FakeAR_selection(fakeableLeps, selectedTaus,
+												fakeableTaus);
+	}
+	else if (anatype == Analyze_2lss1tau) {
+		if (not pass_2l1tau_inclusive_selection(looseLeps, fakeableLeps, tightLeps,
+												fakeableTaus, njets, nbtags_loose,
+												nbtags_medium, metLD, h_cutflow) )
+			return false;
+
+		if (seltype == Signal_2lss1tau)
+			pass = pass_2lss1tau_SR_selection(fakeableLeps, selectedTaus);
+		else if (seltype == Control_fake_2lss1tau)
+			pass = pass_2lss1tau_FakeAR_selection(fakeableLeps, selectedTaus);
+		else if (seltype == Control_2los1tau)
+			pass = pass_2lss1tau_FlipAR_selection(fakeableLeps, selectedTaus);
+	}
+	else if (anatype == Analyze_3l1tau) {
+		if (not pass_3l1tau_inclusive_selection(looseLeps, fakeableLeps,
+												fakeableTaus, njets, nbtags_loose,
+												nbtags_medium, metLD, h_cutflow) )
+			return false;
+
+		if (seltype == Signal_3l1tau)
+			pass = pass_3l1tau_SR_selection(fakeableLeps, selectedTaus);
+		else if (seltype == Control_fake_3l1tau)
+			pass = pass_3l1tau_FakeAR_selection(fakeableLeps, selectedTaus);
+	}
+	else if (anatype == Analyze_2l2tau) {
+		if (not pass_2l2tau_inclusive_selection(looseLeps, fakeableLeps,
+												fakeableTaus, njets, nbtags_loose,
+												nbtags_medium, metLD, h_cutflow) )
+			return false;
+
+		if (seltype == Signal_2l2tau)
+			pass = pass_2l2tau_SR_selection(fakeableLeps, selectedTaus);
+		else if (seltype == Control_fake_2l2tau)
+			pass = pass_2l2tau_FakeAR_selection(fakeableLeps, selectedTaus,
+												fakeableTaus);
+	}
+	else {
+		std::cout << "Unsupported analysis type. Return false." << std::endl;
+		return false;
+	}
+
 	return pass;
 }
 
@@ -645,7 +791,7 @@ bool EventSelector::pass_2lss1tau_taucharge(const miniTau& tau, const miniLepton
 
 bool EventSelector::pass_2lss1tau_tauNumber(const std::vector<miniTau>& selectedTaus)
 {
-	// SR: at least one tau pass medium MVA ID
+	// SR: at least one tau pass Loose MVA ID
 	if (verbose_)
 		std::cout << "number of taus : " << selectedTaus.size() << std::endl;
 	
@@ -1402,7 +1548,7 @@ bool EventSelector::pass_2l2tau_FakeARCR_selection(
 
 bool EventSelector::pass_pairMass_veto(const std::vector<miniLepton>& leps)
 {
-	assert(leps.size()>0);
+	if (leps.size()<2) return true;
 	
 	// veto two leptons with invariant mass  < 12 GeV
 	for (auto it = leps.begin(); it != leps.end()-1; ++it) {

@@ -40,14 +40,21 @@ class EventSelector
 	void fill_cutflow(TH1*, int ibin, const char*);
 	bool pass_hlt_paths(Analysis_types, TriggerHelper * const, unsigned int);
 	bool pass_hlt_match(Analysis_types, TriggerHelper * const, unsigned int,int,int);
-	//bool pass_extra_event_selection(Analysis_types, Selection_types,
-	//								const std::vector<miniLepton>&,
-	//								const std::vector<miniTau>&);
 	bool pass_extra_event_selection(Analysis_types, Selection_types,
 									std::vector<miniLepton> const * const,
 									std::vector<miniTau> const * const,
 									std::vector<miniTau> const *const fakeabletau=0);
-	
+	bool pass_ttH_ltau_inclusive_selection(const std::vector<miniLepton>&,
+										   const std::vector<miniLepton>&,
+										   const std::vector<miniTau>&,
+										   int, int, int, TH1* h_cutflow=0);
+	bool pass_full_event_selection(Analysis_types, Selection_types,
+								   const std::vector<miniLepton>&,
+								   const std::vector<miniLepton>&,
+								   const std::vector<miniLepton>&,
+								   const std::vector<miniTau>&,
+								   const std::vector<miniTau>&,
+								   int, int, int, float, TH1* h_cutflow=0);
 	bool pass_1l2tau_inclusive_selection(const std::vector<miniLepton>&,
 										 const std::vector<miniLepton>&,
 										 const std::vector<miniLepton>&,

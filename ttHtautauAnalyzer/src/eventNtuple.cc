@@ -5,11 +5,23 @@
 
 std::vector<miniLepton> eventNtuple::buildLeptons(bool loose) const
 {
+	char wp = loose ? 'L' : 'F';
+	return buildLeptons(wp);
+}
+
+std::vector<miniLepton> eventNtuple::buildLeptons(char WP) const
+{
+	assert(WP=='L' or WP=='F' or WP=='T');
+	
 	std::vector<miniLepton> leptons;
 
 	for (unsigned int l = 0; l<mu_pt->size(); ++l) {
-		// if not loose selection require to at least pass fakeable id
-		if (!loose and !(mu_isfakeablesel->at(l))) continue;
+		
+		bool passID = (WP=='L');
+		if (WP=='F') passID = mu_isfakeablesel->at(l);
+		if (WP=='T') passID = mu_ismvasel->at(l);
+		if (not passID) continue;
+		
 		TLorentzVector mu;
 		mu.SetPtEtaPhiE(mu_pt->at(l),mu_eta->at(l),mu_phi->at(l),mu_E->at(l));
 		miniLepton lep(mu, mu_conept->at(l), -13*mu_charge->at(l),
@@ -20,8 +32,12 @@ std::vector<miniLepton> eventNtuple::buildLeptons(bool loose) const
 	}
 
 	for (unsigned int l = 0; l<ele_pt->size(); ++l) {
-		// if not loose selection require to at least pass fakeable id
-		if (!loose and !(ele_isfakeablesel->at(l))) continue;
+
+		bool passID = (WP=='L');
+		if (WP=='F') passID = ele_isfakeablesel->at(l);
+		if (WP=='T') passID = ele_ismvasel->at(l);
+		if (not passID) continue;
+
 		TLorentzVector ele;
 		ele.SetPtEtaPhiE(ele_pt->at(l),ele_eta->at(l),ele_phi->at(l),ele_E->at(l));
 		miniLepton lep(ele, ele_conept->at(l), -11*ele_charge->at(l),

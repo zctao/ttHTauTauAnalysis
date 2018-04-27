@@ -6,8 +6,11 @@
 void ttHtautauAnalyzer::Set_up_AnaType(const std::string& anatype)
 {
 	std::cout << anatype << std::endl;
-	
-	if (anatype == "1l2tau") {
+
+	if (anatype == "inclusive") {
+		anaType_ = Analysis_types::Analyze_inclusive;
+	}
+	else if (anatype == "1l2tau") {
 		anaType_ =  Analysis_types::Analyze_1l2tau;
 	}
 	else if (anatype == "2lss1tau") {
@@ -88,7 +91,7 @@ void ttHtautauAnalyzer::Set_up_histograms()
 {
 	h_nProcessed_ = fs_->make<TH1I>("h_nProcessed","",1,0.5,1.5);
 	h_SumGenWeight_ = fs_->make<TH1D>("h_SumGenWeight","",1,0.5,1.5);
-	h_SumGenWeightxPU_ = fs_->make<TH1D>("h_SumGenWeightxPU","",1,0.5,1.5);
+	//h_SumGenWeightxPU_ = fs_->make<TH1D>("h_SumGenWeightxPU","",1,0.5,1.5);
 
 	// cut flow
 	h_CutFlow_ = fs_->make<TH1D>("h_CutFlow","",15,0,15);

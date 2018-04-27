@@ -23,6 +23,7 @@ class eventNtuple
 	void setup_branches(TTree*);
 	void initialize();
 	std::vector<miniLepton> buildLeptons(bool loose=false) const;
+	std::vector<miniLepton> buildLeptons(char) const;
 	std::vector<TLorentzVector> buildFourVectorLeps(bool loose=false) const;
 	std::vector<TLorentzVector> buildFourVectorTaus(std::vector<int>&, bool loose=false) const;
 	std::vector<miniTau> buildTaus(bool loose=false, std::string WP="-") const;

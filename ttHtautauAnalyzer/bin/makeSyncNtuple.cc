@@ -29,7 +29,7 @@ int main(int argc, char** argv)
 	using namespace std;
 	namespace po = boost::program_options;
 
-	string dir, outname;
+	string dir, outname, infile;
 	bool makeObjectNtuple, make1l2tau, make2lss1tau, make3l1tau, make2l2tau;
 	bool debug;
 	
@@ -38,6 +38,7 @@ int main(int argc, char** argv)
 		("help,h", "produce help message")
 		("directory,d", po::value<string>(&dir), "event ntuple directory")
 		("output,o", po::value<string>(&outname), "output name")
+		("input,i", po::value<string>(&infile)->default_value("output_sync_event_incl.root"))
 		("makeObjectNtuple", po::value<bool>(&makeObjectNtuple)->default_value(false))
 		("make1l2tau", po::value<bool>(&make1l2tau)->default_value(false))
 		("make2lss1tau", po::value<bool>(&make2lss1tau)->default_value(false))
@@ -84,12 +85,12 @@ int main(int argc, char** argv)
 
 	if (make1l2tau) {
 		cout << "1l2tau signal region ... " << endl;
-		synctree_1l2tau_sr = makeSyncTree(cdir+"output_sync_event_1l2tau_incl.root",
+		synctree_1l2tau_sr = makeSyncTree(cdir+infile.c_str(),
 										  "syncTree_1l2tau_SR",
 										  Analyze_1l2tau, Signal_1l2tau, debug);
 		
 		cout << "1l2tau fake extrapolation region ... " << endl;
-		synctree_1l2tau_fake = makeSyncTree(cdir+"output_sync_event_1l2tau_incl.root",
+		synctree_1l2tau_fake = makeSyncTree(cdir+infile.c_str(),
 											"syncTree_1l2tau_Fake",
 											Analyze_1l2tau, Control_fake_1l2tau, debug);
 		
@@ -102,20 +103,17 @@ int main(int argc, char** argv)
 	if (make2lss1tau) {
 		cout << "2lss1tau signal region ... " << endl;
 		synctree_2lss1tau_sr =
-			makeSyncTree(cdir+"output_sync_event_2lss1tau_incl.root",
-						 "syncTree_2lSS1tau_SR",
+			makeSyncTree(cdir+infile.c_str(), "syncTree_2lSS1tau_SR",
 						 Analyze_2lss1tau, Signal_2lss1tau, debug);
 		
 		cout << "2lss1tau fake extrapolation region ... " << endl;
 		synctree_2lss1tau_fake =
-			makeSyncTree(cdir+"output_sync_event_2lss1tau_incl.root",
-						 "syncTree_2lSS1tau_Fake",
+			makeSyncTree(cdir+infile.c_str(), "syncTree_2lSS1tau_Fake",
 						 Analyze_2lss1tau, Control_fake_2lss1tau, debug);
 
 		cout << "2lss1tau charge flip region ... " << endl;
 		synctree_2lss1tau_flip =
-			makeSyncTree(cdir+"output_sync_event_2lss1tau_incl.root",
-						 "syncTree_2lSS1tau_Flip",
+			makeSyncTree(cdir+infile.c_str(), "syncTree_2lSS1tau_Flip",
 						 Analyze_2lss1tau, Control_2los1tau, debug);
 		
 		// event count
@@ -127,14 +125,13 @@ int main(int argc, char** argv)
 
 	if (make3l1tau) {
 		cout << "3l1tau signal region ... " << endl;
-		synctree_3l1tau_sr = makeSyncTree(cdir+"output_sync_event_3l1tau_incl.root",
-										  "syncTree_3l1tau_SR",
+		synctree_3l1tau_sr = makeSyncTree(cdir+infile.c_str(), "syncTree_3l1tau_SR",
 										  Analyze_3l1tau, Signal_3l1tau, debug);
 
 		cout << "3l1tau fake extrapolation region ... " << endl;
-		synctree_3l1tau_fake = makeSyncTree(cdir+"output_sync_event_3l1tau_incl.root",
-											"syncTree_3l1tau_Fake",
-											Analyze_3l1tau, Control_fake_3l1tau, debug);
+		synctree_3l1tau_fake =
+			makeSyncTree(cdir+infile.c_str(), "syncTree_3l1tau_Fake",
+						 Analyze_3l1tau, Control_fake_3l1tau, debug);
 		// event count
 		cout << "3l1tau : " << endl;
 		cout << "SR : " << synctree_3l1tau_sr->GetEntries() << endl;
@@ -143,14 +140,13 @@ int main(int argc, char** argv)
 
 	if (make2l2tau) {
 		cout << "2l2tau signal region ... " << endl;
-		synctree_2l2tau_sr = makeSyncTree(cdir+"output_sync_event_2l2tau_incl.root",
-										  "syncTree_2l2tau_SR",
+		synctree_2l2tau_sr = makeSyncTree(cdir+infile.c_str(), "syncTree_2l2tau_SR",
 										  Analyze_2l2tau, Signal_2l2tau, debug);
 
 		cout << "2l2tau fake extrapolation region ... " << endl;
-		synctree_2l2tau_fake = makeSyncTree(cdir+"output_sync_event_2l2tau_incl.root",
-											"syncTree_2l2tau_Fake",
-											Analyze_2l2tau, Control_fake_2l2tau, debug);
+		synctree_2l2tau_fake =
+			makeSyncTree(cdir+infile.c_str(), "syncTree_2l2tau_Fake",
+						 Analyze_2l2tau, Control_fake_2l2tau, debug);
 		// event count
 		cout << "2l2tau : " << endl;
 		cout << "SR : " << synctree_2l2tau_sr->GetEntries() << endl;
@@ -215,7 +211,8 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 
 	//////////////////////////////////////////////
 	// trigger Helper
-	TriggerHelper trig_helper(anatype, false);
+	TriggerHelper trig_helper(Analysis_types::Analyze_inclusive, false);
+	//TriggerHelper trig_helper(anatype, false);
 
 	//////////////////////////////////////////////
 	// mva ntuple
@@ -233,24 +230,41 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		tree_in -> GetEntry(i);
 
 		// reconstruct objects
-	    auto leptons = evNtuple.buildLeptons();  // fakeable
-		auto taus_tight = evNtuple.buildTaus(); // tight taus
-		// fakeable taus for 1l2tau and 2l2tau fake AR
-	    auto taus_fakeable = evNtuple.buildTaus(true);
-
+	    auto leptons = evNtuple.buildLeptons('F');  // fakeable
+		auto leptons_tight = evNtuple.buildLeptons('T'); // tight
+		
+		auto taus_fakeable = evNtuple.buildTaus(true); // fakeable taus
+		std::string selTauWP="-";
+		if (anatype==Analyze_1l2tau or anatype==Analyze_2l2tau)
+			selTauWP="M";
+		auto taus_tight = evNtuple.buildTaus(false, selTauWP); // tight taus
+		
 		if (debug) {
 			std::cout << std::endl;
 			std::cout << "Event: " << evNtuple.run <<":"<< evNtuple.ls << ":"
 					  << evNtuple.nEvent << std::endl;
 		}
 
-		if (anatype != Analyze_NA) {
+		//
+		float mht = evNtuple.computeMHT();
+		float metld = 0.00397 * evNtuple.PFMET + 0.00265 * mht;
 		
+		if (anatype != Analyze_NA) {
+
 			////////////////////////////////////////
-			if (not evt_selector.pass_extra_event_selection(anatype, seltype,
-															&leptons, &taus_tight,
-															&taus_fakeable))
-			continue;
+
+			// dummy loose lepton collection
+			std::vector<miniLepton> looseleptons;
+			// loose lepton only used in pair mass veto, which should already be
+			// applied in the previous stage
+			// otherwise build loose lepton collection from evNtuple.buildLeptons('L')
+			
+			bool passEvtSel = evt_selector.pass_full_event_selection(
+			    anatype, seltype, looseleptons, leptons, leptons_tight,
+				taus_fakeable, taus_tight, evNtuple.n_jet, evNtuple.n_btag_loose,
+				evNtuple.n_btag_medium, metld);
+			
+			if (not passEvtSel) continue;
 
 			////////////////////////////////////////
 			// HLT path
@@ -489,8 +503,8 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		// met
 		syncntuple.PFMET = evNtuple.PFMET;
 		syncntuple.PFMETphi = evNtuple.PFMETphi;
-		syncntuple.MHT = evNtuple.computeMHT();
-		syncntuple.metLD = 0.00397 * syncntuple.PFMET + 0.00265 * syncntuple.MHT;
+		syncntuple.MHT = mht;
+		syncntuple.metLD = metld;
 
 		if (anatype==Analyze_NA or seltype==Selection_NA) {
 			tree_out->Fill();

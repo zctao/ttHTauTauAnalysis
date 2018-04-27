@@ -12,6 +12,7 @@ enum Analysis_types {
 	Analyze_2lss1tau,
 	Analyze_3l1tau,
 	Analyze_2l2tau,
+	Analyze_inclusive,
 	Analyze_NA
 };
 
