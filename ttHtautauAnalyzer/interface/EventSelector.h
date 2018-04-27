@@ -45,9 +45,8 @@ class EventSelector
 									std::vector<miniTau> const * const,
 									std::vector<miniTau> const *const fakeabletau=0);
 	bool pass_ttH_ltau_inclusive_selection(const std::vector<miniLepton>&,
-										   const std::vector<miniLepton>&,
 										   const std::vector<miniTau>&,
-										   int, int, int, TH1* h_cutflow=0);
+										   int, TH1* h_cutflow=0);
 	bool pass_full_event_selection(Analysis_types, Selection_types,
 								   const std::vector<miniLepton>&,
 								   const std::vector<miniLepton>&,
@@ -78,6 +77,8 @@ class EventSelector
 								   const std::vector<miniLepton>&,
 								   const std::vector<miniLepton>&,
 								   int, int, int, float, int&, TH1* h_cutflow=0);
+	bool pass_2ltight_ss_selection(const std::vector<miniLepton>&, int,
+								   TH1* h_cutflow=0);
 	bool pass_2l1tau_inclusive_selection(const std::vector<miniLepton>&,
 										 const std::vector<miniLepton>&,
 										 const std::vector<miniLepton>&,

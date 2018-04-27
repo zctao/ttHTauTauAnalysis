@@ -104,11 +104,9 @@ bool EventSelector::pass_hlt_match(Analysis_types anatype,
 // ttH l+tau inclusive
 /////////////////////////////////
 bool EventSelector::pass_ttH_ltau_inclusive_selection(
-    const std::vector<miniLepton>& looseLeps,
 	const std::vector<miniLepton>& fakeableLeps,
 	const std::vector<miniTau>& fakeableTaus,
-	int njets, int nbtags_loose, int nbtags_medium,
-	TH1* h_cutflow)
+	int njets, TH1* h_cutflow)
 {
 	if (verbose_) std::cout << "start inclusive event selection" << std::endl;
 	
@@ -130,7 +128,7 @@ bool EventSelector::pass_ttH_ltau_inclusive_selection(
 		return false;
 	}
 
-	// nlep >=1 and leading lep pt>20
+	// nlep >=1
 	if (fakeableLeps.size() > 0) {
 		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "nlep>0");
 	}
@@ -139,6 +137,8 @@ bool EventSelector::pass_ttH_ltau_inclusive_selection(
 		return false;
 	}
 
+	/*
+	// leading lep pt > 20
 	assert(fakeableLeps.size() > 0);
 	if (fakeableLeps[0].conept() >= 20.) {
 		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "lep0_pt>20");
@@ -147,6 +147,7 @@ bool EventSelector::pass_ttH_ltau_inclusive_selection(
 		if (verbose_) std::cout << "FAIL leading lepton pt cut" << std::endl;
 		return false;
 	}
+	*/
 
 	/////////////////////////////////
 	// At least 2 jets
@@ -694,6 +695,41 @@ bool EventSelector::pass_2l_generic_selection(
 	
 	/////////////////////////////////
 	if (verbose_) std::cout << "PASSED generic 2l event selection!" << std::endl;
+
+	return true;
+}
+
+bool EventSelector::pass_2ltight_ss_selection(
+    const std::vector<miniLepton>& tightLeps,
+	int njets, TH1* h_cutflow)
+{
+	int ibin = 1;
+	if (h_cutflow and ibin==1) fill_cutflow(h_cutflow, ibin++, "total");
+
+	/////////////////////////////////
+	// At least 2 tight leptons
+	if (tightLeps.size() >= 2) {
+		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "lep num");
+	}
+	else
+		return false;
+
+	/////////////////////////////////
+	// same sign
+	if (tightLeps[0].charge() * tightLeps[1].charge() > 0) {
+		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "ss");
+	}
+	else
+		return false;
+
+	/////////////////////////////////
+	// At least 2 selected jets
+	bool passJetNumber = njets >= 2;
+	if (passJetNumber) {
+		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "jet num");
+	}
+	else
+		return false;
 
 	return true;
 }
