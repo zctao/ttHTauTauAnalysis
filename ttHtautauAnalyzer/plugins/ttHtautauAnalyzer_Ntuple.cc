@@ -183,7 +183,7 @@ void ttHtautauAnalyzer::write_ntuple_jets(const std::vector<pat::Jet>& jets)
 		evNtuple_.jet_eta->push_back(jet.eta());
 		evNtuple_.jet_phi->push_back(jet.phi());
 		evNtuple_.jet_E->push_back(jet.energy());
-		evNtuple_.jet_csv->push_back(jet.bDiscriminator("pfDeepCSVDiscriminatorsJetTags:BvsAll"));
+		evNtuple_.jet_csv->push_back(getJetCSV(jet));
 		evNtuple_.jet_flavor->push_back(jet.hadronFlavour());
 		evNtuple_.jet_qgLikelihood->push_back(jet.userFloat("qgLikelihood"));
 	}

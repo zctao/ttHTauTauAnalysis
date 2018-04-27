@@ -784,7 +784,9 @@ float SFHelper::Get_EvtCSVWeight(const std::vector<pat::Jet>& jets,
 	for (const auto & j : jets) {
 		TLorentzVector jp4;
 		jp4.SetPtEtaPhiE(j.pt(), j.eta(), j.phi(), j.energy());
-		double csv = j.bDiscriminator("pfDeepCSVDiscriminatorsJetTags:BvsAll");
+		//double csv = j.bDiscriminator("pfDeepCSVDiscriminatorsJetTags:BvsAll");
+		double csv = j.bDiscriminator("pfDeepCSVJetTags:probb")
+			+ j.bDiscriminator("pfDeepCSVJetTags:probb");
 		
 		miniJet mj(jp4, csv, j.hadronFlavour());
 		minijets.push_back(mj);

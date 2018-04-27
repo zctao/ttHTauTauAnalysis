@@ -219,7 +219,6 @@ bool ttHtautauAnalyzer::isLooseID(const pat::Tau& tau) const
 {
 	bool passKinematic = tau.pt() > 20. and std::abs(tau.eta()) < 2.3;
 
-	// tauID("byLooseIsolationMVArun2017v2DBoldDMdR0p3wLT2017")
 	// tauID("byVLooseIsolationMVArun2017v2DBoldDMdR0p3wLT2017")
 	bool passID = tau.userFloat("idPreselection") > 0.5;
 
@@ -237,13 +236,11 @@ bool ttHtautauAnalyzer::isTightID(const pat::Tau& tau) const
 		if (not isLooseID(tau)) return false;
 	}
 	
-	if (anaType_==Analyze_1l2tau) {
-		// tauID("byVTightIsolationMVArun2017v2DBoldDMdR0p3wLT2017")
+	if (anaType_==Analyze_1l2tau or anaType_==Analyze_2l2tau) {
 		// tauID("byMediumIsolationMVArun2017v2DBoldDMdR0p3wLT2017")
 		return tau.tauID("byMediumIsolationMVArun2017v2DBoldDMdR0p3wLT2017")>0.5;
 	}
 	else {
-		// tauID("byMediumIsolationMVArun2017v2DBoldDMdR0p3wLT2017")
 		// tauID("byLooseIsolationMVArun2017v2DBoldDMdR0p3wLT2017")
 		return tau.userFloat("idSelection") > 0.5;
 	}
@@ -356,14 +353,21 @@ std::vector<pat::Jet> ttHtautauAnalyzer::getCorrectedJets(
 
 float ttHtautauAnalyzer::getJetCSV(const pat::Jet& jet)
 {
+	float csv = jet.bDiscriminator("pfDeepCSVJetTags:probb")
+		+ jet.bDiscriminator("pfDeepCSVJetTags:probbb");
+
+	return csv;
+
+	/*
 	float defaultvalue = -0.1;
 	//float csv = jet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
-	float csv = jet.bDiscriminator("pfDeepCSVDiscriminatorsJetTags:BvsAll");
+	//float csv = jet.bDiscriminator("pfDeepCSVDiscriminatorsJetTags:BvsAll");
 	if (std::isnan(csv)) return defaultvalue;
 	if (csv > 1.) return 1.;
 	if (csv < 0.) return defaultvalue;
 
 	return csv;
+	*/
 }
 
 void ttHtautauAnalyzer::addJetQGLikelihood(std::vector<pat::Jet>& jets,
