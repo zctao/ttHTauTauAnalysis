@@ -27,14 +27,6 @@ const std::vector<std::string> TriggerHelper::hlt_paths_em_ = {
 	"HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v"
 };
 
-const std::vector<std::string> TriggerHelper::hlt_paths_mtau_ = {
-	"HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1_v"
-};
-
-const std::vector<std::string> TriggerHelper::hlt_paths_etau_ = {
-	"HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1_v"
-};
-
 const std::vector<std::string> TriggerHelper::hlt_paths_3e_ = {
 	"HLT_Ele16_Ele12_Ele8_CaloIdL_TrackIdL_v"
 };
@@ -49,6 +41,14 @@ const std::vector<std::string> TriggerHelper::hlt_paths_2me_ = {
 
 const std::vector<std::string> TriggerHelper::hlt_paths_3m_ = {
 	"HLT_TripleMu_12_10_5_v"
+};
+
+const std::vector<std::string> TriggerHelper::hlt_paths_mtau_ = {
+	"HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1_v"
+};
+
+const std::vector<std::string> TriggerHelper::hlt_paths_etau_ = {
+	"HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1_v"
 };
 
 // Filters
@@ -274,19 +274,19 @@ unsigned int TriggerHelper::get_filter_bits(edm::Handle<edm::TriggerResults> fil
 unsigned int TriggerHelper::encode_bits(edm::Handle<edm::TriggerResults> results, HLTConfigProvider& config, const std::vector<std::string>& vnames)
 {
 	unsigned int bits = 0;
-	unsigned int iname = 0;
 	
 	for (const auto & name : vnames) {
+
+		bits = bits << 1;
+
 		unsigned int index = config.triggerIndex(name);
 
 		if (index >= results->size()) {
 			if (verbose_) std::cerr << "Failed to find " << name << std::endl;
 		}
 		else {
-			if (results->accept(index)) bits |= 1 << iname;
+			if (results->accept(index)) bits += 1;
 		}
-		
-		++iname;
 	}
 
 	return bits;
