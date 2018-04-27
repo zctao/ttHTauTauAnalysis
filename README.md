@@ -28,10 +28,9 @@ Add MEM interface if necessary:
 
 	git clone https://github.com/zctao/ttHTauTau_MEM_Interface.git
 
-MiniAODHelper:
+Add package for kinematic hadronic top fit:
 
-	git clone https://github.com/cms-ttH/MiniAOD.git
-	(currently use branch cmssw940pre3)
+	git clone https://github.com/zctao/HTT_kinfit.git HadTop/HTT_kinfit
 
 LeptonID package shared with ND ttH-Multilepton group:
 
@@ -39,6 +38,7 @@ LeptonID package shared with ND ttH-Multilepton group:
 	cd ttH/LeptonID
 	git checkout cmssw_944_sync
 	cd -
+	
 
 Compile:
 

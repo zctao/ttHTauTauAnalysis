@@ -1,8 +1,9 @@
 <use name="DataFormats/PatCandidates"/>
 <use name="CondTools/BTau"/>
 <use name="CondFormats/BTauObjects"/>
-<use name = "HLTrigger/HLTcore" />
+<use name="HLTrigger/HLTcore"/>
 <use name="root"/>
+<use name="HadTop/HTT_kinfit"/>
 <export>
   <use name="root"/>
   <lib name = "1"/>
