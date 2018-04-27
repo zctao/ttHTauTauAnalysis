@@ -21,11 +21,7 @@ void ttHtautauAnalyzer::write_ntuple_muons(const std::vector<pat::Muon>& muons)
 		evNtuple_.mu_miniIsoCharged->push_back(mu.userFloat("miniAbsIsoCharged"));
 		evNtuple_.mu_miniIsoNeutral->push_back(mu.userFloat("miniAbsIsoNeutralcorr"));
 		evNtuple_.mu_jetPtRel->push_back(mu.userFloat("nearestJetPtRel"));
-		//evNtuple_.mu_jetPtRatio->push_back(mu.userFloat("nearestJetPtRatio"));
-		float varJetPtRatio = (mu.userFloat("nearestJetCsv") > -99.) ?
-			std::min(mu.userFloat("nearestJetPtRatio"), 1.5f) :  // found matched jet
-			(1./(1.+mu.userFloat("relIso04")));  // no matched jet
-		evNtuple_.mu_jetPtRatio->push_back(varJetPtRatio);
+		evNtuple_.mu_jetPtRatio->push_back(mu.userFloat("nearestJetPtRatio"));
 		evNtuple_.mu_jetCSV->push_back(std::max(mu.userFloat("nearestJetCsv"), 0.f));
 		evNtuple_.mu_sip3D->push_back(mu.userFloat("sip3D"));
 		evNtuple_.mu_segmentCompatibility->push_back(mu.segmentCompatibility());
@@ -62,10 +58,7 @@ void ttHtautauAnalyzer::write_ntuple_electrons(const std::vector<pat::Electron>&
 		evNtuple_.ele_miniIsoCharged->push_back(ele.userFloat("miniAbsIsoCharged"));
 		evNtuple_.ele_miniIsoNeutral->push_back(ele.userFloat("miniAbsIsoNeutralcorr"));
 		evNtuple_.ele_jetPtRel->push_back(ele.userFloat("nearestJetPtRel"));
-		float varjetPtRatio = (ele.userFloat("nearestJetCsv") > -99.) ?
-			std::min(ele.userFloat("nearestJetPtRatio"), 1.5f) : // found matched jet
-			(1./(1.+ele.userFloat("relIso04"))); // no matched jets
-		evNtuple_.ele_jetPtRatio->push_back(varjetPtRatio);
+		evNtuple_.ele_jetPtRatio->push_back(ele.userFloat("nearestJetPtRatio"));
 		evNtuple_.ele_jetCSV->push_back(std::max(ele.userFloat("nearestJetCsv"), 0.f));
 		evNtuple_.ele_sip3D->push_back(ele.userFloat("sip3D"));
 		evNtuple_.ele_ntMVAeleID->push_back(ele.userFloat("eleMvaId"));
