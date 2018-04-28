@@ -1,4 +1,5 @@
-import os 
+import os
+import csv
 
 channel_suffix = ['_ext','_p1','_p2','_p3']
 
@@ -31,3 +32,19 @@ def getSubDirectoryNames(eosDir):
 
 def remove_prefix(text, prefix):
     return text[text.startswith(prefix) and len(prefix):]
+
+
+# read dataset list and convert to dictionary
+def getDatasetDict(datasetList):
+    datadict = {}
+    reader = csv.DictReader(open(datasetList, 'rb'))
+    for row in reader:
+        datadict[row['sample']] = row
+
+    return datadict
+
+# samples to submit crab jobs
+def getSamples(infile):
+    f=open(infile, 'r')
+    tmp=f.read()
+    return tmp.replace('\n','').replace(' ','').split(',')
