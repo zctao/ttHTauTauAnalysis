@@ -63,15 +63,6 @@ def getParametersetString(sample, energy_correction ,isdata):
 
     return pset
 
-if args.automatic:
-    template = template.replace("config.Data.unitsPerJob","#config.Data.unitsPerJob")
-
-if args.batch_lpc:
-    template = template.replace("config.Data.ignoreLocality = False",
-                                "config.Data.ignoreLocality = True\n"
-                                +"config.Site.whitelist = ['T3_US_FNALLPC']\n"
-                                +"config.Site.ignoreGlobalBlacklist = True\n")
-
 dataset_dict = getDatasetDict(args.DatasetList)
 samples = args.samples if args.samples is not None else getSamples(args.sample_list)
 
@@ -97,6 +88,15 @@ config.Data.publication = False
 config.Data.outLFNDirBase = '%(outdir)s'
 config.Site.storageSite = 'T3_US_FNALLPC'
 '''
+
+if args.automatic:
+    template = template.replace("config.Data.unitsPerJob","#config.Data.unitsPerJob")
+
+if args.batch_lpc:
+    template = template.replace("config.Data.ignoreLocality = False",
+                                "config.Data.ignoreLocality = True\n"
+                                +"config.Site.whitelist = ['T3_US_FNALLPC']\n"
+                                +"config.Site.ignoreGlobalBlacklist = True\n")
 
 for sample in samples:
     print sample
