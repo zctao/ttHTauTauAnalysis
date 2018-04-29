@@ -65,6 +65,7 @@ Get data files before running analyzer:
 	cd -
 
 When running with CRAB one needs to add the following option to the crab config file: config.JobType.sendExternalFolder = True This is needed until the PR including this ID will be integrated in CMSSW/cms-data.
+It'd also be necessary to remove old MVA weights in RecoEgamma/PhotonIdentification/data/ and RecoEgamma/ElectronIdentification/data/, so crab sandbox tarball size wouldn't exceed 100 MB limit.
 
 ## Usage
 
@@ -74,9 +75,9 @@ Produce sync ntuples:
 
 Submit CRAB jobs to produce event ntuples:
 	   
-	submitCrabJobs.py <samplelist> <analysis_type> <selection_type> --channel_list <channel_list> --prefix <prefix>
+	submitCrabJobsv2.py <datasetlist.csv> --sample_list <sample_list> --prefix <prefix>
 	
-	submitCrabJobs.py -h for help
+	submitCrabJobsv2.py -h for help
 
 Collect and hadd CRAB outputs on EOS:
 
