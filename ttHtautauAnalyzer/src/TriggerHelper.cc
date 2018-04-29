@@ -1,7 +1,8 @@
 #include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/TriggerHelper.h"
 
 const std::vector<std::string> TriggerHelper::hlt_paths_e_ = {
-	"HLT_Ele32_WPTight_Gsf_v",
+	"HLT_Ele27_WPTight_Gsf_v",
+	"HLT_Ele32_WPTight_Gsf_v",  // not available in 2017B and 2017C
 	"HLT_Ele35_WPTight_Gsf_v"
 };
 
@@ -16,13 +17,14 @@ const std::vector<std::string> TriggerHelper::hlt_paths_2e_ = {
 };
 
 const std::vector<std::string> TriggerHelper::hlt_paths_2m_ = {
-	//"HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v",
+	"HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v",
 	"HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v",
-	"HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v"
+	// above two heavily prescaled at the end of the data-taking
+	"HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v"  // not available in 2017B
 };
 
 const std::vector<std::string> TriggerHelper::hlt_paths_em_ = {
-	"HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v",
+	"HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v",  // not available in 2017B
 	"HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v",
 	"HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v"
 };
@@ -241,10 +243,22 @@ void TriggerHelper::add_trigger_version_number(HLTConfigProvider& hlt_config)
 			}
 		} // hlt_config:triggerNames()
 
-		if ((not foundPath) and verbose_)
-			std::cerr << "WARNING!!<< Cannot find HLT path " << name << std::endl;
+		if (not foundPath) {
+			hlt_paths_version_.push_back("notfound_"+name);
+			if (verbose_)
+				std::cerr << "WARNING!! Cannot find HLT path " << name << std::endl;
+		}
 		
 	} // hlt_paths
+}
+
+void TriggerHelper::dump_all_hlt_paths(HLTConfigProvider& hlt_config)
+{
+	std::cout << "HLT paths: " << std::endl;
+	for (const auto & triggername : hlt_config.triggerNames()) {
+		std::cout << triggername << std::endl;
+	}
+	std::cout << std::endl;
 }
 
 unsigned int TriggerHelper::get_trigger_bits(edm::Handle<edm::TriggerResults> triggerResults, HLTConfigProvider& config)
@@ -279,6 +293,8 @@ unsigned int TriggerHelper::encode_bits(edm::Handle<edm::TriggerResults> results
 
 		bits = bits << 1;
 
+		if (name.substr(0,9)=="notfound_") continue;
+		
 		unsigned int index = config.triggerIndex(name);
 
 		if (index >= results->size()) {

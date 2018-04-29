@@ -24,6 +24,7 @@ class TriggerHelper
 	void set_up_paths_2l2tau();
 	void set_up_paths_all();
 	void add_trigger_version_number(HLTConfigProvider&);
+	void dump_all_hlt_paths(HLTConfigProvider&);
 	unsigned int get_trigger_bits(edm::Handle<edm::TriggerResults>,
 								  HLTConfigProvider&);
 	unsigned int get_filter_bits(edm::Handle<edm::TriggerResults>,

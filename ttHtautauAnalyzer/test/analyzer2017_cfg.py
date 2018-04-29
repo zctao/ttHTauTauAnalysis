@@ -219,6 +219,7 @@ process.ttHtaus.debug_mode = cms.bool(options.Debug)
 process.ttHtaus.do_sync = cms.bool(options.doSync)
 process.ttHtaus.doCutFlow = cms.bool(options.doCutFlow)
 process.ttHtaus.doJERsmear = cms.bool(options.doJERSmearing)
+process.ttHtaus.verbosity = cms.int32(1)
 # DeepCSV WPs 
 process.ttHtaus.csv_loose_wp = cms.double(0.1522)
 process.ttHtaus.csv_medium_wp = cms.double(0.4941)

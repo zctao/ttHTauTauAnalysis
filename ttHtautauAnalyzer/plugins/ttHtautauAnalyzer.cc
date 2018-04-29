@@ -91,7 +91,7 @@ ttHtautauAnalyzer::ttHtautauAnalyzer(const edm::ParameterSet& iConfig):
 
 	// Trigger and filter
 	// always include all provided trigger paths regardless of analysis type
-	trig_helper_ = new TriggerHelper(Analysis_types::Analyze_inclusive, true);//verbosity_);
+	trig_helper_ = new TriggerHelper(Analysis_types::Analyze_inclusive, verbosity_);
 	
 	// histograms
 	Set_up_histograms();
@@ -664,6 +664,8 @@ void ttHtautauAnalyzer::beginRun(const edm::Run &iRun, const edm::EventSetup &iS
 		trig_helper_->add_trigger_version_number(hlt_config_);
 	}
 
+	//trig_helper_->dump_all_hlt_paths(hlt_config_);
+	
 	bool filter_config_changed = true; // init() updates this one
 	
 	if (!filter_config_.init(iRun, iSetup, filterTag_, filter_config_changed)) {
