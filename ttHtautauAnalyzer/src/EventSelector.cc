@@ -534,8 +534,14 @@ bool EventSelector::pass_1l2tau_FakeAR_selection(
 {
 	assert(not looseselection_);
 	
-	if ( pass_1l2tau_tightID(fakeableLeps, tightTaus) ) return false;
-	if ( not pass_1l2tau_charge(fakeableTaus) ) return false;
+	if ( pass_1l2tau_tightID(fakeableLeps, tightTaus) ) {
+		std::cout << "FAIL lepton and tau ID WP" << std::endl;
+		return false;
+	}
+	if ( not pass_1l2tau_charge(fakeableTaus) ) {
+		std::cout << "FAIL charge requirement" << std::endl;
+		return false;
+	}
 	return true;
 }
 
@@ -955,7 +961,7 @@ bool EventSelector::pass_2lss1tau_FlipAR_selection(
 	bool lep2IsElectron = abs(fakeableLeps[1].pdgId())==11;
 
 	if (verbose_ and not (lep1IsElectron or lep2IsElectron)) {
-		std::cout << "FAIL: both leptons are not electrons" << std::endl;
+		std::cout << "FAIL: neither leptons are electrons" << std::endl;
 	}
 	
 	// The lepton that has the same sign as tau has to be a electron
