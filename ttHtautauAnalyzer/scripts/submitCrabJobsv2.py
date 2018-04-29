@@ -77,6 +77,7 @@ config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = '%(configfile)s'
 config.JobType.pyCfgParams = %(cfgparams)s
 config.JobType.sendExternalFolder = True
+config.JobType.inputFiles=['qg']
 config.Data.inputDataset = %(dataset)s
 config.Data.inputDBS = '%(DBS)s'
 config.Data.splitting = '%(splitting)s'

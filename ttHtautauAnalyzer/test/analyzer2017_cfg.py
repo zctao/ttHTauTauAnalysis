@@ -139,7 +139,7 @@ qgDatabaseVersion = 'cmssw8020_v2'
 
 from CondCore.CondDB.CondDB_cfi import *
 #CondDB.connect = cms.string('frontier://FrontierProd/CMS_COND_PAT_000')
-CondDB.connect = cms.string('sqlite:../data/qg/QGL_'+qgDatabaseVersion+'.db')
+CondDB.connect = cms.string('sqlite:qg/QGL_'+qgDatabaseVersion+'.db')
 process.QGPoolDBESSource = cms.ESSource("PoolDBESSource", CondDB,
                                 toGet = cms.VPSet(),
 )
