@@ -30,6 +30,9 @@ class TriggerHelper
 	unsigned int get_filter_bits(edm::Handle<edm::TriggerResults>,
 								  HLTConfigProvider&);
 	unsigned int add_paths(const std::vector<std::string>&, unsigned int);
+	std::vector<std::string> get_hlt_paths_wo_version(){return hlt_paths_;}
+	std::vector<std::string> get_hlt_paths_w_version(){return hlt_paths_version_;}
+	std::vector<std::string> get_flt_paths(){return filter_paths_;}
 	
 	bool pass_etau_triggers(unsigned int tbits) {return tbits & bitmask_etau_;}
 	bool pass_mtau_triggers(unsigned int tbits) {return tbits & bitmask_mtau_;}

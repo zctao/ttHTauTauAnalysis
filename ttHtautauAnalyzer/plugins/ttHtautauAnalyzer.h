@@ -303,6 +303,9 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	// pileup
 	TH1D* h_npuTrue_;
 	TH1D* h_npuInTime_;
+	// HLT and filters
+	TH1I* h_hlt_;
+	TH1I* h_flt_;
 };
 
 template <typename T1, typename T2>

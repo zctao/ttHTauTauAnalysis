@@ -99,6 +99,34 @@ void ttHtautauAnalyzer::Set_up_histograms()
 	// pileup
 	h_npuTrue_ = fs_->make<TH1D>("h_npuTrue","",80,0,80);
 	h_npuInTime_ = fs_->make<TH1D>("h_npuInTime","",80,0,80);
+
+	// HLT and filters
+	h_hlt_ = fs_->make<TH1I>("h_hlt","",30,0,30);
+	h_flt_ = fs_->make<TH1I>("h_filter","",20,0,20);
+
+	if (trig_helper_) {
+		std::vector<std::string> hltpaths = trig_helper_->get_hlt_paths_wo_version();
+		std::vector<std::string> fltpaths = trig_helper_->get_flt_paths();
+		
+		TAxis *axis = h_hlt_->GetXaxis();
+		for (unsigned int i=0; i<hltpaths.size(); ++i) {
+			if (i >= (unsigned int)axis->GetNbins()) {
+				std::cerr << "HLT histogram does not have enough bins!" << std::endl;
+				break;
+			}
+			axis->SetBinLabel(i+1, hltpaths[i].c_str());
+		}
+
+		axis = h_flt_->GetXaxis();
+		for (unsigned int i=0; i<fltpaths.size(); ++i) {
+			if (i >= (unsigned int)axis->GetNbins()) {
+				std::cerr << "Filter histogram does not have enough bins!" << std::endl;
+				break;
+			}
+			axis->SetBinLabel(i+1, fltpaths[i].c_str());
+		}
+	}
+	
 }
 
 void ttHtautauAnalyzer::Set_up_tree()

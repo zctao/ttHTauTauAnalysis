@@ -1,7 +1,7 @@
 #include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/TriggerHelper.h"
 
 const std::vector<std::string> TriggerHelper::hlt_paths_e_ = {
-	"HLT_Ele27_WPTight_Gsf_v",
+	//"HLT_Ele27_WPTight_Gsf_v",
 	"HLT_Ele32_WPTight_Gsf_v",  // not available in 2017B and 2017C
 	"HLT_Ele35_WPTight_Gsf_v"
 };

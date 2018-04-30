@@ -63,38 +63,51 @@ bool EventSelector::pass_hlt_paths(Analysis_types anatype,
 bool EventSelector::pass_hlt_match(Analysis_types anatype,
 								   TriggerHelper* const trighelper,
 								   unsigned int triggerBits,
-								   int nfakeableEle, int nfakeableMu)
+								   int nElectron, int nMuon)
 {
 	bool pass = false;
 
 	bool pass_e = trighelper->pass_single_e_triggers(triggerBits);
 	bool pass_m = trighelper->pass_single_m_triggers(triggerBits);
+	bool pass_2e = trighelper->pass_2e_triggers(triggerBits);
+	bool pass_2m = trighelper->pass_2m_triggers(triggerBits);
+	bool pass_em = trighelper->pass_em_triggers(triggerBits);
+	bool pass_etau = trighelper->pass_etau_triggers(triggerBits);
+	bool pass_mtau = trighelper->pass_mtau_triggers(triggerBits);
 	
 	if (anatype == Analyze_1l2tau) {		
-		bool pass_etau = trighelper->pass_etau_triggers(triggerBits);
-		bool pass_mtau = trighelper->pass_mtau_triggers(triggerBits);
-
-		pass = ((pass_e or pass_etau) and nfakeableEle>0) or
-			((pass_m or pass_mtau) and nfakeableMu>0);
+		pass = ((pass_e or pass_etau) and nElectron>0) or
+			((pass_m or pass_mtau) and nMuon>0);
 	}
 	else if (anatype == Analyze_2lss1tau) {
-		pass = true;
-		//bool pass_2e = trighelper->pass_2e_triggers(triggerBits);
-		//bool pass_2m = trighelper->pass_2m_triggers(triggerBits);
-		//bool pass_em = trighelper->pass_em_triggers(triggerBits);
+		pass = (pass_e and nElectron>0) or (pass_2e and nElectron>1) or
+			(pass_m and nMuon>0) or (pass_2m and nMuon>1) or
+			(pass_em and nElectron>0 and nMuon>0);
 	}
 	else if (anatype == Analyze_3l1tau) {
-		pass = true;
+		bool pass_3e = trighelper->pass_3e_triggers(triggerBits);
+		bool pass_m2e = trighelper->pass_m_2e_triggers(triggerBits);
+		bool pass_2me = trighelper->pass_2m_e_triggers(triggerBits);
+		bool pass_3m = trighelper->pass_3m_triggers(triggerBits);
+		pass = (pass_e and nElectron>0) or (pass_2e and nElectron>1) or
+			(pass_m and nMuon>0) or (pass_2m and nMuon>1) or
+			(pass_em and nElectron>0 and nMuon>0) or
+			(pass_3e and nElectron>2) or (pass_3m and nMuon>2) or
+			(pass_m2e and nElectron>1 and nMuon>0) or
+			(pass_2me and nElectron>0 and nMuon>1);
 	}
 	else if (anatype == Analyze_2l2tau) {
-		pass = true;
+		pass = ((pass_e or pass_etau) and nElectron>0) or
+			((pass_m or pass_mtau) and nMuon>0) or
+			(pass_2e and nElectron>1) or (pass_2m and nMuon>1) or
+			(pass_em and nElectron>0 and nMuon>0);
 	}
 
 	if (not pass and verbose_) {
 		std::cout << "FAIL to match the number of offline objects to HLT paths" << std::endl;
 		std::cout << "trigger bits : " << triggerBits << std::endl;
-		std::cout << "nfakeableEle = " << nfakeableEle << " ";
-		std::cout << "nfakeableMu = " << nfakeableMu << std::endl;
+		std::cout << "nElectron = " << nElectron << " ";
+		std::cout << "nMuon = " << nMuon << std::endl;
 	}
 	
 	return pass;
