@@ -57,3 +57,6 @@ wget https://raw.githubusercontent.com/CERN-PH-CMG/cmgtools-lite/80X/TTHAnalysis
 wget https://raw.githubusercontent.com/CERN-PH-CMG/cmgtools-lite/80X/TTHAnalysis/data/kinMVA/tth/3l_ttV_BDTG.weights.xml -O 3l1tau/3l_ttV_BDTG.weights.xml
 
 cd -
+
+# Dataset list
+wget https://docs.google.com/spreadsheets/d/1p4jsl1u7DqJ6e6MgiiSCFrOLrReJnvKvkW54noOwxTY/export?format=csv -O DatasetList_2017reMiniAODv2.csv
