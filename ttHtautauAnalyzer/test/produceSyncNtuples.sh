@@ -1,6 +1,8 @@
 #!/bin/bash
 
-outdir=/uscms/home/ztao/nobackup/ttHTT_syncNtuple/94X/27apr2018/
+date=${1:-30apr2018}
+
+outdir=/uscms/home/ztao/nobackup/ttHTT_syncNtuple/94X/$date/
 mkdir -p $outdir
 
 echo 'producing sync ntuple with event selection turned off'
