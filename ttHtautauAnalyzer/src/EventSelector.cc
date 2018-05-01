@@ -548,11 +548,11 @@ bool EventSelector::pass_1l2tau_FakeAR_selection(
 	assert(not looseselection_);
 	
 	if ( pass_1l2tau_tightID(fakeableLeps, tightTaus) ) {
-		std::cout << "FAIL lepton and tau ID WP" << std::endl;
+		if (verbose_) std::cout << "FAIL lepton and tau ID WP" << std::endl;
 		return false;
 	}
 	if ( not pass_1l2tau_charge(fakeableTaus) ) {
-		std::cout << "FAIL charge requirement" << std::endl;
+		if (verbose_) std::cout << "FAIL charge requirement" << std::endl;
 		return false;
 	}
 	return true;
