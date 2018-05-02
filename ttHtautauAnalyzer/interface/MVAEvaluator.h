@@ -9,7 +9,7 @@
 class MVAEvaluator
 {
  public:
-	MVAEvaluator(){};
+	MVAEvaluator();
 	~MVAEvaluator(){};
 
 	void setup_tmva_reader_HTT();
