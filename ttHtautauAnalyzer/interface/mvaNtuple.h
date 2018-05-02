@@ -76,6 +76,7 @@ class mvaNtuple
 	float compute_cosPsi(const miniTau&, float mass=0.139);
 	float compute_cosPsi(const TLorentzVector&, const TLorentzVector&,
 						 const TLorentzVector&, float mass=0.139);
+	void evaluate_BDTs();
 
 	//////////////////////////////
 	//// variables
@@ -87,7 +88,7 @@ class mvaNtuple
 	unsigned long long nEvent;
 	
 	// MVA variables
-	int nJet;
+	float nJet;
 	float mindr_lep0_jet;
 	float mindr_lep1_jet;
 	float mindr_lep2_jet;
@@ -119,10 +120,10 @@ class mvaNtuple
 	float tt_pt;
 	float max_dr_jet;
 	float HT;
-	int nbtags_medium;
-	int nbtags_loose;
+	float nbtags_medium;
+	float nbtags_loose;
 	float mbb;
-	int is_OS;
+	float is_OS;
 	float min_dr_lep_jet;
 	float mindr_tau_jet;
 	float max_dr_lep_tau;
@@ -240,6 +241,12 @@ class mvaNtuple
 	double pm2_pm3;
 	double pm3_pm3;
 
+	// mem likelihood
+	float mem_LR;
+	
+	// Hj_tagger
+	float Hj_tagger;
+
 	// HTT and input variables
 	float HTT;
 	float HadTop_pt;
@@ -251,6 +258,27 @@ class mvaNtuple
 	float m_Wj1Wj2;
 	float nllKinFit;
 	float pT_b_o_kinFit_pT_b;
+
+	// BDT output
+	//float mva_ttbar;
+	//float mva_ttV;
+
+	float mva_1l2tau_BDT1;
+	float mva_1l2tau_BDT2;
+	float mva_2lss1tau_BDT1;
+	float mva_2lss1tau_BDT2;
+	float mva_2lss1tau_BDT3;
+	float mva_2lss1tau_BDT4;
+	float mva_2lss1tau_BDT5;
+	float mva_2lss1tau_BDT6;
+	float mva_3l1tau_BDT1;
+	float mva_3l1tau_BDT2;
+	float mva_3l1tau_BDT3;
+	float mva_3l1tau_BDT4;
+	float mva_2l2tau_BDT1;
+	float mva_2l2tau_BDT2;
+	float mva_2l2tau_BDT3;
+	float mva_2l2tau_BDT4;
 	
  protected:
 

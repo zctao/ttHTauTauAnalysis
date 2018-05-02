@@ -20,7 +20,8 @@
 #include <string>
 
 TTree* makeSyncTree(const TString, const TString, Analysis_types anatype=Analyze_NA,
-					Selection_types seltype=Selection_NA, bool debug=false,
+					Selection_types seltype=Selection_NA, bool evaluateMVA=false,
+					bool doHTT=false, bool debug=false,
 					const TString intreename="ttHtaus/eventTree");
 
 
@@ -31,6 +32,7 @@ int main(int argc, char** argv)
 
 	string dir, outname, infile;
 	bool makeObjectNtuple, make1l2tau, make2lss1tau, make3l1tau, make2l2tau;
+	bool evaluateMVA, doHTT;
 	bool debug;
 	
 	po::options_description desc("Options");
@@ -44,6 +46,8 @@ int main(int argc, char** argv)
 		("make2lss1tau", po::value<bool>(&make2lss1tau)->default_value(false))
 		("make3l1tau", po::value<bool>(&make3l1tau)->default_value(false))
 		("make2l2tau", po::value<bool>(&make2l2tau)->default_value(false))
+		("evaluateMVA", po::value<bool>(&evaluateMVA)->default_value(true))
+		("doHTT", po::value<bool>(&doHTT)->default_value(true))
 		("debug", po::value<bool>(&debug)->default_value(false));
 
 	po::variables_map vm;
@@ -85,14 +89,15 @@ int main(int argc, char** argv)
 
 	if (make1l2tau) {
 		cout << "1l2tau signal region ... " << endl;
-		synctree_1l2tau_sr = makeSyncTree(cdir+infile.c_str(),
-										  "syncTree_1l2tau_SR",
-										  Analyze_1l2tau, Signal_1l2tau, debug);
+		synctree_1l2tau_sr = makeSyncTree(cdir+infile.c_str(), "syncTree_1l2tau_SR",
+										  Analyze_1l2tau, Signal_1l2tau,
+										  evaluateMVA, doHTT, debug);
 		
 		cout << "1l2tau fake extrapolation region ... " << endl;
 		synctree_1l2tau_fake = makeSyncTree(cdir+infile.c_str(),
 											"syncTree_1l2tau_Fake",
-											Analyze_1l2tau, Control_fake_1l2tau, debug);
+											Analyze_1l2tau, Control_fake_1l2tau,
+											evaluateMVA, doHTT, debug);
 		
 		// event count
 		cout << "1l2tau : " << endl;
@@ -104,17 +109,20 @@ int main(int argc, char** argv)
 		cout << "2lss1tau signal region ... " << endl;
 		synctree_2lss1tau_sr =
 			makeSyncTree(cdir+infile.c_str(), "syncTree_2lSS1tau_SR",
-						 Analyze_2lss1tau, Signal_2lss1tau, debug);
+						 Analyze_2lss1tau, Signal_2lss1tau,
+						 evaluateMVA, doHTT, debug);
 		
 		cout << "2lss1tau fake extrapolation region ... " << endl;
 		synctree_2lss1tau_fake =
 			makeSyncTree(cdir+infile.c_str(), "syncTree_2lSS1tau_Fake",
-						 Analyze_2lss1tau, Control_fake_2lss1tau, debug);
+						 Analyze_2lss1tau, Control_fake_2lss1tau,
+						 evaluateMVA, doHTT, debug);
 
 		cout << "2lss1tau charge flip region ... " << endl;
 		synctree_2lss1tau_flip =
 			makeSyncTree(cdir+infile.c_str(), "syncTree_2lSS1tau_Flip",
-						 Analyze_2lss1tau, Control_2los1tau, debug);
+						 Analyze_2lss1tau, Control_2los1tau,
+						 evaluateMVA, doHTT, debug);
 		
 		// event count
 		cout << "2lSS1tau : " << endl;
@@ -126,12 +134,14 @@ int main(int argc, char** argv)
 	if (make3l1tau) {
 		cout << "3l1tau signal region ... " << endl;
 		synctree_3l1tau_sr = makeSyncTree(cdir+infile.c_str(), "syncTree_3l1tau_SR",
-										  Analyze_3l1tau, Signal_3l1tau, debug);
+										  Analyze_3l1tau, Signal_3l1tau,
+										  evaluateMVA, doHTT, debug);
 
 		cout << "3l1tau fake extrapolation region ... " << endl;
 		synctree_3l1tau_fake =
 			makeSyncTree(cdir+infile.c_str(), "syncTree_3l1tau_Fake",
-						 Analyze_3l1tau, Control_fake_3l1tau, debug);
+						 Analyze_3l1tau, Control_fake_3l1tau,
+						 evaluateMVA, doHTT, debug);
 		// event count
 		cout << "3l1tau : " << endl;
 		cout << "SR : " << synctree_3l1tau_sr->GetEntries() << endl;
@@ -141,12 +151,14 @@ int main(int argc, char** argv)
 	if (make2l2tau) {
 		cout << "2l2tau signal region ... " << endl;
 		synctree_2l2tau_sr = makeSyncTree(cdir+infile.c_str(), "syncTree_2l2tau_SR",
-										  Analyze_2l2tau, Signal_2l2tau, debug);
+										  Analyze_2l2tau, Signal_2l2tau,
+										  evaluateMVA, doHTT, debug);
 
 		cout << "2l2tau fake extrapolation region ... " << endl;
 		synctree_2l2tau_fake =
 			makeSyncTree(cdir+infile.c_str(), "syncTree_2l2tau_Fake",
-						 Analyze_2l2tau, Control_fake_2l2tau, debug);
+						 Analyze_2l2tau, Control_fake_2l2tau,
+						 evaluateMVA, doHTT, debug);
 		// event count
 		cout << "2l2tau : " << endl;
 		cout << "SR : " << synctree_2l2tau_sr->GetEntries() << endl;
@@ -186,7 +198,8 @@ int main(int argc, char** argv)
 
 
 TTree* makeSyncTree(const TString input_file, const TString treename,
-					Analysis_types anatype, Selection_types seltype, bool debug,
+					Analysis_types anatype, Selection_types seltype,
+					bool evaluateMVA, bool doHTT, bool debug,
 					const TString intreename)
 {
 	using namespace std;
@@ -216,7 +229,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 
 	//////////////////////////////////////////////
 	// mva ntuple
-	mvaNtuple mvantuple(anatype, false, "2017");
+	mvaNtuple mvantuple(anatype, false, "2017", doHTT, evaluateMVA);
 
 	//////////////////////////////////////////////
 	// event selector
@@ -516,7 +529,9 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 										syncntuple.PFMETphi, syncntuple.MHT,
 										evNtuple.n_btag_loose,evNtuple.n_btag_medium,
 										btagsp4);
-
+		
+		syncntuple.nBJetLoose = evNtuple.n_btag_loose;
+		
 		if (anatype==Analyze_1l2tau) {
 			assert(taus->size()>1);
 			syncntuple.isGenMatched = leptons[0].isGenMatched() and
@@ -536,9 +551,16 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			//mvantuple.tau1_pt;
 			syncntuple.dR_lep_tau_ss = mvantuple.dr_lep_tau_ss;
 			syncntuple.cosThetaS_hadTau = mvantuple.costS_tau;
-			//mvantuple.compute_HTT(jets);
-			//syncntuple.HTT = mvantuple.HTT;
-			//syncntuple.HadTop_pt = mvantuple.HadTop_pt;
+			if (doHTT) {
+				mvantuple.compute_HTT(jets);
+				syncntuple.HTT = mvantuple.HTT;
+				syncntuple.HadTop_pt = mvantuple.HadTop_pt;
+			}
+			if (evaluateMVA) {
+				mvantuple.evaluate_BDTs();
+				syncntuple.mvaOutput_plainKin_ttV =  mvantuple.mva_1l2tau_BDT1;
+				syncntuple.mvaOutput_1l_2tau_HTT_SUM_VT = mvantuple.mva_1l2tau_BDT2;
+			}
 		}
 
 		if (anatype==Analyze_2lss1tau) {
@@ -564,11 +586,28 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			//mvantuple.met;
 			//mvantuple.tau0_pt;
 
-			//mvantuple.compute_HTT(jets);
-			//syncntuple.HTT = mvantuple.HTT;
-			//syncntuple.HadTop_pt = mvantuple.HadTop_pt;
+			if (doHTT) {
+				mvantuple.compute_HTT(jets);
+				syncntuple.HTT = mvantuple.HTT;
+				syncntuple.HadTop_pt = mvantuple.HadTop_pt;
+			}
 			// Hj_tagger
 			// memOutput_LR
+			if (evaluateMVA) {
+				mvantuple.evaluate_BDTs();
+				syncntuple.mvaOutput_2lss_1tau_plainKin_ttbar =
+					mvantuple.mva_2lss1tau_BDT2;
+				syncntuple.mvaOutput_2lss_1tau_plainKin_ttV =
+					mvantuple.mva_2lss1tau_BDT1;
+				syncntuple.mvaOutput_2lss_1tau_plainKin_1B_M =
+					mvantuple.mva_2lss1tau_BDT6;
+				syncntuple.mvaOutput_2lss_1tau_plainKin_SUM_M =
+					mvantuple.mva_2lss1tau_BDT3;
+				syncntuple.mvaOutput_2lss_1tau_HTT_SUM_M =
+					mvantuple.mva_2lss1tau_BDT4;
+				syncntuple.mvaOutput_2lss_1tau_HTTMEM_SUM_M =
+					mvantuple.mva_2lss1tau_BDT5;
+			}
 		}
 
 		if (anatype==Analyze_3l1tau) {
@@ -594,6 +633,15 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			syncntuple.lep2_conept = mvantuple.lep1_conept;
 			syncntuple.lep3_conept = mvantuple.lep2_conept;
 			//mvantuple.nJet;
+			if (evaluateMVA) {
+				mvantuple.evaluate_BDTs();
+				syncntuple.mvaOutput_plainKin_ttV = mvantuple.mva_3l1tau_BDT1;
+				syncntuple.mvaOutput_plainKin_ttbar = mvantuple.mva_3l1tau_BDT2;
+				syncntuple.mvaOutput_3l_1tau_plainKin_SUM_M =
+					mvantuple.mva_3l1tau_BDT3;
+				syncntuple.mvaOutput_3l_1tau_plainKin_1B_M =
+					mvantuple.mva_3l1tau_BDT4;
+			}
 		}
 
 		if (anatype==Analyze_2l2tau) {
@@ -614,17 +662,21 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			syncntuple.min_dr_lep_tau = mvantuple.min_dr_lep_tau;
 			syncntuple.mindr_tau1_jet = mvantuple.mindr_tau0_jet;
 			syncntuple.avg_dr_lep_tau = mvantuple.avg_dr_lep_tau;
+			if (evaluateMVA) {
+				mvantuple.evaluate_BDTs();
+				syncntuple.mvaOutput_plainKin_ttV = mvantuple.mva_2l2tau_BDT1;
+				syncntuple.mvaOutput_plainKin_ttbar = mvantuple.mva_2l2tau_BDT2;
+				syncntuple.mvaOutput_2l_2tau_plainKin_1B_VT =
+					mvantuple.mva_2l2tau_BDT4;
+				syncntuple.mvaOutput_2l_2tau_plainKin_SUM_VT =
+					mvantuple.mva_2l2tau_BDT3;
+			}
 		}
-		
-		//syncntuple.HTT;
-		//syncntuple.HadTop_pt;
-		//syncntuple.Hj_tagger;
-		
-		syncntuple.nBJetLoose = evNtuple.n_btag_loose;
 
 		// weights
-		syncntuple.PU_weight = evNtuple.PU_weight;
 		syncntuple.MC_weight = evNtuple.MC_weight;
+		
+		syncntuple.PU_weight = evNtuple.PU_weight;
 		syncntuple.bTagSF_weight = evNtuple.bTagSF_weight;
 
 		// FR_weight

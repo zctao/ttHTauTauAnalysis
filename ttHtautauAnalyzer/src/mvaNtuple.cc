@@ -100,10 +100,12 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("nJet", &nJet);
 			tree->Branch("ptmiss", &met);
 			tree->Branch("tau_pt", &tau0_pt);
-			// HTT
-			// Hj_tagger
-			// HadTop_pt
-			// memOutput_LR
+			tree->Branch("nJet", &nJet);
+			tree->Branch("Hj_tagger", &Hj_tagger);
+			tree->Branch("HTT", &HTT);
+			tree->Branch("HadTop_pt", &HadTop_pt);
+			tree->Branch("Hj_tagger", &Hj_tagger);
+			tree->Branch("memOutput_LR", &mem_LR);
 		}
 		else {
 			std::cout << "WARNING: Version " << version_
@@ -127,6 +129,7 @@ void mvaNtuple::setup_branches(TTree* tree)
 		}
 		else if (version_=="2017") {
 			tree->Branch("avg_dr_jet", &avg_dr_jet);
+			tree->Branch("nJet", &nJet);
 			tree->Branch("dr_taus", &dr_taus);
 			tree->Branch("ptmiss", &met);
 			tree->Branch("lep_conePt", &lep0_conept);
@@ -141,8 +144,8 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("tau2_pt", &tau1_pt);
 			tree->Branch("dr_lep_tau_ss", &dr_lep_tau_ss);
 			tree->Branch("costS_tau", &costS_tau);
-			// HTT
-			// HadTop_pt
+			tree->Branch("HTT", &HTT);
+			tree->Branch("HadTop_pt", &HadTop_pt);
 			
 			/*
 			tree->Branch("tau0_tightWP", &tau0_tightWP);
@@ -803,6 +806,103 @@ void mvaNtuple::compute_HTT(const std::vector<miniJet>& jets)
 				}
 			}
 		}
+	}
+}
+
+void mvaNtuple::evaluate_BDTs()
+{
+	assert(evalMVA_);
+	if (anatype_ == Analyze_1l2tau) {
+		float vars1_1l2tau[13] =
+			{avg_dr_jet, dr_taus, met, mT_met_lep0, nJet, mTauTauVis, mindr_lep0_jet,
+			 mindr_tau0_jet, mindr_tau1_jet, dr_lep_tau_lead, nbtags_loose, tau0_pt,
+			 tau1_pt};
+		mva_1l2tau_BDT1 = mva_eval_->evaluate_bdt_1l2tau_BDT1(vars1_1l2tau);
+		
+		float vars2_1l2tau[17] =
+			{avg_dr_jet, dr_taus, met, lep0_conept, mT_met_lep0, mTauTauVis,
+			 mindr_lep0_jet, mindr_tau0_jet, mindr_tau1_jet, dr_lep_tau_ss,
+			 dr_lep_tau_lead, costS_tau, nbtags_loose, tau0_pt, tau1_pt, HTT,
+			 HadTop_pt};
+		mva_1l2tau_BDT2 = mva_eval_->evaluate_bdt_1l2tau_BDT2(vars2_1l2tau);
+	}
+	else if (anatype_ == Analyze_2lss1tau) {
+		float vars1_2l1tau[15] =
+			{avg_dr_jet, dr_lep0_tau, dr_leps, lep0_conept, lep1_conept, mT_met_lep0,
+			 mT_met_lep1, mvis_lep0_tau, mvis_lep1_tau, mindr_lep0_jet,
+			 mindr_lep1_jet, mindr_tau0_jet, met, max_lep_eta, tau0_pt};
+		mva_2lss1tau_BDT1 =  mva_eval_->evaluate_bdt_2lss1tau_BDT1(vars1_2l1tau);
+
+		float vars2_2l1tau[16] =
+			{avg_dr_jet, dr_lep0_tau, dr_lep1_tau, dr_leps, lep0_conept, lep1_conept,
+			 mT_met_lep1, mvis_lep0_tau, mvis_lep1_tau, mbb, mindr_lep0_jet,
+			 mindr_lep1_jet, mindr_tau0_jet, nJet, met, tau0_pt};
+		mva_2lss1tau_BDT2 = mva_eval_->evaluate_bdt_2lss1tau_BDT2(vars2_2l1tau);
+		
+		float vars3_2l1tau[18] =
+			{avg_dr_jet, dr_lep0_tau, dr_lep1_tau, dr_leps, lep0_conept, lep1_conept,
+			 mT_met_lep0, mT_met_lep1, mvis_lep0_tau, mvis_lep1_tau, max_lep_eta, mbb,
+			 mindr_lep0_jet, mindr_lep1_jet, mindr_tau0_jet, nJet, met, tau0_pt};
+		mva_2lss1tau_BDT3 = mva_eval_->evaluate_bdt_2lss1tau_BDT3(vars3_2l1tau);
+		
+		float vars4_2l1tau[19] =
+			{avg_dr_jet, dr_lep0_tau, dr_lep1_tau, dr_leps, lep1_conept, mT_met_lep0,
+			 mT_met_lep1, mvis_lep1_tau, max_lep_eta, mbb, mindr_lep0_jet,
+			 mindr_lep1_jet, mindr_tau0_jet, nJet, met, tau0_pt, HTT, Hj_tagger,
+			 HadTop_pt};
+		mva_2lss1tau_BDT4 = mva_eval_->evaluate_bdt_2lss1tau_BDT4(vars4_2l1tau);
+
+		float vars5_2l1tau[20] =
+			{avg_dr_jet, dr_lep0_tau, dr_lep1_tau, dr_leps, lep1_conept, mT_met_lep0,
+			 mT_met_lep1, mvis_lep1_tau, max_lep_eta, mbb, mindr_lep0_jet,
+			 mindr_lep1_jet, mindr_tau0_jet, nJet, met, tau0_pt, mem_LR, HTT,
+			 Hj_tagger, HadTop_pt};
+		mva_2lss1tau_BDT5 = mva_eval_->evaluate_bdt_2lss1tau_BDT5(vars5_2l1tau);
+
+		float vars6_2l1tau[2] = {mva_2lss1tau_BDT2, mva_2lss1tau_BDT1};
+		mva_2lss1tau_BDT6 = mva_eval_->evaluate_bdt_2lss1tau_BDT6(vars6_2l1tau);
+    }
+	else if (anatype_ == Analyze_3l1tau) {
+		float vars1_3l1tau[13] =
+			{lep0_conept, lep1_conept, mindr_lep0_jet, mindr_lep1_jet, mT_met_lep1,
+			 mT_met_lep0, max_lep_eta, avg_dr_jet, met, tau0_pt, dr_leps,
+			 mvis_lep0_tau, mvis_lep1_tau};
+		mva_3l1tau_BDT1 = mva_eval_->evaluate_bdt_3l1tau_BDT1(vars1_3l1tau);
+
+		float vars2_3l1tau[15] =
+			{mindr_lep0_jet, mindr_lep1_jet, mT_met_lep1, mT_met_lep0, max_lep_eta,
+			 lep2_conept, mindr_lep2_jet, mindr_tau0_jet, avg_dr_jet, met, tau0_pt,
+			 dr_leps, mvis_lep0_tau, mvis_lep1_tau, mbb};
+		mva_3l1tau_BDT2 = mva_eval_->evaluate_bdt_3l1tau_BDT2(vars2_3l1tau);
+
+		float vars3_3l1tau[12] =
+			{lep0_conept, lep1_conept, mindr_lep0_jet, max_lep_eta, mindr_tau0_jet,
+			 met, tau0_pt, dr_leps, mvis_lep0_tau, mvis_lep1_tau, mbb, nJet};
+		mva_3l1tau_BDT3 = mva_eval_->evaluate_bdt_3l1tau_BDT3(vars3_3l1tau);
+
+		float vars4_3l1tau[2] = {mva_3l1tau_BDT2, mva_3l1tau_BDT1};
+		mva_3l1tau_BDT4 = mva_eval_->evaluate_bdt_3l1tau_BDT4(vars4_3l1tau);
+	}
+	else if (anatype_ == Analyze_2l2tau) {
+		float vars1_2l2tau[14] =
+			{mTauTauVis, costS_tau, lep0_conept, lep1_conept, mT_met_lep0,
+			 mT_met_lep1, dr_taus, min_dr_lep_jet, mindr_tau0_jet, avg_dr_jet,
+			 min_dr_lep_tau, max_dr_lep_tau, is_OS, nJet};
+		mva_2l2tau_BDT1 = mva_eval_->evaluate_bdt_2l2tau_BDT1(vars1_2l2tau);
+
+		float vars2_2l2tau[11] =
+			{mTauTauVis, costS_tau, tau0_pt, tau1_pt, tau1_eta, mindr_lep0_jet,
+			 mT_met_lep0, mindr_tau_jet, max_dr_lep_tau, is_OS, nbtags_loose};
+		mva_2l2tau_BDT2 = mva_eval_->evaluate_bdt_2l2tau_BDT2(vars2_2l2tau);
+
+		float vars3_2l2tau[13] =
+			{mTauTauVis, costS_tau, tau0_pt, tau1_pt, lep1_conept, mindr_lep0_jet,
+			 mT_met_lep0, mindr_tau_jet, avg_dr_jet, avg_dr_lep_tau, dr_taus, is_OS,
+			 nbtags_loose};
+		mva_2l2tau_BDT3 = mva_eval_->evaluate_bdt_2l2tau_BDT3(vars3_2l2tau);
+
+		float vars4_2l2tau[2] = {mva_2l2tau_BDT2, mva_2l2tau_BDT1};
+		mva_2l2tau_BDT4 = mva_eval_->evaluate_bdt_2l2tau_BDT4(vars4_2l2tau);
 	}
 }
 

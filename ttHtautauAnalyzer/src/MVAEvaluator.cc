@@ -12,21 +12,24 @@ MVAEvaluator::MVAEvaluator()
 	setup_tmva_reader_2lss1tau_BDT1();
 	setup_tmva_reader_2lss1tau_BDT2();
 	setup_tmva_reader_2lss1tau_BDT3();
-	setup_tmva_reader_2lss1tau_BDT4();
-	setup_tmva_reader_2lss1tau_BDT5();
+	//setup_tmva_reader_2lss1tau_BDT4(); TODO: add Hj_tagger
+	//setup_tmva_reader_2lss1tau_BDT5(); TODO: add mem_LR
+	//setup_tmva_reader_2lss1tau_BDT6();
 	setup_tmva_reader_3l1tau_BDT1();
 	setup_tmva_reader_3l1tau_BDT2();
 	setup_tmva_reader_3l1tau_BDT3();
+	setup_tmva_reader_3l1tau_BDT4(); 
 	setup_tmva_reader_2l2tau_BDT1();
 	setup_tmva_reader_2l2tau_BDT2();
 	setup_tmva_reader_2l2tau_BDT3();
+	setup_tmva_reader_2l2tau_BDT4();
 }
 
 void MVAEvaluator::setup_tmva_reader_HTT()
 {
 	const TString weights =
 		data_directory_ + "HadTopTagger_resolved_XGB_CSV_sort_withKinFit.xml";
-	reader_HTT_ = new TMVA::Reader("!Color:!Silent");
+	reader_HTT_ = new TMVA::Reader("!Color:Silent");
 
 	reader_HTT_ -> AddVariable("CSV_b", &(inputVars_HTT_[0]));
 	reader_HTT_ -> AddVariable("qg_Wj2", &(inputVars_HTT_[1]));
@@ -51,7 +54,7 @@ void MVAEvaluator::setup_tmva_reader_1l2tau_BDT1()
 {
 	const TString weights =
 		data_directory_ + "1l2tau/1l_2tau_XGB_plainKin_evtLevelTT_TTH_13Var.xml";
-	reader_1l2tau_BDT1_ = new TMVA::Reader("!Color:!Silent");
+	reader_1l2tau_BDT1_ = new TMVA::Reader("!Color:Silent");
 
 	reader_1l2tau_BDT1_ ->AddVariable("avg_dr_jet", &(inputVars_1l2tau_BDT1_[0]));
 	reader_1l2tau_BDT1_ ->AddVariable("dr_taus", &(inputVars_1l2tau_BDT1_[1]));
@@ -72,6 +75,11 @@ void MVAEvaluator::setup_tmva_reader_1l2tau_BDT1()
 
 float MVAEvaluator::evaluate_bdt_1l2tau_BDT1(float Vars[13])
 {
+	if (!reader_1l2tau_BDT1_) {
+		std::cerr << "WARNiNG!! TMVA Reader reader_1l2tau_BDT1_ not setup" << std::endl;
+		return -9999.;
+	}
+	
 	for (size_t i=0; i<13; ++i)
 		inputVars_1l2tau_BDT1_[i] = Vars[i];
 
@@ -82,7 +90,7 @@ void MVAEvaluator::setup_tmva_reader_1l2tau_BDT2()
 {
 	const TString weights =
 		data_directory_ + "1l2tau/1l_2tau_XGB_HTT_evtLevelSUM_TTH_VT_17Var.xml";
-	reader_1l2tau_BDT2_ = new TMVA::Reader("!Color:!Silent");
+	reader_1l2tau_BDT2_ = new TMVA::Reader("!Color:Silent");
 
 	reader_1l2tau_BDT2_ -> AddVariable("avg_dr_jet", &(inputVars_1l2tau_BDT2_[0]));
 	reader_1l2tau_BDT2_ -> AddVariable("dr_taus", &(inputVars_1l2tau_BDT2_[1]));
@@ -107,6 +115,11 @@ void MVAEvaluator::setup_tmva_reader_1l2tau_BDT2()
 
 float MVAEvaluator::evaluate_bdt_1l2tau_BDT2(float Vars[17])
 {
+	if (!reader_1l2tau_BDT2_) {
+		std::cerr << "WARNiNG!! TMVA Reader reader_1l2tau_BDT2_ not setup" << std::endl;
+		return -9999.;
+	}
+	
 	for (size_t i=0; i<17; ++i)
 		inputVars_1l2tau_BDT2_[i] = Vars[i];
 
@@ -117,7 +130,7 @@ void MVAEvaluator::setup_tmva_reader_2lss1tau_BDT1()
 {
 	const TString weights =
 		data_directory_ + "2lss1tau/2lss_1tau_XGB_plainKin_evtLevelTTV_TTH_15Var.xml";
-	reader_2lss1tau_BDT1_ = new TMVA::Reader("!Color:!Silent");
+	reader_2lss1tau_BDT1_ = new TMVA::Reader("!Color:Silent");
 
 	reader_2lss1tau_BDT1_ -> AddVariable("avg_dr_jet", &(inputVars_2lss1tau_BDT1_[0]));
 	reader_2lss1tau_BDT1_ -> AddVariable("dr_lep1_tau", &(inputVars_2lss1tau_BDT1_[1]));
@@ -140,6 +153,11 @@ void MVAEvaluator::setup_tmva_reader_2lss1tau_BDT1()
 
 float MVAEvaluator::evaluate_bdt_2lss1tau_BDT1(float Vars[15])
 {
+	if (!reader_2lss1tau_BDT1_) {
+		std::cerr << "WARNiNG!! TMVA Reader reader_2lss1tau_BDT1_ not setup" << std::endl;
+		return -9999.;
+	}
+	
 	for (size_t i=0; i<15; ++i)
 		inputVars_2lss1tau_BDT1_[i] = Vars[i];
 
@@ -150,7 +168,7 @@ void MVAEvaluator::setup_tmva_reader_2lss1tau_BDT2()
 {
 	const TString weights =
 		data_directory_ + "2lss1tau/2lss_1tau_XGB_plainKin_evtLevelTT_TTH_16Var.xml";
-	reader_2lss1tau_BDT2_ = new TMVA::Reader("!Color:!Silent");
+	reader_2lss1tau_BDT2_ = new TMVA::Reader("!Color:Silent");
 
 	reader_2lss1tau_BDT2_ -> AddVariable("avg_dr_jet", &(inputVars_2lss1tau_BDT2_[0]));
 	reader_2lss1tau_BDT2_ -> AddVariable("dr_lep1_tau", &(inputVars_2lss1tau_BDT2_[1]));
@@ -174,6 +192,11 @@ void MVAEvaluator::setup_tmva_reader_2lss1tau_BDT2()
 
 float MVAEvaluator::evaluate_bdt_2lss1tau_BDT2(float Vars[16])
 {
+	if (!reader_2lss1tau_BDT2_) {
+		std::cerr << "WARNiNG!! TMVA Reader reader_2lss1tau_BDT2_ not setup" << std::endl;
+		return -9999.;
+	}
+	
 	for (size_t i=0; i<16; ++i)
 		inputVars_2lss1tau_BDT2_[i] = Vars[i];
 
@@ -184,7 +207,7 @@ void MVAEvaluator::setup_tmva_reader_2lss1tau_BDT3()
 {
 	const TString weights =
 		data_directory_ + "2lss1tau/2lss_1tau_XGB_plainKin_evtLevelSUM_TTH_M_18Var.xml";
-	reader_2lss1tau_BDT3_ = new TMVA::Reader("!Color:!Silent");
+	reader_2lss1tau_BDT3_ = new TMVA::Reader("!Color:Silent");
 
 	reader_2lss1tau_BDT3_ -> AddVariable("avg_dr_jet", &(inputVars_2lss1tau_BDT3_[0]));
 	reader_2lss1tau_BDT3_ -> AddVariable("dr_lep1_tau", &(inputVars_2lss1tau_BDT3_[1]));
@@ -210,6 +233,11 @@ void MVAEvaluator::setup_tmva_reader_2lss1tau_BDT3()
 
 float MVAEvaluator::evaluate_bdt_2lss1tau_BDT3(float Vars[18])
 {
+	if (!reader_2lss1tau_BDT3_) {
+		std::cerr << "WARNiNG!! TMVA Reader reader_2lss1tau_BDT3_ not setup" << std::endl;
+		return -9999.;
+	}
+	
 	for (size_t i=0; i<18; ++i)
 		inputVars_2lss1tau_BDT3_[i] = Vars[i];
 
@@ -220,7 +248,7 @@ void MVAEvaluator::setup_tmva_reader_2lss1tau_BDT4()
 {
 	const TString weights =
 		data_directory_ + "2lss1tau/2lss_1tau_XGB_HTT_evtLevelSUM_TTH_M_19Var.xml";
-	reader_2lss1tau_BDT4_ = new TMVA::Reader("!Color:!Silent");
+	reader_2lss1tau_BDT4_ = new TMVA::Reader("!Color:Silent");
 
 	reader_2lss1tau_BDT4_ -> AddVariable("avg_dr_jet", &(inputVars_2lss1tau_BDT4_[0]));
 	reader_2lss1tau_BDT4_ -> AddVariable("dr_lep1_tau", &(inputVars_2lss1tau_BDT4_[1]));
@@ -247,6 +275,11 @@ void MVAEvaluator::setup_tmva_reader_2lss1tau_BDT4()
 
 float MVAEvaluator::evaluate_bdt_2lss1tau_BDT4(float Vars[19])
 {
+	if (!reader_2lss1tau_BDT4_) {
+		std::cerr << "WARNiNG!! TMVA Reader reader_2lss1tau_BDT4_ not setup" << std::endl;
+		return -9999.;
+	}
+	
 	for (size_t i=0; i<19; ++i)
 		inputVars_2lss1tau_BDT4_[i] = Vars[i];
 
@@ -257,7 +290,7 @@ void MVAEvaluator::setup_tmva_reader_2lss1tau_BDT5()
 {
 	const TString weights =
 		data_directory_ + "2lss1tau/2lss_1tau_XGB_HTTMEM_evtLevelSUM_TTH_M_20Var.xml";
-	reader_2lss1tau_BDT5_ = new TMVA::Reader("!Color:!Silent");
+	reader_2lss1tau_BDT5_ = new TMVA::Reader("!Color:Silent");
 
 	reader_2lss1tau_BDT5_ -> AddVariable("avg_dr_jet", &(inputVars_2lss1tau_BDT5_[0]));
 	reader_2lss1tau_BDT5_ -> AddVariable("dr_lep1_tau", &(inputVars_2lss1tau_BDT5_[1]));
@@ -285,17 +318,47 @@ void MVAEvaluator::setup_tmva_reader_2lss1tau_BDT5()
 
 float MVAEvaluator::evaluate_bdt_2lss1tau_BDT5(float Vars[20])
 {
+	if (!reader_2lss1tau_BDT5_) {
+		std::cerr << "WARNiNG!! TMVA Reader reader_2lss1tau_BDT5_ not setup" << std::endl;
+		return -9999.;
+	}
+	
 	for (size_t i=0; i<20; ++i)
 		inputVars_2lss1tau_BDT5_[i] = Vars[i];
 
 	return reader_2lss1tau_BDT5_ -> EvaluateMVA("BDT");
 }
 
+void MVAEvaluator::setup_tmva_reader_2lss1tau_BDT6()
+{
+	const TString weights =
+		data_directory_ + "2lss1tau/2lss_1tau_XGB_JointBDT_plainKin_1B_M.xml";
+	reader_2lss1tau_BDT6_ = new TMVA::Reader("!Color:Silent");
+
+	reader_2lss1tau_BDT6_ -> AddVariable("BDTtt", &(inputVars_2lss1tau_BDT6_[0]));
+	reader_2lss1tau_BDT6_ -> AddVariable("BDTttV", &(inputVars_2lss1tau_BDT6_[1]));
+	
+	reader_2lss1tau_BDT6_ -> BookMVA("BDT", weights);
+}
+
+float MVAEvaluator::evaluate_bdt_2lss1tau_BDT6(float Vars[2])
+{
+	if (!reader_2lss1tau_BDT6_) {
+		std::cerr << "WARNiNG!! TMVA Reader reader_2lss1tau_BDT6_ not setup" << std::endl;
+		return -9999.;
+	}
+		
+	inputVars_2lss1tau_BDT6_[0] = Vars[0];
+	inputVars_2lss1tau_BDT6_[1] = Vars[1];
+
+	return reader_2lss1tau_BDT6_ -> EvaluateMVA("BDT");
+}
+
 void MVAEvaluator::setup_tmva_reader_3l1tau_BDT1()
 {
 	const TString weights =
 		data_directory_ + "3l1tau/3l_1tau_XGB_plainKin_evtLevelTTV_TTH_13Var.xml";
-	reader_3l1tau_BDT1_ = new TMVA::Reader("!Color:!Silent");
+	reader_3l1tau_BDT1_ = new TMVA::Reader("!Color:Silent");
 
 	reader_3l1tau_BDT1_ -> AddVariable("lep1_conePt", &(inputVars_3l1tau_BDT1_[0]));
 	reader_3l1tau_BDT1_ -> AddVariable("lep2_conePt", &(inputVars_3l1tau_BDT1_[1]));
@@ -316,6 +379,11 @@ void MVAEvaluator::setup_tmva_reader_3l1tau_BDT1()
 
 float MVAEvaluator::evaluate_bdt_3l1tau_BDT1(float Vars[13])
 {
+	if (!reader_3l1tau_BDT1_) {
+		std::cerr << "WARNiNG!! TMVA Reader reader_3l1tau_BDT1_ not setup" << std::endl;
+		return -9999.;
+	}
+	
 	for (size_t i=0; i<13; ++i)
 		inputVars_3l1tau_BDT1_[i] = Vars[i];
 
@@ -326,7 +394,7 @@ void MVAEvaluator::setup_tmva_reader_3l1tau_BDT2()
 {
 	const TString weights =
 		data_directory_ + "3l1tau/3l_1tau_XGB_plainKin_evtLevelTT_TTH_15Var.xml";
-	reader_3l1tau_BDT2_ = new TMVA::Reader("!Color:!Silent");
+	reader_3l1tau_BDT2_ = new TMVA::Reader("!Color:Silent");
 
 	reader_3l1tau_BDT2_ -> AddVariable("mindr_lep1_jet", &(inputVars_3l1tau_BDT2_[0]));
 	reader_3l1tau_BDT2_ -> AddVariable("mindr_lep2_jet", &(inputVars_3l1tau_BDT2_[1]));
@@ -349,6 +417,11 @@ void MVAEvaluator::setup_tmva_reader_3l1tau_BDT2()
 
 float MVAEvaluator::evaluate_bdt_3l1tau_BDT2(float Vars[15])
 {
+	if (!reader_3l1tau_BDT2_) {
+		std::cerr << "WARNiNG!! TMVA Reader reader_3l1tau_BDT2_ not setup" << std::endl;
+		return -9999.;
+	}
+	
 	for (size_t i=0; i<15; ++i)
 		inputVars_3l1tau_BDT2_[i] = Vars[i];
 
@@ -359,7 +432,7 @@ void MVAEvaluator::setup_tmva_reader_3l1tau_BDT3()
 {
 	const TString weights =
 		data_directory_ + "3l1tau/3l_1tau_XGB_plainKin_evtLevelSUM_TTH_M_12Var.xml";
-	reader_3l1tau_BDT3_ = new TMVA::Reader("!Color:!Silent");
+	reader_3l1tau_BDT3_ = new TMVA::Reader("!Color:Silent");
 
 	reader_3l1tau_BDT3_ -> AddVariable("lep1_conePt", &(inputVars_3l1tau_BDT3_[0]));
 	reader_3l1tau_BDT3_ -> AddVariable("lep2_conePt", &(inputVars_3l1tau_BDT3_[1]));
@@ -379,17 +452,47 @@ void MVAEvaluator::setup_tmva_reader_3l1tau_BDT3()
 
 float MVAEvaluator::evaluate_bdt_3l1tau_BDT3(float Vars[12])
 {
+	if (!reader_3l1tau_BDT3_) {
+		std::cerr << "WARNiNG!! TMVA Reader reader_3l1tau_BDT3_ not setup" << std::endl;
+		return -9999.;
+	}
+	
 	for (size_t i=0; i<12; ++i)
 		inputVars_3l1tau_BDT3_[i] = Vars[i];
 
 	return reader_3l1tau_BDT3_ -> EvaluateMVA("BDT");
 }
 
+void MVAEvaluator::setup_tmva_reader_3l1tau_BDT4()
+{
+	const TString weights =
+		data_directory_ + "3l1tau/3l_1tau_XGB_JointBDT_plainKin_1B_M.xml";
+	reader_3l1tau_BDT4_ = new TMVA::Reader("!Color:Silent");
+
+	reader_3l1tau_BDT4_ -> AddVariable("BDTtt", &(inputVars_3l1tau_BDT4_[0]));
+	reader_3l1tau_BDT4_ -> AddVariable("BDTttV", &(inputVars_3l1tau_BDT4_[1]));
+	
+	reader_3l1tau_BDT4_ -> BookMVA("BDT", weights);
+}
+
+float MVAEvaluator::evaluate_bdt_3l1tau_BDT4(float Vars[2])
+{
+	if (!reader_3l1tau_BDT4_) {
+		std::cerr << "WARNiNG!! TMVA Reader reader_3l1tau_BDT4_ not setup" << std::endl;
+		return -9999.;
+	}
+	
+	inputVars_3l1tau_BDT4_[0] = Vars[0];
+	inputVars_3l1tau_BDT4_[1] = Vars[1];
+
+	return reader_3l1tau_BDT4_ -> EvaluateMVA("BDT");
+}
+
 void MVAEvaluator::setup_tmva_reader_2l2tau_BDT1()
 {
 	const TString weights =
 		data_directory_ + "2l2tau/2l_2tau_XGB_plainKin_evtLevelTTV_TTH_14Var.xml";
-	reader_2l2tau_BDT1_ = new TMVA::Reader("!Color:!Silent");
+	reader_2l2tau_BDT1_ = new TMVA::Reader("!Color:Silent");
 
 	reader_2l2tau_BDT1_ -> AddVariable("mTauTauVis", &(inputVars_2l2tau_BDT1_[0]));
 	reader_2l2tau_BDT1_ -> AddVariable("cosThetaS_hadTau", &(inputVars_2l2tau_BDT1_[1]));
@@ -411,6 +514,11 @@ void MVAEvaluator::setup_tmva_reader_2l2tau_BDT1()
 
 float MVAEvaluator::evaluate_bdt_2l2tau_BDT1(float Vars[14])
 {
+	if (!reader_2l2tau_BDT1_) {
+		std::cerr << "WARNiNG!! TMVA Reader reader_2l2tau_BDT1_ not setup" << std::endl;
+		return -9999.;
+	}
+	
 	for (size_t i=0; i<14; ++i)
 		inputVars_2l2tau_BDT1_[i] = Vars[i];
 
@@ -421,7 +529,7 @@ void MVAEvaluator::setup_tmva_reader_2l2tau_BDT2()
 {
 	const TString weights =
 		data_directory_ + "2l2tau/2l_2tau_XGB_plainKin_evtLevelTT_TTH_11Var.xml";
-	reader_2l2tau_BDT2_ = new TMVA::Reader("!Color:!Silent");
+	reader_2l2tau_BDT2_ = new TMVA::Reader("!Color:Silent");
 
 	reader_2l2tau_BDT2_ -> AddVariable("mTauTauVis", &(inputVars_2l2tau_BDT2_[0]));
 	reader_2l2tau_BDT2_ -> AddVariable("cosThetaS_hadTau", &(inputVars_2l2tau_BDT2_[1]));
@@ -440,6 +548,11 @@ void MVAEvaluator::setup_tmva_reader_2l2tau_BDT2()
 
 float MVAEvaluator::evaluate_bdt_2l2tau_BDT2(float Vars[11])
 {
+	if (!reader_2l2tau_BDT2_) {
+		std::cerr << "WARNiNG!! TMVA Reader reader_2l2tau_BDT2_ not setup" << std::endl;
+		return -9999.;
+	}
+	
 	for (size_t i=0; i<11; ++i)
 		inputVars_2l2tau_BDT2_[i] = Vars[i];
 
@@ -450,7 +563,7 @@ void MVAEvaluator::setup_tmva_reader_2l2tau_BDT3()
 {
 	const TString weights =
 		data_directory_ + "2l2tau/2l_2tau_XGB_plainKin_evtLevelSUM_TTH_VT_13Var.xml";
-	reader_2l2tau_BDT3_ = new TMVA::Reader("!Color:!Silent");
+	reader_2l2tau_BDT3_ = new TMVA::Reader("!Color:Silent");
 
 	reader_2l2tau_BDT3_ -> AddVariable("mTauTauVis", &(inputVars_2l2tau_BDT3_[0]));
 	reader_2l2tau_BDT3_ -> AddVariable("cosThetaS_hadTau", &(inputVars_2l2tau_BDT3_[1]));
@@ -471,8 +584,38 @@ void MVAEvaluator::setup_tmva_reader_2l2tau_BDT3()
 
 float MVAEvaluator::evaluate_bdt_2l2tau_BDT3(float Vars[13])
 {
+	if (!reader_2l2tau_BDT3_) {
+		std::cerr << "WARNiNG!! TMVA Reader reader_2l2tau_BDT3_ not setup" << std::endl;
+		return -9999.;
+	}
+	
 	for (size_t i=0; i<13; ++i)
 		inputVars_2l2tau_BDT3_[i] = Vars[i];
 
 	return reader_2l2tau_BDT3_ -> EvaluateMVA("BDT");
+}
+
+void MVAEvaluator::setup_tmva_reader_2l2tau_BDT4()
+{
+	const TString weights =
+		data_directory_ + "2l2tau/2l_2tau_XGB_JointBDT_plainKin_1B_VT.xml";
+	reader_2l2tau_BDT4_ = new TMVA::Reader("!Color:Silent");
+
+	reader_2l2tau_BDT4_ -> AddVariable("BDTtt", &(inputVars_2l2tau_BDT4_[0]));
+	reader_2l2tau_BDT4_ -> AddVariable("BDTttV", &(inputVars_2l2tau_BDT4_[1]));
+	
+	reader_2l2tau_BDT4_ -> BookMVA("BDT", weights);
+}
+
+float MVAEvaluator::evaluate_bdt_2l2tau_BDT4(float Vars[2])
+{
+	if (!reader_2l2tau_BDT4_) {
+		std::cerr << "WARNiNG!! TMVA Reader reader_2l2tau_BDT4_ not setup" << std::endl;
+		return -9999.;
+	}
+	
+	inputVars_2l2tau_BDT4_[0] = Vars[0];
+	inputVars_2l2tau_BDT4_[1] = Vars[1];
+
+	return reader_2l2tau_BDT4_ -> EvaluateMVA("BDT");
 }
