@@ -527,6 +527,7 @@ void eventNtuple::initialize()
 	jet_phi->clear();
 	jet_E->clear();
 	jet_csv->clear();
+	jet_csv_csvv2->clear();
 	jet_flavor->clear();
 	jet_qgLikelihood->clear();
 
@@ -721,6 +722,7 @@ void eventNtuple::setup_branches(TTree* tree)
 	tree->Branch("jet_phi",    &jet_phi);
 	tree->Branch("jet_E",      &jet_E);
 	tree->Branch("jet_csv",    &jet_csv);
+	tree->Branch("jet_csv_csvv2", &jet_csv_csvv2);
 	tree->Branch("jet_flavor", &jet_flavor);
 	tree->Branch("jet_qgLikelihood", &jet_qgLikelihood);
 
@@ -912,6 +914,7 @@ void eventNtuple::set_branch_address(TTree* tree)
 	tree->SetBranchAddress("jet_phi",    &jet_phi);
 	tree->SetBranchAddress("jet_E",      &jet_E);
 	tree->SetBranchAddress("jet_csv",    &jet_csv);
+	tree->SetBranchAddress("jet_csv_csvv2", &jet_csv_csvv2);
 	tree->SetBranchAddress("jet_flavor", &jet_flavor);
 	tree->SetBranchAddress("jet_qgLikelihood", &jet_qgLikelihood);
 
