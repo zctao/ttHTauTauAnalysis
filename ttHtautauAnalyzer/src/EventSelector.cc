@@ -856,7 +856,7 @@ bool EventSelector::pass_2lss1tau_tauNumber(const std::vector<miniTau>& selected
 		if (verbose_) std::cout << "FAIL tau number requirement" << std::endl;
 		return false;
 	}
-	/*
+	
 	// At most one tau passing Medium MVA (avoid overlap with 2l2tau)
 	int nvtighttau = 0;
 	for (const auto & tau : selectedTaus) {
@@ -867,7 +867,7 @@ bool EventSelector::pass_2lss1tau_tauNumber(const std::vector<miniTau>& selected
 		if (verbose_) std::cout << "FAIL: more than one Medium taus" << std::endl;
 		return false;
 	}
-	*/
+
 	return true;
 }
 
@@ -879,20 +879,10 @@ bool EventSelector::pass_2lss1tau_SR_selection(
 	if (verbose_) std::cout << "start 2lss1tau signal region selection" << std::endl;
 
 	///////////////////////////////
-	// At least one tau pass loose MVA ID
+	// At least one tau pass medium MVA ID
+	// and at most one tau passing VTight MVA (avoid overlap with 2l2tau)
 	if ( not pass_2lss1tau_tauNumber(selectedTaus) )
 		return false;
-
-	// At most one tau passing Medium MVA (avoid overlap with 2l2tau)
-	int nvtighttau = 0;
-	for (const auto & tau : selectedTaus) {
-		if (not looseselection_) assert(tau.passMVAID("L"));
-		if (tau.passMVAID("M")) nvtighttau++;
-	}
-	if ( nvtighttau > 1 ) {
-		if (verbose_) std::cout << "FAIL: more than one Medium taus" << std::endl;
-		return false;
-	}
 	
 	///////////////////////////////
 	// lepton ID
