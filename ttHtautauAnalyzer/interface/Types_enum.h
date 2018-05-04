@@ -39,6 +39,8 @@ enum Selection_types {
 	Inclusive_2lss1tau,
 	Inclusive_3l1tau,
 	Inclusive_2l2tau,
+    Control_ttW,
+	Control_ttZ,
 	Selection_NA
 };
 

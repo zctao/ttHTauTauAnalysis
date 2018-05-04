@@ -77,8 +77,9 @@ class EventSelector
 								   const std::vector<miniLepton>&,
 								   const std::vector<miniLepton>&,
 								   int, int, int, float, int&, TH1* h_cutflow=0);
+	bool pass_2ltight_ss_selection(const std::vector<miniLepton>&, int);
 	bool pass_2ltight_ss_selection(const std::vector<miniLepton>&, int,
-								   TH1* h_cutflow=0);
+								   int&, TH1* h_cutflow=0);
 	bool pass_2l1tau_inclusive_selection(const std::vector<miniLepton>&,
 										 const std::vector<miniLepton>&,
 										 const std::vector<miniLepton>&,
@@ -101,9 +102,9 @@ class EventSelector
 	bool pass_2lss1tau_FlipCR_selection();
 	bool pass_2lss1tau_FlipARCR_selection();
 	//
-	bool pass_2lss_inclusive_CR_selection();
-	bool pass_2lss_ttW_CR_selection();
-	bool pass_2lss_NJet_CR_selection();
+	//bool pass_2lss_inclusive_CR_selection();
+	//bool pass_2lss_ttW_CR_selection();
+	//bool pass_2lss_NJet_CR_selection();
 
 	bool pass_3l_generic_selection(const std::vector<miniLepton>&,
 								   const std::vector<miniLepton>&,
@@ -126,9 +127,9 @@ class EventSelector
 	bool pass_3l1tau_tauNumber(const std::vector<miniTau>&);
 	
 	// TODO
-	bool pass_3l_inclusive_CR_selection();
-	bool pass_3l_ttZ_CR_selection();
-	bool pass_3l_WZ_CR_selection();
+	//bool pass_3l_inclusive_CR_selection();
+	//bool pass_3l_ttZ_CR_selection();
+	//bool pass_3l_WZ_CR_selection();
 
 	bool pass_2l2tau_inclusive_selection(const std::vector<miniLepton>&,
 										 const std::vector<miniLepton>&,
@@ -149,6 +150,16 @@ class EventSelector
 	bool pass_2l2tau_charge(const std::vector<miniLepton>&,
 							const std::vector<miniTau>&);
 
+	// control region
+	bool pass_ttW_CR_selection(const std::vector<miniLepton>&,
+							   const std::vector<miniLepton>&,
+							   const std::vector<miniLepton>&,
+							   int, int, int, float, TH1* h_cutflow=0);
+	bool pass_ttZ_CR_selection(const std::vector<miniLepton>&,
+							   const std::vector<miniLepton>&,
+							   const std::vector<miniLepton>&,
+							   int, int, float, TH1* h_cutflow=0);
+	
 	bool pass_pairMass_veto(const std::vector<miniLepton>&);
 	bool pass_Zmass_veto(const std::vector<miniLepton>&, bool, bool);
 	bool pass_metLD_3l(float, const std::vector<miniLepton>&, int);

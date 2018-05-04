@@ -32,6 +32,7 @@ int main(int argc, char** argv)
 
 	string dir, outname, infile;
 	bool makeObjectNtuple, make1l2tau, make2lss1tau, make3l1tau, make2l2tau;
+	bool makeControl;
 	bool evaluateMVA, doHTT;
 	bool debug;
 	
@@ -46,6 +47,7 @@ int main(int argc, char** argv)
 		("make2lss1tau", po::value<bool>(&make2lss1tau)->default_value(false))
 		("make3l1tau", po::value<bool>(&make3l1tau)->default_value(false))
 		("make2l2tau", po::value<bool>(&make2l2tau)->default_value(false))
+		("makeControl", po::value<bool>(&makeControl)->default_value(false))
 		("evaluateMVA", po::value<bool>(&evaluateMVA)->default_value(true))
 		("doHTT", po::value<bool>(&doHTT)->default_value(true))
 		("debug", po::value<bool>(&debug)->default_value(false));
@@ -71,6 +73,8 @@ int main(int argc, char** argv)
 	TTree *synctree_3l1tau_fake = 0;
 	TTree *synctree_2l2tau_sr = 0;
 	TTree *synctree_2l2tau_fake = 0;
+	TTree *synctree_ttWctrl = 0;
+	TTree *synctree_ttZctrl = 0;
 
 	if (makeObjectNtuple) {
 		cout << "Object ntuple ... " << endl;
@@ -164,6 +168,20 @@ int main(int argc, char** argv)
 		cout << "SR : " << synctree_2l2tau_sr->GetEntries() << endl;
 		cout << "Fake : " << synctree_2l2tau_fake->GetEntries() << endl;
 	}
+
+	if (makeControl) {
+		cout << "ttW control region ... " << endl;
+		synctree_ttWctrl = makeSyncTree(cdir+infile.c_str(), "syncTree_ttWctrl",
+										Analyze_2lss1tau, Control_ttW,
+										evaluateMVA, doHTT, debug);
+		synctree_ttZctrl = makeSyncTree(cdir+infile.c_str(), "syncTree_ttZctrl",
+										Analyze_3l1tau, Control_ttZ,
+										evaluateMVA, doHTT, debug);
+		// event count
+		cout << "Control region : " << endl;
+		cout << "ttW : " << synctree_ttWctrl->GetEntries() << endl;
+		cout << "ttZ : " << synctree_ttZctrl->GetEntries() << endl;
+	}
 	
 	// create output file
 	TFile* fileout = new TFile(outname.c_str(), "recreate");
@@ -187,6 +205,11 @@ int main(int argc, char** argv)
 	if (make2l2tau) {
 		synctree_2l2tau_sr->Write();
 		synctree_2l2tau_fake->Write();
+	}
+
+	if (makeControl) {
+		synctree_ttWctrl->Write();
+		synctree_ttZctrl->Write();
 	}
 	
 	fileout->Close();
@@ -513,7 +536,8 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		syncntuple.MHT = mht;
 		syncntuple.metLD = metld;
 
-		if (anatype==Analyze_NA or seltype==Selection_NA) {
+		if (anatype==Analyze_NA or seltype==Selection_NA or
+			seltype==Control_ttW or seltype==Control_ttZ) {
 			tree_out->Fill();
 			continue;
 		}
@@ -523,7 +547,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		auto jetsp4 = evNtuple.buildFourVectorJets();
 		auto btagsp4 = evNtuple.buildFourVectorBtagJets();
 
-		assert(leptons.size()>0 and taus->size()>0);
+		//assert(leptons.size()>0 and taus->size()>0);
 		
 		mvantuple.compute_mva_variables(leptons, *taus, jetsp4, syncntuple.PFMET,
 										syncntuple.PFMETphi, syncntuple.MHT,
