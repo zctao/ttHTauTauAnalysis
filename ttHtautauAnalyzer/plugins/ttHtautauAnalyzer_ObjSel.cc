@@ -356,6 +356,9 @@ float ttHtautauAnalyzer::getJetCSV(const pat::Jet& jet)
 	float csv = jet.bDiscriminator("pfDeepCSVJetTags:probb")
 		+ jet.bDiscriminator("pfDeepCSVJetTags:probbb");
 
+	if (isnan(csv))
+		csv = -2.;
+	
 	return csv;
 
 	/*
