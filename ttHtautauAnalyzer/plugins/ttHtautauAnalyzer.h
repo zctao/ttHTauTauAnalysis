@@ -303,6 +303,8 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	// pileup
 	TH1D* h_npuTrue_;
 	TH1D* h_npuInTime_;
+	TH1D* h_npuTrue_genweight_;
+	TH1D* h_npuInTime_genweight_;
 	// HLT and filters
 	TH1I* h_hlt_;
 	TH1I* h_flt_;

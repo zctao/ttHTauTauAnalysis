@@ -179,29 +179,6 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	}
 
 	/////////////////////////////////////////
-	// Pile up
-	float npuTrue = -9999.;
-	float npuInTime = -9999.;
-	//float pu_weight = -9999.;
-	if (not isdata_) {
-		std::vector<PileupSummaryInfo>::const_iterator PVI;
-		for (PVI = PU_info->begin(); PVI != PU_info->end(); ++PVI){
-			int BX = PVI->getBunchCrossing();
-			if (BX == 0) { // "0" is the in-time crossing, negative values are the early crossings, positive are late
-				npuTrue = PVI -> getTrueNumInteractions();
-				npuInTime = PVI -> getPU_NumInteractions();
-				break;
-			}
-		}
-
-		h_npuTrue_->Fill(npuTrue);
-		h_npuInTime_->Fill(npuInTime);
-		
-		// pileup weight
-	    //pu_weight = sf_helper_->Get_PUWeight(npuTrue);
-	}
-
-	/////////////////////////////////////////
 	// gen weights
 	float mc_weight = -9999.;
 	float mc_weight_scale_muF0p5 = -9999.;
@@ -210,7 +187,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	float mc_weight_scale_muR2 = -9999.;
 	if (not isdata_) {
 		float genWeight = event_gen_info.product()->weight();
-		mc_weight = genWeight / std::abs(genWeight);
+		mc_weight = genWeight;// / std::abs(genWeight);
 
 		if (event_lhe_info.isValid()) {
 			if (event_lhe_info->weights().size() > 6) {
@@ -229,12 +206,37 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 			}
 		}
 	}
-
+	
 	/////////////////////////////////////////
 	// event counts before cuts
 	if (not isdata_) {
 		h_SumGenWeight_->Fill(1, mc_weight);
 		//h_SumGenWeightxPU_->Fill(1, mc_weight * pu_weight);
+	}
+
+	/////////////////////////////////////////
+	// Pile up
+	float npuTrue = -9999.;
+	float npuInTime = -9999.;
+	//float pu_weight = -9999.;
+	if (not isdata_) {
+		std::vector<PileupSummaryInfo>::const_iterator PVI;
+		for (PVI = PU_info->begin(); PVI != PU_info->end(); ++PVI){
+			int BX = PVI->getBunchCrossing();
+			if (BX == 0) { // "0" is the in-time crossing, negative values are the early crossings, positive are late
+				npuTrue = PVI -> getTrueNumInteractions();
+				npuInTime = PVI -> getPU_NumInteractions();
+				break;
+			}
+		}
+
+		h_npuTrue_->Fill(npuTrue);
+		h_npuTrue_genweight_->Fill(npuTrue, mc_weight);
+		h_npuInTime_->Fill(npuInTime);
+		h_npuInTime_->Fill(npuInTime, mc_weight);
+		
+		// pileup weight
+	    //pu_weight = sf_helper_->Get_PUWeight(npuTrue);
 	}
 	
 	/////////////////////////////////////////	

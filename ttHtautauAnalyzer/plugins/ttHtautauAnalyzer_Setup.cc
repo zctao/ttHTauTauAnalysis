@@ -99,6 +99,8 @@ void ttHtautauAnalyzer::Set_up_histograms()
 	// pileup
 	h_npuTrue_ = fs_->make<TH1D>("h_npuTrue","",80,0,80);
 	h_npuInTime_ = fs_->make<TH1D>("h_npuInTime","",80,0,80);
+	h_npuTrue_genweight_ = fs_->make<TH1D>("h_npuTree_genweight","",80,0,80);
+	h_npuInTime_genweight_ = fs_->make<TH1D>("h_npuInTime_genweight","",80,0,80);
 
 	// HLT and filters
 	h_hlt_ = fs_->make<TH1I>("h_hlt","",30,0,30);
