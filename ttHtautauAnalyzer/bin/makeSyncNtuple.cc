@@ -19,10 +19,10 @@
 #include <algorithm>
 #include <string>
 
-TTree* makeSyncTree(const TString, const TString, Analysis_types anatype=Analyze_NA,
+TTree* makeSyncTree(const TString, const TString, const TString,
+					Analysis_types anatype=Analyze_NA,
 					Selection_types seltype=Selection_NA, bool evaluateMVA=false,
-					bool doHTT=false, bool debug=false,
-					const TString intreename="ttHtaus/eventTree");
+					bool doHTT=false, bool debug=false);
 
 
 int main(int argc, char** argv)
@@ -30,7 +30,7 @@ int main(int argc, char** argv)
 	using namespace std;
 	namespace po = boost::program_options;
 
-	string dir, outname, infile;
+	string dir, outname, infile, treename;
 	bool makeObjectNtuple, make1l2tau, make2lss1tau, make3l1tau, make2l2tau;
 	bool makeControl;
 	bool evaluateMVA, doHTT;
@@ -42,6 +42,7 @@ int main(int argc, char** argv)
 		("directory,d", po::value<string>(&dir), "event ntuple directory")
 		("output,o", po::value<string>(&outname), "output name")
 		("input,i", po::value<string>(&infile)->default_value("output_sync_event_incl.root"))
+		("treename,t", po::value<string>(&treename)->default_value("ttHtaus/eventTree"))
 		("makeObjectNtuple", po::value<bool>(&makeObjectNtuple)->default_value(false))
 		("make1l2tau", po::value<bool>(&make1l2tau)->default_value(false))
 		("make2lss1tau", po::value<bool>(&make2lss1tau)->default_value(false))
@@ -78,7 +79,7 @@ int main(int argc, char** argv)
 
 	if (makeObjectNtuple) {
 		cout << "Object ntuple ... " << endl;
-		synctree_obj = makeSyncTree(cdir+"output_sync.root","syncTree");
+		synctree_obj = makeSyncTree(cdir+"output_sync.root","syncTree", treename);
 		
 		// event count
 		cout << "number of events with at least 1 preselected muons : " << "\t"
@@ -94,12 +95,12 @@ int main(int argc, char** argv)
 	if (make1l2tau) {
 		cout << "1l2tau signal region ... " << endl;
 		synctree_1l2tau_sr = makeSyncTree(cdir+infile.c_str(), "syncTree_1l2tau_SR",
-										  Analyze_1l2tau, Signal_1l2tau,
+										  treename, Analyze_1l2tau, Signal_1l2tau,
 										  evaluateMVA, doHTT, debug);
 		
 		cout << "1l2tau fake extrapolation region ... " << endl;
 		synctree_1l2tau_fake = makeSyncTree(cdir+infile.c_str(),
-											"syncTree_1l2tau_Fake",
+											"syncTree_1l2tau_Fake", treename, 
 											Analyze_1l2tau, Control_fake_1l2tau,
 											evaluateMVA, doHTT, debug);
 		
@@ -112,19 +113,19 @@ int main(int argc, char** argv)
 	if (make2lss1tau) {
 		cout << "2lss1tau signal region ... " << endl;
 		synctree_2lss1tau_sr =
-			makeSyncTree(cdir+infile.c_str(), "syncTree_2lSS1tau_SR",
+			makeSyncTree(cdir+infile.c_str(), "syncTree_2lSS1tau_SR", treename, 
 						 Analyze_2lss1tau, Signal_2lss1tau,
 						 evaluateMVA, doHTT, debug);
 		
 		cout << "2lss1tau fake extrapolation region ... " << endl;
 		synctree_2lss1tau_fake =
-			makeSyncTree(cdir+infile.c_str(), "syncTree_2lSS1tau_Fake",
+			makeSyncTree(cdir+infile.c_str(), "syncTree_2lSS1tau_Fake", treename, 
 						 Analyze_2lss1tau, Control_fake_2lss1tau,
 						 evaluateMVA, doHTT, debug);
 
 		cout << "2lss1tau charge flip region ... " << endl;
 		synctree_2lss1tau_flip =
-			makeSyncTree(cdir+infile.c_str(), "syncTree_2lSS1tau_Flip",
+			makeSyncTree(cdir+infile.c_str(), "syncTree_2lSS1tau_Flip", treename, 
 						 Analyze_2lss1tau, Control_2los1tau,
 						 evaluateMVA, doHTT, debug);
 		
@@ -138,13 +139,13 @@ int main(int argc, char** argv)
 	if (make3l1tau) {
 		cout << "3l1tau signal region ... " << endl;
 		synctree_3l1tau_sr = makeSyncTree(cdir+infile.c_str(), "syncTree_3l1tau_SR",
-										  Analyze_3l1tau, Signal_3l1tau,
+										  treename, Analyze_3l1tau, Signal_3l1tau,
 										  evaluateMVA, doHTT, debug);
 
 		cout << "3l1tau fake extrapolation region ... " << endl;
 		synctree_3l1tau_fake =
 			makeSyncTree(cdir+infile.c_str(), "syncTree_3l1tau_Fake",
-						 Analyze_3l1tau, Control_fake_3l1tau,
+						 treename, Analyze_3l1tau, Control_fake_3l1tau,
 						 evaluateMVA, doHTT, debug);
 		// event count
 		cout << "3l1tau : " << endl;
@@ -155,13 +156,13 @@ int main(int argc, char** argv)
 	if (make2l2tau) {
 		cout << "2l2tau signal region ... " << endl;
 		synctree_2l2tau_sr = makeSyncTree(cdir+infile.c_str(), "syncTree_2l2tau_SR",
-										  Analyze_2l2tau, Signal_2l2tau,
+										  treename, Analyze_2l2tau, Signal_2l2tau,
 										  evaluateMVA, doHTT, debug);
 
 		cout << "2l2tau fake extrapolation region ... " << endl;
 		synctree_2l2tau_fake =
 			makeSyncTree(cdir+infile.c_str(), "syncTree_2l2tau_Fake",
-						 Analyze_2l2tau, Control_fake_2l2tau,
+						 treename, Analyze_2l2tau, Control_fake_2l2tau,
 						 evaluateMVA, doHTT, debug);
 		// event count
 		cout << "2l2tau : " << endl;
@@ -172,10 +173,10 @@ int main(int argc, char** argv)
 	if (makeControl) {
 		cout << "ttW control region ... " << endl;
 		synctree_ttWctrl = makeSyncTree(cdir+infile.c_str(), "syncTree_ttWctrl",
-										Analyze_2lss1tau, Control_ttW,
+										treename, Analyze_2lss1tau, Control_ttW,
 										evaluateMVA, doHTT, debug);
 		synctree_ttZctrl = makeSyncTree(cdir+infile.c_str(), "syncTree_ttZctrl",
-										Analyze_3l1tau, Control_ttZ,
+										treename, Analyze_3l1tau, Control_ttZ,
 										evaluateMVA, doHTT, debug);
 		// event count
 		cout << "Control region : " << endl;
@@ -221,9 +222,9 @@ int main(int argc, char** argv)
 
 
 TTree* makeSyncTree(const TString input_file, const TString treename,
+					const TString intreename,
 					Analysis_types anatype, Selection_types seltype,
-					bool evaluateMVA, bool doHTT, bool debug,
-					const TString intreename)
+					bool evaluateMVA, bool doHTT, bool debug)
 {
 	using namespace std;
 
