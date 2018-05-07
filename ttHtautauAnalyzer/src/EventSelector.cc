@@ -614,12 +614,13 @@ bool EventSelector::pass_2l_generic_selection(
 	if (h_cutflow and ibin==1) fill_cutflow(h_cutflow, ibin++, "total");
 
 	/////////////////////////////////
-	// At least 2 fakeable leptons and no more than 2 tight leptons
+	// At least 2 fakeable leptons /*and no more than 2 tight leptons*/
 	if (verbose_) {
 		std::cout << "nFakeableLeptons = "<< fakeableLeps.size()
 				  << "  nTightLeptons = " << tightLeps.size() << std::endl;
 	}
-	bool passLepNumber = fakeableLeps.size() >=2  and tightLeps.size() <= 2;
+	//bool passLepNumber = fakeableLeps.size() >=2  and tightLeps.size() <= 2;
+	bool passLepNumber = fakeableLeps.size() >=2;
 	if (passLepNumber) {
 		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "lep num");
 	}
@@ -794,6 +795,13 @@ bool EventSelector::pass_2l1tau_inclusive_selection(
 
 	if (not passes2lGenericSel) {
 		if (verbose_) std::cout << "FAIL generic 2l selection" << std::endl;
+		return false;
+	}
+
+	// no more than 2 tight leptons
+	if (tightLeps.size()>2) {
+		if (verbose_)
+			std::cout << "FAIL due to more than two tight leptons" << std::endl;
 		return false;
 	}
 
@@ -1039,7 +1047,6 @@ bool EventSelector::pass_ttW_CR_selection(
 		pass_2l_generic_selection(looseLeps, fakeableLeps, tightLeps,
 								  njets, nbtags_loose, nbtags_medium, metLD,
 								  ibin, h_cutflow);
-	// need to loose tight lep number cut
 	
 	if (not pass2lGenericSel) {
 		if (verbose_) std::cout << "FAIL generic 2l selection" << std::endl;
