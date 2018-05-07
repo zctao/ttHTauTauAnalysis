@@ -16,5 +16,5 @@ echo "producing inclusive sync ntuple"
 cmsRun analyzer2017_cfg.py doSync=True SampleName=sync_event_incl doCutFlow=True AnalysisType=inclusive
 mv output_sync_event_incl.root $outdir
 
-makeSyncNtuple -d $outdir -o syncNtuple_event.root  --make1l2tau true --make2lss1tau true --make3l1tau true --make2l2tau true
+makeSyncNtuple -d $outdir -o syncNtuple_event.root  --make1l2tau true --make2lss1tau true --make3l1tau true --make2l2tau true --makeControl true
 mv syncNtuple_event.root $outdir
