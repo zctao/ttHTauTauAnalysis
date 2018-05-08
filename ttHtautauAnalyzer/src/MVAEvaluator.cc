@@ -7,14 +7,15 @@ const TString MVAEvaluator::data_directory_ = (string(getenv("CMSSW_BASE"))+"/sr
 MVAEvaluator::MVAEvaluator()
 {
 	setup_tmva_reader_HTT();
+	//setup_tmva_reader_HjTagger(); //TODO: add Hj_tagger
 	setup_tmva_reader_1l2tau_BDT1();
 	setup_tmva_reader_1l2tau_BDT2();
 	setup_tmva_reader_2lss1tau_BDT1();
 	setup_tmva_reader_2lss1tau_BDT2();
 	setup_tmva_reader_2lss1tau_BDT3();
-	//setup_tmva_reader_2lss1tau_BDT4(); TODO: add Hj_tagger
-	//setup_tmva_reader_2lss1tau_BDT5(); TODO: add mem_LR
-	//setup_tmva_reader_2lss1tau_BDT6();
+	//setup_tmva_reader_2lss1tau_BDT4(); //TODO: add Hj_tagger
+	//setup_tmva_reader_2lss1tau_BDT5(); //TODO: add mem_LR
+	setup_tmva_reader_2lss1tau_BDT6();
 	setup_tmva_reader_3l1tau_BDT1();
 	setup_tmva_reader_3l1tau_BDT2();
 	setup_tmva_reader_3l1tau_BDT3();
@@ -48,6 +49,28 @@ float MVAEvaluator::evaluate_bdt_HTT(float Vars[7])
 		inputVars_HTT_[i] = Vars[i];
 
 	return reader_HTT_ -> EvaluateMVA("BDT");
+}
+
+void MVAEvaluator::setup_tmva_reader_HjTagger()
+{
+	const TString weights = data_directory_ + "Hj_csv_BDTG.weights.xml";
+	reader_HjTagger_ = new TMVA::Reader("!Color:Silent");
+
+	reader_HjTagger_ -> AddVariable("Jet_lepdrmin", &(inputVars_HjTagger_[0]));
+	reader_HjTagger_ -> AddVariable("Jet_pfCombinedInclusiveSecondaryVertexV2BJetTags := max(Jet_pfCombinedInclusiveSecondaryVertexV2BJetTags,0.)", &(inputVars_HjTagger_[1]));
+	reader_HjTagger_ -> AddVariable("Jet_qg := max(Jet_qg,0.)", &(inputVars_HjTagger_[2]));
+	reader_HjTagger_ -> AddVariable("Jet_lepdrmax", &(inputVars_HjTagger_[3]));
+	reader_HjTagger_ -> AddVariable("Jet_pt", &(inputVars_HjTagger_[4]));
+
+	reader_HjTagger_ -> BookMVA("BDT", weights);
+}
+
+float MVAEvaluator::evaluate_bdt_HjTagger(float Vars[5])
+{
+	for (size_t i=0; i<5; ++i)
+		inputVars_HjTagger_[i] = Vars[i];
+
+	return reader_HjTagger_ -> EvaluateMVA("BDT");
 }
 
 void MVAEvaluator::setup_tmva_reader_1l2tau_BDT1()

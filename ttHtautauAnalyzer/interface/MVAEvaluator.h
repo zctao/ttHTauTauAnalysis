@@ -13,6 +13,7 @@ class MVAEvaluator
 	~MVAEvaluator(){};
 
 	void setup_tmva_reader_HTT();
+	void setup_tmva_reader_HjTagger();
 	void setup_tmva_reader_1l2tau_BDT1();
 	void setup_tmva_reader_1l2tau_BDT2();
 	void setup_tmva_reader_2lss1tau_BDT1();
@@ -31,6 +32,7 @@ class MVAEvaluator
 	void setup_tmva_reader_2l2tau_BDT4();
 
     float evaluate_bdt_HTT(float*);
+	float evaluate_bdt_HjTagger(float*);
 	float evaluate_bdt_1l2tau_BDT1(float*);
 	float evaluate_bdt_1l2tau_BDT2(float*);
 	float evaluate_bdt_2lss1tau_BDT1(float*);
@@ -53,6 +55,7 @@ class MVAEvaluator
 	static const TString data_directory_;
 	
 	float inputVars_HTT_[7];
+	float inputVars_HjTagger_[5];
 	float inputVars_1l2tau_BDT1_[13];
 	float inputVars_1l2tau_BDT2_[17];
 	float inputVars_2lss1tau_BDT1_[15];
@@ -71,6 +74,7 @@ class MVAEvaluator
 	float inputVars_2l2tau_BDT4_[2];
 
 	TMVA::Reader *reader_HTT_;
+	TMVA::Reader *reader_HjTagger_;
 	TMVA::Reader *reader_1l2tau_BDT1_;
 	TMVA::Reader *reader_1l2tau_BDT2_;
 	TMVA::Reader *reader_2lss1tau_BDT1_;

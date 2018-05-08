@@ -11,10 +11,13 @@
 ### mva
 dir_mva=mva
 
-# HadTop Tagger
 mkdir -p $dir_mva
 cd $dir_mva
+# HadTop Tagger
 wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/HadTopTagger_resolved_XGB_CSV_sort_withKinFit.xml
+
+# Hj Tagger
+#scp ztao@lxplus.cern.ch:/afs/cern.ch/user/b/binghuan/public/TTHLep/weights_IHEP/*.xml .
 cd -
 
 mkdir -p $dir_mva/1l2tau/
@@ -30,7 +33,7 @@ wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036
 wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/2lss_1tau_XGB_plainKin_evtLevelSUM_TTH_M_18Var.xml
 wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/2lss_1tau_XGB_HTT_evtLevelSUM_TTH_M_19Var.xml
 wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/2lss_1tau_XGB_HTTMEM_evtLevelSUM_TTH_M_20Var.xml
-wget https://github.com/HEP-KBFI/tth-htt/blob/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/2lss_1tau_XGB_JointBDT_plainKin_1B_M.xml
+wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/2lss_1tau_XGB_JointBDT_plainKin_1B_M.xml
 cd -
 
 mkdir -p $dir_mva/3l1tau/

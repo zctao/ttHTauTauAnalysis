@@ -783,6 +783,7 @@ void mvaNtuple::compute_HTT_input_variables(const miniJet& bjet,
 void mvaNtuple::compute_HTT(const std::vector<miniJet>& jets)
 {
 	assert(doHTT_);
+	assert(jets.size()>=3);
 	
 	HTT = -9999.;
 	HadTop_pt = -9999.;
