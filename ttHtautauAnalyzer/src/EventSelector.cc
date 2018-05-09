@@ -631,25 +631,11 @@ bool EventSelector::pass_2l_generic_selection(
 
 	/////////////////////////////////
 	// lepton pt
-	if (verbose_) {
-		std::cout << "lep1 pdgid conept pt : " << fakeableLeps[0].pdgId() << " "
-				  << fakeableLeps[0].conept() << " " << fakeableLeps[0].pt()
-				  << std::endl;
-		std::cout << "lep2 pdgid conept pt : " << fakeableLeps[1].pdgId() << " "
-				  << fakeableLeps[1].conept() << " " << fakeableLeps[1].pt()
-				  << std::endl;
-	}
-	float minpt = 25.;
-	float minpt2 = abs(fakeableLeps[1].pdgId())==11 ? 15. : 10.;
-	bool passLepPt =
-		fakeableLeps[0].conept() >= minpt and fakeableLeps[1].conept() >= minpt2;
-	if (passLepPt) {
+	if (pass_lepton_pT_2l(fakeableLeps)) {
 		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "lep pt");
 	}
-	else {
-		if (verbose_) std::cout << "FAIL lepton pT requirement" << std::endl;
+	else
 		return false;
-	}
 
 	/////////////////////////////////
 	// muon, electron tight charge
@@ -1052,10 +1038,14 @@ bool EventSelector::pass_ttW_CR_selection(
 		if (verbose_) std::cout << "FAIL generic 2l selection" << std::endl;
 		return false;
 	}
-
+	
 	// Extend Z mass veto to SFOS lepton pairs
 	if (pass_Zmass_veto(fakeableLeps, true, false)) {
 		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "Zmass veto (sfos)");
+	}
+	else {
+		if (verbose_) std::cout << "FAIL Z mass veto (SFOS)" << std::endl;
+		return false;
 	}
 	
 	bool pass2ltightssSel =
@@ -1066,6 +1056,15 @@ bool EventSelector::pass_ttW_CR_selection(
 		return false;
 	}
 
+	// Extend pT cut to tight leptons
+	if (pass_lepton_pT_2l(tightLeps)) {
+		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "lep pt");
+	}
+	else
+		return false;
+	
+	////////////////
+	
 	// At least 2 jets passing medium WP b-tag
 	if (nbtags_medium >= 2) {
 		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "btag num");
@@ -1491,25 +1490,11 @@ bool EventSelector::pass_2l2tau_inclusive_selection(
 
 	/////////////////////////////////
 	// lepton pt
-	if (verbose_) {
-		std::cout << "lep1 pdgid conept pt : " << fakeableLeps[0].pdgId() << " "
-				  << fakeableLeps[0].conept() << " " << fakeableLeps[0].pt()
-				  << std::endl;
-		std::cout << "lep2 pdgid conept pt : " << fakeableLeps[1].pdgId() << " "
-				  << fakeableLeps[1].conept() << " " << fakeableLeps[1].pt()
-				  << std::endl;
-	}
-    float minpt = 25.;
-	float minpt2 = abs(fakeableLeps[1].pdgId())==11 ? 15. : 10.;
-	bool passLepPt =
-		fakeableLeps[0].conept() >= minpt and fakeableLeps[1].conept() >= minpt2;
-	if (passLepPt) {
+	if (pass_lepton_pT_2l(fakeableLeps)) {
 		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "lep pt");
 	}
-	else {
-		if (verbose_) std::cout << "FAIL lepton pT requirement" << std::endl;
+	else 
 		return false;
-	}
 
 	/////////////////////////////////
 	// At least 2 fakeable taus
@@ -1804,6 +1789,30 @@ bool EventSelector::pass_metLD_3l(float metLD, const std::vector<miniLepton>& le
 	return false;
 }
 
+bool EventSelector::pass_lepton_pT_2l(const std::vector<miniLepton>& leptons)
+{
+	if (leptons.size()<2) {
+		if (verbose_) std::cout << "Not enough leptons!!" << std::endl;
+		return false;
+	}
+
+	if (verbose_) {
+		std::cout << "lep1 pdgid conept pt : " << leptons[0].pdgId() << " "
+				  << leptons[0].conept() << " " << leptons[0].pt() << std::endl;
+		std::cout << "lep2 pdgid conept pt : " << leptons[1].pdgId() << " "
+				  << leptons[1].conept() << " " << leptons[1].pt() << std::endl;
+	}
+    float minpt = 25.;
+	float minpt2 = abs(leptons[1].pdgId())==11 ? 15. : 10.;
+	bool passLepPt =
+		leptons[0].conept() >= minpt and leptons[1].conept() >= minpt2;
+	if (passLepPt)
+		return true;
+	else {
+		if (verbose_) std::cout << "FAIL lepton pT requirement" << std::endl;
+		return false;
+	}
+}
 
 //////////////////////////
 // Deprecated methods
