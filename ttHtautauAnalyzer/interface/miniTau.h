@@ -39,6 +39,7 @@ class miniTau
 	void set_signalNeutrHadrCands(std::vector<TLorentzVector>& nh) {signalNeutrHadrCands_ = nh;}
 	void set_tauIDWPindex(int iWP) {tauIDMVAWP_ = iWP;}
 	void set_tauIDWPindex(bool, bool, bool, bool, bool);
+	void set_IsTight(bool istight) {istight_ = istight;}
 
 	// TODO: check value was set before returning
 	float pt() const {return pt_;}

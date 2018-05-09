@@ -270,11 +270,11 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		auto leptons_loose = evNtuple.buildLeptons('L');  // loose
 	    auto leptons = evNtuple.buildLeptons('F');  // fakeable
 		auto leptons_tight = evNtuple.buildLeptons('T'); // tight
-		
-		auto taus_fakeable = evNtuple.buildTaus(true); // fakeable taus
-		std::string selTauWP="-";
+
+		std::string selTauWP="L";
 		if (anatype==Analyze_1l2tau or anatype==Analyze_2l2tau)
 			selTauWP="M";
+		auto taus_fakeable = evNtuple.buildTaus(true, selTauWP); // fakeable taus
 		auto taus_tight = evNtuple.buildTaus(false, selTauWP); // tight taus
 		
 		if (debug) {
@@ -317,7 +317,8 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		
 		////////////////////////////////////////
 		std::vector<miniTau> * taus = &taus_tight;
-		if (seltype==Control_fake_1l2tau or seltype==Control_fake_2l2tau)
+		//if (seltype==Control_fake_1l2tau or seltype==Control_fake_2l2tau)
+		if (anatype==Analyze_1l2tau or anatype==Analyze_2l2tau)
 			taus = &taus_fakeable;
 		
 		syncntuple.initialize();

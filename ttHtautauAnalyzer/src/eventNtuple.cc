@@ -64,7 +64,15 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorLeps(bool loose) const
 	return lepsP4;
 }
 
-std::vector<miniTau> eventNtuple::buildTaus(bool loose, std::string WP) const
+/*std::vector<miniTau> eventNtuple::buildTaus(std::string WP) const
+{
+	// explicitly selecting taus passing WP
+	// passTightSel() is meaningless for the tau collection returned by this method
+	return buildTaus(false, WP);
+}
+*/
+
+std::vector<miniTau> eventNtuple::buildTaus(bool loose, std::string tightWPDef) const
 {
 	std::vector<miniTau> taus;
 		
@@ -82,13 +90,20 @@ std::vector<miniTau> eventNtuple::buildTaus(bool loose, std::string WP) const
 							 tau_byMediumIsolationMVArun2v1DBdR03oldDMwLT->at(t)>0,
 							 tau_byTightIsolationMVArun2v1DBdR03oldDMwLT->at(t)>0,
 							 tau_byVTightIsolationMVArun2v1DBdR03oldDMwLT->at(t)>0);
-		
+
+		//Update istight_ according to tight WP definition (based on on analysis type)
+		tau.set_IsTight(tau.passMVAID(tightWPDef));
+
+		assert(tau.passMVAID("VL"));
+		if (!loose and !tau.passTightSel()) continue;
+		/*
 		if (WP!="-") {
 			if (not tau.passMVAID(WP)) continue;
 		}
 		else {// if WP is not explicitly set
 			if (!loose and !(tau_idSelection->at(t))) continue;
-		}			
+		}
+		*/	
 		
 		// Tau decay products
 		// charged hadron

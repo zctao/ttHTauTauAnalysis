@@ -26,7 +26,8 @@ class eventNtuple
 	std::vector<miniLepton> buildLeptons(char) const;
 	std::vector<TLorentzVector> buildFourVectorLeps(bool loose=false) const;
 	std::vector<TLorentzVector> buildFourVectorTaus(std::vector<int>&, bool loose=false) const;
-	std::vector<miniTau> buildTaus(bool loose=false, std::string WP="-") const;
+	//std::vector<miniTau> buildTaus(std::string) const;
+	std::vector<miniTau> buildTaus(bool loose=false, std::string tightWPDef="L") const;
 	std::vector<TLorentzVector> buildFourVectorTaus(bool loose=false) const;
 	std::vector<TLorentzVector> buildFourVectorTauDaugsCharged(bool loose=false) const;
 	std::vector<TLorentzVector> buildFourVectorTauDaugsNeutral(bool loose=false) const;
