@@ -244,7 +244,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		h_npuTrue_->Fill(npuTrue);
 		h_npuTrue_genweight_->Fill(npuTrue, mc_weight);
 		h_npuInTime_->Fill(npuInTime);
-		h_npuInTime_->Fill(npuInTime, mc_weight);
+		h_npuInTime_genweight_->Fill(npuInTime, mc_weight);
 		
 		// pileup weight
 	    //pu_weight = sf_helper_->Get_PUWeight(npuTrue);
