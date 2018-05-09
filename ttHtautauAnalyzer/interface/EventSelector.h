@@ -62,12 +62,12 @@ class EventSelector
 	bool pass_1l2tau_SR_selection(const std::vector<miniLepton>&,
 								  const std::vector<miniTau>&);
 	bool pass_1l2tau_FakeAR_selection(const std::vector<miniLepton>&,
-									  const std::vector<miniTau>&,
+									  //const std::vector<miniTau>&,
 									  const std::vector<miniTau>&);
 	bool pass_1l2tau_CR_selection(const std::vector<miniLepton>&,
 								  const std::vector<miniTau>&);
 	bool pass_1l2tau_FakeARCR_selection(const std::vector<miniLepton>&,
-										const std::vector<miniTau>&,
+										//const std::vector<miniTau>&,
 										const std::vector<miniTau>&);
 	bool pass_1l2tau_tightID(const std::vector<miniLepton>&,
 							 const std::vector<miniTau>&);
@@ -138,12 +138,12 @@ class EventSelector
 	bool pass_2l2tau_SR_selection(const std::vector<miniLepton>&,
 								  const std::vector<miniTau>&);
 	bool pass_2l2tau_FakeAR_selection(const std::vector<miniLepton>&,
-									  const std::vector<miniTau>&,
+									  //const std::vector<miniTau>&,
 									  const std::vector<miniTau>&);
 	bool pass_2l2tau_CR_selection(const std::vector<miniLepton>&,
 								  const std::vector<miniTau>&);
 	bool pass_2l2tau_FakeARCR_selection(const std::vector<miniLepton>&,
-										const std::vector<miniTau>&,
+										//const std::vector<miniTau>&,
 										const std::vector<miniTau>&);
 	bool pass_2l2tau_tightID(const std::vector<miniLepton>&,
 							 const std::vector<miniTau>&);
