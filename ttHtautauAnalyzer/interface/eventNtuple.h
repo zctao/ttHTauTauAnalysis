@@ -239,10 +239,18 @@ class eventNtuple
 	std::vector<float> *jet_eta = 0;
 	std::vector<float> *jet_phi = 0;
 	std::vector<float> *jet_E = 0;
-	std::vector<float> *jet_csv = 0;  // DeepCSV
-	std::vector<float> *jet_csv_csvv2 = 0;
+	std::vector<float> *jet_csv = 0; // Store DeepCSV; for backward compactibility
+	std::vector<float> *jet_deepcsv = 0;  
+	std::vector<float> *jet_deepCvsB = 0;
+	std::vector<float> *jet_deepCvsL = 0;
+	std::vector<float> *jet_csvv2 = 0;
+	std::vector<float> *jet_ctagCvsB = 0;
+	std::vector<float> *jet_ctagCvsL = 0;
 	std::vector<float> *jet_flavor = 0;
 	std::vector<float> *jet_qgLikelihood = 0;
+	std::vector<float> *jet_axis2 = 0;
+	std::vector<float> *jet_ptD = 0;
+	std::vector<int> *jet_mult = 0;
 
 	// met
 	float PFMET = -9999.;

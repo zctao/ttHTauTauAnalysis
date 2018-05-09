@@ -84,7 +84,12 @@ ttHtautauAnalyzer::ttHtautauAnalyzer(const edm::ParameterSet& iConfig):
 	mets_token_ = consumes<pat::METCollection>(iConfig.getParameter<edm::InputTag>("mets"));
 	genparticle_token_ = consumes<reco::GenParticleCollection>(iConfig.getParameter<edm::InputTag>("prunedgen"));
 	genjets_token_ = consumes<reco::GenJetCollection>(edm::InputTag("slimmedGenJets"));
+	// quark-gluon likelihood
 	qg_token_ = consumes<edm::ValueMap<float>>(edm::InputTag("QGTagger", "qgLikelihood"));
+	axis2_token_ = consumes<edm::ValueMap<float>>(edm::InputTag("QGTagger", "axis2"));
+	ptD_token_ = consumes<edm::ValueMap<float>>(edm::InputTag("QGTagger", "ptD"));
+	mult_token_ = consumes<edm::ValueMap<int>>(edm::InputTag("QGTagger", "mult"));
+	
 
 	//badMuons_token_ = consumes<edm::View<reco::Muon>>(iConfig.getParameter<edm::InputTag>("badmu"));
 	//clonedMuons_token_ = consumes<edm::View<reco::Muon>>(iConfig.getParameter<edm::InputTag>("clonemu"));
@@ -162,6 +167,12 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	iEvent.getByToken(mets_token_,mets);
 	Handle<edm::ValueMap<float>> qgHandle;
 	iEvent.getByToken(qg_token_, qgHandle);
+	Handle<edm::ValueMap<float>> axis2Handle;
+	iEvent.getByToken(axis2_token_, axis2Handle);
+	Handle<edm::ValueMap<float>> ptDHandle;
+	iEvent.getByToken(ptD_token_, ptDHandle);
+	Handle<edm::ValueMap<int>> multHandle;
+	iEvent.getByToken(mult_token_, multHandle);
 
 	Handle<GenEventInfoProduct> event_gen_info;
 	Handle<LHEEventProduct> event_lhe_info;
@@ -392,7 +403,9 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	}
 
 	// QGLikelihood
-	addJetQGLikelihood(jet_raw, *qgHandle.product());
+	//addJetQGLikelihood(jet_raw, *qgHandle.product());
+	addJetQGTaggerInfo(jet_raw, *qgHandle.product(), *axis2Handle.product(),
+					   *ptDHandle.product(), *multHandle.product());
 	
 	// remove overlap
 	std::vector<pat::Jet> jet_no_lep = removeOverlapdR(jet_raw, lep_fakeable, 0.4);

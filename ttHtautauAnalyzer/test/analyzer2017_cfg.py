@@ -234,10 +234,10 @@ process.TFileService = cms.Service("TFileService",
 )
 
 ### Performance
-#process.Timing = cms.Service("Timing",
-#                             summaryOnly = cms.untracked.bool(True),
-#                             useJobReport = cms.untracked.bool(True)
-#)
+process.Timing = cms.Service("Timing",
+                             summaryOnly = cms.untracked.bool(True),
+                             useJobReport = cms.untracked.bool(True)
+)
 #process.SimpleMemoryCheck = cms.Service("SimpleMemoryCheck",
 #                                        ignoreTotal = cms.untracked.int32(1),
 #                                        oncePerEventMode=cms.untracked.bool(True)

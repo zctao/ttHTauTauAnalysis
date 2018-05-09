@@ -177,9 +177,17 @@ void ttHtautauAnalyzer::write_ntuple_jets(const std::vector<pat::Jet>& jets)
 		evNtuple_.jet_phi->push_back(jet.phi());
 		evNtuple_.jet_E->push_back(jet.energy());
 		evNtuple_.jet_csv->push_back(getJetCSV(jet));
-		evNtuple_.jet_csv_csvv2->push_back(jet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
+		evNtuple_.jet_deepcsv->push_back(getJetCSV(jet));
+		evNtuple_.jet_deepCvsB->push_back(getJetDeepCvsB(jet));
+		evNtuple_.jet_deepCvsL->push_back(getJetDeepCvsL(jet));
+		evNtuple_.jet_csvv2->push_back(jet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
+		evNtuple_.jet_ctagCvsB->push_back(jet.bDiscriminator("pfCombinedCvsBJetTags"));
+		evNtuple_.jet_ctagCvsL->push_back(jet.bDiscriminator("pfCombinedCvsLJetTags"));
 		evNtuple_.jet_flavor->push_back(jet.hadronFlavour());
 		evNtuple_.jet_qgLikelihood->push_back(jet.userFloat("qgLikelihood"));
+		evNtuple_.jet_axis2->push_back(jet.userFloat("axis2"));
+		evNtuple_.jet_ptD->push_back(jet.userFloat("ptD"));
+		evNtuple_.jet_mult->push_back(jet.userInt("mult"));
 	}
 }
 

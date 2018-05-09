@@ -131,8 +131,12 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	std::vector<pat::Jet> getSelectedJets(const std::vector<pat::Jet>&);
 	std::vector<pat::Jet> getCorrectedJets(const std::vector<pat::Jet>&, JetCorrectionUncertainty*, const std::string&);
 	float getJetCSV(const pat::Jet&);
-	void addJetQGLikelihood(std::vector<pat::Jet>&,
-							const edm::ValueMap<float>&);
+	float getJetDeepCvsB(const pat::Jet&);
+	float getJetDeepCvsL(const pat::Jet&);
+	void addJetQGLikelihood(std::vector<pat::Jet>&, const edm::ValueMap<float>&);
+	void addJetQGTaggerInfo(std::vector<pat::Jet>&, const edm::ValueMap<float>&,
+							const edm::ValueMap<float>&, const edm::ValueMap<float>&,
+							const edm::ValueMap<int>&);
 	float getMHT(std::vector<pat::Muon>&, std::vector<pat::Electron>&,
 				 std::vector<pat::Tau>&, std::vector<pat::Jet>&);
 	float getMHT(std::vector<miniLepton>&, std::vector<pat::Tau>&,
@@ -273,7 +277,11 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	edm::EDGetTokenT<pat::METCollection> mets_token_;
 	edm::EDGetTokenT<reco::GenParticleCollection> genparticle_token_;
 	edm::EDGetTokenT<reco::GenJetCollection> genjets_token_;
+	// quark-gluon likelihood
 	edm::EDGetTokenT<edm::ValueMap<float>> qg_token_;
+	edm::EDGetTokenT<edm::ValueMap<float>> axis2_token_;
+	edm::EDGetTokenT<edm::ValueMap<float>> ptD_token_;
+	edm::EDGetTokenT<edm::ValueMap<int>> mult_token_;
 
 	//edm::EDGetTokenT<edm::View<reco::Muon>> badMuons_token_;
 	//edm::EDGetTokenT<edm::View<reco::Muon>> clonedMuons_token_;

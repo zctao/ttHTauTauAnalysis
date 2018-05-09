@@ -373,12 +373,43 @@ float ttHtautauAnalyzer::getJetCSV(const pat::Jet& jet)
 	*/
 }
 
+float ttHtautauAnalyzer::getJetDeepCvsB(const pat::Jet& jet)
+{
+	float probC = jet.bDiscriminator("pfDeepCSVJetTags:probc");
+	float probB = jet.bDiscriminator("pfDeepCSVJetTags:probb") +
+		jet.bDiscriminator("pfDeepCSVJetTags:probbb");
+	
+	return probC/(probC+probB);
+}
+
+float ttHtautauAnalyzer::getJetDeepCvsL(const pat::Jet& jet)
+{
+	float probC = jet.bDiscriminator("pfDeepCSVJetTags:probc");
+	float probL = jet.bDiscriminator("pfDeepCSVJetTags:probudsg");
+
+	return probC/(probC+probL);
+}
+
 void ttHtautauAnalyzer::addJetQGLikelihood(std::vector<pat::Jet>& jets,
 										   const edm::ValueMap<float>& QGL_valuemap)
 {
 	for (size_t i=0; i<jets.size(); ++i) {
 		float qgLikelihood = QGL_valuemap.get(i);
 		jets[i].addUserFloat("qgLikelihood", qgLikelihood);
+	}
+}
+
+void ttHtautauAnalyzer::addJetQGTaggerInfo(std::vector<pat::Jet>& jets,
+										   const edm::ValueMap<float>& QGL_valuemap,
+										   const edm::ValueMap<float>& axis2_valuemap,
+										   const edm::ValueMap<float>& ptD_valuemap,
+										   const edm::ValueMap<int>& mult_valuemap)
+{
+	for (size_t i=0; i<jets.size(); ++i) {
+		jets[i].addUserFloat("qgLikelihood", QGL_valuemap.get(i));
+		jets[i].addUserFloat("axis2", axis2_valuemap.get(i));
+		jets[i].addUserFloat("ptD", ptD_valuemap.get(i));
+		jets[i].addUserInt("mult", mult_valuemap.get(i));
 	}
 }
 

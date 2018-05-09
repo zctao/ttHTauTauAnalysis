@@ -542,9 +542,17 @@ void eventNtuple::initialize()
 	jet_phi->clear();
 	jet_E->clear();
 	jet_csv->clear();
-	jet_csv_csvv2->clear();
+	jet_deepcsv->clear();
+	jet_deepCvsB->clear();
+	jet_deepCvsL->clear();
+	jet_csvv2->clear();
+	jet_ctagCvsB->clear();
+	jet_ctagCvsL->clear();
 	jet_flavor->clear();
 	jet_qgLikelihood->clear();
+	jet_axis2->clear();
+	jet_ptD->clear();
+	jet_mult->clear();
 
 	// met
 	//std::cout << "eventNtuple::initialize(): met" << std::endl;
@@ -732,14 +740,22 @@ void eventNtuple::setup_branches(TTree* tree)
 	tree->Branch("tau_signalGammaCands_E", &tau_signalGammaCands_E);
 	///
 	
-	tree->Branch("jet_pt",     &jet_pt);
-	tree->Branch("jet_eta",    &jet_eta);
-	tree->Branch("jet_phi",    &jet_phi);
-	tree->Branch("jet_E",      &jet_E);
-	tree->Branch("jet_csv",    &jet_csv);
-	tree->Branch("jet_csv_csvv2", &jet_csv_csvv2);
-	tree->Branch("jet_flavor", &jet_flavor);
+	tree->Branch("jet_pt",           &jet_pt);
+	tree->Branch("jet_eta",          &jet_eta);
+	tree->Branch("jet_phi",          &jet_phi);
+	tree->Branch("jet_E",            &jet_E);
+	tree->Branch("jet_csv",          &jet_csv);
+	tree->Branch("jet_deepcsv",      &jet_deepcsv);
+	tree->Branch("jet_deepCvsB",     &jet_deepCvsB);
+	tree->Branch("jet_deepCvsL",     &jet_deepCvsL);
+	tree->Branch("jet_csvv2",        &jet_csvv2);
+	tree->Branch("jet_ctagCvsB",     &jet_ctagCvsB);
+	tree->Branch("jet_ctagCvsL",     &jet_ctagCvsL);
+	tree->Branch("jet_flavor",       &jet_flavor);
 	tree->Branch("jet_qgLikelihood", &jet_qgLikelihood);
+	tree->Branch("jet_axis2",        &jet_axis2);
+	tree->Branch("jet_ptD",          &jet_ptD);
+	tree->Branch("jet_mult",         &jet_mult);
 
 	tree->Branch("PFMET", &PFMET);
 	tree->Branch("PFMETphi", &PFMETphi);
@@ -924,14 +940,22 @@ void eventNtuple::set_branch_address(TTree* tree)
 	tree->SetBranchAddress("tau_signalGammaCands_phi", &tau_signalGammaCands_phi);
 	tree->SetBranchAddress("tau_signalGammaCands_E", &tau_signalGammaCands_E);
 	
-	tree->SetBranchAddress("jet_pt",     &jet_pt);
-	tree->SetBranchAddress("jet_eta",    &jet_eta);
-	tree->SetBranchAddress("jet_phi",    &jet_phi);
-	tree->SetBranchAddress("jet_E",      &jet_E);
-	tree->SetBranchAddress("jet_csv",    &jet_csv);
-	tree->SetBranchAddress("jet_csv_csvv2", &jet_csv_csvv2);
-	tree->SetBranchAddress("jet_flavor", &jet_flavor);
+	tree->SetBranchAddress("jet_pt",           &jet_pt);
+	tree->SetBranchAddress("jet_eta",          &jet_eta);
+	tree->SetBranchAddress("jet_phi",          &jet_phi);
+	tree->SetBranchAddress("jet_E",            &jet_E);
+	tree->SetBranchAddress("jet_csv",          &jet_csv);
+	tree->SetBranchAddress("jet_deepcsv",      &jet_deepcsv);
+	tree->SetBranchAddress("jet_deepCvsB",     &jet_deepCvsB);
+	tree->SetBranchAddress("jet_deepCvsL",     &jet_deepCvsL);
+	tree->SetBranchAddress("jet_csvv2",        &jet_csvv2);
+	tree->SetBranchAddress("jet_ctagCvsB",     &jet_ctagCvsB);
+	tree->SetBranchAddress("jet_ctagCvsL",     &jet_ctagCvsL);
+	tree->SetBranchAddress("jet_flavor",       &jet_flavor);
 	tree->SetBranchAddress("jet_qgLikelihood", &jet_qgLikelihood);
+	tree->SetBranchAddress("jet_axis2",        &jet_axis2);
+	tree->SetBranchAddress("jet_ptD",          &jet_ptD);
+	tree->SetBranchAddress("jet_mult",         &jet_mult);
 
 	tree->SetBranchAddress("PFMET", &PFMET);
 	tree->SetBranchAddress("PFMETphi", &PFMETphi);
