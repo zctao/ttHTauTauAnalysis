@@ -8,6 +8,8 @@
 #include "miniTau.h"
 #include "miniJet.h"
 
+#include "Types_enum.h"
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -28,6 +30,7 @@ class eventNtuple
 	std::vector<TLorentzVector> buildFourVectorTaus(std::vector<int>&, bool loose=false) const;
 	//std::vector<miniTau> buildTaus(std::string) const;
 	std::vector<miniTau> buildTaus(bool loose=false, std::string tightWPDef="L") const;
+	std::vector<miniTau> buildTaus(bool, Analysis_types) const;
 	std::vector<TLorentzVector> buildFourVectorTaus(bool loose=false) const;
 	std::vector<TLorentzVector> buildFourVectorTauDaugsCharged(bool loose=false) const;
 	std::vector<TLorentzVector> buildFourVectorTauDaugsNeutral(bool loose=false) const;

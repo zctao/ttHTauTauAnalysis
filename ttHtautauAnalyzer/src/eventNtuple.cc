@@ -72,6 +72,17 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorLeps(bool loose) const
 }
 */
 
+std::vector<miniTau> eventNtuple::buildTaus(bool loose, Analysis_types anatype) const
+{
+	std::string selTauWP;
+	if (anatype==Analyze_1l2tau or anatype==Analyze_2l2tau)
+		selTauWP = "M";
+	else
+		selTauWP = "L";
+
+	return buildTaus(loose, selTauWP);
+}
+
 std::vector<miniTau> eventNtuple::buildTaus(bool loose, std::string tightWPDef) const
 {
 	std::vector<miniTau> taus;
