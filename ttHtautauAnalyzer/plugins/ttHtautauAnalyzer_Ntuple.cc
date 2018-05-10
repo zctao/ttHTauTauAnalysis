@@ -322,7 +322,7 @@ void ttHtautauAnalyzer::write_ntuple_triggerSF(const miniLepton& lep,
 void ttHtautauAnalyzer::write_ntuple_frweight(const std::vector<miniLepton>& leps,
 											  const std::vector<pat::Tau>& taus)
 {
-	if (selType_==Control_2los1tau)
+	if (selType_==Application_Flip_2lss1tau)
 		evNtuple_.FR_weight = sf_helper_->Get_ChargeFlipWeight(leps, taus);
 	else
 		evNtuple_.FR_weight = sf_helper_->Get_FR_weight(leps, taus);

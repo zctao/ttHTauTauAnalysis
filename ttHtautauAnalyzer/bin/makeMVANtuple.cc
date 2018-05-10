@@ -9,7 +9,6 @@
 #include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/miniLepton.h"
 #include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/miniTau.h"
 #include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/eventNtuple.h"
-//#include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/MVAVars.h"
 #include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/Types_enum.h"
 #include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/SFHelper.h"
 #include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/TriggerHelper.h"
@@ -22,51 +21,6 @@
 
 //#pragma link C++ class std::vector < std::vector<int> >+;
 
-Analysis_types getAnaType(std::string analysis_type)
-{
-	Analysis_types anaType = Analyze_NA;
-		
-	if (analysis_type=="1l2tau")
-		anaType = Analyze_1l2tau;
-	else if (analysis_type=="2lss1tau")
-		anaType = Analyze_2lss1tau;
-	else if (analysis_type=="3l1tau")
-		anaType = Analyze_3l1tau;
-	else {
-		std::cerr << "Analysis type not supported! Available types are: 1l2tau, 2lss1tau, 3l1tau" << std::endl;
-	}
-
-	return anaType;
-}
-
-Selection_types getSelType(std::string selection_type)
-{
-	Selection_types selType = Selection_NA;
-	
-	if (selection_type=="signal_2lss1tau")
-		selType = Signal_2lss1tau;
-	else if (selection_type=="control_fake_2lss1tau")
-		selType = Control_fake_2lss1tau;
-	else if (selection_type=="control_2los1tau")
-		selType = Control_2los1tau;
-	else if (selection_type=="signal_1l2tau")
-		selType = Signal_1l2tau;
-	else if (selection_type=="control_fake_1l2tau")
-		selType = Control_fake_1l2tau;
-	else if (selection_type=="signal_3l1tau")
-		selType = Signal_3l1tau;
-	else if (selection_type=="control_fake_3l1tau")
-		selType = Control_fake_3l1tau;
-	else if (selection_type=="loose_1l2tau")
-		selType = Loose_1l2tau;
-	else if (selection_type=="loose_2lss1tau")
-		selType = Loose_2lss1tau;
-	else
-		std::cerr << "Not valid selection type!" << std::endl;
-
-	return selType;
-}
-
 int main(int argc, char** argv)
 {
 	using namespace std;
@@ -78,7 +32,7 @@ int main(int argc, char** argv)
 	bool requireMCMatching, systematics, isdata; //evaluate, 
 	bool updateSF, setTreeWeight, addMEM;
 	bool requireTrigger, looseSelection; //, looseLeptons, looseTaus;
-	char tauWP;
+	string tauWP;
 
 	po::options_description desc("Options");
 	desc.add_options()
@@ -104,7 +58,7 @@ int main(int argc, char** argv)
 		("loose_selection,l", po::value<bool>(&looseSelection)->default_value(false))
 		//("loose_leptons", po::value<bool>(&looseLeptons)->default_value(false))
 		//("loose_taus", po::value<bool>(&looseTaus)->default_value(false))
-		("tauWP", po::value<char>(&tauWP)->default_value('-'))
+		("tauWP", po::value<string>(&tauWP)->default_value("-"))
 		("tree_weight,w", po::value<bool>(&setTreeWeight)->default_value(true));
 	
 	po::variables_map vm;
@@ -119,8 +73,8 @@ int main(int argc, char** argv)
 	//TString sample_ts = sample.c_str();
 	//bool isdata = sample_ts.Contains("data");
 	
-	auto anaType = getAnaType(analysis_type);
-	auto selType = getSelType(selection_type);
+	auto anaType = Types_enum::getAnaType(analysis_type);
+	auto selType = Types_enum::getSelType(selection_type);
 
 	// MVA variables
 	//MVAVars mvaVars(anaType);
@@ -131,7 +85,7 @@ int main(int argc, char** argv)
 	SFHelper sfhelper(anaType, selType, isdata);
 
 	// Trigger Helper
-	TriggerHelper trighelper(anaType, false);
+	TriggerHelper trighelper(Analysis_types::Analyze_inclusive, false);
 	
 	// open file and read tree
 	cout << "Open root file : " << infile << endl;
@@ -226,7 +180,7 @@ int main(int argc, char** argv)
 
 		/////////////////
 		// taus
-		bool looseTau = looseSelection or selType==Control_fake_1l2tau;
+		bool looseTau = looseSelection or selType==Application_Fake_1l2tau;
 		vector<miniTau> taus = evNtuple.buildTaus(looseTau, tauWP);
 
 		/////////////////
@@ -258,9 +212,9 @@ int main(int argc, char** argv)
 		/// MVA variables
 		//////////////////////////////////////
 
-		mvantuple.compute_variables(leptons, taus, jets, evNtuple.PFMET,
-									evNtuple.PFMETphi, evNtuple.MHT,
-									evNtuple.n_btag_loose, evNtuple.n_btag_medium);
+		mvantuple.compute_mva_variables(leptons, taus, jets, evNtuple.PFMET,
+										evNtuple.PFMETphi, evNtuple.MHT,
+										evNtuple.n_btag_loose, evNtuple.n_btag_medium);
 		
 		//////////////////////////////////////
 		/// Event ID
@@ -283,13 +237,13 @@ int main(int argc, char** argv)
 		mvantuple.event_weight = evNtuple.event_weight;
 		
 		if (updateSF) {
-			if (selType==Control_fake_1l2tau or selType==Control_fake_2lss1tau or
-				selType==Control_fake_3l1tau) {
+			if (selType==Application_Fake_1l2tau or selType==Application_Fake_2lss1tau or
+				selType==Application_Fake_3l1tau) {
 				mvantuple.event_weight =
 					sfhelper.Get_FR_weight(leptons,taus);
 
 				if (systematics) {
-					if (selType==Control_fake_1l2tau) {
+					if (selType==Application_Fake_1l2tau) {
 						mvantuple.event_weight_FRjt_normUp = sfhelper.Get_FR_weight(leptons,taus,"FRjt_normUp");
 						mvantuple.event_weight_FRjt_normDown = sfhelper.Get_FR_weight(leptons,taus,"FRjt_normDown");
 						mvantuple.event_weight_FRjt_shapeUp = sfhelper.Get_FR_weight(leptons,taus,"FRjt_shapeUp");
@@ -333,7 +287,7 @@ int main(int argc, char** argv)
 					}
 				}
 			}
-			else if (selType==Control_2los1tau) {
+			else if (selType==Application_Flip_2lss1tau) {
 				assert(taus.size()>0);
 				mvantuple.event_weight =
 					sfhelper.Get_ChargeFlipWeight(leptons, taus[0].charge());

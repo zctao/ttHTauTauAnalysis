@@ -208,7 +208,7 @@ bool EventSelector::pass_extra_event_selection(
 		if (seltype == Signal_1l2tau)
 			//pass = pass_1l2tau_SR_selection(*fakeableLeps, *selectedTaus);
 			pass = pass_1l2tau_SR_selection(*fakeableLeps, *fakeableTaus);
-		else if (seltype == Control_fake_1l2tau)
+		else if (seltype == Application_Fake_1l2tau)
 			//pass = pass_1l2tau_FakeAR_selection(*fakeableLeps, *selectedTaus,
 			//									*fakeableTaus);
 			pass = pass_1l2tau_FakeAR_selection(*fakeableLeps, *fakeableTaus);
@@ -216,22 +216,22 @@ bool EventSelector::pass_extra_event_selection(
 	else if (anatype == Analyze_2lss1tau) {
 		if (seltype == Signal_2lss1tau)
 			pass = pass_2lss1tau_SR_selection(*fakeableLeps, *selectedTaus);
-		else if (seltype == Control_fake_2lss1tau)
+		else if (seltype == Application_Fake_2lss1tau)
 			pass = pass_2lss1tau_FakeAR_selection(*fakeableLeps, *selectedTaus);
-		else if (seltype == Control_2los1tau)
+		else if (seltype == Application_Flip_2lss1tau)
 			pass = pass_2lss1tau_FlipAR_selection(*fakeableLeps, *selectedTaus);
     }
 	else if (anatype == Analyze_3l1tau) {
 		if (seltype == Signal_3l1tau)
 			pass = pass_3l1tau_SR_selection(*fakeableLeps, *selectedTaus);
-		else if (seltype == Control_fake_3l1tau)
+		else if (seltype == Application_Fake_3l1tau)
 			pass = pass_3l1tau_FakeAR_selection(*fakeableLeps, *selectedTaus);
 	}
 	else if (anatype == Analyze_2l2tau) {
 		if (seltype == Signal_2l2tau)
 			//pass = pass_2l2tau_SR_selection(*fakeableLeps, *selectedTaus);
 			pass = pass_2l2tau_SR_selection(*fakeableLeps, *fakeableTaus);
-		else if (seltype == Control_fake_2l2tau)
+		else if (seltype == Application_Fake_2l2tau)
 			//pass = pass_2l2tau_FakeAR_selection(*fakeableLeps, *selectedTaus,
 			//									*fakeableTaus);
 			pass = pass_2l2tau_FakeAR_selection(*fakeableLeps, *fakeableTaus);
@@ -263,7 +263,7 @@ bool EventSelector::pass_full_event_selection(
 		if (seltype == Signal_1l2tau)
 			//pass = pass_1l2tau_SR_selection(fakeableLeps, selectedTaus);
 			pass = pass_1l2tau_SR_selection(fakeableLeps, fakeableTaus);
-		else if (seltype == Control_fake_1l2tau)
+		else if (seltype == Application_Fake_1l2tau)
 			//pass = pass_1l2tau_FakeAR_selection(fakeableLeps, selectedTaus,
 			//									fakeableTaus);
 			pass = pass_1l2tau_FakeAR_selection(fakeableLeps, fakeableTaus);
@@ -283,9 +283,9 @@ bool EventSelector::pass_full_event_selection(
 			
 			if (seltype == Signal_2lss1tau)
 				pass = pass_2lss1tau_SR_selection(fakeableLeps, selectedTaus);
-			else if (seltype == Control_fake_2lss1tau)
+			else if (seltype == Application_Fake_2lss1tau)
 				pass = pass_2lss1tau_FakeAR_selection(fakeableLeps, selectedTaus);
-			else if (seltype == Control_2los1tau)
+			else if (seltype == Application_Flip_2lss1tau)
 				pass = pass_2lss1tau_FlipAR_selection(fakeableLeps, selectedTaus);
 		}
 	}
@@ -303,7 +303,7 @@ bool EventSelector::pass_full_event_selection(
 
 			if (seltype == Signal_3l1tau)
 				pass = pass_3l1tau_SR_selection(fakeableLeps, selectedTaus);
-			else if (seltype == Control_fake_3l1tau)
+			else if (seltype == Application_Fake_3l1tau)
 				pass = pass_3l1tau_FakeAR_selection(fakeableLeps, selectedTaus);
 		}
 	}
@@ -316,7 +316,7 @@ bool EventSelector::pass_full_event_selection(
 		if (seltype == Signal_2l2tau)
 			//pass = pass_2l2tau_SR_selection(fakeableLeps, selectedTaus);
 			pass = pass_2l2tau_SR_selection(fakeableLeps, fakeableTaus);
-		else if (seltype == Control_fake_2l2tau)
+		else if (seltype == Application_Fake_2l2tau)
 			//pass = pass_2l2tau_FakeAR_selection(fakeableLeps, selectedTaus,
 			//									fakeableTaus);
 			pass = pass_2l2tau_FakeAR_selection(fakeableLeps, fakeableTaus);
@@ -1974,7 +1974,7 @@ bool EventSelector::pass_lepton_charge(int lep0Charge, int lep1Charge)
 	}
 	
 	bool samesign = lep0Charge * lep1Charge > 0;
-	bool pass = (selType_==Control_2los1tau) ? (!samesign) : samesign;	
+	bool pass = (selType_==Application_Flip_2lss1tau) ? (!samesign) : samesign;	
 	if (pass)
 		return true;
 
@@ -2122,7 +2122,7 @@ bool EventSelector::pass_lepton_ID(bool lep0IsTight, bool lep1IsTight,
 		// signal region: two leading leptons are tight
 		bool passLepWP = lep0IsTight and lep1IsTight;
 
-		if (selType_==Control_fake_2lss1tau) passLepWP = not passLepWP;
+		if (selType_==Application_Fake_2lss1tau) passLepWP = not passLepWP;
 
 		if (passLepWP) return true;
 	}
@@ -2130,7 +2130,7 @@ bool EventSelector::pass_lepton_ID(bool lep0IsTight, bool lep1IsTight,
 		// signal region: leading lepton is tight
 		bool passLepWP = lep0IsTight;
 
-		//if (selType_==Control_fake_1l2tau) passLepWP = not lep0IsTight;
+		//if (selType_==Application_Fake_1l2tau) passLepWP = not lep0IsTight;
 
 		if (passLepWP) return true;
 	}
@@ -2138,7 +2138,7 @@ bool EventSelector::pass_lepton_ID(bool lep0IsTight, bool lep1IsTight,
 		// signal region: the three leading leptons are tight
 		bool passLepWP = lep0IsTight and lep1IsTight and lep2IsTight;
 
-		if (selType_==Control_fake_3l1tau) passLepWP = not passLepWP;
+		if (selType_==Application_Fake_3l1tau) passLepWP = not passLepWP;
 
 		if (passLepWP) return true;
 	}
@@ -2211,7 +2211,7 @@ bool EventSelector::pass_tau_charge(int tauCharge,
 				  << leps[1].charge() << std::endl;
 	}
 	
-	if (selType_==Control_2los1tau) {
+	if (selType_==Application_Flip_2lss1tau) {
 		assert(leps[0].charge()*leps[1].charge() < 0);
 		if (leps[0].charge()==tauCharge and abs(leps[0].pdgId())==11)
 			return true;
@@ -2234,7 +2234,7 @@ bool EventSelector::pass_taupair_charge(int tau0charge, int tau1charge)
 {
 	// 1l2tau category only
 	assert(anaType_==Analyze_1l2tau);
-	assert(selType_==Signal_1l2tau or selType_==Control_fake_1l2tau or
+	assert(selType_==Signal_1l2tau or selType_==Application_Fake_1l2tau or
 		   selType_==Loose_1l2tau);
 	
 	if (verbose_) {
@@ -2281,7 +2281,7 @@ bool EventSelector::pass_lep_tau_ID(bool lepIsTight, int ntau_tight)
 	// and at least 2 taus are tight
 	bool passWP = pass_lepton_ID(lepIsTight) and pass_tau_ID(ntau_tight);
 
-	if (selType_==Control_fake_1l2tau)
+	if (selType_==Application_Fake_1l2tau)
 		passWP = not passWP;
 
 	return passWP;

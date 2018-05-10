@@ -101,7 +101,7 @@ int main(int argc, char** argv)
 		cout << "1l2tau fake extrapolation region ... " << endl;
 		synctree_1l2tau_fake = makeSyncTree(cdir+infile.c_str(),
 											"syncTree_1l2tau_Fake", treename, 
-											Analyze_1l2tau, Control_fake_1l2tau,
+											Analyze_1l2tau, Application_Fake_1l2tau,
 											evaluateMVA, doHTT, debug);
 		
 		// event count
@@ -120,13 +120,13 @@ int main(int argc, char** argv)
 		cout << "2lss1tau fake extrapolation region ... " << endl;
 		synctree_2lss1tau_fake =
 			makeSyncTree(cdir+infile.c_str(), "syncTree_2lSS1tau_Fake", treename, 
-						 Analyze_2lss1tau, Control_fake_2lss1tau,
+						 Analyze_2lss1tau, Application_Fake_2lss1tau,
 						 evaluateMVA, doHTT, debug);
 
 		cout << "2lss1tau charge flip region ... " << endl;
 		synctree_2lss1tau_flip =
 			makeSyncTree(cdir+infile.c_str(), "syncTree_2lSS1tau_Flip", treename, 
-						 Analyze_2lss1tau, Control_2los1tau,
+						 Analyze_2lss1tau, Application_Flip_2lss1tau,
 						 evaluateMVA, doHTT, debug);
 		
 		// event count
@@ -145,7 +145,7 @@ int main(int argc, char** argv)
 		cout << "3l1tau fake extrapolation region ... " << endl;
 		synctree_3l1tau_fake =
 			makeSyncTree(cdir+infile.c_str(), "syncTree_3l1tau_Fake",
-						 treename, Analyze_3l1tau, Control_fake_3l1tau,
+						 treename, Analyze_3l1tau, Application_Fake_3l1tau,
 						 evaluateMVA, doHTT, debug);
 		// event count
 		cout << "3l1tau : " << endl;
@@ -162,7 +162,7 @@ int main(int argc, char** argv)
 		cout << "2l2tau fake extrapolation region ... " << endl;
 		synctree_2l2tau_fake =
 			makeSyncTree(cdir+infile.c_str(), "syncTree_2l2tau_Fake",
-						 treename, Analyze_2l2tau, Control_fake_2l2tau,
+						 treename, Analyze_2l2tau, Application_Fake_2l2tau,
 						 evaluateMVA, doHTT, debug);
 		// event count
 		cout << "2l2tau : " << endl;
@@ -317,7 +317,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		
 		////////////////////////////////////////
 		std::vector<miniTau> * taus = &taus_tight;
-		//if (seltype==Control_fake_1l2tau or seltype==Control_fake_2l2tau)
+		//if (seltype==Application_Fake_1l2tau or seltype==Application_Fake_2l2tau)
 		if (anatype==Analyze_1l2tau or anatype==Analyze_2l2tau)
 			taus = &taus_fakeable;
 		
@@ -706,10 +706,10 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		syncntuple.bTagSF_weight = evNtuple.bTagSF_weight;
 
 		// FR_weight
-		if (seltype==Control_fake_1l2tau or seltype==Control_fake_2lss1tau or
-			seltype==Control_fake_3l1tau or seltype==Control_fake_2l2tau)
+		if (seltype==Application_Fake_1l2tau or seltype==Application_Fake_2lss1tau or
+			seltype==Application_Fake_3l1tau or seltype==Application_Fake_2l2tau)
 			syncntuple.FR_weight = sf_helper.Get_FR_weight(leptons,*taus);
-		else if (seltype==Control_2los1tau)
+		else if (seltype==Application_Flip_2lss1tau)
 			syncntuple.FR_weight =
 				sf_helper.Get_ChargeFlipWeight(leptons, taus->at(0).charge());
 		

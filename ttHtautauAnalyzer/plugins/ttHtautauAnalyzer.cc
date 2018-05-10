@@ -521,22 +521,6 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	evNtuple_.pvx = pv.x();
 	evNtuple_.pvy = pv.y();
 	evNtuple_.pvz = pv.z();
-
-	/*
-	if (not event_selection_off_) {
-		if (anaType_==Analyze_2lss1tau) {
-			assert(lep_fakeable.size() >= 2);
-			if (abs(lep_fakeable[0].pdgId())==13 and
-				abs(lep_fakeable[1].pdgId())==13)
-				evNtuple_.lepCategory = 0;  // mumu
-			else if (abs(lep_fakeable[0].pdgId())==11 and
-					 abs(lep_fakeable[1].pdgId())==11)
-				evNtuple_.lepCategory = 1;  // ee
-			else
-				evNtuple_.lepCategory = 2;  // emu
-		}
-	}
-	*/
 	
 	evNtuple_.n_presel_mu = mu_preselected.size();
 	evNtuple_.n_fakeable_mu = n_muon_fakeable;
@@ -556,33 +540,6 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	evNtuple_.filterBits =
 		trig_helper_->get_filter_bits(filterResults,filter_config_);
 	
-	/// scale factors
-	if (!isdata_ and !event_selection_off_) {
-		/*
-		write_ntuple_bTagSF(jet_selected);
-		write_ntuple_leptonSF(lep_fakeable);
-		write_ntuple_tauSF(minitau_loose);
-
-		if (anaType_==Analyze_2lss1tau)
-			write_ntuple_triggerSF(evNtuple_.lepCategory);
-		else if (anaType_==Analyze_3l1tau)
-			write_ntuple_triggerSF();
-		else if (anaType_==Analyze_1l2tau) {
-			bool hlt1LTriggered =
-				trig_helper_->pass_single_lep_triggers(evNtuple_.triggerBits);
-			bool hltXTriggered =
-				trig_helper_->pass_leptau_cross_triggers(evNtuple_.triggerBits);
-			write_ntuple_triggerSF(lep_fakeable[0], minitau_loose,
-								   hlt1LTriggered, hltXTriggered);
-		}
-		*/
-	}
-	
-	/// fake rate weights
-	//if (!event_selection_off_) {
-	//	write_ntuple_frweight(lep_fakeable, minitau_loose);
-	//}
-	
 	/// event weights
 	if (not isdata_) {
 		//evNtuple_.PU_weight = pu_weight;
@@ -592,24 +549,6 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		evNtuple_.MC_weight_scale_muR0p5 = mc_weight_scale_muR0p5;
 		evNtuple_.MC_weight_scale_muR2 = mc_weight_scale_muR2;
 	}
-	
-	/*
-	if (selType_ == Signal_2lss1tau or selType_ == Loose_2lss1tau or
-		selType_ == Signal_1l2tau or selType_ == Loose_1l2tau or
-		selType_ == Signal_3l1tau) {
-		if (isdata_) evNtuple_.event_weight = 1.;
-		else {
-			evNtuple_.event_weight =
-				evNtuple_.PU_weight * evNtuple_.MC_weight *
-				evNtuple_.bTagSF_weight * evNtuple_.leptonSF_weight *
-				evNtuple_.tauSF_weight * evNtuple_.triggerSF_weight;
-				
-		}
-	}
-	else if (selType_==Control_fake_2lss1tau or selType_==Control_2los1tau or
-			 selType_==Control_fake_1l2tau or selType_==Control_fake_3l1tau)
-		evNtuple_.event_weight = evNtuple_.FR_weight;
-	*/
 	
 	/// muons
 	write_ntuple_muons(mu_preselected);

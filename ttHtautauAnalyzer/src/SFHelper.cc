@@ -23,12 +23,12 @@ SFHelper::SFHelper(Analysis_types analysis, Selection_types selection,
 			Set_up_triggerSF_Lut();
 	}
 
-	if (_selection == Control_fake_2lss1tau or _selection == Control_fake_1l2tau
-		or _selection == Control_fake_3l1tau or _selection == Control_fake_2l2tau) {
+	if (_selection == Application_Fake_2lss1tau or _selection == Application_Fake_1l2tau
+		or _selection == Application_Fake_3l1tau or _selection == Application_Fake_2l2tau) {
 		Set_up_FakeRate_Lut(tauIDWP);
 	}
 
-	if (_selection == Control_2los1tau) {
+	if (_selection == Application_Flip_2lss1tau) {
 		Set_up_ChargeMisID_Lut();
 	}
 }
@@ -46,11 +46,11 @@ SFHelper::~SFHelper()
 			Delete_triggerSF_Lut();
 	}
 
-	if (_selection == Control_fake_2lss1tau) {
+	if (_selection == Application_Fake_2lss1tau) {
 		Delete_FakeRate_Lut();
 	}
 
-	if (_selection == Control_2los1tau) {
+	if (_selection == Application_Flip_2lss1tau) {
 		Delete_ChargeMisID_Lut();
 	}
 }
@@ -1139,7 +1139,7 @@ float SFHelper::Get_FR_weight(const std::vector<miniLepton>& leps,
 	float f1=0., f2=0., f3=0., f4=0.;
 	float FR_weight = 0.;
 	
-	if (_selection==Control_fake_1l2tau) {
+	if (_selection==Application_Fake_1l2tau) {
 		assert(leps.size() >= 1);
 		assert(taus.size() >= 2);
 
@@ -1164,7 +1164,7 @@ float SFHelper::Get_FR_weight(const std::vector<miniLepton>& leps,
 		FR_weight = F1 * F2 * F3;
 		if (_debug) std::cout << "FR_weight : " << F1 * F2 * F3 << std::endl;
 	}
-	else if (_selection==Control_fake_2lss1tau) {
+	else if (_selection==Application_Fake_2lss1tau) {
 		assert(leps.size() >= 2);
 		assert(leps[0].passFakeableSel() and leps[1].passFakeableSel());
 
@@ -1186,7 +1186,7 @@ float SFHelper::Get_FR_weight(const std::vector<miniLepton>& leps,
 		FR_weight = -1. * F1 * F2;
 		if (_debug) std::cout << "FR_weight : " << -1 * F1 * F2 << std::endl;
 	}
-	else if (_selection==Control_fake_3l1tau) {
+	else if (_selection==Application_Fake_3l1tau) {
 		assert(leps.size() >= 3);
 		assert(leps[0].passFakeableSel() and leps[1].passFakeableSel() and
 			   leps[2].passFakeableSel());
@@ -1214,7 +1214,7 @@ float SFHelper::Get_FR_weight(const std::vector<miniLepton>& leps,
 		FR_weight = F1 * F2 * F3;
 		if (_debug) std::cout << "FR_weight : " << F1 * F2 * F3 << std::endl;
 	}
-	else if (_selection==Control_fake_2l2tau) {
+	else if (_selection==Application_Fake_2l2tau) {
 		assert(leps.size() >= 2);
 		assert(taus.size() >= 2);
 		

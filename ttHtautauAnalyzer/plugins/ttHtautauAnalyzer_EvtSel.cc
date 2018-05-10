@@ -234,7 +234,7 @@ bool ttHtautauAnalyzer::pass_event_sel_1l2tau (
 		pass_taupair_charge =
 			evt_selector_->pass_taupair_charge(taus[0].charge(),taus[1].charge());
 	}
-	else if (selType_==Control_fake_1l2tau) {
+	else if (selType_==Application_Fake_1l2tau) {
 		assert(taus_fakeable.size()>1);
 		pass_taupair_charge =
 			evt_selector_->pass_taupair_charge(taus_fakeable[0].charge(),
