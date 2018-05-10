@@ -59,6 +59,11 @@ class mvaNtuple
 	void compute_HTT_input_variables(const miniJet&, const miniJet&, const miniJet&);
 	void compute_HTT(const std::vector<miniJet>&);
 	
+	void assign_four_momentum(const std::vector<miniLepton>&,
+							  const std::vector<miniTau>&);
+	int count_electrons(const std::vector<miniLepton>&);
+	int count_muons(const std::vector<miniLepton>&);
+	
 	float compute_average_dr(const std::vector<TLorentzVector>&);
 	float compute_average_dr(const std::vector<TLorentzVector>&,
 							 const std::vector<TLorentzVector>&);
@@ -76,6 +81,7 @@ class mvaNtuple
 	float compute_cosPsi(const miniTau&, float mass=0.139);
 	float compute_cosPsi(const TLorentzVector&, const TLorentzVector&,
 						 const TLorentzVector&, float mass=0.139);
+	float compute_mll(const std::vector<miniLepton>&);
 	void evaluate_BDTs();
 
 	//////////////////////////////
@@ -86,9 +92,42 @@ class mvaNtuple
 	unsigned int run;
 	unsigned int lumi;
 	unsigned long long nEvent;
-	
-	// MVA variables
+
+	// generic variables
+	int nEle;
+	int nMu;
+	int nTau;
 	float nJet;
+	float nbtags_medium;
+	float nbtags_loose;
+	float met;
+	float metLD;
+
+	// kinematic variables
+	float mll;  // dilepton mass
+	float lep0_conept;
+	float lep1_conept;
+	float lep2_conept;
+	float lep0_eta;
+	float lep1_eta;
+	float lep2_eta;
+	float lep0_phi;
+	float lep1_phi;
+	float lep2_phi;
+	float lep3_phi;
+	float lep0_E;
+	float lep1_E;
+	float lep2_E;
+	float tau0_pt;
+	float tau1_pt;
+	float tau0_eta;
+	float tau1_eta;
+	float tau0_phi;
+	float tau1_phi;
+	float tau0_E;
+	float tau1_E;
+	
+	// Other MVA input variables
 	float mindr_lep0_jet;
 	float mindr_lep1_jet;
 	float mindr_lep2_jet;
@@ -96,18 +135,10 @@ class mvaNtuple
 	float mindr_tau1_jet;
 	float avg_dr_jet;
 	float max_lep_eta;
-	float met;
-	float mht;
 	float mT_met_lep0;
 	float mT_met_lep1;
-	float lep0_conept;
-	float lep1_conept;
-	float lep2_conept;
 	float costS_tau;
 	float dr_leps;
-	float tau0_pt;
-	float tau1_pt;
-	float tau1_eta;
 	float dr_lep0_tau;
 	float dr_lep1_tau;
 	float dr_lep_tau_ss;
@@ -120,8 +151,7 @@ class mvaNtuple
 	float tt_pt;
 	float max_dr_jet;
 	float HT;
-	float nbtags_medium;
-	float nbtags_loose;
+	float mht;
 	float mbb;
 	float is_OS;
 	float min_dr_lep_jet;
@@ -132,8 +162,6 @@ class mvaNtuple
 
 	int tau0_decaymode;
 	int tau1_decaymode;
-	float tau0_E;
-	float tau1_E;
 	float tau0_easym;
 	float tau1_easym;
 
@@ -292,6 +320,7 @@ class mvaNtuple
 	MVAEvaluator *mva_eval_;
 
 	float lam(float, float, float);
+	int count_leptons(const std::vector<miniLepton>&, int);
 };
 
 #endif

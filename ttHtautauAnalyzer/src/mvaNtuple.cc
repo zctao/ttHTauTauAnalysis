@@ -58,6 +58,67 @@ void mvaNtuple::setup_branches(TTree* tree)
 		tree->Branch("event_weight_FRm_ecUp",&event_weight_FRm_ecUp);
 		tree->Branch("event_weight_FRm_ecDown",&event_weight_FRm_ecDown);
 	}		
+
+	// generic variables
+	tree->Branch("nEle", &nEle);
+	tree->Branch("nMu", &nMu);
+	tree->Branch("nTau", &nTau);
+	tree->Branch("nJet", &nJet);
+	tree->Branch("nBTags_loose", &nbtags_loose);
+	tree->Branch("nBTags_medium", &nbtags_medium);
+	tree->Branch("ptmiss", &met);
+	tree->Branch("metLD", &metLD);
+
+	// set branch for kinematic variables
+	if (version_=="2017") {
+		// electrons and muons
+		if (anatype_ == Analyze_1l2tau) {
+			tree->Branch("lep_conePt", &lep0_conept);
+			tree->Branch("lep_eta", &lep0_eta);
+			tree->Branch("lep_phi", &lep0_phi);
+			tree->Branch("lep_E", &lep0_E);
+		}
+		else if (anatype_ == Analyze_2lss1tau or anatype_ == Analyze_2l2tau or
+				 anatype_ == Analyze_3l1tau) {
+			tree->Branch("lep1_conePt", &lep0_conept);
+			tree->Branch("lep1_eta", &lep0_eta);
+			tree->Branch("lep1_phi", &lep0_phi);
+			tree->Branch("lep1_E", &lep0_E);
+			tree->Branch("lep2_conePt", &lep1_conept);
+			tree->Branch("lep2_eta", &lep1_eta);
+			tree->Branch("lep2_phi", &lep1_phi);
+			tree->Branch("lep2_E", &lep1_E);
+				
+			if (anatype_ == Analyze_3l1tau) {
+				tree->Branch("lep3_conePt", &lep2_conept);
+				tree->Branch("lep3_eta", &lep2_eta);
+				tree->Branch("lep3_phi", &lep2_phi);
+				tree->Branch("lep3_E", &lep2_E);
+			}
+
+			tree->Branch("mll", &mll);
+		}
+		
+		// taus
+		if (anatype_ == Analyze_1l2tau or anatype_ == Analyze_2l2tau) {
+			tree->Branch("tau1_pt", &tau0_pt);
+			tree->Branch("tau1_eta", &tau0_eta);
+			tree->Branch("tau1_phi", &tau0_phi);
+			tree->Branch("tau1_E", &tau0_E);
+			tree->Branch("tau2_pt", &tau1_pt);
+			tree->Branch("tau2_eta", &tau1_eta);
+			tree->Branch("tau2_phi", &tau1_phi);
+			tree->Branch("tau2_E", &tau1_E);
+		}
+		else if (anatype_ == Analyze_2lss1tau or anatype_ == Analyze_3l1tau) {
+			tree->Branch("tau_pt", &tau0_pt);
+			tree->Branch("tau_eta", &tau0_eta);
+			tree->Branch("tau_phi", &tau0_phi);
+			tree->Branch("tau_E", &tau0_E);
+		}
+		else
+			std::cerr << "WARNING! Unknown analysis type" << std::endl;
+	}
 	
 	if (anatype_ == Analyze_2lss1tau) {
 		if (version_=="2016") { // 2016 analysis variables
@@ -78,7 +139,6 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("tau0_decaymode", &tau0_decaymode);
 			tree->Branch("tau0_E", &tau0_E);
 			tree->Branch("tau0_easym", &tau0_easym);
-			tree->Branch("nJet", &nJet);
 			tree->Branch("avg_dr_jet", &avg_dr_jet);
 		}
 		else if (version_=="2017") {
@@ -86,8 +146,6 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("dr_lep1_tau", &dr_lep0_tau);
 			tree->Branch("dr_lep2_tau", &dr_lep1_tau);
 			tree->Branch("dr_leps", &dr_leps);
-			tree->Branch("lep1_conePt", &lep0_conept);
-			tree->Branch("lep2_conePt", &lep1_conept);
 			tree->Branch("mT_lep1", &mT_met_lep0);
 			tree->Branch("mT_lep2", &mT_met_lep1);
 			tree->Branch("mTauTauVis1", &mvis_lep0_tau);
@@ -97,10 +155,6 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("mindr_lep1_jet", &mindr_lep0_jet);
 			tree->Branch("mindr_lep2_jet", &mindr_lep1_jet);
 			tree->Branch("mindr_tau_jet", &mindr_tau0_jet);
-			tree->Branch("nJet", &nJet);
-			tree->Branch("ptmiss", &met);
-			tree->Branch("tau_pt", &tau0_pt);
-			tree->Branch("nJet", &nJet);
 			tree->Branch("Hj_tagger", &Hj_tagger);
 			tree->Branch("HTT", &HTT);
 			tree->Branch("HadTop_pt", &HadTop_pt);
@@ -124,15 +178,11 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("tau1_pt", &tau1_pt);
 			tree->Branch("nbtags", &nbtags_medium);
 			tree->Branch("nbtags_loose", &nbtags_loose);
-			tree->Branch("nJet", &nJet);
 			tree->Branch("avg_dr_jet", &avg_dr_jet);
 		}
 		else if (version_=="2017") {
 			tree->Branch("avg_dr_jet", &avg_dr_jet);
-			tree->Branch("nJet", &nJet);
 			tree->Branch("dr_taus", &dr_taus);
-			tree->Branch("ptmiss", &met);
-			tree->Branch("lep_conePt", &lep0_conept);
 			tree->Branch("mT_lep", &mT_met_lep0);
 			tree->Branch("mTauTauVis", &mTauTauVis);
 			tree->Branch("mindr_lep_jet", &mindr_lep0_jet);
@@ -140,8 +190,6 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("mindr_tau2_jet", &mindr_tau1_jet);
 			tree->Branch("dr_lep_tau_lead", &dr_lep_tau_lead);
 			tree->Branch("nBjetLoose", &nbtags_loose);
-			tree->Branch("tau1_pt", &tau0_pt);
-			tree->Branch("tau2_pt", &tau1_pt);
 			tree->Branch("dr_lep_tau_ss", &dr_lep_tau_ss);
 			tree->Branch("costS_tau", &costS_tau);
 			tree->Branch("HTT", &HTT);
@@ -226,7 +274,6 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("lep0_conept", &lep0_conept);
 			tree->Branch("lep1_conept", &lep1_conept);
 			tree->Branch("lep2_conept", &lep2_conept);
-			tree->Branch("nJet", &nJet);
 			tree->Branch("avg_dr_jet", &avg_dr_jet);
 			//tree->Branch("tau0_decaymode", &tau0_decaymode);
 			//tree->Branch("tau0_E", &tau0_E);
@@ -236,8 +283,6 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("mTauTauVis1", &mvis_lep0_tau);
 			tree->Branch("mTauTauVis2", &mvis_lep1_tau);
 			tree->Branch("max_lep_eta", &max_lep_eta);
-			tree->Branch("ptmiss", &met);
-			tree->Branch("tau_pt", tau0_pt);
 			tree->Branch("dr_leps", &dr_leps);
 			tree->Branch("mindr_lep1_jet", &mindr_lep0_jet);
 			tree->Branch("mindr_lep2_jet", &mindr_lep1_jet);
@@ -246,11 +291,7 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("avg_dr_jet", &avg_dr_jet);
 			tree->Branch("mindr_tau_jet", &mindr_tau0_jet);
 			tree->Branch("mbb_loose", &mbb);
-			tree->Branch("lep1_conePt", &lep0_conept);
-			tree->Branch("lep2_conePt", &lep1_conept);
-			tree->Branch("lep3_conePt", &lep2_conept);
 			tree->Branch("mindr_lep3_jet", &mindr_lep2_jet);
-			tree->Branch("nJet", &nJet);
 		}
 		else {
 			std::cout << "WARNING: Version " << version_
@@ -268,16 +309,10 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("mT_lep1", &mT_met_lep0);
 			tree->Branch("mT_lep2", &mT_met_lep1);
 			tree->Branch("mindr_lep1_jet", &mindr_lep0_jet);
-			tree->Branch("tau1_pt", &tau0_pt);
-			tree->Branch("tau2_pt", &tau1_pt);
-			tree->Branch("tau2_eta", &tau1_eta);
 			tree->Branch("max_dr_lep_tau", &max_dr_lep_tau);
-			tree->Branch("nJet", &nJet);
 			tree->Branch("nBJetLoose", &nbtags_loose);
 			tree->Branch("dr_taus", &dr_taus);
 			tree->Branch("avg_dr_jet", &avg_dr_jet);
-			tree->Branch("lep1_conePt", &lep0_conept);
-			tree->Branch("lep2_conePt", &lep1_conept);
 			tree->Branch("min_dr_lep_tau", &min_dr_lep_tau);
 			tree->Branch("mindr_tau1_jet", &mindr_tau0_jet);
 			tree->Branch("avg_dr_lep_tau", &avg_dr_lep_tau);
@@ -288,6 +323,59 @@ void mvaNtuple::setup_branches(TTree* tree)
 					  << std::endl;
 		}
 	}
+}
+
+void mvaNtuple::assign_four_momentum(const std::vector<miniLepton>& leptons,
+									 const std::vector<miniTau>& taus)
+{
+	assert(leptons.size()>0);
+	lep0_conept = leptons[0].conept();
+	lep0_eta = leptons[0].eta();
+	lep0_phi = leptons[0].phi();
+	lep0_E = leptons[0].p4().E();
+	if (leptons.size() > 1) {
+		lep1_conept = leptons[1].conept();
+		lep1_eta = leptons[1].eta();
+		lep1_phi = leptons[1].phi();
+		lep1_E = leptons[1].p4().E();
+	}
+	if (leptons.size() > 3) {
+		lep2_conept = leptons[2].conept();
+		lep2_eta = leptons[2].eta();
+		lep2_phi = leptons[2].phi();
+		lep2_E = leptons[2].p4().E();
+	}
+
+	assert(taus.size()>0);
+	tau0_pt = taus[0].pt();
+	tau0_eta = taus[0].eta();
+	tau0_phi = taus[0].phi();
+	tau0_E = taus[0].p4().E();
+	if (taus.size()>1) {
+		tau1_pt = taus[1].pt();
+		tau1_eta = taus[1].eta();
+		tau1_phi = taus[1].phi();
+		tau1_E = taus[1].p4().E();
+	}
+}
+
+int mvaNtuple::count_leptons(const std::vector<miniLepton>& leptons, int pdgid)
+{
+	int count = 0;
+	for (const auto & lep : leptons) {
+		if (abs(lep.pdgId())==abs(pdgid)) count++;
+	}
+	return count;
+}
+
+int mvaNtuple::count_electrons(const std::vector<miniLepton>& leptons)
+{
+	return count_leptons(leptons, 11);
+}
+
+int mvaNtuple::count_muons(const std::vector<miniLepton>& leptons)
+{
+	return count_leptons(leptons, 13);
 }
 
 void mvaNtuple::compute_mva_variables(const std::vector<miniLepton>& leptons,
@@ -310,8 +398,20 @@ void mvaNtuple::compute_mva_variables(const std::vector<miniLepton>& leptons,
 									  int nbtagsloose, int nbtagsmedium,
 									  const std::vector<TLorentzVector>& bjets)
 {
-	// common variables in all categories
+	nEle =  count_electrons(leptons);
+	nMu = count_muons(leptons);
+	nTau = taus.size();
 	nJet = jets.size();
+	nbtags_medium = nbtagsloose;
+	nbtags_loose = nbtagsmedium;
+	met = MET;
+	mht = MHT;
+	metLD = 0.00397 * MET + 0.00265 * MHT;
+
+	assign_four_momentum(leptons, taus);
+	compute_mll(leptons);
+	
+	// common variables in all categories
 	avg_dr_jet = compute_average_dr(jets);
 	
 	switch(anatype_){
@@ -325,25 +425,16 @@ void mvaNtuple::compute_mva_variables(const std::vector<miniLepton>& leptons,
 			mTauTauVis = (taus[0].p4()+taus[1].p4()).M();
 			tt_pt = (taus[0].p4()+taus[1].p4()).Pt();
 			max_dr_jet = compute_max_dr(jets);
-			tau0_pt = taus[0].pt();
-			tau1_pt = taus[1].pt();
-			nbtags_medium = nbtagsloose;
-			nbtags_loose = nbtagsmedium;
 		}
 		else if (version_=="2017") {
 			costS_tau = compute_cosThetaS(taus[0].p4());
 			dr_taus = taus[0].p4().DeltaR(taus[1].p4());
-			met = MET;
-			lep0_conept = leptons[0].conept();
 			mT_met_lep0 = compute_mT_lep(leptons[0], MET, METphi);
 			mTauTauVis = (taus[0].p4()+taus[1].p4()).M();
 			mindr_lep0_jet = compute_min_dr(leptons[0].p4(),jets);
 			mindr_tau0_jet = compute_min_dr(taus[0].p4(),jets);
 			mindr_tau1_jet = compute_min_dr(taus[1].p4(),jets);		
 			dr_lep_tau_lead = leptons[0].p4().DeltaR(taus[0].p4());
-			nbtags_loose = nbtagsloose;
-			tau0_pt = taus[0].pt();
-			tau1_pt = taus[1].pt();
 			dr_lep_tau_sublead = leptons[0].p4().DeltaR(taus[1].p4());
 			dr_lep_tau_ss = (leptons[0].charge()==taus[0].charge()) ? dr_lep_tau_lead : dr_lep_tau_sublead;
 
@@ -369,27 +460,19 @@ void mvaNtuple::compute_mva_variables(const std::vector<miniLepton>& leptons,
 			mindr_lep0_jet = compute_min_dr(leptons[0].p4(),jets);
 			mindr_lep1_jet = compute_min_dr(leptons[1].p4(),jets);
 			max_lep_eta = compute_max_lep_eta(leptons);
-			met = MET;
-			mht = MHT;
 			mT_met_lep0 = compute_mT_lep(leptons[0], MET, METphi);
-			lep0_conept = leptons[0].conept();
-			lep1_conept = leptons[1].conept();
 			dr_leps = leptons[0].p4().DeltaR(leptons[1].p4());
-			tau0_pt = taus[0].pt();
 			dr_lep0_tau = leptons[0].p4().DeltaR(taus[0].p4());
 			dr_lep1_tau = leptons[1].p4().DeltaR(taus[0].p4());
 			mvis_lep0_tau = (leptons[0].p4()+taus[0].p4()).M();
 			mvis_lep1_tau = (leptons[1].p4()+taus[0].p4()).M();
 			tau0_decaymode = taus[0].decaymode();
-			tau0_E = taus[0].p4().E();
 			tau0_easym = compute_upsilon(taus[0]);
 		}
 		else if (version_=="2017") {
 			dr_lep0_tau = leptons[0].p4().DeltaR(taus[0].p4());
 			dr_lep1_tau = leptons[1].p4().DeltaR(taus[0].p4());
 			dr_leps = leptons[0].p4().DeltaR(leptons[1].p4());
-			lep0_conept = leptons[0].conept();
-			lep1_conept = leptons[1].conept();
 			mT_met_lep0 = compute_mT_lep(leptons[0], MET, METphi);
 			mT_met_lep1 = compute_mT_lep(leptons[1], MET, METphi);
 			mvis_lep0_tau = (leptons[0].p4()+taus[0].p4()).M();
@@ -399,8 +482,6 @@ void mvaNtuple::compute_mva_variables(const std::vector<miniLepton>& leptons,
 			mindr_lep0_jet = compute_min_dr(leptons[0].p4(),jets);
 			mindr_lep1_jet = compute_min_dr(leptons[1].p4(),jets);
 			mindr_tau0_jet = compute_min_dr(taus[0].p4(),jets);
-			met = MET;
-			tau0_pt = taus[0].pt();
 		}
 		break;
 	case Analyze_3l1tau:
@@ -414,9 +495,6 @@ void mvaNtuple::compute_mva_variables(const std::vector<miniLepton>& leptons,
 			mindr_lep1_jet = compute_min_dr(leptons[1].p4(),jets);
 			mindr_lep2_jet = compute_min_dr(leptons[2].p4(),jets);
 			mT_met_lep0 = compute_mT_lep(leptons[0], MET, METphi);
-			lep0_conept = leptons[0].conept();
-			lep1_conept = leptons[1].conept();
-			lep2_conept = leptons[2].conept();
 		}
 		else if (version_=="2017") {
 			// index of two leading leptons OS with tau
@@ -438,8 +516,6 @@ void mvaNtuple::compute_mva_variables(const std::vector<miniLepton>& leptons,
 				mvis_lep1_tau = -1.;
 			//
 			max_lep_eta = compute_max_lep_eta(leptons);
-			met = MET;
-			tau0_pt = taus[0].pt();
 			dr_leps = leptons[0].p4().DeltaR(leptons[1].p4());
 			mindr_lep0_jet = compute_min_dr(leptons[0].p4(),jets);
 			mindr_lep1_jet = compute_min_dr(leptons[1].p4(),jets);
@@ -447,9 +523,6 @@ void mvaNtuple::compute_mva_variables(const std::vector<miniLepton>& leptons,
 			mT_met_lep1 = compute_mT_lep(leptons[1], MET, METphi);
 			mindr_tau0_jet = compute_min_dr(taus[0].p4(),jets);;
 			mbb = (nbtagsloose>1) ? (bjets[0]+bjets[1]).M() : -1.;
-			lep0_conept = leptons[0].conept();
-			lep1_conept = leptons[1].conept();
-			lep2_conept = leptons[2].conept();
 			mindr_lep2_jet = compute_min_dr(leptons[2].p4(),jets);
 		}
 		break;
@@ -467,15 +540,9 @@ void mvaNtuple::compute_mva_variables(const std::vector<miniLepton>& leptons,
 			mT_met_lep0 = compute_mT_lep(leptons[0], MET, METphi);
 			mT_met_lep1 = compute_mT_lep(leptons[1], MET, METphi);
 			mindr_lep0_jet = compute_min_dr(leptons[0].p4(),jets);
-			tau0_pt = taus[0].pt();
-			tau1_pt = taus[1].pt();
-			tau1_eta = taus[1].eta();
 			max_dr_lep_tau = compute_max_dr({leptons[0].p4(),leptons[1].p4()},
 											{taus[0].p4(),taus[1].p4()});
-			nbtags_loose = nbtagsloose;
 			dr_taus = taus[0].p4().DeltaR(taus[1].p4());
-			lep0_conept = leptons[0].conept();
-			lep1_conept = leptons[1].conept();
 			min_dr_lep_tau = compute_min_dr({leptons[0].p4(),leptons[1].p4()},
 											{taus[0].p4(),taus[1].p4()});
 			mindr_tau0_jet = compute_min_dr(taus[0].p4(),jets);
@@ -756,6 +823,28 @@ float mvaNtuple::compute_cosPsi(const TLorentzVector& p1, const TLorentzVector& 
 										  lam(s,s23,m2)));
 
 	return 8*s*numerator/denominator;
+}
+
+float mvaNtuple::compute_mll(const std::vector<miniLepton>& leptons)
+{
+	if (leptons.size() < 2) {
+		return 0;
+	}
+	else if (leptons.size() == 2) {
+		return (leptons[0].p4()+leptons[1].p4()).M();
+	}
+	else {
+		// return the mass of lepton pair cloest to Z peak (91.2 GeV)
+		float mll = 0;
+		for (auto l = leptons.begin(); l != leptons.end()-1; ++l) {
+			for (auto l2 = l+1; l2 != leptons.end(); ++l2) {
+				float newdiff = fabs((l->p4()+l2->p4()).M() - 91.2);
+				float bestdiff = fabs(mll - 91.2);
+				if (newdiff < bestdiff) mll = (l->p4()+l2->p4()).M();
+			}
+		}
+		return mll;
+	}
 }
 
 float mvaNtuple::lam(float a, float b, float c)
