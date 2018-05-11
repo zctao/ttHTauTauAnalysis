@@ -97,6 +97,9 @@ class SFHelper
 	float evalTGraph(TGraphAsymmErrors*, float);
 	float readTGraph(TGraphAsymmErrors*, float);
 	float readTF(TF1*, float);
+
+	inline Analysis_types getAnaType() const {return _analysis;}
+	inline Selection_types getSelType() const {return _selection;}
 	
  private:
 

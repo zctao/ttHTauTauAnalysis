@@ -6,13 +6,15 @@
 
 #include "boost/program_options.hpp"
 
-#include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/miniLepton.h"
-#include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/miniTau.h"
-#include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/eventNtuple.h"
-#include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/Types_enum.h"
-#include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/SFHelper.h"
-#include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/TriggerHelper.h"
-#include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/mvaNtuple.h"
+#include "../interface/miniLepton.h"
+#include "../interface/miniTau.h"
+#include "../interface/miniJet.h"
+#include "../interface/eventNtuple.h"
+#include "../interface/Types_enum.h"
+#include "../interface/SFHelper.h"
+#include "../interface/TriggerHelper.h"
+#include "../interface/EventSelector.h"
+#include "../interface/mvaNtuple.h"
 
 #include <vector>
 #include <iostream>
@@ -20,6 +22,14 @@
 #include <string>
 
 //#pragma link C++ class std::vector < std::vector<int> >+;
+
+void Set_FR_weights(Selection_types, SFHelper&, eventNtuple&, mvaNtuple&,
+					const std::vector<miniLepton>&, const std::vector<miniTau>&,
+					bool);
+void Set_SR_weights(Analysis_types,SFHelper&, eventNtuple&, mvaNtuple&,
+					TriggerHelper&,
+					const std::vector<miniLepton>&, const std::vector<miniTau>&,
+					const std::vector<miniJet>&, bool);
 
 int main(int argc, char** argv)
 {
@@ -29,10 +39,10 @@ int main(int argc, char** argv)
 	string infile, outname, sample, analysis_type, selection_type, intree, version;
 	string mem_filename, mem_treename;
 	float xsection;
-	bool requireMCMatching, systematics, isdata; //evaluate, 
+	bool systematics, isdata, evaluateMVA, requireMCMatching;
 	bool updateSF, setTreeWeight, addMEM;
-	bool requireTrigger, looseSelection; //, looseLeptons, looseTaus;
-	string tauWP;
+	bool requireTrigger, looseSelection;
+	//string tauWP;
 
 	po::options_description desc("Options");
 	desc.add_options()
@@ -47,18 +57,16 @@ int main(int argc, char** argv)
 		("xsection,x", po::value<float>(&xsection)->default_value(1.),"cross section of the sample")
 		("treename", po::value<string>(&intree)->default_value("ttHtaus/eventTree"))
 		("isdata,d", po::value<bool>(&isdata)->default_value(false))
-		("trigger,t", po::value<bool>(&requireTrigger)->default_value(false))
+		("trigger,t", po::value<bool>(&requireTrigger)->default_value(true))
 		("add_mem", po::value<bool>(&addMEM)->default_value(false))
 		("mem_filename", po::value<string>(&mem_filename)->default_value("mem_output.root"))
 		("mem_treename", po::value<string>(&mem_treename)->default_value("mem"))
-		("mc_matching,m", po::value<bool>(&requireMCMatching)->default_value(true))
-		//("evaluate,e", po::value<bool>(&evaluate)->default_value(false))
+		//("mc_matching,m", po::value<bool>(&requireMCMatching)->default_value(true))
+		("evaluateMVA,e", po::value<bool>(&evaluateMVA)->default_value(true))
 		("systematics,s", po::value<bool>(&systematics)->default_value(true))
-		("update_sf,u", po::value<bool>(&updateSF)->default_value(false))
+		("update_sf,u", po::value<bool>(&updateSF)->default_value(true))
 		("loose_selection,l", po::value<bool>(&looseSelection)->default_value(false))
-		//("loose_leptons", po::value<bool>(&looseLeptons)->default_value(false))
-		//("loose_taus", po::value<bool>(&looseTaus)->default_value(false))
-		("tauWP", po::value<string>(&tauWP)->default_value("-"))
+		//("tauWP", po::value<string>(&tauWP)->default_value("-"))
 		("tree_weight,w", po::value<bool>(&setTreeWeight)->default_value(true));
 	
 	po::variables_map vm;
@@ -69,24 +77,11 @@ int main(int argc, char** argv)
 		cout << desc << endl;
 		return 1;
 	}
-
-	//TString sample_ts = sample.c_str();
-	//bool isdata = sample_ts.Contains("data");
 	
-	auto anaType = Types_enum::getAnaType(analysis_type);
-	auto selType = Types_enum::getSelType(selection_type);
+	Analysis_types anaType = Types_enum::getAnaType(analysis_type);
+	Selection_types selType = Types_enum::getSelType(selection_type);
 
-	// MVA variables
-	//MVAVars mvaVars(anaType);
-	//if (evaluate)
-	//	mvaVars.set_up_tmva_reader();
-	
-	// Scale Factor Helper
-	SFHelper sfhelper(anaType, selType, isdata);
-
-	// Trigger Helper
-	TriggerHelper trighelper(Analysis_types::Analyze_inclusive, false);
-	
+	//////////////////////////////////////////////
 	// open file and read tree
 	cout << "Open root file : " << infile << endl;
 	TFile* f_in = TFile::Open(infile.c_str());
@@ -95,17 +90,31 @@ int main(int argc, char** argv)
 	eventNtuple evNtuple;
 	evNtuple.set_branch_address(tree_in);
 
+	//////////////////////////////////////////////
 	// create output file
-	//const string output_file = outdir+"mvaVars_"+sample+"_"+analysis_type+".root";
 	const string output_file = outname;
 	cout << "Output file created : " << output_file << endl;
 	TFile* f_out = new TFile(output_file.c_str(), "recreate");
 	TTree* tree_mva = new TTree("mva","mva");
 
 	// mva ntuple
-	mvaNtuple mvantuple(anaType, systematics, version);
+	bool doHTT = evaluateMVA;
+	mvaNtuple mvantuple(anaType, systematics, version, doHTT, evaluateMVA);
 	mvantuple.setup_branches(tree_mva);
 
+	//////////////////////////////////////////////
+	// Trigger Helper
+	TriggerHelper trighelper(Analysis_types::Analyze_inclusive, false);
+
+	//////////////////////////////////////////////
+	// Scale Factor Helper
+	SFHelper sfhelper(anaType, selType, isdata);
+
+	//////////////////////////////////////////////
+	// event selector
+	EventSelector evt_selector(false, !isdata, looseSelection);
+
+	//////////////////////////////////////////////
 	// total number of events processed
 	auto h_nProcessed = (TH1D*)f_in->Get("ttHtaus/h_nProcessed");
 	double nProcessed = h_nProcessed->GetBinContent(1);
@@ -120,101 +129,61 @@ int main(int argc, char** argv)
 	// loop over events
 	int nEntries = tree_in->GetEntries();
 	//std::cout << "nEntries : " << nEntries << std::endl;
-	int passlep=0, passtau=0, passcharge=0;
+
 	for (int i = 0; i < nEntries; ++i) {
 		tree_in->GetEntry(i);
 
 		//////////////////////////////////////
-		/// Additional selections
+		/// Reconstruct objects for event selection
 		//////////////////////////////////////
+		auto leptons_loose = evNtuple.buildLeptons('L');  // loose
+		auto leptons_fakeable = evNtuple.buildLeptons('F');  // fakeable
+		auto leptons_tight = evNtuple.buildLeptons('T');  // tight
 
-		// triggers/filters
-		if (requireTrigger) {
-			if (anaType==Analyze_1l2tau) {
-				bool passhlt =
-					trighelper.pass_single_lep_triggers(evNtuple.triggerBits) or
-					trighelper.pass_leptau_cross_triggers(evNtuple.triggerBits);
-				if (not passhlt) continue;
-			}
-			else if (anaType==Analyze_2lss1tau) {
-				bool passhlt =
-					trighelper.pass_single_e_triggers(evNtuple.triggerBits) or
-					trighelper.pass_single_m_triggers(evNtuple.triggerBits) or
-					trighelper.pass_dilep_triggers(evNtuple.triggerBits);
-				if (not passhlt) continue;
-			}
-			else if (anaType==Analyze_3l1tau) {
-				// TODO
-				assert(0);
-			}
-		}
+		auto taus_fakeable = evNtuple.buildTaus(true, anaType);  // fakeable
+		auto taus_tight = evNtuple.buildTaus(false, anaType);  // tight
+
+		float mht = evNtuple.computeMHT();
+		float metld = 0.00397 * evNtuple.PFMET + 0.00265 * mht;
 		
-		// also apply tighter/additional selection if needed
-		if (anaType == Analyze_2lss1tau) {
-			// tau charge
-			if (not evNtuple.passTauCharge) continue;
-		}
-		else if (anaType == Analyze_1l2tau) {
-			// mc match
-			if (requireMCMatching and !isdata and
-				not(evNtuple.isGenMatchedLep and evNtuple.isGenMatchedTau))
-				continue;
-			// tau pair charge
-			if (not evNtuple.passTauCharge) continue;
-		}
-		else if (anaType == Analyze_3l1tau) {
-			if (not evNtuple.passTauCharge) continue;
-		}
-
 		//////////////////////////////////////
-		/// reconstruct object four momentums
+		/// Event selections
 		//////////////////////////////////////
+		bool passEvtSel =  evt_selector.pass_full_event_selection(
+			anaType, selType, leptons_loose, leptons_fakeable, leptons_tight,
+			taus_fakeable, taus_tight, evNtuple.n_jet, evNtuple.n_btag_loose,
+			evNtuple.n_btag_medium, metld);
 
-		// loose muons and electrons, preselected taus, selected jets are stored
-		// in the input ntuple
+		if (not passEvtSel) continue;
 
-		/////////////////
-		// leptons
-		bool looseLep = looseSelection;
-		vector<miniLepton> leptons = evNtuple.buildLeptons(looseLep);
-
-		/////////////////
-		// taus
-		bool looseTau = looseSelection or selType==Application_Fake_1l2tau;
-		vector<miniTau> taus = evNtuple.buildTaus(looseTau, tauWP);
-
-		/////////////////
-		// jets
-		vector<TLorentzVector> jets = evNtuple.buildFourVectorJets();
-
-		/////////////////////////////////////
-		// Double check event selections
-		if (anaType == Analyze_2lss1tau) {
-			if (leptons.size()<2) continue;
-			if (taus.size()<1) continue;
-			if (leptons[0].charge()*leptons[1].charge()<0) continue;
-		}
-		else if (anaType == Analyze_1l2tau) {
-			if (leptons.size()<1) continue;
-			passlep++;
-			if (taus.size()<2) continue;
-			passtau++;
-			if (taus[0].charge()*taus[1].charge()>0) continue;
-			passcharge++;
-		}
-		else if (anaType == Analyze_3l1tau) {
-		    if (leptons.size()<3) continue;
-			if (taus.size()<1) continue;
-			if ((taus[0].charge()+leptons[0].charge()+leptons[1].charge()+leptons[2].charge())!=0) continue;
-		}
+		// trigger paths
+		int nfakeableEle = mvantuple.count_electrons(leptons_fakeable);
+		int nfakeableMu = mvantuple.count_muons(leptons_fakeable);
+		bool passHLT =
+			evt_selector.pass_hlt_paths(anaType,&trighelper,evNtuple.triggerBits) and
+			evt_selector.pass_hlt_match(anaType,&trighelper,evNtuple.triggerBits,
+										nfakeableEle, nfakeableMu);
+		if (not passHLT and requireTrigger) continue;
 
 		//////////////////////////////////////
 		/// MVA variables
 		//////////////////////////////////////
 
-		mvantuple.compute_mva_variables(leptons, taus, jets, evNtuple.PFMET,
+		const std::vector<miniLepton> *leptons = &leptons_fakeable;
+		// TODO: if loose selection
+
+		const std::vector<miniTau> *taus = &taus_tight;
+		if (anaType==Analyze_1l2tau or anaType==Analyze_2l2tau)
+			taus = &taus_fakeable;
+
+		auto jets = evNtuple.buildJets();
+		auto jetsp4 = evNtuple.buildFourVectorJets();
+		auto btagsp4 = evNtuple.buildFourVectorBtagJets();
+		
+		mvantuple.compute_mva_variables(*leptons, *taus, jetsp4, evNtuple.PFMET,
 										evNtuple.PFMETphi, evNtuple.MHT,
-										evNtuple.n_btag_loose, evNtuple.n_btag_medium);
+										evNtuple.n_btag_loose,evNtuple.n_btag_medium,
+										btagsp4);
 		
 		//////////////////////////////////////
 		/// Event ID
@@ -231,135 +200,33 @@ int main(int argc, char** argv)
 		}
 		
 		//////////////////////////////////////
-		/// Event weights
+		/// Event weights and scale factors
 		//////////////////////////////////////
 
-		mvantuple.event_weight = evNtuple.event_weight;
+		if (not updateSF) {
+			mvantuple.event_weight = evNtuple.event_weight;
+			tree_mva->Fill();
+			continue;
+		}
 		
-		if (updateSF) {
-			if (selType==Application_Fake_1l2tau or selType==Application_Fake_2lss1tau or
-				selType==Application_Fake_3l1tau) {
-				mvantuple.event_weight =
-					sfhelper.Get_FR_weight(leptons,taus);
-
-				if (systematics) {
-					if (selType==Application_Fake_1l2tau) {
-						mvantuple.event_weight_FRjt_normUp = sfhelper.Get_FR_weight(leptons,taus,"FRjt_normUp");
-						mvantuple.event_weight_FRjt_normDown = sfhelper.Get_FR_weight(leptons,taus,"FRjt_normDown");
-						mvantuple.event_weight_FRjt_shapeUp = sfhelper.Get_FR_weight(leptons,taus,"FRjt_shapeUp");
-						mvantuple.event_weight_FRjt_shapeDown = sfhelper.Get_FR_weight(leptons,taus,"FRjt_shapeDown");
-						
-						// electron/muon fake rate systematics?
-					}
-					else { // fake 2lss1tau or 3l1tau
-						mvantuple.event_weight_FRe_normUp =
-							sfhelper.Get_FR_weight(leptons,taus,"FRe_normUp");
-						mvantuple.event_weight_FRe_normDown =
-							sfhelper.Get_FR_weight(leptons,taus,"FRe_normDown");
-						mvantuple.event_weight_FRe_ptUp =
-							sfhelper.Get_FR_weight(leptons,taus,"FRe_ptUp");
-						mvantuple.event_weight_FRe_ptDown =
-							sfhelper.Get_FR_weight(leptons,taus,"FRe_ptDown");
-						mvantuple.event_weight_FRe_bUp =
-							sfhelper.Get_FR_weight(leptons,taus,"FRe_bUp");
-						mvantuple.event_weight_FRe_bDown =
-							sfhelper.Get_FR_weight(leptons,taus,"FRe_bDown");
-						mvantuple.event_weight_FRe_ecUp =
-							sfhelper.Get_FR_weight(leptons,taus,"FRe_ecUp");
-						mvantuple.event_weight_FRe_ecDown =
-							sfhelper.Get_FR_weight(leptons,taus,"FRe_ecDown");
-						mvantuple.event_weight_FRm_normUp =
-							sfhelper.Get_FR_weight(leptons,taus,"FRm_normUp");
-						mvantuple.event_weight_FRm_normDown =
-							sfhelper.Get_FR_weight(leptons,taus,"FRm_normDown");
-						mvantuple.event_weight_FRm_ptUp =
-							sfhelper.Get_FR_weight(leptons,taus,"FRm_ptUp");
-						mvantuple.event_weight_FRm_ptDown =
-							sfhelper.Get_FR_weight(leptons,taus,"FRm_ptDown");
-						mvantuple.event_weight_FRm_bUp =
-							sfhelper.Get_FR_weight(leptons,taus,"FRm_bUp");
-						mvantuple.event_weight_FRm_bDown =
-							sfhelper.Get_FR_weight(leptons,taus,"FRm_bDown");
-						mvantuple.event_weight_FRm_ecUp =
-							sfhelper.Get_FR_weight(leptons,taus,"FRm_ecUp");
-						mvantuple.event_weight_FRm_ecDown =
-							sfhelper.Get_FR_weight(leptons,taus,"FRm_ecDown");
-					}
-				}
-			}
-			else if (selType==Application_Flip_2lss1tau) {
-				assert(taus.size()>0);
-				mvantuple.event_weight =
-					sfhelper.Get_ChargeFlipWeight(leptons, taus[0].charge());
-			}
-			else { // signal region selection
-			  if (isdata)
-				  mvantuple.event_weight = 1;
-			  else {
-				
-				float pu_weight = sfhelper.Get_PUWeight(evNtuple.npuTrue);
-				float lepid_sf = sfhelper.Get_LeptonIDSF_weight(leptons);
-				float tauid_sf = sfhelper.Get_TauIDSF_weight(taus);
-
-				float hlt_sf = 1.;
-				if (anaType==Analyze_1l2tau) {
-					bool hlt1LTriggered =
-						trighelper.pass_single_lep_triggers(evNtuple.triggerBits);
-					bool hltXTriggered =
-						trighelper.pass_leptau_cross_triggers(evNtuple.triggerBits);
-					hlt_sf =
-						sfhelper.Get_HLTSF_1l2tau(leptons[0],taus,hlt1LTriggered,
-												  hltXTriggered);
-				}
-				else if (anaType==Analyze_2lss1tau) {
-					hlt_sf =
-						sfhelper.Get_HLTSF_2l1tau(evNtuple.lepCategory);
-				}
-				else if (anaType==Analyze_3l1tau) {
-					hlt_sf = sfhelper.Get_HLTSF_3l1tau();
-				}
-				
-				// not recomputable with current ntuple
-				float mc_weight = evNtuple.MC_weight;
-				float btag_sf = evNtuple.bTagSF_weight;
-
-				mvantuple.event_weight =
-					pu_weight * mc_weight * btag_sf * lepid_sf * tauid_sf * hlt_sf;
-				if (systematics) {
-					mvantuple.event_weight_thu_shape_x1Up = mvantuple.event_weight / mc_weight * evNtuple.MC_weight_scale_muF2;
-					mvantuple.event_weight_thu_shape_x1Down = mvantuple.event_weight / mc_weight * evNtuple.MC_weight_scale_muF0p5;
-					mvantuple.event_weight_thu_shape_y1Up = mvantuple.event_weight / mc_weight * evNtuple.MC_weight_scale_muR2;
-					mvantuple.event_weight_thu_shape_y1Down = mvantuple.event_weight / mc_weight * evNtuple.MC_weight_scale_muR0p5;
-
-					mvantuple.event_weight_btag_LFUp = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_LFUp;
-					mvantuple.event_weight_btag_LFDown = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_LFDown;
-					mvantuple.event_weight_btag_HFUp = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_HFUp;
-					mvantuple.event_weight_btag_HFDown = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_HFDown;
-					mvantuple.event_weight_btag_HFStats1Up = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_HFStats1Up;
-					mvantuple.event_weight_btag_HFStats1Down = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_HFStats1Down;
-					mvantuple.event_weight_btag_HFStats2Up = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_HFStats2Up;
-					mvantuple.event_weight_btag_HFStats2Down = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_HFStats2Down;
-					mvantuple.event_weight_btag_LFStats1Up = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_LFStats1Up;
-					mvantuple.event_weight_btag_LFStats1Down = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_LFStats1Down;
-					mvantuple.event_weight_btag_LFStats2Up = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_LFStats2Up;
-					mvantuple.event_weight_btag_LFStats2Down = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_LFStats2Down;
-					mvantuple.event_weight_btag_cErr1Up = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_cErr1Up;
-					mvantuple.event_weight_btag_cErr1Down = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_cErr1Down;
-					mvantuple.event_weight_btag_cErr2Up = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_cErr2Up;
-					mvantuple.event_weight_btag_cErr2Down = mvantuple.event_weight / btag_sf * evNtuple.btagSF_weight_cErr2Down;
-
-					if (anaType==Analyze_2lss1tau or anaType==Analyze_3l1tau) {
-						mvantuple.event_weight_FRjt_normUp = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_normUp");
-						mvantuple.event_weight_FRjt_normDown = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_normDown");
-						mvantuple.event_weight_FRjt_shapeUp = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_shapeUp");
-						mvantuple.event_weight_FRjt_shapeDown = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_shapeDown");
-					}
-					
-				} // if (systematics)
-				
-			  } // if (isdata)
-			}
-		} // if (updateSF)
+		if (selType==Application_Fake_1l2tau or selType==Application_Fake_2lss1tau or
+			selType==Application_Fake_3l1tau or selType==Application_Fake_2l2tau) {
+			// Fake application region weights
+			Set_FR_weights(selType, sfhelper, evNtuple, mvantuple, *leptons, *taus,
+						   systematics);
+		}
+		else if (selType==Application_Flip_2lss1tau) {
+			// Charge flip weights
+			mvantuple.event_weight =
+				sfhelper.Get_ChargeFlipWeight(*leptons, taus->at(0).charge());
+		}
+		else { // signal region selection
+			if (isdata)
+				mvantuple.event_weight = 1;
+			else
+				Set_SR_weights(anaType, sfhelper, evNtuple, mvantuple, trighelper,
+							   *leptons, *taus, jets, systematics);
+		}
 		
 		tree_mva->Fill();
 		
@@ -383,10 +250,153 @@ int main(int argc, char** argv)
 	// close files
 	f_out->Close();
 	f_in->Close();
-
-	//std::cout << "passlep : " << passlep << std::endl;
-	//std::cout << "passtau : " << passtau << std::endl;
-	//std::cout << "passcharge : " << passcharge << std::endl;
 	
 	return 0;
+}
+
+void Set_FR_weights(Selection_types seltype, SFHelper& sfhelper,
+					eventNtuple& evntuple, mvaNtuple& mvantuple,
+					const std::vector<miniLepton>& leptons,
+					const std::vector<miniTau>& taus, bool syst)
+{
+	assert(seltype==Application_Fake_2lss1tau or seltype==Application_Fake_3l1tau or
+		   seltype==Application_Fake_1l2tau or seltype==Application_Fake_2l2tau);
+	assert(sfhelper.getSelType()==seltype);
+	
+	mvantuple.event_weight = sfhelper.Get_FR_weight(leptons, taus);
+
+	if (syst) {
+		mvantuple.event_weight_FRe_normUp =
+			sfhelper.Get_FR_weight(leptons,taus,"FRe_normUp");
+		mvantuple.event_weight_FRe_normDown =
+			sfhelper.Get_FR_weight(leptons,taus,"FRe_normDown");
+		mvantuple.event_weight_FRe_ptUp =
+			sfhelper.Get_FR_weight(leptons,taus,"FRe_ptUp");
+		mvantuple.event_weight_FRe_ptDown =
+			sfhelper.Get_FR_weight(leptons,taus,"FRe_ptDown");
+		mvantuple.event_weight_FRe_bUp =
+			sfhelper.Get_FR_weight(leptons,taus,"FRe_bUp");
+		mvantuple.event_weight_FRe_bDown =
+			sfhelper.Get_FR_weight(leptons,taus,"FRe_bDown");
+		mvantuple.event_weight_FRe_ecUp =
+			sfhelper.Get_FR_weight(leptons,taus,"FRe_ecUp");
+		mvantuple.event_weight_FRe_ecDown =
+			sfhelper.Get_FR_weight(leptons,taus,"FRe_ecDown");
+		mvantuple.event_weight_FRm_normUp =
+			sfhelper.Get_FR_weight(leptons,taus,"FRm_normUp");
+		mvantuple.event_weight_FRm_normDown =
+			sfhelper.Get_FR_weight(leptons,taus,"FRm_normDown");
+		mvantuple.event_weight_FRm_ptUp =
+			sfhelper.Get_FR_weight(leptons,taus,"FRm_ptUp");
+		mvantuple.event_weight_FRm_ptDown =
+			sfhelper.Get_FR_weight(leptons,taus,"FRm_ptDown");
+		mvantuple.event_weight_FRm_bUp =
+			sfhelper.Get_FR_weight(leptons,taus,"FRm_bUp");
+		mvantuple.event_weight_FRm_bDown =
+			sfhelper.Get_FR_weight(leptons,taus,"FRm_bDown");
+		mvantuple.event_weight_FRm_ecUp =
+			sfhelper.Get_FR_weight(leptons,taus,"FRm_ecUp");
+		mvantuple.event_weight_FRm_ecDown =
+			sfhelper.Get_FR_weight(leptons,taus,"FRm_ecDown");
+		
+		if (seltype==Application_Fake_1l2tau or seltype==Application_Fake_2l2tau) {
+			mvantuple.event_weight_FRjt_normUp =
+				sfhelper.Get_FR_weight(leptons,taus,"FRjt_normUp");
+			mvantuple.event_weight_FRjt_normDown =
+				sfhelper.Get_FR_weight(leptons,taus,"FRjt_normDown");
+			mvantuple.event_weight_FRjt_shapeUp =
+				sfhelper.Get_FR_weight(leptons,taus,"FRjt_shapeUp");
+			mvantuple.event_weight_FRjt_shapeDown =
+				sfhelper.Get_FR_weight(leptons,taus,"FRjt_shapeDown");
+		}
+	}  // syst
+}
+
+void Set_SR_weights(Analysis_types anatype, SFHelper& sfhelper,
+					eventNtuple& evntuple, mvaNtuple& mvantuple,
+					TriggerHelper& trighelper,
+					const std::vector<miniLepton>& leptons,
+					const std::vector<miniTau>& taus,
+					const std::vector<miniJet>& jets, bool syst)
+{
+	assert(sfhelper.getAnaType()==anatype);
+	
+	// signal region and MC samples
+
+	// Gen weight
+	float mc_weight = evntuple.MC_weight;
+	
+	// Pileup
+	// FIXME
+	//float pu_weight = sfhelper.Get_PUWeight(evntuple.npuTrue);
+	float pu_weight = 1;
+
+	// HLT scale factor
+	// FIXME
+	/*
+	bool hlt1LTriggered =
+		trighelper.pass_single_lep_triggers(evntuple.triggerBits);
+	bool hltXTriggered =
+		trighelper.pass_leptau_cross_triggers(evntuple.triggerBits);
+	float hlt_sf = sfhelper.Get_HLTSF(leptons, taus, hlt1LTriggered, hltXTriggered);
+	*/
+	float hlt_sf = 1.;
+
+	// lepton ID scale factor
+	// NEED UPDATE
+	//float lepid_sf = sfhelper.Get_LeptonIDSF_weight(leptons);
+	float lepid_sf = 1.;
+
+	// tau ID scale factor
+	// NEED UPDATE
+	//float tauid_sf = sfhelper.Get_TauIDSF_weight(taus);
+	float tauid_sf = 1.;
+	
+	// btag scale factor
+	float btag_sf = sfhelper.Get_EvtCSVWeight(jets,"NA");
+
+	////////////////////
+	mvantuple.event_weight =
+		pu_weight * mc_weight * btag_sf * lepid_sf * tauid_sf * hlt_sf;
+
+	////////////////////
+	if (syst) { // systematic uncertainties
+		// theoretical uncertainties
+		mvantuple.event_weight_thu_shape_x1Up =
+			mvantuple.event_weight / mc_weight * evntuple.MC_weight_scale_muF2;
+		mvantuple.event_weight_thu_shape_x1Down =
+			mvantuple.event_weight / mc_weight * evntuple.MC_weight_scale_muF0p5;
+		mvantuple.event_weight_thu_shape_y1Up =
+			mvantuple.event_weight / mc_weight * evntuple.MC_weight_scale_muR2;
+		mvantuple.event_weight_thu_shape_y1Down =
+			mvantuple.event_weight / mc_weight * evntuple.MC_weight_scale_muR0p5;
+
+		// b-tagging
+		mvantuple.event_weight_btag_LFUp = mvantuple.event_weight / btag_sf * (sfhelper.Get_EvtCSVWeight(jets, "LFUp"));
+		mvantuple.event_weight_btag_LFDown = mvantuple.event_weight / btag_sf * (sfhelper.Get_EvtCSVWeight(jets, "LFDown"));
+		mvantuple.event_weight_btag_HFUp = mvantuple.event_weight / btag_sf * (sfhelper.Get_EvtCSVWeight(jets, "HFUp"));
+		mvantuple.event_weight_btag_HFDown = mvantuple.event_weight / btag_sf * (sfhelper.Get_EvtCSVWeight(jets, "HFDown"));
+		mvantuple.event_weight_btag_HFStats1Up = mvantuple.event_weight / btag_sf * (sfhelper.Get_EvtCSVWeight(jets, "HFStats1Up"));
+		mvantuple.event_weight_btag_HFStats1Down = mvantuple.event_weight / btag_sf * (sfhelper.Get_EvtCSVWeight(jets, "HFStats1Down"));
+		mvantuple.event_weight_btag_HFStats2Up = mvantuple.event_weight / btag_sf * (sfhelper.Get_EvtCSVWeight(jets, "HFStats2Up"));
+		mvantuple.event_weight_btag_HFStats2Down = mvantuple.event_weight / btag_sf * (sfhelper.Get_EvtCSVWeight(jets, "HFStats2Down"));
+		mvantuple.event_weight_btag_LFStats1Up = mvantuple.event_weight / btag_sf * (sfhelper.Get_EvtCSVWeight(jets, "LFStats1Up"));
+		mvantuple.event_weight_btag_LFStats1Down = mvantuple.event_weight / btag_sf * (sfhelper.Get_EvtCSVWeight(jets, "LFStats1Down"));
+		mvantuple.event_weight_btag_LFStats2Up = mvantuple.event_weight / btag_sf * (sfhelper.Get_EvtCSVWeight(jets, "LFStats2Up"));
+		mvantuple.event_weight_btag_LFStats2Down = mvantuple.event_weight / btag_sf * (sfhelper.Get_EvtCSVWeight(jets, "LFStats2Down"));
+		mvantuple.event_weight_btag_cErr1Up = mvantuple.event_weight / btag_sf * (sfhelper.Get_EvtCSVWeight(jets, "cErr1Up"));
+		mvantuple.event_weight_btag_cErr1Down = mvantuple.event_weight / btag_sf * (sfhelper.Get_EvtCSVWeight(jets, "cErr1Down"));
+		mvantuple.event_weight_btag_cErr2Up = mvantuple.event_weight / btag_sf * (sfhelper.Get_EvtCSVWeight(jets, "cErr2Up"));
+		mvantuple.event_weight_btag_cErr2Down = mvantuple.event_weight / btag_sf * (sfhelper.Get_EvtCSVWeight(jets, "cErr2Down"));
+
+		// tau ID
+		if (anatype==Analyze_2lss1tau or anatype==Analyze_3l1tau) {
+			mvantuple.event_weight_FRjt_normUp = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_normUp");
+			mvantuple.event_weight_FRjt_normDown = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_normDown");
+			mvantuple.event_weight_FRjt_shapeUp = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_shapeUp");
+			mvantuple.event_weight_FRjt_shapeDown = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_shapeDown");
+		}
+
+		// lepton ID?
+	}
 }

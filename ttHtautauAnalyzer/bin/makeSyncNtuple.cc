@@ -271,8 +271,8 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 	    auto leptons = evNtuple.buildLeptons('F');  // fakeable
 		auto leptons_tight = evNtuple.buildLeptons('T'); // tight
 
-		auto taus_fakeable = evNtuple.buildTaus(true, anatype);
-		auto taus_tight = evNtuple.buildTaus(false, anatype);
+		auto taus_fakeable = evNtuple.buildTaus(true, anatype); // fakeable
+		auto taus_tight = evNtuple.buildTaus(false, anatype);  // tight
 		
 		if (debug) {
 			std::cout << std::endl;
