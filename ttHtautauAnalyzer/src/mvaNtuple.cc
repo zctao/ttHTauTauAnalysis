@@ -346,11 +346,12 @@ void mvaNtuple::assign_four_momentum(const std::vector<miniLepton>& leptons,
 		lep2_E = leptons[2].p4().E();
 	}
 
-	assert(taus.size()>0);
-	tau0_pt = taus[0].pt();
-	tau0_eta = taus[0].eta();
-	tau0_phi = taus[0].phi();
-	tau0_E = taus[0].p4().E();
+	if (taus.size()>0) {
+		tau0_pt = taus[0].pt();
+		tau0_eta = taus[0].eta();
+		tau0_phi = taus[0].phi();
+		tau0_E = taus[0].p4().E();
+	}
 	if (taus.size()>1) {
 		tau1_pt = taus[1].pt();
 		tau1_eta = taus[1].eta();
