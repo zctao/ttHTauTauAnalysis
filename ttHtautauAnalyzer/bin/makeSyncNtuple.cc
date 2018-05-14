@@ -581,7 +581,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			}
 			if (evaluateMVA) {
 				mvantuple.evaluate_BDTs();
-				syncntuple.mvaOutput_plainKin_ttV =  mvantuple.mva_1l2tau_BDT1;
+				syncntuple.mvaOutput_plainKin_ttbar =  mvantuple.mva_1l2tau_BDT1;
 				syncntuple.mvaOutput_1l_2tau_HTT_SUM_VT = mvantuple.mva_1l2tau_BDT2;
 			}
 		}
