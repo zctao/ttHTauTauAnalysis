@@ -543,15 +543,12 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 
 		// mva variables
 		auto jets = evNtuple.buildJets();
-		auto jetsp4 = evNtuple.buildFourVectorJets();
-		auto btagsp4 = evNtuple.buildFourVectorBtagJets();
 
 		//assert(leptons.size()>0 and taus->size()>0);
-		
-		mvantuple.compute_mva_variables(leptons, *taus, jetsp4, syncntuple.PFMET,
+
+		mvantuple.compute_all_variables(leptons, *taus, jets, syncntuple.PFMET,
 										syncntuple.PFMETphi, syncntuple.MHT,
-										evNtuple.n_btag_loose,evNtuple.n_btag_medium,
-										btagsp4);
+										evNtuple.n_btag_loose,evNtuple.n_btag_medium);
 		
 		syncntuple.nBJetLoose = evNtuple.n_btag_loose;
 		
@@ -575,12 +572,10 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			syncntuple.dR_lep_tau_ss = mvantuple.dr_lep_tau_ss;
 			syncntuple.cosThetaS_hadTau = mvantuple.costS_tau;
 			if (doHTT) {
-				mvantuple.compute_HTT(jets);
 				syncntuple.HTT = mvantuple.HTT;
 				syncntuple.HadTop_pt = mvantuple.HadTop_pt;
 			}
 			if (evaluateMVA) {
-				mvantuple.evaluate_BDTs();
 				syncntuple.mvaOutput_plainKin_ttbar =  mvantuple.mva_1l2tau_BDT1;
 				syncntuple.mvaOutput_1l_2tau_HTT_SUM_VT = mvantuple.mva_1l2tau_BDT2;
 			}
@@ -610,14 +605,12 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			//mvantuple.tau0_pt;
 
 			if (doHTT) {
-				mvantuple.compute_HTT(jets);
 				syncntuple.HTT = mvantuple.HTT;
 				syncntuple.HadTop_pt = mvantuple.HadTop_pt;
 			}
 			// Hj_tagger
 			// memOutput_LR
 			if (evaluateMVA) {
-				mvantuple.evaluate_BDTs();
 				syncntuple.mvaOutput_2lss_1tau_plainKin_ttbar =
 					mvantuple.mva_2lss1tau_BDT2;
 				syncntuple.mvaOutput_2lss_1tau_plainKin_ttV =
@@ -657,7 +650,6 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			syncntuple.lep3_conept = mvantuple.lep2_conept;
 			//mvantuple.nJet;
 			if (evaluateMVA) {
-				mvantuple.evaluate_BDTs();
 				syncntuple.mvaOutput_plainKin_ttV = mvantuple.mva_3l1tau_BDT1;
 				syncntuple.mvaOutput_plainKin_ttbar = mvantuple.mva_3l1tau_BDT2;
 				syncntuple.mvaOutput_3l_1tau_plainKin_SUM_M =
@@ -686,7 +678,6 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			syncntuple.mindr_tau1_jet = mvantuple.mindr_tau0_jet;
 			syncntuple.avg_dr_lep_tau = mvantuple.avg_dr_lep_tau;
 			if (evaluateMVA) {
-				mvantuple.evaluate_BDTs();
 				syncntuple.mvaOutput_plainKin_ttV = mvantuple.mva_2l2tau_BDT1;
 				syncntuple.mvaOutput_plainKin_ttbar = mvantuple.mva_2l2tau_BDT2;
 				syncntuple.mvaOutput_2l_2tau_plainKin_1B_VT =

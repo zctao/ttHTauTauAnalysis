@@ -184,13 +184,10 @@ int main(int argc, char** argv)
 			taus = &taus_fakeable;
 
 		auto jets = evNtuple.buildJets();
-		auto jetsp4 = evNtuple.buildFourVectorJets();
-		auto btagsp4 = evNtuple.buildFourVectorBtagJets();
 		
-		mvantuple.compute_mva_variables(*leptons, *taus, jetsp4, evNtuple.PFMET,
+		mvantuple.compute_all_variables(*leptons, *taus, jets, evNtuple.PFMET,
 										evNtuple.PFMETphi, evNtuple.MHT,
-										evNtuple.n_btag_loose,evNtuple.n_btag_medium,
-										btagsp4);
+										evNtuple.n_btag_loose,evNtuple.n_btag_medium);
 
 		// FIXME
 		if (doHTT and not CR) mvantuple.compute_HTT(jets);

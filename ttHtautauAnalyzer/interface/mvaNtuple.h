@@ -48,6 +48,10 @@ class mvaNtuple
 
 	//void set_branch_address(TTree*);
 	void setup_branches(TTree*);
+	void compute_all_variables(const std::vector<miniLepton>&,
+							   const std::vector<miniTau>&,
+							   const std::vector<miniJet>&,
+							   float, float, float, int, int);
 	void compute_mva_variables(const std::vector<miniLepton>&,
 							   const std::vector<miniTau>&,
 							   const std::vector<TLorentzVector>&,
@@ -57,6 +61,10 @@ class mvaNtuple
 							   const std::vector<TLorentzVector>&,
 							   float, float, float, int, int,
 							   const std::vector<TLorentzVector>&);
+	void compute_mva_variables(const std::vector<miniLepton>&,
+							   const std::vector<miniTau>&,
+							   const std::vector<miniJet>&,
+							   float, float, float, int, int);
 	void compute_tauDecay_variables(const std::vector<miniTau>&, bool test=false);
 	void compute_HTT_input_variables(const miniJet&, const miniJet&, const miniJet&);
 	void compute_HTT(const std::vector<miniJet>&);

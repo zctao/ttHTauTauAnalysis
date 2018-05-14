@@ -399,6 +399,22 @@ int mvaNtuple::count_muons(const std::vector<miniLepton>& leptons)
 	return count_leptons(leptons, 13);
 }
 
+void mvaNtuple::compute_all_variables(const std::vector<miniLepton>& leptons,
+									  const std::vector<miniTau>& taus,
+									  const std::vector<miniJet>& jets,
+									  float MET, float METphi, float MHT,
+									  int nbtagsloose, int nbtagsmedium)
+{
+	compute_mva_variables(leptons, taus, jets, MET, METphi, MHT, nbtagsloose,
+						  nbtagsmedium);
+
+	if (control_) return;  // for now
+	
+	if (doHTT_ and (anatype_==Analyze_1l2tau or anatype_==Analyze_2lss1tau))
+		compute_HTT(jets);
+	if (evalMVA_) evaluate_BDTs();
+}
+
 void mvaNtuple::compute_mva_variables(const std::vector<miniLepton>& leptons,
 									  const std::vector<miniTau>& taus,
 									  const std::vector<TLorentzVector>& jets,
@@ -410,7 +426,27 @@ void mvaNtuple::compute_mva_variables(const std::vector<miniLepton>& leptons,
 	compute_mva_variables(leptons, taus, jets, MET, METphi, MHT, nbtagsloose,
 						  nbtagsmedium, dummy);
 }
-	
+
+void mvaNtuple::compute_mva_variables(const std::vector<miniLepton>& leptons,
+									  const std::vector<miniTau>& taus,
+									  const std::vector<miniJet>& jets,
+									  float MET, float METphi, float MHT,
+									  int nbtagsloose, int nbtagsmedium)
+{
+	std::vector<TLorentzVector> jetsp4;
+	for (const auto & jet : jets) {
+		jetsp4.push_back(jet.p4());
+	}
+
+	std::vector<miniJet> jets_csv = jets;
+	// sort by csv 
+	std::sort(jets_csv.begin(),jets_csv.end(), [] (miniJet& j1, miniJet& j2) {return j1.csv() > j2.csv();});
+	assert(jets_csv.size()>=2);
+	std::vector<TLorentzVector> bjetsp4 = {jets_csv[0].p4(), jets_csv[1].p4()};
+
+	compute_mva_variables(leptons, taus, jetsp4, MET, METphi, MHT, nbtagsloose,
+						  nbtagsmedium, bjetsp4);
+}
 
 void mvaNtuple::compute_mva_variables(const std::vector<miniLepton>& leptons,
 									  const std::vector<miniTau>& taus,
