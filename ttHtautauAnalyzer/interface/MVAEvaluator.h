@@ -75,24 +75,24 @@ class MVAEvaluator
 	float inputVars_2l2tau_BDT3_[13];
 	float inputVars_2l2tau_BDT4_[2];
 
-	TMVA::Reader *reader_HTT_;
-	TMVA::Reader *reader_HjTagger_;
-	TMVA::Reader *reader_1l2tau_BDT1_;
-	TMVA::Reader *reader_1l2tau_BDT2_;
-	TMVA::Reader *reader_2lss1tau_BDT1_;
-	TMVA::Reader *reader_2lss1tau_BDT2_;
-	TMVA::Reader *reader_2lss1tau_BDT3_;
-	TMVA::Reader *reader_2lss1tau_BDT4_;
-	TMVA::Reader *reader_2lss1tau_BDT5_;
-	TMVA::Reader *reader_2lss1tau_BDT6_;
-	TMVA::Reader *reader_3l1tau_BDT1_;
-	TMVA::Reader *reader_3l1tau_BDT2_;
-	TMVA::Reader *reader_3l1tau_BDT3_;
-	TMVA::Reader *reader_3l1tau_BDT4_;
-	TMVA::Reader *reader_2l2tau_BDT1_;
-	TMVA::Reader *reader_2l2tau_BDT2_;
-	TMVA::Reader *reader_2l2tau_BDT3_;
-	TMVA::Reader *reader_2l2tau_BDT4_;
+	TMVA::Reader *reader_HTT_ = 0;
+	TMVA::Reader *reader_HjTagger_ = 0;
+	TMVA::Reader *reader_1l2tau_BDT1_ = 0;
+	TMVA::Reader *reader_1l2tau_BDT2_ = 0;
+	TMVA::Reader *reader_2lss1tau_BDT1_ = 0;
+	TMVA::Reader *reader_2lss1tau_BDT2_ = 0;
+	TMVA::Reader *reader_2lss1tau_BDT3_ = 0;
+	TMVA::Reader *reader_2lss1tau_BDT4_ = 0;
+	TMVA::Reader *reader_2lss1tau_BDT5_ = 0;
+	TMVA::Reader *reader_2lss1tau_BDT6_ = 0;
+	TMVA::Reader *reader_3l1tau_BDT1_ = 0;
+	TMVA::Reader *reader_3l1tau_BDT2_ = 0;
+	TMVA::Reader *reader_3l1tau_BDT3_ = 0;
+	TMVA::Reader *reader_3l1tau_BDT4_ = 0;
+	TMVA::Reader *reader_2l2tau_BDT1_ = 0;
+	TMVA::Reader *reader_2l2tau_BDT2_ = 0;
+	TMVA::Reader *reader_2l2tau_BDT3_ = 0;
+	TMVA::Reader *reader_2l2tau_BDT4_ = 0;
 };
 
 #endif
