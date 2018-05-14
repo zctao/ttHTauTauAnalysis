@@ -3,6 +3,7 @@
 #include <TTree.h>
 #include <TString.h>
 #include <TLorentzVector.h>
+#include <TParameter.h>
 
 #include "boost/program_options.hpp"
 
@@ -39,7 +40,7 @@ int main(int argc, char** argv)
 	string infile, outname, sample, analysis_type, selection_type, intree, version;
 	string mem_filename, mem_treename;
 	float xsection;
-	bool systematics, isdata, evaluateMVA, requireMCMatching;
+	bool systematics, isdata, evaluateMVA;//, requireMCMatching;
 	bool updateSF, setTreeWeight, addMEM;
 	bool requireTrigger, looseSelection;
 	//string tauWP;
@@ -67,7 +68,7 @@ int main(int argc, char** argv)
 		("update_sf,u", po::value<bool>(&updateSF)->default_value(true))
 		("loose_selection,l", po::value<bool>(&looseSelection)->default_value(false))
 		//("tauWP", po::value<string>(&tauWP)->default_value("-"))
-		("tree_weight,w", po::value<bool>(&setTreeWeight)->default_value(true));
+		("tree_weight,w", po::value<bool>(&setTreeWeight)->default_value(false));
 	
 	po::variables_map vm;
 	po::store(po::command_line_parser(argc, argv).options(desc).run(), vm);
@@ -122,9 +123,14 @@ int main(int argc, char** argv)
 	auto h_SumGenWeight = (TH1D*)f_in->Get("ttHtaus/h_SumGenWeight");
 	//auto h_SumGenWeight = (TH1D*)f_in->Get("ttHtaus/h_SumGenWeightxPU");
 	double SumGenWeight = h_SumGenWeight->GetBinContent(1);
+	if (h_SumGenWeight->GetEntries()==0) // empty h_SumGenWeight in data ntuples
+		SumGenWeight = 1.;
 
-	//std::cout << "nProcessed : " << nProcessed << std::endl;
-	//std::cout << "SumGenWeight : " << SumGenWeight << std::endl;
+	TParameter<double> xspar("xsection", xsection);
+	TParameter<double> sumgenwpar("SumGenWeight", SumGenWeight);
+	
+	tree_mva->GetUserInfo()->Add(&xspar);
+	tree_mva->GetUserInfo()->Add(&sumgenwpar);
 	
 	// loop over events
 	int nEntries = tree_in->GetEntries();
