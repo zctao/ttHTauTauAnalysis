@@ -100,7 +100,8 @@ int main(int argc, char** argv)
 
 	// mva ntuple
 	bool doHTT = evaluateMVA;
-	mvaNtuple mvantuple(anaType, systematics, version, doHTT, evaluateMVA);
+	bool CR = (selType==Control_ttW or selType==Control_ttZ or Control_WZ);
+	mvaNtuple mvantuple(anaType, systematics, version, doHTT, evaluateMVA, CR);
 	mvantuple.setup_branches(tree_mva);
 
 	//////////////////////////////////////////////
@@ -190,6 +191,10 @@ int main(int argc, char** argv)
 										evNtuple.PFMETphi, evNtuple.MHT,
 										evNtuple.n_btag_loose,evNtuple.n_btag_medium,
 										btagsp4);
+
+		// FIXME
+		if (doHTT and not CR) mvantuple.compute_HTT(jets);
+		if (evaluateMVA and not CR) mvantuple.evaluate_BDTs();
 		
 		//////////////////////////////////////
 		/// Event ID
@@ -397,10 +402,11 @@ void Set_SR_weights(Analysis_types anatype, SFHelper& sfhelper,
 
 		// tau ID
 		if (anatype==Analyze_2lss1tau or anatype==Analyze_3l1tau) {
-			mvantuple.event_weight_FRjt_normUp = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_normUp");
-			mvantuple.event_weight_FRjt_normDown = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_normDown");
-			mvantuple.event_weight_FRjt_shapeUp = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_shapeUp");
-			mvantuple.event_weight_FRjt_shapeDown = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_shapeDown");
+			// NEED UPDATE
+			//mvantuple.event_weight_FRjt_normUp = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_normUp");
+			//mvantuple.event_weight_FRjt_normDown = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_normDown");
+			//mvantuple.event_weight_FRjt_shapeUp = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_shapeUp");
+			//mvantuple.event_weight_FRjt_shapeDown = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_shapeDown");
 		}
 
 		// lepton ID?
