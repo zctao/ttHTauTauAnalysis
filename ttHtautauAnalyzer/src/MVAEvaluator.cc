@@ -4,8 +4,9 @@ using namespace std;
 
 const TString MVAEvaluator::data_directory_ = (string(getenv("CMSSW_BASE"))+"/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/mva/").c_str();
 
-MVAEvaluator::MVAEvaluator()
+MVAEvaluator::MVAEvaluator(bool verbose)
 {
+	verbose_ = verbose;
 	setup_tmva_reader_HTT();
 	//setup_tmva_reader_HjTagger(); //TODO: add Hj_tagger
 	setup_tmva_reader_1l2tau_BDT1();
@@ -99,7 +100,8 @@ void MVAEvaluator::setup_tmva_reader_1l2tau_BDT1()
 float MVAEvaluator::evaluate_bdt_1l2tau_BDT1(float Vars[13])
 {
 	if (!reader_1l2tau_BDT1_) {
-		std::cerr << "WARNiNG!! TMVA Reader reader_1l2tau_BDT1_ not setup" << std::endl;
+		if (verbose_)
+			std::cerr << "WARNiNG!! TMVA Reader reader_1l2tau_BDT1_ not setup" << std::endl;
 		return -9999.;
 	}
 	
@@ -139,7 +141,8 @@ void MVAEvaluator::setup_tmva_reader_1l2tau_BDT2()
 float MVAEvaluator::evaluate_bdt_1l2tau_BDT2(float Vars[17])
 {
 	if (!reader_1l2tau_BDT2_) {
-		std::cerr << "WARNiNG!! TMVA Reader reader_1l2tau_BDT2_ not setup" << std::endl;
+		if (verbose_)
+			std::cerr << "WARNiNG!! TMVA Reader reader_1l2tau_BDT2_ not setup" << std::endl;
 		return -9999.;
 	}
 	
@@ -177,7 +180,8 @@ void MVAEvaluator::setup_tmva_reader_2lss1tau_BDT1()
 float MVAEvaluator::evaluate_bdt_2lss1tau_BDT1(float Vars[15])
 {
 	if (!reader_2lss1tau_BDT1_) {
-		std::cerr << "WARNiNG!! TMVA Reader reader_2lss1tau_BDT1_ not setup" << std::endl;
+		if (verbose_)
+			std::cerr << "WARNiNG!! TMVA Reader reader_2lss1tau_BDT1_ not setup" << std::endl;
 		return -9999.;
 	}
 	
@@ -216,7 +220,8 @@ void MVAEvaluator::setup_tmva_reader_2lss1tau_BDT2()
 float MVAEvaluator::evaluate_bdt_2lss1tau_BDT2(float Vars[16])
 {
 	if (!reader_2lss1tau_BDT2_) {
-		std::cerr << "WARNiNG!! TMVA Reader reader_2lss1tau_BDT2_ not setup" << std::endl;
+		if (verbose_)
+			std::cerr << "WARNiNG!! TMVA Reader reader_2lss1tau_BDT2_ not setup" << std::endl;
 		return -9999.;
 	}
 	
@@ -257,7 +262,8 @@ void MVAEvaluator::setup_tmva_reader_2lss1tau_BDT3()
 float MVAEvaluator::evaluate_bdt_2lss1tau_BDT3(float Vars[18])
 {
 	if (!reader_2lss1tau_BDT3_) {
-		std::cerr << "WARNiNG!! TMVA Reader reader_2lss1tau_BDT3_ not setup" << std::endl;
+		if (verbose_)
+			std::cerr << "WARNiNG!! TMVA Reader reader_2lss1tau_BDT3_ not setup" << std::endl;
 		return -9999.;
 	}
 	
@@ -299,7 +305,8 @@ void MVAEvaluator::setup_tmva_reader_2lss1tau_BDT4()
 float MVAEvaluator::evaluate_bdt_2lss1tau_BDT4(float Vars[19])
 {
 	if (!reader_2lss1tau_BDT4_) {
-		std::cerr << "WARNiNG!! TMVA Reader reader_2lss1tau_BDT4_ not setup" << std::endl;
+		if (verbose_)
+			std::cerr << "WARNiNG!! TMVA Reader reader_2lss1tau_BDT4_ not setup" << std::endl;
 		return -9999.;
 	}
 	
@@ -342,7 +349,8 @@ void MVAEvaluator::setup_tmva_reader_2lss1tau_BDT5()
 float MVAEvaluator::evaluate_bdt_2lss1tau_BDT5(float Vars[20])
 {
 	if (!reader_2lss1tau_BDT5_) {
-		std::cerr << "WARNiNG!! TMVA Reader reader_2lss1tau_BDT5_ not setup" << std::endl;
+		if (verbose_)
+			std::cerr << "WARNiNG!! TMVA Reader reader_2lss1tau_BDT5_ not setup" << std::endl;
 		return -9999.;
 	}
 	
@@ -367,7 +375,8 @@ void MVAEvaluator::setup_tmva_reader_2lss1tau_BDT6()
 float MVAEvaluator::evaluate_bdt_2lss1tau_BDT6(float Vars[2])
 {
 	if (!reader_2lss1tau_BDT6_) {
-		std::cerr << "WARNiNG!! TMVA Reader reader_2lss1tau_BDT6_ not setup" << std::endl;
+		if (verbose_)
+			std::cerr << "WARNiNG!! TMVA Reader reader_2lss1tau_BDT6_ not setup" << std::endl;
 		return -9999.;
 	}
 		
@@ -403,7 +412,8 @@ void MVAEvaluator::setup_tmva_reader_3l1tau_BDT1()
 float MVAEvaluator::evaluate_bdt_3l1tau_BDT1(float Vars[13])
 {
 	if (!reader_3l1tau_BDT1_) {
-		std::cerr << "WARNiNG!! TMVA Reader reader_3l1tau_BDT1_ not setup" << std::endl;
+		if (verbose_)
+			std::cerr << "WARNiNG!! TMVA Reader reader_3l1tau_BDT1_ not setup" << std::endl;
 		return -9999.;
 	}
 	
@@ -441,7 +451,8 @@ void MVAEvaluator::setup_tmva_reader_3l1tau_BDT2()
 float MVAEvaluator::evaluate_bdt_3l1tau_BDT2(float Vars[15])
 {
 	if (!reader_3l1tau_BDT2_) {
-		std::cerr << "WARNiNG!! TMVA Reader reader_3l1tau_BDT2_ not setup" << std::endl;
+		if (verbose_)
+			std::cerr << "WARNiNG!! TMVA Reader reader_3l1tau_BDT2_ not setup" << std::endl;
 		return -9999.;
 	}
 	
@@ -476,7 +487,8 @@ void MVAEvaluator::setup_tmva_reader_3l1tau_BDT3()
 float MVAEvaluator::evaluate_bdt_3l1tau_BDT3(float Vars[12])
 {
 	if (!reader_3l1tau_BDT3_) {
-		std::cerr << "WARNiNG!! TMVA Reader reader_3l1tau_BDT3_ not setup" << std::endl;
+		if (verbose_)
+			std::cerr << "WARNiNG!! TMVA Reader reader_3l1tau_BDT3_ not setup" << std::endl;
 		return -9999.;
 	}
 	
@@ -501,7 +513,8 @@ void MVAEvaluator::setup_tmva_reader_3l1tau_BDT4()
 float MVAEvaluator::evaluate_bdt_3l1tau_BDT4(float Vars[2])
 {
 	if (!reader_3l1tau_BDT4_) {
-		std::cerr << "WARNiNG!! TMVA Reader reader_3l1tau_BDT4_ not setup" << std::endl;
+		if (verbose_)
+			std::cerr << "WARNiNG!! TMVA Reader reader_3l1tau_BDT4_ not setup" << std::endl;
 		return -9999.;
 	}
 	
@@ -538,7 +551,8 @@ void MVAEvaluator::setup_tmva_reader_2l2tau_BDT1()
 float MVAEvaluator::evaluate_bdt_2l2tau_BDT1(float Vars[14])
 {
 	if (!reader_2l2tau_BDT1_) {
-		std::cerr << "WARNiNG!! TMVA Reader reader_2l2tau_BDT1_ not setup" << std::endl;
+		if (verbose_)
+			std::cerr << "WARNiNG!! TMVA Reader reader_2l2tau_BDT1_ not setup" << std::endl;
 		return -9999.;
 	}
 	
@@ -572,7 +586,8 @@ void MVAEvaluator::setup_tmva_reader_2l2tau_BDT2()
 float MVAEvaluator::evaluate_bdt_2l2tau_BDT2(float Vars[11])
 {
 	if (!reader_2l2tau_BDT2_) {
-		std::cerr << "WARNiNG!! TMVA Reader reader_2l2tau_BDT2_ not setup" << std::endl;
+		if (verbose_)
+			std::cerr << "WARNiNG!! TMVA Reader reader_2l2tau_BDT2_ not setup" << std::endl;
 		return -9999.;
 	}
 	
@@ -608,7 +623,8 @@ void MVAEvaluator::setup_tmva_reader_2l2tau_BDT3()
 float MVAEvaluator::evaluate_bdt_2l2tau_BDT3(float Vars[13])
 {
 	if (!reader_2l2tau_BDT3_) {
-		std::cerr << "WARNiNG!! TMVA Reader reader_2l2tau_BDT3_ not setup" << std::endl;
+		if (verbose_)
+			std::cerr << "WARNiNG!! TMVA Reader reader_2l2tau_BDT3_ not setup" << std::endl;
 		return -9999.;
 	}
 	
@@ -633,7 +649,8 @@ void MVAEvaluator::setup_tmva_reader_2l2tau_BDT4()
 float MVAEvaluator::evaluate_bdt_2l2tau_BDT4(float Vars[2])
 {
 	if (!reader_2l2tau_BDT4_) {
-		std::cerr << "WARNiNG!! TMVA Reader reader_2l2tau_BDT4_ not setup" << std::endl;
+		if (verbose_)
+			std::cerr << "WARNiNG!! TMVA Reader reader_2l2tau_BDT4_ not setup" << std::endl;
 		return -9999.;
 	}
 	

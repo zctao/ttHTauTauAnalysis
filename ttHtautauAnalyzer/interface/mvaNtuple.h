@@ -24,12 +24,14 @@ class mvaNtuple
  public:
 
     mvaNtuple(Analysis_types anaType, bool doSystematics,
-			  const std::string& version="2017", bool doHTT=false, bool eval=false) {
+			  const std::string& version="2017", bool doHTT=false, bool eval=false,
+			  bool control_region=false) {
 		anatype_ = anaType;
 		dosystematics_ = doSystematics;
 		version_ = version;
 		doHTT_ = doHTT;
 		evalMVA_ = eval;
+		control_ = control_region;
 		
 		if (doHTT) {
 			const std::string tf_fileName = std::string(getenv("CMSSW_BASE")) +
@@ -38,7 +40,7 @@ class mvaNtuple
 		}
 
 		if (doHTT_ or evalMVA_) {
-			mva_eval_ = new MVAEvaluator();
+			mva_eval_ = new MVAEvaluator(false);
 		}
 	}
 	
@@ -318,6 +320,8 @@ class mvaNtuple
 	bool evalMVA_;
 	HadTopKinFit *kinFit_;
 	MVAEvaluator *mva_eval_;
+
+	bool control_;
 
 	float lam(float, float, float);
 	int count_leptons(const std::vector<miniLepton>&, int);

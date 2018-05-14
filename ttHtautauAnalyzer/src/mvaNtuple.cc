@@ -160,6 +160,13 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("HadTop_pt", &HadTop_pt);
 			tree->Branch("Hj_tagger", &Hj_tagger);
 			tree->Branch("memOutput_LR", &mem_LR);
+
+			tree->Branch("mvaOutput_2lss_1tau_plainKin_ttV", &mva_2lss1tau_BDT1);
+			tree->Branch("mvaOutput_2lss_1tau_plainKin_ttbar", &mva_2lss1tau_BDT2);
+			tree->Branch("mvaOutput_2lss_1tau_plainKin_SUM_M", &mva_2lss1tau_BDT3);
+			tree->Branch("mvaOutput_2lss_1tau_HTT_SUM_M", &mva_2lss1tau_BDT4);
+			tree->Branch("mvaOutput_2lss_1tau_HTTMEM_SUM_M", &mva_2lss1tau_BDT5);
+			tree->Branch("mvaOutput_2lss_1tau_plainKin_1B_M", &mva_2lss1tau_BDT6);
 		}
 		else {
 			std::cout << "WARNING: Version " << version_
@@ -194,6 +201,9 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("costS_tau", &costS_tau);
 			tree->Branch("HTT", &HTT);
 			tree->Branch("HadTop_pt", &HadTop_pt);
+			
+			tree->Branch("mvaOutput_plainKin_ttbar", &mva_1l2tau_BDT1);
+			tree->Branch("mvaOutput_1l_2tau_HTT_SUM_VT", &mva_1l2tau_BDT2);
 			
 			/*
 			tree->Branch("tau0_tightWP", &tau0_tightWP);
@@ -292,6 +302,11 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("mindr_tau_jet", &mindr_tau0_jet);
 			tree->Branch("mbb_loose", &mbb);
 			tree->Branch("mindr_lep3_jet", &mindr_lep2_jet);
+
+			tree->Branch("mvaOutput_plainKin_ttV", &mva_3l1tau_BDT1);
+			tree->Branch("mvaOutput_plainKin_ttbar", &mva_3l1tau_BDT2);
+			tree->Branch("mvaOutput_3l_1tau_plainKin_SUM_M", &mva_3l1tau_BDT3);
+			tree->Branch("mvaOutput_3l_1tau_plainKin_1B_M", &mva_3l1tau_BDT4);
 		}
 		else {
 			std::cout << "WARNING: Version " << version_
@@ -316,6 +331,11 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("min_dr_lep_tau", &min_dr_lep_tau);
 			tree->Branch("mindr_tau1_jet", &mindr_tau0_jet);
 			tree->Branch("avg_dr_lep_tau", &avg_dr_lep_tau);
+
+			tree->Branch("mvaOutput_plainKin_ttV", &mva_2l2tau_BDT1);
+			tree->Branch("mvaOutput_plainKin_ttbar", &mva_2l2tau_BDT2);
+			tree->Branch("mvaOutput_2l_2tau_plainKin_SUM_VT", &mva_2l2tau_BDT3);
+			tree->Branch("mvaOutput_2l_2tau_plainKin_1B_VT", &mva_2l2tau_BDT4);
 		}
 		else {
 			std::cout << "WARNING: Version " << version_
@@ -410,10 +430,12 @@ void mvaNtuple::compute_mva_variables(const std::vector<miniLepton>& leptons,
 	metLD = 0.00397 * MET + 0.00265 * MHT;
 
 	assign_four_momentum(leptons, taus);
-	compute_mll(leptons);
+	mll = compute_mll(leptons);
 	
 	// common variables in all categories
 	avg_dr_jet = compute_average_dr(jets);
+
+	if (control_) return;
 	
 	switch(anatype_){
 	case Analyze_1l2tau:
@@ -828,23 +850,24 @@ float mvaNtuple::compute_cosPsi(const TLorentzVector& p1, const TLorentzVector& 
 
 float mvaNtuple::compute_mll(const std::vector<miniLepton>& leptons)
 {
-	if (leptons.size() < 2) {
+	if (anatype_==Analyze_1l2tau) {
 		return 0;
 	}
-	else if (leptons.size() == 2) {
+	else if (anatype_==Analyze_2lss1tau or anatype_==Analyze_2l2tau) {
+		assert(leptons.size()>1);
 		return (leptons[0].p4()+leptons[1].p4()).M();
 	}
 	else {
 		// return the mass of lepton pair cloest to Z peak (91.2 GeV)
-		float mll = 0;
+		float bestmll = 0;
 		for (auto l = leptons.begin(); l != leptons.end()-1; ++l) {
 			for (auto l2 = l+1; l2 != leptons.end(); ++l2) {
 				float newdiff = fabs((l->p4()+l2->p4()).M() - 91.2);
-				float bestdiff = fabs(mll - 91.2);
-				if (newdiff < bestdiff) mll = (l->p4()+l2->p4()).M();
+				float bestdiff = fabs(bestmll - 91.2);
+				if (newdiff < bestdiff) bestmll = (l->p4()+l2->p4()).M();
 			}
 		}
-		return mll;
+		return bestmll;
 	}
 }
 

@@ -9,7 +9,7 @@
 class MVAEvaluator
 {
  public:
-	MVAEvaluator();
+	MVAEvaluator(bool verbose=true);
 	~MVAEvaluator(){};
 
 	void setup_tmva_reader_HTT();
@@ -52,6 +52,8 @@ class MVAEvaluator
 
  protected:
 
+	bool verbose_;
+	
 	static const TString data_directory_;
 	
 	float inputVars_HTT_[7];
