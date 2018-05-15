@@ -168,6 +168,7 @@ class EventSelector
 	bool pass_metLD_3l(float, const std::vector<miniLepton>&, int);
 	bool pass_lepton_pT_2l(const std::vector<miniLepton>&);
 	bool pass_3l_charge(const std::vector<miniLepton>&);
+	bool pass_HZZ4l_veto(const std::vector<miniLepton>&);
 	
 	//////////////////////////
 	// Deprecated methods

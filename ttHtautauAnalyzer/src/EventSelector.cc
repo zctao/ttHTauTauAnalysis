@@ -1637,8 +1637,8 @@ bool EventSelector::pass_3l_SR_selection(
 
 	///////////////////////////////
 	// veto H->ZZ*->4l
-	//if (not pass_HZZ4l_veto(looseLeps))
-	//	return false;
+	if (not pass_HZZ4l_veto(looseLeps))
+		return false;
 
 	///////////////////////////////
 	// Z mass veto: 91.2 +/- 10 GeV (SFOS)
@@ -1746,8 +1746,8 @@ bool EventSelector::pass_ttZ_CR_selection(
 
 	///////////////////////////////
 	// veto H->ZZ*->4l
-	//if (not pass_HZZ4l_veto(looseLeps))
-	//	return false;
+	if (not pass_HZZ4l_veto(looseLeps))
+		return false;
 
 	///////////////////////////////
 	// reverted Z mass veto: 91.2 +/- 10 GeV (SFOS)
@@ -2314,12 +2314,26 @@ bool EventSelector::pass_Zmass_veto(const std::vector<miniLepton>& leps)
 	return true;
 }
 
-/*
 bool EventSelector::pass_HZZ4l_veto(const std::vector<miniLepton>& leptons)
 {
-	// Veto events containing two SFOS pairs of preselected leptons, with mass m_4l < 140 GeV	
+	// Veto events containing two SFOS pairs of preselected leptons, with mass m_4l < 140 GeV
+	if (leptons.size()<4) return true;
+
+	for (auto l1 = leptons.begin(); l1 != leptons.end()-3; ++l1) {
+		for (auto l2 = l1+1; l2 != leptons.end()-2; ++l2) {
+			for (auto l3=l2+1; l3 != leptons.end()-1; ++l3) {
+				for (auto l4=l3+1; l4 != leptons.end(); ++l4) {
+					// check if two SFOS pairs
+					bool IsTwoSFOS = (l1->pdgId()+l2->pdgId()+l3->pdgId()+l4->pdgId() ==0);
+					float m4l = (l1->p4()+l2->p4()+l3->p4()+l4->p4()).M();
+					if (IsTwoSFOS and m4l<140.) return false;
+				}
+			}
+		}
+	}
+
+	return true;
 }
-*/
 
 bool EventSelector::pass_metLD(float metLD, const std::vector<miniLepton>& leps,
 							   int njets)
