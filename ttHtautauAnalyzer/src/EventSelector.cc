@@ -271,8 +271,8 @@ bool EventSelector::pass_full_event_selection(
 	else if (anatype == Analyze_2lss1tau) {
 		if (seltype == Control_ttW) {
 			pass = pass_ttW_CR_selection(looseLeps, fakeableLeps, tightLeps,
-										 njets, nbtags_loose, nbtags_medium,
-										 metLD, h_cutflow);
+										 selectedTaus, njets, nbtags_loose,
+										 nbtags_medium, metLD, h_cutflow);
 		}
 		else {
 			if (not pass_2l1tau_inclusive_selection(looseLeps, fakeableLeps,
@@ -292,7 +292,8 @@ bool EventSelector::pass_full_event_selection(
 	else if (anatype == Analyze_3l1tau) {
 		if (seltype == Control_ttZ) {
 			pass = pass_ttZ_CR_selection(looseLeps, fakeableLeps, tightLeps,
-										 njets, nbtags_medium, metLD, h_cutflow);
+										 selectedTaus, njets, nbtags_loose,
+										 nbtags_medium, metLD, h_cutflow);
 		}
 		else {	
 			if (not pass_3l1tau_inclusive_selection(looseLeps, fakeableLeps,
@@ -655,13 +656,13 @@ bool EventSelector::pass_2l_generic_selection(
 	if (h_cutflow and ibin==1) fill_cutflow(h_cutflow, ibin++, "total");
 
 	/////////////////////////////////
-	// At least 2 fakeable leptons /*and no more than 2 tight leptons*/
+	// At least 2 fakeable leptons and no more than 2 tight leptons
 	if (verbose_) {
 		std::cout << "nFakeableLeptons = "<< fakeableLeps.size()
 				  << "  nTightLeptons = " << tightLeps.size() << std::endl;
 	}
-	//bool passLepNumber = fakeableLeps.size() >=2  and tightLeps.size() <= 2;
-	bool passLepNumber = fakeableLeps.size() >=2;
+	bool passLepNumber = fakeableLeps.size() >=2  and tightLeps.size() <= 2;
+	
 	if (passLepNumber) {
 		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "lep num");
 	}
@@ -711,7 +712,7 @@ bool EventSelector::pass_2l_generic_selection(
 
 	/////////////////////////////////
 	// Z mass veto: 91.2 +/- 10 (ee only)
-	if ( pass_Zmass_veto(fakeableLeps, false, true) ) {
+	if ( pass_Zmass_veto(looseLeps, false, true) ) {
 		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "Zmass veto");
 	}
 	else
@@ -822,13 +823,6 @@ bool EventSelector::pass_2l1tau_inclusive_selection(
 
 	if (not passes2lGenericSel) {
 		if (verbose_) std::cout << "FAIL generic 2l selection" << std::endl;
-		return false;
-	}
-
-	// no more than 2 tight leptons
-	if (tightLeps.size()>2) {
-		if (verbose_)
-			std::cout << "FAIL due to more than two tight leptons" << std::endl;
 		return false;
 	}
 
@@ -1056,54 +1050,175 @@ bool EventSelector::pass_2lss1tau_FlipAR_selection(
 			 passTauCharge );
 }
 
+// 2lss signal region
+bool EventSelector::pass_2lss_SR_selection(
+	const std::vector<miniLepton>& looseLeps,
+	const std::vector<miniLepton>& fakeableLeps,
+	const std::vector<miniLepton>& tightLeps,
+	const std::vector<miniTau>& tightTaus,
+	int njets, int nbtags_loose, int nbtags_medium, float metLD,
+    TH1* h_cutflow)
+{
+	if (verbose_)
+		std::cout << "start event selection: 2lss signal region" << std::endl;
+
+	int ibin = 1;
+	if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "total");
+
+	bool passes2lGenericSel =
+		pass_2l_generic_selection(looseLeps, fakeableLeps, tightLeps,
+								  njets, nbtags_loose, nbtags_medium, metLD,
+								  ibin, h_cutflow);
+
+	if (not passes2lGenericSel) {
+		if (verbose_) std::cout << "FAIL generic 2l selection" << std::endl;
+		return false;
+	}
+
+	/////////////////////////////////
+	// No tau passing "byLooseIsolationMVArun2v1DBdR03oldDMwLT"
+	if (verbose_) std::cout << "ntightTaus = " << tightTaus.size() << std::endl;
+	bool passTauNumber = (tightTaus.size()==0);
+	if (passTauNumber) {
+		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "tau num");
+	}
+	else {
+		if (verbose_) std::cout << "FAIL tight tau number requirement" << std::endl;
+		return false;
+	}
+
+	/////////////////////////////////
+	// The 2 leading leptons are tight
+	if ( not pass_2lss1tau_tightLepID(fakeableLeps) ) {  // bad naming 
+		if (verbose_) std::cout << "FAIL tight lepton requirement" << std::endl;
+		return false;
+	}
+
+	/////////////////////////////////
+	// The 2 leading leptons are same-sign
+	if ( not pass_2lss1tau_2lss(fakeableLeps) ) {  // bad naming
+		if (verbose_) std::cout << "FAIL lepton same sign requirement" << std::endl;
+		return false;
+	}
+
+	///////////////////////////////
+	// MC Matching
+	if (isMC_) {
+		assert(fakeableLeps.size()>1);
+		bool passMCMatch = fakeableLeps[0].isGenMatched() and
+			fakeableLeps[1].isGenMatched();
+		if (not passMCMatch) {
+			if (verbose_) {
+				std::cout << "mcMatchType lep1 lep2 : "
+						  << fakeableLeps[0].MCMatchType() << " "
+						  << fakeableLeps[1].MCMatchType() << std::endl;
+				std::cout << "FAIL MC Matching" << std::endl;
+			}
+			return false;
+		}
+	}
+	
+	/////////////////////////////////
+	// At least 4 selected jets
+	if (verbose_) std::cout << "nJets = " << njets << std::endl;
+		
+	bool passJetNumber = njets >= 4;
+	if (passJetNumber) {
+		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "jet num");
+	}
+	else {
+		if (verbose_) std::cout << "FAIL jet number requirement" << std::endl;
+		return false;
+	}
+	
+	/////////////////////////////////
+	if (verbose_) std::cout << "PASSED 2lss signal region selection!" << std::endl;
+
+	return true;
+}
+
 // ttW control regions
 bool EventSelector::pass_ttW_CR_selection(
     const std::vector<miniLepton>& looseLeps,
 	const std::vector<miniLepton>& fakeableLeps,
 	const std::vector<miniLepton>& tightLeps,
+	const std::vector<miniTau>& tightTaus,
 	int njets, int nbtags_loose, int nbtags_medium, float metLD,
     TH1* h_cutflow)
 {
 	if (verbose_)
-		std::cout << "start event selection: ttW control region" << std::endl;
+		std::cout << "start event selection: 2lss signal region" << std::endl;
 
 	int ibin = 1;
-	if (h_cutflow and ibin==1) fill_cutflow(h_cutflow, ibin++, "total");
+	if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "total");
 
-	bool pass2lGenericSel =
+	bool passes2lGenericSel =
 		pass_2l_generic_selection(looseLeps, fakeableLeps, tightLeps,
 								  njets, nbtags_loose, nbtags_medium, metLD,
 								  ibin, h_cutflow);
-	
-	if (not pass2lGenericSel) {
+
+	if (not passes2lGenericSel) {
 		if (verbose_) std::cout << "FAIL generic 2l selection" << std::endl;
 		return false;
 	}
-	
-	// Extend Z mass veto to SFOS lepton pairs
-	if (pass_Zmass_veto(fakeableLeps, true, false)) {
-		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "Zmass veto (sfos)");
+
+	/////////////////////////////////
+	// No tau passing "byLooseIsolationMVArun2v1DBdR03oldDMwLT"
+	if (verbose_) std::cout << "ntightTaus = " << tightTaus.size() << std::endl;
+	bool passTauNumber = (tightTaus.size()==0);
+	if (passTauNumber) {
+		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "tau num");
 	}
 	else {
-		if (verbose_) std::cout << "FAIL Z mass veto (SFOS)" << std::endl;
-		return false;
-	}
-	
-	bool pass2ltightssSel =
-		pass_2ltight_ss_selection(tightLeps, njets, ibin, h_cutflow);
-	if (not pass2ltightssSel) {
-		if (verbose_)
-			std::cout << "FAIL 2l tight and same sign selection" << std::endl;
+		if (verbose_) std::cout << "FAIL tight tau number requirement" << std::endl;
 		return false;
 	}
 
-	// Extend pT cut to tight leptons
-	if (pass_lepton_pT_2l(tightLeps)) {
-		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "lep pt");
-	}
-	else
+	/////////////////////////////////
+	// The 2 leading leptons are tight
+	if ( not pass_2lss1tau_tightLepID(fakeableLeps) ) {  // bad naming 
+		if (verbose_) std::cout << "FAIL tight lepton requirement" << std::endl;
 		return false;
+	}
+
+	/////////////////////////////////
+	// The 2 leading leptons are same-sign
+	if ( not pass_2lss1tau_2lss(fakeableLeps) ) {  // bad naming
+		if (verbose_) std::cout << "FAIL lepton same sign requirement" << std::endl;
+		return false;
+	}
+
+	///////////////////////////////
+	// MC Matching
+	if (isMC_) {
+		assert(fakeableLeps.size()>1);
+		bool passMCMatch = fakeableLeps[0].isGenMatched() and
+			fakeableLeps[1].isGenMatched();
+		if (not passMCMatch) {
+			if (verbose_) {
+				std::cout << "mcMatchType lep1 lep2 : "
+						  << fakeableLeps[0].MCMatchType() << " "
+						  << fakeableLeps[1].MCMatchType() << std::endl;
+				std::cout << "FAIL MC Matching" << std::endl;
+			}
+			return false;
+		}
+	}
 	
+	/////////////////////////////////
+	// Exactly 3 selected jets
+	if (verbose_) std::cout << "nJets = " << njets << std::endl;
+		
+	bool passJetNumber = njets == 3;
+	if (passJetNumber) {
+		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "jet num");
+	}
+	else {
+		if (verbose_) std::cout << "FAIL jet number requirement" << std::endl;
+		return false;
+	}
+
+	/*
 	////////////////
 	
 	// At least 2 jets passing medium WP b-tag
@@ -1115,7 +1230,9 @@ bool EventSelector::pass_ttW_CR_selection(
 			std::cout << "FAIL to have at least 2 medium btags" << std::endl;
 		return false;
 	}
-
+	*/
+	
+	/////////////////////////////////
 	if (verbose_) std::cout << "PASSED ttW control region selection!" << std::endl;
 	return true;
 }
@@ -1239,7 +1356,7 @@ bool EventSelector::pass_3l1tau_inclusive_selection(
 	
 	/////////////////////////////////
 	// Z mass veto: 91.2 +/- 10 GeV (SFOS)
-	if ( pass_Zmass_veto(fakeableLeps, true, false) ) {
+	if ( pass_Zmass_veto(looseLeps, true, false) ) {
 		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "Zmass veto");
 	}
 	else
@@ -1298,6 +1415,19 @@ bool EventSelector::pass_3l1tau_charge(
 	int chargesum = leptons[0].charge() + leptons[1].charge() + leptons[2].charge()
 		+ taus[0].charge();
 	return chargesum==0;
+}
+
+bool EventSelector::pass_3l_charge(const std::vector<miniLepton>& leptons)
+{
+	assert(leptons.size()>2);
+
+	if (verbose_) {
+		std::cout << "charge lep1 lep2 lep3 : " << leptons[0].charge() << " "
+				  << leptons[1].charge() << " " <<  leptons[2].charge() << std::endl;
+	}
+	// SR: charge sum of the three leptons == +/- 1
+	int chargesum = leptons[0].charge() + leptons[1].charge() + leptons[2].charge();
+	return abs(chargesum)==1;
 }
 
 bool EventSelector::pass_3l1tau_tauNumber(const std::vector<miniTau>& selectedTaus)
@@ -1416,12 +1546,119 @@ bool EventSelector::pass_3l1tau_FakeARCR_selection(
 			 not pass_3l1tau_charge(fakeableLeps, selectedTaus));
 }
 
+//
+bool EventSelector::pass_3l_SR_selection(
+    const std::vector<miniLepton>& looseLeps,
+	const std::vector<miniLepton>& fakeableLeps,
+	const std::vector<miniLepton>& tightLeps,
+	const std::vector<miniTau>& tightTaus,
+    int njets, int nbtags_loose, int nbtags_medium, float metLD,
+	TH1* h_cutflow)
+{
+	if (verbose_) std::cout << "start 3l signal region selection" << std::endl;
+
+	int ibin = 1;
+	if (h_cutflow and ibin==1) fill_cutflow(h_cutflow, ibin++, "total");
+
+	bool passes3lGenericSel =
+		pass_3l_generic_selection(looseLeps, fakeableLeps, njets, metLD, ibin,
+								  h_cutflow);
+	if (not passes3lGenericSel) {
+		if (verbose_) std::cout << "FAIL generic 3l selection" << std::endl;
+		return false;
+	}
+
+	/////////////////////////////////
+	// At least 2 loose btag or 1 medium btag
+	if (verbose_) {
+		std::cout << "nbtags loose : " << nbtags_loose << std::endl;
+		std::cout << "nbtags medium : " << nbtags_medium << std::endl;
+	}
+	
+	bool passBTagNumber = (nbtags_loose >= 2) or (nbtags_medium >= 1);
+	if (passBTagNumber) {
+		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "btag num");
+	}
+	else {
+		if (verbose_) std::cout << "FAIL btag number requirement" << std::endl;
+		return false;
+	}
+	
+	///////////////////////////////
+	// No tau passing "byLooseIsolationMVArun2v1DBdR03oldDMwLT"
+	if (verbose_) std::cout << "ntightTaus = " << tightTaus.size() << std::endl;
+	bool passTauNumber = (tightTaus.size()==0);
+	if (passTauNumber) {
+		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "tau num");
+	}
+	else {
+		if (verbose_) std::cout << "FAIL tight tau number requirement" << std::endl;
+		return false;
+	}
+	
+	///////////////////////////////
+	// The 3 leading leptons are tight
+	if ( not pass_3l1tau_tightID(fakeableLeps) ) {  // bad naming
+		if (verbose_) std::cout << "FAIL tight lepton requirement" << std::endl;
+		return false;
+	}
+
+	///////////////////////////////
+	// Sum of 3 tight charges == +/- 1
+	if (not pass_3l_charge(fakeableLeps)) {
+		if (verbose_) std::cout << "FAIL charge sum" << std::endl;
+		return false;
+	}
+
+	// tight lepton pT cut
+	bool passLepPt_tighter = fakeableLeps[1].conept() >= 15.;
+	if (not passLepPt_tighter) {
+		if (verbose_) std::cout << "FAIL lepton pT cut" << std::endl;
+		return false;
+	}
+	
+	///////////////////////////////
+	// MC Matching
+	if (isMC_) {
+		assert(fakeableLeps.size()>2);
+		bool passMCMatch = fakeableLeps[0].isGenMatched() and
+			fakeableLeps[1].isGenMatched() and fakeableLeps[2].isGenMatched();
+		if (not passMCMatch) {
+			if (verbose_) {
+				std::cout << "mcMatchType lep1 lep2 lep3 : "
+						  << fakeableLeps[0].MCMatchType() << " "
+						  << fakeableLeps[1].MCMatchType() << " "
+						  << fakeableLeps[2].MCMatchType() << std::endl;
+				std::cout << "FAIL MC Matching" << std::endl;
+			}
+			return false;
+		}
+	}
+
+	///////////////////////////////
+	// veto H->ZZ*->4l
+	//if (not pass_HZZ4l_veto(looseLeps))
+	//	return false;
+
+	///////////////////////////////
+	// Z mass veto: 91.2 +/- 10 GeV (SFOS)
+	if (not pass_Zmass_veto(looseLeps, true, false) )
+		return false;
+
+	/////////////////////////////////
+	if (verbose_) std::cout << "PASSED 3l signal region selection!" << std::endl;
+
+	return true;
+}
+
+	
 // ttZ control region
 bool EventSelector::pass_ttZ_CR_selection(
     const std::vector<miniLepton>& looseLeps,
 	const std::vector<miniLepton>& fakeableLeps,
 	const std::vector<miniLepton>& tightLeps,
-    int njets, int nbtags_medium, float metLD,
+	const std::vector<miniTau>& tightTaus,
+    int njets, int nbtags_loose, int nbtags_medium, float metLD,
 	TH1* h_cutflow)
 {
 	if (verbose_)
@@ -1438,48 +1675,86 @@ bool EventSelector::pass_ttZ_CR_selection(
 		return false;
 	}
 
-	// At least 3 tight leptons
-	if (verbose_) std::cout << "nTightLeptons = " << tightLeps.size() << std::endl;
-	if (tightLeps.size() >= 3) {
-		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, ">=3 tight lep");
-	}
-	else {
-		if (verbose_)
-			std::cout << "FAIL to have at least 3 tight leptons" << std::endl;
-		return false;
-	}
-
-	// tighter lepton pT cut
-	assert(tightLeps.size()>2);
-	bool passpt = tightLeps[0].conept()>25. and tightLeps[2].conept()>10. and
-		( (tightLeps[1].conept()>15. and abs(tightLeps[1].pdgId())==11) or
-		  (tightLeps[1].conept()>10. and abs(tightLeps[1].pdgId())==13) );
-	if (passpt) {
-		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "lep pt");
-	}
-	else {
-		if (verbose_) std::cout << "FAIL lepton pt cuts" << std::endl;
-		return false;
+	/////////////////////////////////
+	// At least 2 loose btag or 1 medium btag
+	if (verbose_) {
+		std::cout << "nbtags loose : " << nbtags_loose << std::endl;
+		std::cout << "nbtags medium : " << nbtags_medium << std::endl;
 	}
 	
-	// At least 2 jets passing medium WP b-tag
-	if (verbose_) std::cout << "n medium btags : " << nbtags_medium << std::endl;
-	if (nbtags_medium >= 2) {
+	bool passBTagNumber = (nbtags_loose >= 2) or (nbtags_medium >= 1);
+	if (passBTagNumber) {
 		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "btag num");
 	}
 	else {
-		if (verbose_)
-			std::cout << "FAIL to have at least 2 medium btags" << std::endl;
+		if (verbose_) std::cout << "FAIL btag number requirement" << std::endl;
+		return false;
+	}
+	
+	///////////////////////////////
+	// FIXME: Necessary?
+	// No tau passing "byLooseIsolationMVArun2v1DBdR03oldDMwLT"
+	if (verbose_) std::cout << "ntightTaus = " << tightTaus.size() << std::endl;
+	bool passTauNumber = (tightTaus.size()==0);
+	if (passTauNumber) {
+		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "tau num");
+	}
+	else {
+		if (verbose_) std::cout << "FAIL tight tau number requirement" << std::endl;
+		return false;
+	}
+	///////////////////////////////
+	
+	///////////////////////////////
+	// The 3 leading leptons are tight
+	if ( not pass_3l1tau_tightID(fakeableLeps) ) {  // bad naming
+		if (verbose_) std::cout << "FAIL tight lepton requirement" << std::endl;
 		return false;
 	}
 
-	// At least 1 same flavour, opposite charge lepton pair passes the Z mass window cut: |mll - mZ| < 10 GeV 
-	if ( not pass_Zmass_veto(tightLeps, true, false) ) {
-		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "Zmass");
+	///////////////////////////////
+	// Sum of 3 tight charges == +/- 1
+	if (not pass_3l_charge(fakeableLeps)) {
+		if (verbose_) std::cout << "FAIL charge sum" << std::endl;
+		return false;
 	}
-	else
+
+	// tight lepton pT cut
+	bool passLepPt_tighter = fakeableLeps[1].conept() >= 15.;
+	if (not passLepPt_tighter) {
+		if (verbose_) std::cout << "FAIL lepton pT cut" << std::endl;
+		return false;
+	}
+	
+	///////////////////////////////
+	// MC Matching
+	if (isMC_) {
+		assert(fakeableLeps.size()>2);
+		bool passMCMatch = fakeableLeps[0].isGenMatched() and
+			fakeableLeps[1].isGenMatched() and fakeableLeps[2].isGenMatched();
+		if (not passMCMatch) {
+			if (verbose_) {
+				std::cout << "mcMatchType lep1 lep2 lep3 : "
+						  << fakeableLeps[0].MCMatchType() << " "
+						  << fakeableLeps[1].MCMatchType() << " "
+						  << fakeableLeps[2].MCMatchType() << std::endl;
+				std::cout << "FAIL MC Matching" << std::endl;
+			}
+			return false;
+		}
+	}
+
+	///////////////////////////////
+	// veto H->ZZ*->4l
+	//if (not pass_HZZ4l_veto(looseLeps))
+	//	return false;
+
+	///////////////////////////////
+	// reverted Z mass veto: 91.2 +/- 10 GeV (SFOS)
+	if (pass_Zmass_veto(looseLeps, true, false) )
 		return false;
 
+	/////////////////////////////////
 	if (verbose_) std::cout << "PASSED ttZ control region selection!" << std::endl;
 
 	return true;
@@ -1487,10 +1762,6 @@ bool EventSelector::pass_ttZ_CR_selection(
 
 /*
 TODO
-bool EventSelector::pass_3l_inclusive_CR_selection()
-{
-
-}
 
 bool EventSelector::pass_3l_WZ_CR_selection()
 {
@@ -2042,6 +2313,13 @@ bool EventSelector::pass_Zmass_veto(const std::vector<miniLepton>& leps)
 
 	return true;
 }
+
+/*
+bool EventSelector::pass_HZZ4l_veto(const std::vector<miniLepton>& leptons)
+{
+	// Veto events containing two SFOS pairs of preselected leptons, with mass m_4l < 140 GeV	
+}
+*/
 
 bool EventSelector::pass_metLD(float metLD, const std::vector<miniLepton>& leps,
 							   int njets)
