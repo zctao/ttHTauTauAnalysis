@@ -283,6 +283,11 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		//
 		float mht = evNtuple.computeMHT();
 		float metld = 0.00397 * evNtuple.PFMET + 0.00265 * mht;
+
+		auto jets = evNtuple.buildJets();
+		// Jet cleaning based on analysis type
+
+
 		
 		if (anatype != Analyze_NA) {
 
@@ -295,20 +300,18 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			if (not passEvtSel) continue;
 
 			////////////////////////////////////////
-			// HLT path
-			if (not evt_selector.pass_hlt_paths(anatype, &trig_helper,
-												evNtuple.triggerBits))
-				continue;
-
-			// Match HLT path with number of offline objects
+			// HLT and MET filters
 			int nfakeableEle = 0, nfkaeableMu = 0;
 			for (const auto & lep : leptons) {
 				if (abs(lep.pdgId())==11) nfakeableEle++;
 				if (abs(lep.pdgId())==13) nfkaeableMu++;
 			}
-			if (not evt_selector.pass_hlt_match(anatype, &trig_helper,
-												evNtuple.triggerBits, nfakeableEle,
-												nfkaeableMu))
+
+			bool isdata = false;
+			if (not evt_selector.pass_hlt_and_filters(anatype, &trig_helper,
+													  evNtuple.triggerBits,
+													  nfakeableEle, nfkaeableMu,
+													  evNtuple.filterBits, isdata))
 				continue;
 		}
 		
@@ -542,7 +545,6 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		}
 
 		// mva variables
-		auto jets = evNtuple.buildJets();
 
 		//assert(leptons.size()>0 and taus->size()>0);
 

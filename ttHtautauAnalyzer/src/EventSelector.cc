@@ -113,6 +113,31 @@ bool EventSelector::pass_hlt_match(Analysis_types anatype,
 	return pass;
 }
 
+bool EventSelector::pass_hlt_and_filters(Analysis_types anatype,
+										 TriggerHelper* const trighelper,
+										 unsigned int triggerBits,
+										 int nElectron, int nMuon,
+										 unsigned int filterBits, bool isdata)
+{
+	if (not trighelper->pass_filters(filterBits, isdata)) {
+		if (verbose_) {
+			std::cout << "FAIL MET filters" << std::endl;
+			std::cout << "filter bits : " << filterBits << std::endl;
+		}
+		return false;
+	}
+	
+	if (not pass_hlt_paths(anatype, trighelper, triggerBits))
+		return false;
+
+	if (not pass_hlt_match(anatype, trighelper, triggerBits, nElectron, nMuon))
+		return false;
+
+	if (verbose_) std::cout << "PASSED HLT and MET filters!" << std::endl;
+		
+	return true;
+}
+
 /////////////////////////////////
 // ttH l+tau inclusive
 /////////////////////////////////

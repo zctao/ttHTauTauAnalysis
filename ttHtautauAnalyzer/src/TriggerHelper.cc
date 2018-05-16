@@ -55,6 +55,7 @@ const std::vector<std::string> TriggerHelper::hlt_paths_etau_ = {
 
 // Filters
 const std::vector<std::string> TriggerHelper::filter_paths_ = {
+	// If paths are updated here, update filter bismasks in constructor too
 	"Flag_goodVertices",
 	"Flag_globalTightHalo2016Filter",
 	"Flag_HBHENoiseFilter",
@@ -62,7 +63,7 @@ const std::vector<std::string> TriggerHelper::filter_paths_ = {
 	"Flag_EcalDeadCellTriggerPrimitiveFilter",
 	"Flag_BadPFMuonFilter",
 	"Flag_BadChargedCandidateFilter",
-	"Flag_eeBadScFilter",
+	"Flag_eeBadScFilter",   // apply only to data not MC
 	"Flag_ecalBadCalibFilter"
 };
 
@@ -85,6 +86,10 @@ TriggerHelper::TriggerHelper(Analysis_types analysis, bool verbose)
 		set_up_paths_2l2tau();
 	else
 		set_up_paths_all();
+
+	// for MET filters
+	bitmask_filter_data_ = 511;  // 0b111111111
+	bitmask_filter_mc_ = 509;    // 0b111111101
 }
 
 void TriggerHelper::set_up_paths_1l2tau()
@@ -328,4 +333,14 @@ bool TriggerHelper::pass_trilep_triggers(unsigned int triggerBits)
 {
 	return pass_3e_triggers(triggerBits) or pass_m_2e_triggers(triggerBits) or
 		pass_2m_e_triggers(triggerBits) or pass_3m_triggers(triggerBits);
+}
+
+bool TriggerHelper::pass_filters(unsigned int filterBits, bool isdata)
+{
+	if (isdata) {
+		return (filterBits & bitmask_filter_data_) == bitmask_filter_data_;
+	}
+	else {
+		return (filterBits & bitmask_filter_mc_) == bitmask_filter_mc_;
+	}
 }

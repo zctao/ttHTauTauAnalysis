@@ -166,12 +166,17 @@ int main(int argc, char** argv)
 		// trigger paths
 		int nfakeableEle = mvantuple.count_electrons(leptons_fakeable);
 		int nfakeableMu = mvantuple.count_muons(leptons_fakeable);
-		bool passHLT =
-			evt_selector.pass_hlt_paths(anaType,&trighelper,evNtuple.triggerBits) and
-			evt_selector.pass_hlt_match(anaType,&trighelper,evNtuple.triggerBits,
-										nfakeableEle, nfakeableMu);
-		if (not passHLT and requireTrigger) continue;
+		//bool passHLT =
+		//	evt_selector.pass_hlt_paths(anaType,&trighelper,evNtuple.triggerBits) and
+		//	evt_selector.pass_hlt_match(anaType,&trighelper,evNtuple.triggerBits,
+		//								nfakeableEle, nfakeableMu);
+		//if (not passHLT and requireTrigger) continue;
 
+		bool passHLTandFilters = evt_selector.pass_hlt_and_filters(
+			anaType, &trighelper, evNtuple.triggerBits, nfakeableEle, nfakeableMu,
+			evNtuple.filterBits, isdata);
+		if (not passHLTandFilters and requireTrigger) continue;
+		
 		//////////////////////////////////////
 		/// MVA variables
 		//////////////////////////////////////
@@ -362,6 +367,7 @@ void Set_SR_weights(Analysis_types anatype, SFHelper& sfhelper,
 	
 	// btag scale factor
 	float btag_sf = sfhelper.Get_EvtCSVWeight(jets,"NA");
+	// FIXME for JEC: JESUp and JESDown
 
 	////////////////////
 	mvantuple.event_weight =

@@ -49,6 +49,7 @@ class TriggerHelper
 	bool pass_2m_e_triggers(unsigned int tbits) {return tbits & bitmask_2me_;}
 	bool pass_3m_triggers(unsigned int tbits) {return tbits & bitmask_3m_;}
 	bool pass_trilep_triggers(unsigned int);
+	bool pass_filters(unsigned int, bool);
 	
 	//bool pass_trigger(std::string&);  // Todo
 	//bool pass_filter(std::string&);   // Todo
@@ -89,6 +90,9 @@ class TriggerHelper
 	unsigned int bitmask_m2e_;
 	unsigned int bitmask_2me_;
 	unsigned int bitmask_3m_;
+
+	unsigned int bitmask_filter_data_;
+	unsigned int bitmask_filter_mc_;
 };
 
 #endif
