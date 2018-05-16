@@ -4,11 +4,6 @@ cmssw=${1:-CMSSW_9_4_7}
 log=${2:-savedfiles.log}
 
 tar -zcvf $cmssw.tgz $cmssw \
---exclude=src/ttH \
---exclude=src/RecoEgamma \
---exclude=src/PhysicsTools \
---exclude=src/HadTop \
---exclude=src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles \
 --exclude=external \
 --exclude=tmp \
 --exclude=doc \
