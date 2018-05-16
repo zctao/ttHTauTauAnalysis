@@ -26,6 +26,8 @@ parser.add_argument('-o','--outdir', type=str, default="./", help="Output direct
 parser.add_argument('-c','--corrections', nargs='+',
                     choices=['jesup','jesdown','tesup','tesdown'], default=[],
                     help="Jet/Tau energy correction")
+parser.add_argument('--transfer_inputs', action='store_true',
+                    help="Copy input files locally from EOS")
 
 args = parser.parse_args()
 
@@ -33,7 +35,7 @@ datasets = { 'data_e':'SingleElectron','data_mu':'SingleMuon','data_dieg':'Doubl
              'data_dimu':'DoubleMuon','data_mueg':'MuonEG'}
 samplelist_dict = getDatasetDict(args.datasetlist)
 
-mvantupleList = open('mvaNtupleList_'+args.version+'.log','a')
+mvantupleList = open('mvaNtupleList_'+args.version+'.log','w')
 
 anatypes=['1l2tau','2lss1tau','3l1tau','2l2tau']
 if args.analysis is not None:  # if analysis types are explicitly set
@@ -51,17 +53,23 @@ for sample in args.samples:
         assert(sample in samplelist_dict)
         ntuplename += samplelist_dict[sample]['dataset'].split('/')[1]+'/'
 
-    ntuplename += args.version+'/ntuple_'
-
+    filename = 'ntuple_'
     if 'data' in sample:
-        ntuplename += 'data_incl.root'
+        filename += 'data_incl.root'
     else:
-        ntuplename += sample+'_incl.root'
+        filename += sample+'_incl.root'
+
+    ntuplename += args.version+'/'+filename
 
     print sample, ntuplename
 
+    # add redirector
     ntuplename = args.redirector + ntuplename
     
+    if args.transfer_inputs:
+        os.system('xrdcp -s '+ntuplename+' .')
+        ntuplename = filename
+        
     for anatype in anatypes:
         print anatype
         
@@ -84,6 +92,9 @@ for sample in args.samples:
 
         for seltype in seltypes:
             print seltype
+
+            os.system('mkdir -p '+args.outdir+args.version+'/')
+            print "make output directory:", args.outdir+args.version+'/'
             
             outname = args.outdir+args.version+'/mvaNtuple_'+sample+'_'+seltype+'.root'
             argument = ' -i '+ntuplename+' -o '+outname+' --anatype '+anatype+' --seltype '+seltype
@@ -108,3 +119,6 @@ for sample in args.samples:
 
     stop = timer()
     print "Process", sample, "took", (stop-start)/60., "min"
+
+    if args.transfer_inputs:
+        os.system('rm '+filename)
