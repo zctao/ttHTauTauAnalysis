@@ -13,6 +13,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <tuple>
 
 class eventNtuple
 {
@@ -35,10 +36,16 @@ class eventNtuple
 	std::vector<TLorentzVector> buildFourVectorTauDaugsCharged(bool loose=false) const;
 	std::vector<TLorentzVector> buildFourVectorTauDaugsNeutral(bool loose=false) const;
 	std::vector<miniJet> buildJets() const;
+	std::vector<miniJet> buildCleanedJets(float,Analysis_types,Selection_types,
+										  std::vector<miniLepton> const * const,
+										  std::vector<miniTau> const * const) const;
+	std::tuple<int, int> count_btags(const std::vector<miniJet>&) const ;
 	std::vector<TLorentzVector> buildFourVectorJets() const;
 	std::vector<TLorentzVector> buildFourVectorBtagJets() const;
 	TLorentzVector buildFourVectorMET();
-	float computeMHT();
+	float computeMHT();  // deprecated
+	float computeMHT(const std::vector<miniLepton>&, const std::vector<miniTau>&,
+					 const std::vector<miniJet>&);
 
 	template <typename T>
 		std::vector<TLorentzVector> buildFourVectors(const std::vector<T>&);

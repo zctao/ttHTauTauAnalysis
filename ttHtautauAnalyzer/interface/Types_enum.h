@@ -107,6 +107,31 @@ namespace Types_enum {
 		if (SelTypeMap.count(seltype)>0) selType = SelTypeMap.at(seltype);
 		return selType;
 	}
+
+	inline int getNnominalLeptons(Analysis_types anatype) {
+		int nleps = -1;
+		if (anatype==Analyze_1l2tau)
+			nleps = 1;
+		else if (anatype==Analyze_2lss1tau or anatype==Analyze_2l2tau)
+			nleps = 2;
+		else if (anatype==Analyze_3l1tau)
+			nleps = 3;
+
+		return nleps;
+	}
+
+	inline int getNnominalTaus(Analysis_types anatype, Selection_types seltype) {
+		int ntaus = -1;
+		if (anatype==Analyze_1l2tau or anatype==Analyze_2l2tau)
+			ntaus = 2;
+		else if (anatype==Analyze_2lss1tau or anatype==Analyze_3l1tau) {
+			if (seltype==Control_ttW or seltype==Control_ttZ or seltype==Control_WZ)
+				ntaus = 0;
+			else
+				ntaus = 1;
+		}
+		return ntaus;
+	}
 }
 
 #endif

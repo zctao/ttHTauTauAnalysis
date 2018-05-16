@@ -408,11 +408,12 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 					   *ptDHandle.product(), *multHandle.product());
 	
 	// remove overlap
-	std::vector<pat::Jet> jet_no_lep = removeOverlapdR(jet_raw, lep_fakeable, 0.4);
-	std::vector<pat::Jet> jet_cleaned = removeOverlapdR(jet_no_lep, tau_loose, 0.4);
+	//std::vector<pat::Jet> jet_no_lep = removeOverlapdR(jet_raw, lep_fakeable, 0.4);
+	//std::vector<pat::Jet> jet_cleaned = removeOverlapdR(jet_no_lep, tau_loose, 0.4);
 
 	// selected jets
-	std::vector<pat::Jet> jet_selected = getSelectedJets(jet_cleaned);
+	//std::vector<pat::Jet> jet_selected = getSelectedJets(jet_cleaned);
+	std::vector<pat::Jet> jet_selected = getSelectedJets(jet_raw);
 
 	if (debug_) {
 		std::cout << "n_jets : " << jet_selected.size() << std::endl;

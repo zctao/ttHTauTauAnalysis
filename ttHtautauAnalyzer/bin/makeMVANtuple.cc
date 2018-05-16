@@ -21,6 +21,7 @@
 #include <iostream>
 #include <algorithm>
 #include <string>
+#include <tuple>
 
 //#pragma link C++ class std::vector < std::vector<int> >+;
 
@@ -150,7 +151,16 @@ int main(int argc, char** argv)
 		auto taus_fakeable = evNtuple.buildTaus(true, anaType);  // fakeable
 		auto taus_tight = evNtuple.buildTaus(false, anaType);  // tight
 
-		float mht = evNtuple.computeMHT();
+		//auto jets = evNtuple.buildJets();
+		// Jet cleaning based on analysis type
+		auto jets = evNtuple.buildCleanedJets(0.4, anaType, selType,
+											  &leptons_fakeable, &taus_fakeable);
+
+		int nbtags_loose, nbtags_medium;
+		std::tie(nbtags_loose, nbtags_medium) = evNtuple.count_btags(jets);
+		assert(nbtags_loose >= nbtags_medium);
+		
+		float mht = evNtuple.computeMHT(leptons_fakeable, taus_fakeable, jets);
 		float metld = 0.00397 * evNtuple.PFMET + 0.00265 * mht;
 		
 		//////////////////////////////////////
@@ -158,8 +168,8 @@ int main(int argc, char** argv)
 		//////////////////////////////////////
 		bool passEvtSel =  evt_selector.pass_full_event_selection(
 			anaType, selType, leptons_loose, leptons_fakeable, leptons_tight,
-			taus_fakeable, taus_tight, evNtuple.n_jet, evNtuple.n_btag_loose,
-			evNtuple.n_btag_medium, metld);
+			taus_fakeable, taus_tight, jets.size(), nbtags_loose,
+			nbtags_medium, metld);
 
 		if (not passEvtSel) continue;
 
@@ -187,12 +197,10 @@ int main(int argc, char** argv)
 		const std::vector<miniTau> *taus = &taus_tight;
 		if (anaType==Analyze_1l2tau or anaType==Analyze_2l2tau)
 			taus = &taus_fakeable;
-
-		auto jets = evNtuple.buildJets();
 		
 		mvantuple.compute_all_variables(*leptons, *taus, jets, evNtuple.PFMET,
 										evNtuple.PFMETphi, evNtuple.MHT,
-										evNtuple.n_btag_loose,evNtuple.n_btag_medium);
+										nbtags_loose, nbtags_medium);
 
 		// FIXME
 		if (doHTT and not CR) mvantuple.compute_HTT(jets);

@@ -262,6 +262,62 @@ std::vector<miniJet> eventNtuple::buildJets() const
 	return jets;
 }
 
+std::vector<miniJet> eventNtuple::buildCleanedJets(
+	float cleaningdR, Analysis_types anatype, Selection_types seltype,
+	std::vector<miniLepton> const * const fakeableLeps,
+	std::vector<miniTau> const * const fakeableTaus) const
+{
+	// Remove overlap jets by dR w.r.t. the first N leptons and first M taus
+	// in pT descending order based on analysis type: (N)l(M)tau
+	int NLeps = Types_enum::getNnominalLeptons(anatype);
+	int MTaus = Types_enum::getNnominalTaus(anatype, seltype);
+	
+	std::vector<miniJet> jets_raw = buildJets();
+	
+	std::vector<miniJet> jets_clean;
+	for (const auto & jet : jets_raw) {
+		bool keep = true;
+		
+		int ilep = 0;
+		for (const auto & lep : (*fakeableLeps)) {
+			if (ilep >= NLeps) break;
+			if ( jet.p4().DeltaR(lep.p4()) < cleaningdR ) keep = false;
+			ilep++;
+		}
+
+		int itau = 0;
+		for (const auto & tau : (*fakeableTaus)) {
+			if (itau >= MTaus) break;
+			if ( jet.p4().DeltaR(tau.p4()) < cleaningdR ) keep = false;
+			itau++;
+		}
+
+		if (keep) jets_clean.push_back(jet);
+	}
+
+	return jets_clean;
+}
+
+std::tuple<int, int> eventNtuple::count_btags(const std::vector<miniJet>& jets) const
+{
+	// FIXME: hard-coded csv WPs for now
+	// should move them to some better place and pass as arguments
+	float csv_loose_wp = 0.1522;  // DeepCSV loose wp
+	float csv_medium_wp = 0.4941; // DeepCSV medium wp
+	
+	int nbtags_loose = 0;
+	int nbtags_medium = 0;
+
+	for (const auto & jet : jets) {
+		if (jet.csv() > csv_loose_wp) nbtags_loose++;
+		if (jet.csv() > csv_medium_wp) nbtags_medium++;
+	}
+
+	assert(nbtags_loose >= nbtags_medium);
+	
+	return std::make_tuple(nbtags_loose, nbtags_medium);
+}
+
 std::vector<TLorentzVector> eventNtuple::buildFourVectorJets() const
 {
 	std::vector<TLorentzVector> jetsP4;
@@ -318,8 +374,27 @@ TLorentzVector eventNtuple::buildFourVectorMET()
 	return met;
 }
 
+float eventNtuple::computeMHT(const std::vector<miniLepton>& leptons,
+							  const std::vector<miniTau>& taus,
+							  const std::vector<miniJet>& jets)
+{
+	TLorentzVector mht;
+
+	for (const auto & l : leptons)
+		mht -= l.p4();
+	for (const auto & t : taus)
+		mht -= t.p4();
+	for (const auto & j : jets)
+		mht -= j.p4();
+
+	return mht.Pt();
+}
+
 float eventNtuple::computeMHT()
 {
+	std::cerr << "Method deprecated." << std::endl;
+	assert(0);
+	
 	// FIXME: use fakeable leptons
 	
 	TLorentzVector mht;

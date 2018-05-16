@@ -18,6 +18,7 @@
 #include <vector>
 #include <algorithm>
 #include <string>
+#include <tuple>
 
 TTree* makeSyncTree(const TString, const TString, const TString,
 					Analysis_types anatype=Analyze_NA,
@@ -273,29 +274,32 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 
 		auto taus_fakeable = evNtuple.buildTaus(true, anatype); // fakeable
 		auto taus_tight = evNtuple.buildTaus(false, anatype);  // tight
+
+		//auto jets = evNtuple.buildJets();
+		// Jet cleaning based on analysis type
+		auto jets = evNtuple.buildCleanedJets(0.4, anatype, seltype, &leptons,
+											  &taus_fakeable);
+
+		int nbtags_loose, nbtags_medium;
+		std::tie(nbtags_loose, nbtags_medium) = evNtuple.count_btags(jets);
+		assert(nbtags_loose >= nbtags_medium);
+		
+		float mht = evNtuple.computeMHT(leptons, taus_fakeable, jets);
+		float metld = 0.00397 * evNtuple.PFMET + 0.00265 * mht;
 		
 		if (debug) {
 			std::cout << std::endl;
 			std::cout << "Event: " << evNtuple.run <<":"<< evNtuple.ls << ":"
 					  << evNtuple.nEvent << std::endl;
 		}
-
-		//
-		float mht = evNtuple.computeMHT();
-		float metld = 0.00397 * evNtuple.PFMET + 0.00265 * mht;
-
-		auto jets = evNtuple.buildJets();
-		// Jet cleaning based on analysis type
-
-
 		
 		if (anatype != Analyze_NA) {
 
 			////////////////////////////////////////
 			bool passEvtSel = evt_selector.pass_full_event_selection(
 			    anatype, seltype, leptons_loose, leptons, leptons_tight,
-				taus_fakeable, taus_tight, evNtuple.n_jet, evNtuple.n_btag_loose,
-				evNtuple.n_btag_medium, metld);
+				taus_fakeable, taus_tight, jets.size(), nbtags_loose,
+				nbtags_medium, metld);
 			
 			if (not passEvtSel) continue;
 
@@ -334,7 +338,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		syncntuple.n_mvasel_ele = evNtuple.n_mvasel_ele;
 		syncntuple.n_fakeablesel_ele = evNtuple.n_fakeable_ele;
 		syncntuple.n_presel_tau = evNtuple.n_presel_tau;
-		syncntuple.n_presel_jet = evNtuple.n_jet;
+		syncntuple.n_presel_jet = jets.size();
 
 		// muons
 		if (evNtuple.mu_pt->size()>0) {
@@ -503,6 +507,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		}
 
 		// jets
+		/*
 		if (evNtuple.jet_pt->size()>0) {
 			syncntuple.jet1_pt = evNtuple.jet_pt->at(0);
 			syncntuple.jet1_eta = evNtuple.jet_eta->at(0);
@@ -531,6 +536,36 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			syncntuple.jet4_E = evNtuple.jet_E->at(3);
 			syncntuple.jet4_CSV = evNtuple.jet_csv->at(3);
 		}
+		*/
+		if (jets.size()>0) {
+			syncntuple.jet1_pt = jets[0].pt();
+			syncntuple.jet1_eta = jets[0].eta();
+			syncntuple.jet1_phi = jets[0].phi();
+			syncntuple.jet1_E = jets[0].energy();
+			syncntuple.jet1_CSV = jets[0].csv();
+		}
+		if (jets.size()>1) {
+			syncntuple.jet2_pt = jets[1].pt();
+			syncntuple.jet2_eta = jets[1].eta();
+			syncntuple.jet2_phi = jets[1].phi();
+			syncntuple.jet2_E = jets[1].energy();
+			syncntuple.jet2_CSV = jets[1].csv();
+		}
+		if (jets.size()>2) {
+			syncntuple.jet3_pt = jets[2].pt();
+			syncntuple.jet3_eta = jets[2].eta();
+			syncntuple.jet3_phi = jets[2].phi();
+			syncntuple.jet3_E = jets[2].energy();
+			syncntuple.jet3_CSV = jets[2].csv();
+		}
+		if (jets.size()>3) {
+			syncntuple.jet4_pt = jets[3].pt();
+			syncntuple.jet4_eta = jets[3].eta();
+			syncntuple.jet4_phi = jets[3].phi();
+			syncntuple.jet4_E = jets[3].energy();
+			syncntuple.jet4_CSV = jets[3].csv();
+		}
+
 		
 		// met
 		syncntuple.PFMET = evNtuple.PFMET;
@@ -550,9 +585,9 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 
 		mvantuple.compute_all_variables(leptons, *taus, jets, syncntuple.PFMET,
 										syncntuple.PFMETphi, syncntuple.MHT,
-										evNtuple.n_btag_loose,evNtuple.n_btag_medium);
+										nbtags_loose, nbtags_medium);
 		
-		syncntuple.nBJetLoose = evNtuple.n_btag_loose;
+		syncntuple.nBJetLoose = nbtags_loose;
 		
 		if (anatype==Analyze_1l2tau) {
 			assert(taus->size()>1);
