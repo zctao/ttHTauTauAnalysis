@@ -45,7 +45,7 @@ class eventNtuple
 	std::tuple<int, int> count_btags(const std::vector<miniJet>&) const ;
 	std::vector<TLorentzVector> buildFourVectorJets() const;
 	std::vector<TLorentzVector> buildFourVectorBtagJets() const;
-	TLorentzVector buildFourVectorMET();
+	TLorentzVector buildFourVectorMET(const TString& correction="na");
 	float computeMHT();  // deprecated
 	float computeMHT(const std::vector<miniLepton>&, const std::vector<miniTau>&,
 					 const std::vector<miniJet>&);
@@ -276,6 +276,15 @@ class eventNtuple
 	float METCov10 = -9999.;
 	float METCov01 = -9999.;
 	float METCov11 = -9999.;
+
+	float PFMET_jesup = -9999.;
+	float PFMETphi_jesup = -9999.;
+	float PFMET_jesdown = -9999.;
+	float PFMETphi_jesdown = -9999.;
+	float PFMET_tesup = -9999.;
+	float PFMETphi_tesup = -9999.;
+	float PFMET_tesdown = -9999.;
+	float PFMETphi_tesdown = -9999.;
 	
 };
 

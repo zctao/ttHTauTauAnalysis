@@ -192,6 +192,28 @@ void ttHtautauAnalyzer::write_ntuple_jets(const std::vector<pat::Jet>& jets)
 	}
 }
 
+void ttHtautauAnalyzer::write_ntuple_met(const pat::MET& met)
+{
+	evNtuple_.PFMET = met.pt();
+	evNtuple_.PFMETphi = met.phi();
+	evNtuple_.METSignificance = met.metSignificance();
+	evNtuple_.METCov00 = met.getSignificanceMatrix()(0,0);
+	evNtuple_.METCov01 = met.getSignificanceMatrix()(0,1);
+	evNtuple_.METCov10 = evNtuple_.METCov01;
+	evNtuple_.METCov11 = met.getSignificanceMatrix()(1,1);
+	// shifted type 1 met for systematic study
+	// Jet Energy Scale
+	evNtuple_.PFMET_jesup = met.shiftedPt(pat::MET::METUncertainty::JetEnUp);
+	evNtuple_.PFMETphi_jesup = met.shiftedPhi(pat::MET::METUncertainty::JetEnUp);
+	evNtuple_.PFMET_jesdown = met.shiftedPt(pat::MET::METUncertainty::JetEnDown);
+	evNtuple_.PFMETphi_jesdown = met.shiftedPhi(pat::MET::METUncertainty::JetEnDown);
+	// Tau Energy Scale
+	evNtuple_.PFMET_tesup = met.shiftedPt(pat::MET::METUncertainty::TauEnUp);
+	evNtuple_.PFMETphi_tesup = met.shiftedPhi(pat::MET::METUncertainty::TauEnUp);
+	evNtuple_.PFMET_tesdown = met.shiftedPt(pat::MET::METUncertainty::TauEnDown);
+	evNtuple_.PFMETphi_tesdown = met.shiftedPhi(pat::MET::METUncertainty::TauEnDown);
+}
+
 /*
 void ttHtautauAnalyzer::write_ntuple_bTagSF(const std::vector<pat::Jet>& jets)
 {

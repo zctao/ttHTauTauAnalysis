@@ -159,9 +159,11 @@ int main(int argc, char** argv)
 		int nbtags_loose, nbtags_medium;
 		std::tie(nbtags_loose, nbtags_medium) = evNtuple.count_btags(jets);
 		assert(nbtags_loose >= nbtags_medium);
-		
+
+		auto metp4 = evNtuple.buildFourVectorMET();
+		float met = metp4.Pt();
 		float mht = evNtuple.computeMHT(leptons_fakeable, taus_fakeable, jets);
-		float metld = 0.00397 * evNtuple.PFMET + 0.00265 * mht;
+		float metld = 0.00397 * met + 0.00265 * mht;
 		
 		//////////////////////////////////////
 		/// Event selections
@@ -198,8 +200,8 @@ int main(int argc, char** argv)
 		if (anaType==Analyze_1l2tau or anaType==Analyze_2l2tau)
 			taus = &taus_fakeable;
 		
-		mvantuple.compute_all_variables(*leptons, *taus, jets, evNtuple.PFMET,
-										evNtuple.PFMETphi, evNtuple.MHT,
+		mvantuple.compute_all_variables(*leptons, *taus, jets,
+										metp4.Pt(), metp4.Phi(), mht,
 										nbtags_loose, nbtags_medium);
 
 		// FIXME

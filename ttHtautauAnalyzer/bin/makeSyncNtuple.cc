@@ -2,6 +2,7 @@
 #include <TFile.h>
 #include <TTree.h>
 #include <TString.h>
+#include <TLorentzVector.h>
 
 #include "boost/program_options.hpp"
 #include "../interface/Types_enum.h"
@@ -283,9 +284,11 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		int nbtags_loose, nbtags_medium;
 		std::tie(nbtags_loose, nbtags_medium) = evNtuple.count_btags(jets);
 		assert(nbtags_loose >= nbtags_medium);
-		
+
+		auto metp4 = evNtuple.buildFourVectorMET();
+		float met = metp4.Pt();
 		float mht = evNtuple.computeMHT(leptons, taus_fakeable, jets);
-		float metld = 0.00397 * evNtuple.PFMET + 0.00265 * mht;
+		float metld = 0.00397 * met + 0.00265 * mht;
 		
 		if (debug) {
 			std::cout << std::endl;
@@ -568,8 +571,8 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 
 		
 		// met
-		syncntuple.PFMET = evNtuple.PFMET;
-		syncntuple.PFMETphi = evNtuple.PFMETphi;
+		syncntuple.PFMET = metp4.Pt();
+		syncntuple.PFMETphi = metp4.Phi();
 		syncntuple.MHT = mht;
 		syncntuple.metLD = metld;
 
@@ -726,11 +729,14 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 
 		// weights
 		syncntuple.MC_weight = evNtuple.MC_weight;
-		
+
+		// UPDATE NEEDED
 		syncntuple.PU_weight = evNtuple.PU_weight;
-		syncntuple.bTagSF_weight = evNtuple.bTagSF_weight;
+
+		syncntuple.bTagSF_weight = sf_helper.Get_EvtCSVWeight(jets,"NA");
 
 		// FR_weight
+		// UPDATE NEEDED
 		if (seltype==Application_Fake_1l2tau or seltype==Application_Fake_2lss1tau or
 			seltype==Application_Fake_3l1tau or seltype==Application_Fake_2l2tau)
 			syncntuple.FR_weight = sf_helper.Get_FR_weight(leptons,*taus);
@@ -739,12 +745,15 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 				sf_helper.Get_ChargeFlipWeight(leptons, taus->at(0).charge());
 		
 		// leptonSF_weight
+		// UPDATE NEEDED
 		syncntuple.leptonSF_weight = sf_helper.Get_LeptonIDSF_weight(leptons);
 		
 		// tauSF_weight
+		// UPDATE NEEDED
 		syncntuple.tauSF_weight = sf_helper.Get_TauIDSF_weight(*taus);
 		
-		// triggerSF_weight
+		// triggerSF
+		// UPDATE NEEDED
 		bool hlt1LTriggered =
 				trig_helper.pass_single_lep_triggers(evNtuple.triggerBits);
 		bool hltXTriggered =

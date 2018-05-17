@@ -197,6 +197,7 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	void write_ntuple_electrons(const std::vector<pat::Electron>&);
 	void write_ntuple_taus(const std::vector<pat::Tau>&);
 	void write_ntuple_jets(const std::vector<pat::Jet>&);
+	void write_ntuple_met(const pat::MET&);
 	
 	//Utilities
 	template <typename T1, typename T2>

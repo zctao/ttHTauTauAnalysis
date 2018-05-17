@@ -387,10 +387,21 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorBtagJets() const
 	return btagsP4;
 }
 
-TLorentzVector eventNtuple::buildFourVectorMET()
+TLorentzVector eventNtuple::buildFourVectorMET(const TString& correction)
 {
 	TLorentzVector met;
-	met.SetPtEtaPhiM(PFMET, 0, PFMETphi, 0);
+	
+	if (correction.EqualTo("jesup", TString::ECaseCompare::kIgnoreCase))
+		met.SetPtEtaPhiM(PFMET_jesup, 0., PFMETphi_jesup, 0.);
+	else if (correction.EqualTo("jesdown", TString::ECaseCompare::kIgnoreCase))
+		met.SetPtEtaPhiM(PFMET_jesdown, 0., PFMETphi_jesdown, 0.);
+	else if (correction.EqualTo("tesup", TString::ECaseCompare::kIgnoreCase))
+		met.SetPtEtaPhiM(PFMET_tesup, 0., PFMETphi_tesup, 0.);
+	else if (correction.EqualTo("tesdown", TString::ECaseCompare::kIgnoreCase))
+		met.SetPtEtaPhiM(PFMET_tesdown, 0., PFMETphi_tesdown, 0.);
+	else
+		met.SetPtEtaPhiM(PFMET, 0., PFMETphi, 0.);
+	
 	return met;
 }
 
@@ -672,6 +683,15 @@ void eventNtuple::initialize()
 	METCov10 = -9999.;
 	METCov01 = -9999.;
 	METCov11 = -9999.;
+	
+	PFMET_jesup = -9999.;
+	PFMETphi_jesup = -9999.;
+	PFMET_jesdown = -9999.;
+	PFMETphi_jesdown = -9999.;
+	PFMET_tesup = -9999.;
+	PFMETphi_tesup = -9999.;
+	PFMET_tesdown = -9999.;
+	PFMETphi_tesdown = -9999.;
 }
 
 void eventNtuple::setup_branches(TTree* tree)
@@ -874,6 +894,14 @@ void eventNtuple::setup_branches(TTree* tree)
 	tree->Branch("METCov11", &METCov11);
 	tree->Branch("MHT", &MHT);
 	tree->Branch("metLD", &metLD);
+	tree->Branch("PFMET_jesup", &PFMET_jesup);
+	tree->Branch("PFMETphi_jesup", &PFMETphi_jesup);
+	tree->Branch("PFMET_jesdown", &PFMET_jesdown);
+	tree->Branch("PFMETphi_jesdown", &PFMETphi_jesdown);
+	tree->Branch("PFMET_tesup", &PFMET_tesup);
+	tree->Branch("PFMETphi_tesup", &PFMETphi_tesup);
+	tree->Branch("PFMET_tesdown", &PFMET_tesdown);
+	tree->Branch("PFMETphi_tesdown", &PFMETphi_tesdown);
 }
 
 void eventNtuple::set_branch_address(TTree* tree)
@@ -1075,6 +1103,14 @@ void eventNtuple::set_branch_address(TTree* tree)
 	tree->SetBranchAddress("METCov11", &METCov11);
 	tree->SetBranchAddress("MHT", &MHT);
 	tree->SetBranchAddress("metLD", &metLD);
+	tree->SetBranchAddress("PFMET_jesup", &PFMET_jesup);
+	tree->SetBranchAddress("PFMETphi_jesup", &PFMETphi_jesup);
+	tree->SetBranchAddress("PFMET_jesdown", &PFMET_jesdown);
+	tree->SetBranchAddress("PFMETphi_jesdown", &PFMETphi_jesdown);
+	tree->SetBranchAddress("PFMET_tesup", &PFMET_tesup);
+	tree->SetBranchAddress("PFMETphi_tesup", &PFMETphi_tesup);
+	tree->SetBranchAddress("PFMET_tesdown", &PFMET_tesdown);
+	tree->SetBranchAddress("PFMETphi_tesdown", &PFMETphi_tesdown);
 }
 
 #endif

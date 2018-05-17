@@ -565,16 +565,11 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	write_ntuple_jets(jet_selected);
 	
 	/// met
-	evNtuple_.PFMET = pfMET.pt();
-	evNtuple_.PFMETphi = pfMET.phi();
+	write_ntuple_met(pfMET);
 	evNtuple_.MHT = MHT;
 	evNtuple_.metLD = metLD;
-	evNtuple_.METSignificance = pfMET.metSignificance();
-	evNtuple_.METCov00 = pfMET.getSignificanceMatrix()(0,0);
-	evNtuple_.METCov01 = pfMET.getSignificanceMatrix()(0,1);
-	evNtuple_.METCov10 = evNtuple_.METCov01;
-	evNtuple_.METCov11 = pfMET.getSignificanceMatrix()(1,1);
 
+	////
 	eventTree_ -> Fill();
 	////
 	
