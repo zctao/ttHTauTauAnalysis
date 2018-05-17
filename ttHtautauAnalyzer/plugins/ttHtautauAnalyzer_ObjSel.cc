@@ -293,32 +293,14 @@ std::vector<pat::Jet> ttHtautauAnalyzer::getSelectedJets(const std::vector<pat::
 {
 	std::vector<pat::Jet> seljets;
 	for (const auto & jet : jets) {
-		bool passKinematic = (jet.pt() > 25. and fabs(jet.eta()) < 2.4);
+		float jetPt = jet.pt();
+		// To account for upwards JEC variation for systematic study
+		if (jet.hasUserFloat("jesUnc")) jetPt *= 1.+jet.userFloat("jesUnc");
+		
+		bool passKinematic = (jetPt > 25. and fabs(jet.eta()) < 2.4);
 
 		bool passID = isTightJet(jet);
-			
-		/*
-		bool looseID =
-		    jet.neutralHadronEnergyFraction() < 0.99 and
-		    jet.chargedEmEnergyFraction() < 0.99 and
-			jet.neutralEmEnergyFraction() < 0.99 and
-			jet.numberOfDaughters() > 1 and
-			jet.chargedHadronEnergyFraction() > 0.0 and
-		    jet.chargedMultiplicity() > 0;
-		*/
-		/*
-		bool looseID =
-			(jet.neutralHadronEnergyFraction()<0.99 and
-			 jet.neutralEmEnergyFraction()<0.99 and
-			 jet.chargedMultiplicity()+jet.neutralMultiplicity()>1
-			 )
-			and
-			((std::abs(jet.eta())<=2.4 and
-			  jet.chargedHadronEnergyFraction()>0 and
-			  jet.chargedMultiplicity()>0 && jet.chargedEmEnergyFraction()<0.99)
-			 or std::abs(jet.eta())>2.4
-			 ); 
-		*/
+
 		if (passKinematic and passID)
 			seljets.push_back(jet);
 	}
@@ -335,8 +317,6 @@ std::vector<pat::Jet> ttHtautauAnalyzer::getCorrectedJets(
 		shift = 1.;
 	else if (JECType=="JESDown")
 		shift = -1.;
-	else
-		return input_jets;
 	
 	std::vector<pat::Jet> output_jets = input_jets;
 	
@@ -346,6 +326,7 @@ std::vector<pat::Jet> ttHtautauAnalyzer::getCorrectedJets(
 		float unc = jecUnc->getUncertainty(true);
 	    float jes = 1 + shift*unc;
 		jet.scaleEnergy(jes);
+		jet.addUserFloat("jesUnc",unc);
 	}
 	
 	return output_jets;

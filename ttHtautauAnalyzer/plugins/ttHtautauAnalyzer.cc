@@ -466,6 +466,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 			evt_selector_ -> pass_2ltight_ss_selection(
 				lep_tight, jet_selected.size());
 	}
+	// Following seletions are deprecated
 	else if (anaType_==Analyze_2lss1tau) {
 		pass_event_sel = evt_selector_ -> pass_2l1tau_inclusive_selection(
 		    lep_loose, *lep_selected, lep_tight, minitau_loose,
@@ -580,7 +581,6 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	firstpass_ = true;
 
 	return;
-	
 }
 
 

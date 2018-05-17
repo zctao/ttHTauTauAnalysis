@@ -247,13 +247,26 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorTauDaugsNeutral(bool loo
 	return tauDaugsNeutralP4;
 }
 
-std::vector<miniJet> eventNtuple::buildJets() const
+std::vector<miniJet> eventNtuple::buildJets(const TString& jec ,float minPt) const
 {
 	std::vector<miniJet> jets;
 
 	for (unsigned int j = 0; j < jet_pt->size(); ++j) {
+		
 		TLorentzVector jp4;
 		jp4.SetPtEtaPhiE(jet_pt->at(j),jet_eta->at(j),jet_phi->at(j),jet_E->at(j));
+		
+		// JEC uncertainties
+		float shift = 0.;
+		if (jec.EqualTo("jesup", TString::ECaseCompare::kIgnoreCase))
+			shift = 1.;
+		else if (jec.EqualTo("jesdown", TString::ECaseCompare::kIgnoreCase))
+			shift = -1.;
+
+		float unc = jet_jesUnc->at(j);
+		jp4 *= 1.+shift*unc;
+		
+		if (jp4.Pt() < minPt) continue;
 		
 		miniJet jet(jp4, jet_csv->at(j), jet_flavor->at(j), jet_qgLikelihood->at(j));
 		jets.push_back(jet);
@@ -265,14 +278,15 @@ std::vector<miniJet> eventNtuple::buildJets() const
 std::vector<miniJet> eventNtuple::buildCleanedJets(
 	float cleaningdR, Analysis_types anatype, Selection_types seltype,
 	std::vector<miniLepton> const * const fakeableLeps,
-	std::vector<miniTau> const * const fakeableTaus) const
+	std::vector<miniTau> const * const fakeableTaus,
+	const TString& jec ,float minPt) const
 {
 	// Remove overlap jets by dR w.r.t. the first N leptons and first M taus
 	// in pT descending order based on analysis type: (N)l(M)tau
 	int NLeps = Types_enum::getNnominalLeptons(anatype);
 	int MTaus = Types_enum::getNnominalTaus(anatype, seltype);
 	
-	std::vector<miniJet> jets_raw = buildJets();
+	std::vector<miniJet> jets_raw = buildJets(jec,minPt);
 	
 	std::vector<miniJet> jets_clean;
 	for (const auto & jet : jets_raw) {
@@ -320,6 +334,9 @@ std::tuple<int, int> eventNtuple::count_btags(const std::vector<miniJet>& jets) 
 
 std::vector<TLorentzVector> eventNtuple::buildFourVectorJets() const
 {
+	std::cerr << "Method deprecated" << std::endl;
+	assert(0);
+	
 	std::vector<TLorentzVector> jetsP4;
 	
 	for (unsigned int j = 0; j < jet_pt->size(); ++j) {
@@ -333,6 +350,9 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorJets() const
 
 std::vector<TLorentzVector> eventNtuple::buildFourVectorBtagJets() const
 {
+	std::cerr << "Method deprecated" << std::endl;
+	assert(0);
+	
 	// return two jets with the highest csv score
 	
 	std::vector<TLorentzVector> btagsP4;
@@ -639,6 +659,7 @@ void eventNtuple::initialize()
 	jet_axis2->clear();
 	jet_ptD->clear();
 	jet_mult->clear();
+	jet_jesUnc->clear();
 
 	// met
 	//std::cout << "eventNtuple::initialize(): met" << std::endl;
@@ -842,6 +863,7 @@ void eventNtuple::setup_branches(TTree* tree)
 	tree->Branch("jet_axis2",        &jet_axis2);
 	tree->Branch("jet_ptD",          &jet_ptD);
 	tree->Branch("jet_mult",         &jet_mult);
+	tree->Branch("jet_jesUnc",       &jet_jesUnc);
 
 	tree->Branch("PFMET", &PFMET);
 	tree->Branch("PFMETphi", &PFMETphi);
@@ -1042,6 +1064,7 @@ void eventNtuple::set_branch_address(TTree* tree)
 	tree->SetBranchAddress("jet_axis2",        &jet_axis2);
 	tree->SetBranchAddress("jet_ptD",          &jet_ptD);
 	tree->SetBranchAddress("jet_mult",         &jet_mult);
+	tree->SetBranchAddress("jet_jesUnc",       &jet_jesUnc);
 
 	tree->SetBranchAddress("PFMET", &PFMET);
 	tree->SetBranchAddress("PFMETphi", &PFMETphi);
