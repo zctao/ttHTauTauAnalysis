@@ -138,6 +138,23 @@ int main(int argc, char** argv)
 		cout << "Flip : " << synctree_2lss1tau_flip->GetEntries() << endl;
 	}
 
+	if (make2l2tau) {
+		cout << "2l2tau signal region ... " << endl;
+		synctree_2l2tau_sr = makeSyncTree(cdir+infile.c_str(), "syncTree_2l2tau_SR",
+										  treename, Analyze_2l2tau, Signal_2l2tau,
+										  evaluateMVA, doHTT, debug);
+
+		cout << "2l2tau fake extrapolation region ... " << endl;
+		synctree_2l2tau_fake =
+			makeSyncTree(cdir+infile.c_str(), "syncTree_2l2tau_Fake",
+						 treename, Analyze_2l2tau, Application_Fake_2l2tau,
+						 evaluateMVA, doHTT, debug);
+		// event count
+		cout << "2l2tau : " << endl;
+		cout << "SR : " << synctree_2l2tau_sr->GetEntries() << endl;
+		cout << "Fake : " << synctree_2l2tau_fake->GetEntries() << endl;
+	}
+	
 	if (make3l1tau) {
 		cout << "3l1tau signal region ... " << endl;
 		synctree_3l1tau_sr = makeSyncTree(cdir+infile.c_str(), "syncTree_3l1tau_SR",
@@ -155,30 +172,13 @@ int main(int argc, char** argv)
 		cout << "Fake : " << synctree_3l1tau_fake->GetEntries() << endl;
 	}
 
-	if (make2l2tau) {
-		cout << "2l2tau signal region ... " << endl;
-		synctree_2l2tau_sr = makeSyncTree(cdir+infile.c_str(), "syncTree_2l2tau_SR",
-										  treename, Analyze_2l2tau, Signal_2l2tau,
-										  evaluateMVA, doHTT, debug);
-
-		cout << "2l2tau fake extrapolation region ... " << endl;
-		synctree_2l2tau_fake =
-			makeSyncTree(cdir+infile.c_str(), "syncTree_2l2tau_Fake",
-						 treename, Analyze_2l2tau, Application_Fake_2l2tau,
-						 evaluateMVA, doHTT, debug);
-		// event count
-		cout << "2l2tau : " << endl;
-		cout << "SR : " << synctree_2l2tau_sr->GetEntries() << endl;
-		cout << "Fake : " << synctree_2l2tau_fake->GetEntries() << endl;
-	}
-
 	if (makeControl) {
 		cout << "ttW control region ... " << endl;
 		synctree_ttWctrl = makeSyncTree(cdir+infile.c_str(), "syncTree_ttWctrl",
-										treename, Analyze_2lss1tau, Control_ttW,
+										treename, Analyze_2lss, Control_ttW,
 										evaluateMVA, doHTT, debug);
 		synctree_ttZctrl = makeSyncTree(cdir+infile.c_str(), "syncTree_ttZctrl",
-										treename, Analyze_3l1tau, Control_ttZ,
+										treename, Analyze_3l, Control_ttZ,
 										evaluateMVA, doHTT, debug);
 		// event count
 		cout << "Control region : " << endl;

@@ -78,9 +78,9 @@ TriggerHelper::TriggerHelper(Analysis_types analysis, bool verbose)
 		set_up_paths_all();
 	else if (anaType_ == Analyze_1l2tau)
 		set_up_paths_1l2tau();
-	else if (anaType_ == Analyze_2lss1tau)
+	else if (anaType_ == Analyze_2lss1tau or anaType_ == Analyze_2lss)
 		set_up_paths_2lss1tau();
-	else if (anaType_ == Analyze_3l1tau)
+	else if (anaType_ == Analyze_3l1tau or anaType_ == Analyze_3l)
 		set_up_paths_3l1tau();
 	else if (anaType_ == Analyze_2l2tau)
 		set_up_paths_2l2tau();
