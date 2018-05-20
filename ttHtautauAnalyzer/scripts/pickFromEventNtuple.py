@@ -17,7 +17,7 @@ args = parser.parse_args()
 
 def getEventList(flist):
     f=open(flist,'r')
-    tmp.f.read()
+    tmp=f.read()
     return tmp.split('\n')
 
 eventList = args.events if args.events is not None else getEventList(args.event_list)
@@ -30,7 +30,8 @@ outfile = TFile(args.output, 'recreate')
 outtree = intree.CloneTree(0)
 
 for ev in intree:
-    if str(ev.nEvent) in eventList:
+    eventid = str(ev.run)+':'+str(int(ev.GetLeaf('ls').GetValue()))+':'+str(ev.nEvent)
+    if str(ev.nEvent) in eventList or eventid in eventList:
         outtree.Fill()
 
 outtree.AutoSave()
