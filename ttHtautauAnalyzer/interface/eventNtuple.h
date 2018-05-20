@@ -194,6 +194,15 @@ class eventNtuple
 	std::vector<int>   *ele_passesConversionVeto = 0;
 	std::vector<int>   *ele_nMissingHits = 0;
 	std::vector<int>   *ele_mcMatchType = 0;
+	std::vector<float> *ele_ecalTrkEnergyPreCorr = 0;
+	std::vector<float> *ele_ecalTrkEnergyPostCorr = 0;
+	std::vector<float> *ele_energyScaleValue = 0;
+	std::vector<float> *ele_energySigmaValue = 0;
+	std::vector<float> *ele_energySmearNrSigma = 0;
+	std::vector<float> *ele_energyScaleUp = 0;
+	std::vector<float> *ele_energyScaleDown = 0;
+	std::vector<float> *ele_energySigmaUp = 0;
+	std::vector<float> *ele_energySigmaDown = 0;
 	
 	// taus
 	std::vector<float> *tau_pt = 0;

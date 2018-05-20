@@ -89,6 +89,11 @@ options.inputFiles='file:/uscms/home/ztao/nobackup/datasample/ttH_94X/ttHJetToNo
 # get and parse the command line arguments
 options.parseArguments()
 
+process.load("Configuration.Geometry.GeometryRecoDB_cff")
+process.load("Configuration.StandardSequences.Services_cff")
+process.load("Configuration.StandardSequences.MagneticField_cff")
+process.load("Geometry.CaloEventSetup.CaloTowerConstituents_cfi")
+
 ### Global tag
 process.load('Configuration.StandardSequences.Services_cff')
 process.load( "Configuration.StandardSequences.FrontierConditions_GlobalTag_cff" )
@@ -159,13 +164,20 @@ process.QGTagger.srcJets = cms.InputTag("updatedPatJetsUpdatedJEC")
 process.QGTagger.srcVertexCollection=cms.InputTag("offlineSlimmedPrimaryVertices")
 process.QGTagger.jetsLabel = cms.string('QGL_AK4PFchs')
 
-### Electron MVA VID-based receipe
-from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
-switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
+### Electron scale and smearing + MVA IDs
+from RecoEgamma.EgammaTools.EgammaPostRecoTools import setupEgammaPostRecoSeq
+setupEgammaPostRecoSeq(process,applyEnergyCorrections=not options.doSync,
+                       applyVIDOnCorrectedEgamma=not options.doSync,
+                       isMiniAOD=True,
+                       era='2017-Nov17ReReco')
 
-my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_noIso_V1_cff', 'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_iso_V1_cff']
-for idmod in my_id_modules:
-    setupAllVIDIdsInModule(process, idmod, setupVIDElectronSelection)
+### Electron MVA VID-based receipe
+#from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
+#switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
+
+#my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_noIso_V1_cff', 'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_iso_V1_cff']
+#for idmod in my_id_modules:
+#    setupAllVIDIdsInModule(process, idmod, setupVIDElectronSelection)
 
 # ##################################################
 # # rerun tau ID
@@ -191,9 +203,11 @@ process.load("ttHTauTauAnalysis.ttHtautauAnalyzer.ttHtaus_cfi")
 ### update parameter sets
 process.ttHLeptons.rhoParam = "fixedGridRhoFastjetAll"
 # if rerun tauID
+#process.ttHLeptons.electrons = cms.InputTag("slimmedElectrons","","ttH")
 process.ttHLeptons.taus = cms.InputTag("NewTauIDsEmbedded")
 #
 process.ttHLeptons.jets = cms.InputTag("updatedPatJetsUpdatedJEC")
+#process.ttHLeptons.JECTag = cms.string("patJetCorrFactorsUpdatedJEC")
 process.ttHLeptons.LooseCSVWP = cms.double(0.1522)  # DeepCSV WP
 process.ttHLeptons.MediumCSVWP = cms.double(0.4941) # DeepCSV WP
 process.ttHLeptons.mvaValuesMap = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17NoIsoV1Values")
@@ -220,6 +234,7 @@ process.ttHtaus.do_sync = cms.bool(options.doSync)
 process.ttHtaus.doCutFlow = cms.bool(options.doCutFlow)
 process.ttHtaus.doJERsmear = cms.bool(options.doJERSmearing)
 process.ttHtaus.verbosity = cms.int32(1)
+process.ttHtaus.doEGammaScaleSmear = cms.bool(not options.doSync)
 # DeepCSV WPs 
 process.ttHtaus.csv_loose_wp = cms.double(0.1522)
 process.ttHtaus.csv_medium_wp = cms.double(0.4941)
@@ -248,8 +263,9 @@ process.Timing = cms.Service("Timing",
 if options.isData:
     process.p = cms.Path(
         process.primaryVertexFilter *
-        process.patJetCorrFactorsUpdatedJEC * process.updatedPatJetsUpdatedJEC *
-        process.egmGsfElectronIDSequence *
+        process.patJetCorrFactorsUpdatedJEC * process.updatedPatJetsUpdatedJEC *     
+        #process.egmGsfElectronIDSequence *
+        process.egammaPostRecoSeq *
         process.rerunMvaIsolationSequence * process.NewTauIDsEmbedded * # *getattr(process, "NewTauIDsEmbedded")
         process.fullPatMetSequence *
         process.ttHLeptons *
@@ -259,7 +275,8 @@ if options.isData:
 else:
     process.p = cms.Path(
         process.patJetCorrFactorsUpdatedJEC * process.updatedPatJetsUpdatedJEC *
-        process.egmGsfElectronIDSequence *
+        #process.egmGsfElectronIDSequence *
+        process.egammaPostRecoSeq *
         process.rerunMvaIsolationSequence * process.NewTauIDsEmbedded * # *getattr(process, "NewTauIDsEmbedded")
         process.fullPatMetSequence *
         process.ttHLeptons *

@@ -70,6 +70,17 @@ void ttHtautauAnalyzer::write_ntuple_electrons(const std::vector<pat::Electron>&
 		evNtuple_.ele_nMissingHits->push_back(ele.userFloat("numMissingHits"));
 		if (!isdata_)
 			evNtuple_.ele_mcMatchType->push_back(ele.userInt("MCMatchType"));
+		if (ele.hasUserFloat("ecalTrkEnergyPostCorr")) {
+			evNtuple_.ele_ecalTrkEnergyPreCorr->push_back(ele.userFloat("ecalTrkEnergyPreCorr"));
+			evNtuple_.ele_ecalTrkEnergyPostCorr->push_back(ele.userFloat("ecalTrkEnergyPostCorr"));
+			evNtuple_.ele_energyScaleValue->push_back(ele.userFloat("energyScaleValue"));
+			evNtuple_.ele_energySigmaValue->push_back(ele.userFloat("energySigmaValue"));
+			evNtuple_.ele_energySmearNrSigma->push_back(ele.userFloat("energySmearNrSigma"));
+			evNtuple_.ele_energyScaleUp->push_back(ele.userFloat("energyScaleUp"));
+			evNtuple_.ele_energyScaleDown->push_back(ele.userFloat("energyScaleDown"));
+			evNtuple_.ele_energySigmaUp->push_back(ele.userFloat("energySigmaUp"));
+			evNtuple_.ele_energySigmaDown->push_back(ele.userFloat("energySigmaDown"));
+		}
 	}
 }
 
