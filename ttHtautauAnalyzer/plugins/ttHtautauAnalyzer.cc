@@ -461,10 +461,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	if (anaType_==Analyze_inclusive) {	
 		pass_event_sel =
 			evt_selector_ -> pass_ttH_ltau_inclusive_selection(
-			    *lep_selected, minitau_loose, jet_selected.size(), h_CutFlow_)
-			or // to include phase space for ttW control region
-			evt_selector_ -> pass_2ltight_ss_selection(
-				lep_tight, jet_selected.size());
+			    *lep_selected, minitau_loose, jet_selected.size(), h_CutFlow_);
 	}
 	// Following seletions are deprecated
 	else if (anaType_==Analyze_2lss1tau) {

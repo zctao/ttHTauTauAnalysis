@@ -2,7 +2,7 @@
 #define ttHtautauAnalyzer_EvtSel_cc
 
 #include "ttHTauTauAnalysis/ttHtautauAnalyzer/plugins/ttHtautauAnalyzer.h"
-
+/*
 bool ttHtautauAnalyzer::pass_event_sel_2lss1tau (
     const std::vector<miniLepton>& lep_loose,
     const std::vector<miniLepton>& lep_fakeable,
@@ -102,14 +102,14 @@ bool ttHtautauAnalyzer::pass_event_sel_2lss1tau (
 
 	//////////////////////////
 	// tau charge
-	/*
-	assert(taus.size() >= 1);
-	if (evt_selector_->pass_tau_charge(taus[0].charge(), lep_fakeable)) {
-		if (doCutflow_) fill_CutFlow(ibin++,"tau charge");
-	}
-	else
-		return false;
-	*/
+	
+	//assert(taus.size() >= 1);
+	//if (evt_selector_->pass_tau_charge(taus[0].charge(), lep_fakeable)) {
+	//	if (doCutflow_) fill_CutFlow(ibin++,"tau charge");
+	//}
+	//else
+	//	return false;
+
 	// for signal region, opposite sign between tau and either lepton
 	// for control region, the lepton that has the same sign as tau has to be a electron, and the charge flip rate is only applied to this electron
 	// To save computing time, additional requirement on tau charge applied after ntuple production for signal or control region
@@ -129,21 +129,21 @@ bool ttHtautauAnalyzer::pass_event_sel_2lss1tau (
 	//////////////////////////
 	// MC truth matching
 	if (not isdata_) {
-		/*
-		if (evt_selector_->pass_lep_mc_match(lep_fakeable)) {
-			if (doCutflow_) fill_CutFlow(ibin++,"lep MC");
-		}
-		else
-			return false;
-		*/
-		/*
-		assert(taus.size() >= 1);
-		if (evt_selector_->pass_tau_mc_match(taus[0])) {
-			if (doCutflow_) fill_CutFlow(ibin++,"tau MC");
-		}
-		else
-			return false;
-		*/
+		
+		//if (evt_selector_->pass_lep_mc_match(lep_fakeable)) {
+		//	if (doCutflow_) fill_CutFlow(ibin++,"lep MC");
+		//}
+		//else
+		//	return false;
+		//
+		
+		//assert(taus.size() >= 1);
+		//if (evt_selector_->pass_tau_mc_match(taus[0])) {
+		//	if (doCutflow_) fill_CutFlow(ibin++,"tau MC");
+		//}
+		//else
+		//	return false;
+		
 	}
 
 	//////////////////////////
@@ -227,30 +227,30 @@ bool ttHtautauAnalyzer::pass_event_sel_1l2tau (
 
 	//////////////////////////
 	// tau charge
-	/*
-	bool pass_taupair_charge = false;
-	if (selType_==Signal_1l2tau) {
-		assert(taus.size()>1);
-		pass_taupair_charge =
-			evt_selector_->pass_taupair_charge(taus[0].charge(),taus[1].charge());
-	}
-	else if (selType_==Application_Fake_1l2tau) {
-		assert(taus_fakeable.size()>1);
-		pass_taupair_charge =
-			evt_selector_->pass_taupair_charge(taus_fakeable[0].charge(),
-											   taus_fakeable[1].charge());
-	}
-	else {
-		std::cout << "Selection type not available!!" << std::endl;
-		return false;
-	}
+	
+	//bool pass_taupair_charge = false;
+	//if (selType_==Signal_1l2tau) {
+	//	assert(taus.size()>1);
+	//	pass_taupair_charge =
+	//		evt_selector_->pass_taupair_charge(taus[0].charge(),taus[1].charge());
+	//}
+	//else if (selType_==Application_Fake_1l2tau) {
+	//	assert(taus_fakeable.size()>1);
+	//	pass_taupair_charge =
+	//		evt_selector_->pass_taupair_charge(taus_fakeable[0].charge(),
+	//										   taus_fakeable[1].charge());
+	//}
+	//else {
+	//	std::cout << "Selection type not available!!" << std::endl;
+	//	return false;
+	//}
 
-	if (pass_taupair_charge) {
-		if (doCutflow_) fill_CutFlow(ibin++,"tau charge");
-	}
-	else
-		return false;
-	*/
+	//if (pass_taupair_charge) {
+	//	if (doCutflow_) fill_CutFlow(ibin++,"tau charge");
+	//}
+	//else
+	//	return false;
+
 	// Requirement on tau charge is applied after ntuple production for signal or control region
 	
 	//////////////////////////
@@ -384,13 +384,12 @@ bool ttHtautauAnalyzer::pass_event_sel_3l1tau (
 	// Charge sum
 	// do not apply cut here
 	// save the charge sum in ntuple
-	/*
-	if (evt_selector_->pass_charge_sum(taus[0].charge(), lep_fakeable)) {
-		if (doCutflow_) fill_CutFlow(ibin++,"charge sum");
-	}
-	else
-		return false;
-	*/
+	
+	//if (evt_selector_->pass_charge_sum(taus[0].charge(), lep_fakeable)) {
+	//	if (doCutflow_) fill_CutFlow(ibin++,"charge sum");
+	//}
+	//else
+	//	return false;
 	
 	//////////////////////////
 	// MC truth matching
@@ -421,5 +420,6 @@ void ttHtautauAnalyzer::fill_CutFlow(int ibin, const char* name)
 
 	return;
 }
-
+*/
 #endif
+

@@ -42,10 +42,6 @@ class EventSelector
 	bool pass_hlt_match(Analysis_types, TriggerHelper * const, unsigned int,int,int);
 	bool pass_hlt_and_filters(Analysis_types, TriggerHelper * const, unsigned int,
 							  int, int, unsigned int, bool);
-	bool pass_extra_event_selection(Analysis_types, Selection_types,
-									std::vector<miniLepton> const * const,
-									std::vector<miniTau> const * const,
-									std::vector<miniTau> const *const fakeabletau=0);
 	bool pass_ttH_ltau_inclusive_selection(const std::vector<miniLepton>&,
 										   const std::vector<miniTau>&,
 										   int, TH1* h_cutflow=0);
@@ -56,25 +52,18 @@ class EventSelector
 								   const std::vector<miniTau>&,
 								   const std::vector<miniTau>&,
 								   int, int, int, float, TH1* h_cutflow=0);
+	
 	bool pass_1l2tau_inclusive_selection(const std::vector<miniLepton>&,
 										 const std::vector<miniLepton>&,
 										 const std::vector<miniLepton>&,
 										 const std::vector<miniTau>&,
 										 int, int, int, TH1* h_cutflow=0);
-	bool pass_1l2tau_SR_selection(const std::vector<miniLepton>&,
-								  const std::vector<miniTau>&);
-	bool pass_1l2tau_FakeAR_selection(const std::vector<miniLepton>&,
-									  //const std::vector<miniTau>&,
-									  const std::vector<miniTau>&);
-	bool pass_1l2tau_CR_selection(const std::vector<miniLepton>&,
-								  const std::vector<miniTau>&);
-	bool pass_1l2tau_FakeARCR_selection(const std::vector<miniLepton>&,
-										//const std::vector<miniTau>&,
-										const std::vector<miniTau>&);
 	bool pass_1l2tau_tightID(const std::vector<miniLepton>&,
 							 const std::vector<miniTau>&);
 	bool pass_1l2tau_charge(const std::vector<miniTau>&);
-
+	bool pass_1l2tau_selection(Selection_types, const std::vector<miniLepton>&,
+							   const std::vector<miniTau>&);
+	
 	bool pass_2l_generic_selection(const std::vector<miniLepton>&,
 								   const std::vector<miniLepton>&,
 								   const std::vector<miniLepton>&,
@@ -82,84 +71,50 @@ class EventSelector
 	bool pass_2ltight_ss_selection(const std::vector<miniLepton>&, int);
 	bool pass_2ltight_ss_selection(const std::vector<miniLepton>&, int,
 								   int&, TH1* h_cutflow=0);
-	bool pass_2lss_SR_selection(const std::vector<miniLepton>&,
-								const std::vector<miniLepton>&,
-								const std::vector<miniLepton>&,
-								const std::vector<miniTau>&,
-								int, int, int, float, TH1* h_cutflow=0);
 	bool pass_2l1tau_inclusive_selection(const std::vector<miniLepton>&,
 										 const std::vector<miniLepton>&,
 										 const std::vector<miniLepton>&,
 										 const std::vector<miniTau>&,
 										 int, int, int, float, TH1* h_cutflow=0);
-	bool pass_2lss1tau_SR_selection(const std::vector<miniLepton>&,
-									const std::vector<miniTau>&);
-	bool pass_2lss1tau_FakeAR_selection(const std::vector<miniLepton>&,
-										const std::vector<miniTau>&);
-	bool pass_2lss1tau_FlipAR_selection(const std::vector<miniLepton>&,
-										const std::vector<miniTau>&);
-
-	bool pass_2lss1tau_tightLepID(const std::vector<miniLepton>&);
-	bool pass_2lss1tau_2lss(const std::vector<miniLepton>&);
-	bool pass_2lss1tau_taucharge(const miniTau&, const miniLepton&);
-	bool pass_2lss1tau_tauNumber(const std::vector<miniTau>&);
-	// TODO
-	bool pass_2lss1tau_FakeCR_selection();
-	bool pass_2lss1tau_FakeARCR_selection();
-	bool pass_2lss1tau_FlipCR_selection();
-	bool pass_2lss1tau_FlipARCR_selection();
-
+	bool pass_2l_tightLepID(const std::vector<miniLepton>&);
+	bool pass_2l_2lSS(const std::vector<miniLepton>&);
+	bool pass_2l1tau_leptauOS(const miniTau&, const miniLepton&);
+	bool pass_2l1tau_tauNumber(const std::vector<miniTau>&);
+	bool pass_2lss1tau_selection(Selection_types, const std::vector<miniLepton>&,
+								 const std::vector<miniTau>&);
+	
 	bool pass_3l_generic_selection(const std::vector<miniLepton>&,
 								   const std::vector<miniLepton>&,
 								   int, float, int&, TH1* h_cutflow=0);
-	bool pass_3l_SR_selection(const std::vector<miniLepton>&,
-							  const std::vector<miniLepton>&,
-							  const std::vector<miniLepton>&,
-							  const std::vector<miniTau>&,
-							  int, int, int, float, TH1* h_cutflow=0);
 	bool pass_3l1tau_inclusive_selection(const std::vector<miniLepton>&,
 										 const std::vector<miniLepton>&,
 										 const std::vector<miniTau>&,
 										 int, int, int, float, TH1* h_cutflow=0);
-	bool pass_3l1tau_SR_selection(const std::vector<miniLepton>&,
-								  const std::vector<miniTau>&);
-	bool pass_3l1tau_FakeAR_selection(const std::vector<miniLepton>&,
-									  const std::vector<miniTau>&);
-	bool pass_3l1tau_CR_selection(const std::vector<miniLepton>&,
-								  const std::vector<miniTau>&);
-	bool pass_3l1tau_FakeARCR_selection(const std::vector<miniLepton>&,
-										const std::vector<miniTau>&);
-	bool pass_3l1tau_tightID(const std::vector<miniLepton>&);
+	bool pass_3l_tightLepID(const std::vector<miniLepton>&);
 	bool pass_3l1tau_charge(const std::vector<miniLepton>&,
 							const std::vector<miniTau>&);
 	bool pass_3l1tau_tauNumber(const std::vector<miniTau>&);
+	bool pass_3l1tau_selection(Selection_types, const std::vector<miniLepton>&,
+							   const std::vector<miniTau>&);
 
 	bool pass_2l2tau_inclusive_selection(const std::vector<miniLepton>&,
 										 const std::vector<miniLepton>&,
 										 const std::vector<miniTau>&,
 										 int, int, int, float, TH1* h_cutflow=0);
-	bool pass_2l2tau_SR_selection(const std::vector<miniLepton>&,
-								  const std::vector<miniTau>&);
-	bool pass_2l2tau_FakeAR_selection(const std::vector<miniLepton>&,
-									  //const std::vector<miniTau>&,
-									  const std::vector<miniTau>&);
-	bool pass_2l2tau_CR_selection(const std::vector<miniLepton>&,
-								  const std::vector<miniTau>&);
-	bool pass_2l2tau_FakeARCR_selection(const std::vector<miniLepton>&,
-										//const std::vector<miniTau>&,
-										const std::vector<miniTau>&);
 	bool pass_2l2tau_tightID(const std::vector<miniLepton>&,
 							 const std::vector<miniTau>&);
 	bool pass_2l2tau_charge(const std::vector<miniLepton>&,
 							const std::vector<miniTau>&);
+	bool pass_2l2tau_selection(Selection_types, const std::vector<miniLepton>&,
+							   const std::vector<miniTau>&);
 
 	// control region
-	bool pass_ttW_CR_selection(const std::vector<miniLepton>&,
+	bool pass_ttW_CR_selection(Selection_types, const std::vector<miniLepton>&,
 							   const std::vector<miniLepton>&,
 							   const std::vector<miniLepton>&,
 							   const std::vector<miniTau>&,
 							   int, int, int, float, TH1* h_cutflow=0);
-	bool pass_ttZ_CR_selection(const std::vector<miniLepton>&,
+	bool pass_ttZ_CR_selection(Selection_types, const std::vector<miniLepton>&,
 							   const std::vector<miniLepton>&,
 							   const std::vector<miniLepton>&,
 							   const std::vector<miniTau>&,
@@ -171,10 +126,13 @@ class EventSelector
 	bool pass_lepton_pT_2l(const std::vector<miniLepton>&);
 	bool pass_3l_charge(const std::vector<miniLepton>&);
 	bool pass_HZZ4l_veto(const std::vector<miniLepton>&);
+	bool pass_MCMatch(const std::vector<miniLepton>&, int,
+					  const std::vector<miniTau>&, int);
 	
 	//////////////////////////
 	// Deprecated methods
 	//////////////////////////
+	/*
 	bool pass_lepton_number(const std::vector<miniLepton>&,
 							const std::vector<miniLepton>&);
 	bool pass_lepton_pt(const std::vector<miniLepton>&);
@@ -196,6 +154,58 @@ class EventSelector
 	bool pass_lep_mc_match(const std::vector<miniLepton>&, int nleps=2);
 	bool pass_tau_mc_match(const pat::Tau&);
 	bool pass_tau_mc_match(const std::vector<pat::Tau>&, int ntaus=2);
+
+	bool pass_extra_event_selection(Analysis_types, Selection_types,
+									std::vector<miniLepton> const * const,
+									std::vector<miniTau> const * const,
+									std::vector<miniTau> const *const fakeabletau=0);
+	
+	
+	bool pass_1l2tau_SR_selection(const std::vector<miniLepton>&,
+								  const std::vector<miniTau>&);
+	bool pass_1l2tau_FakeAR_selection(const std::vector<miniLepton>&,
+									  //const std::vector<miniTau>&,
+									  const std::vector<miniTau>&);
+	bool pass_1l2tau_CR_selection(const std::vector<miniLepton>&,
+								  const std::vector<miniTau>&);
+	bool pass_1l2tau_FakeARCR_selection(const std::vector<miniLepton>&,
+										//const std::vector<miniTau>&,
+										const std::vector<miniTau>&);
+	bool pass_2lss_SR_selection(const std::vector<miniLepton>&,
+								const std::vector<miniLepton>&,
+								const std::vector<miniLepton>&,
+								const std::vector<miniTau>&,
+								int, int, int, float, TH1* h_cutflow=0);
+	bool pass_2lss1tau_SR_selection(const std::vector<miniLepton>&,
+									const std::vector<miniTau>&);
+	bool pass_2lss1tau_FakeAR_selection(const std::vector<miniLepton>&,
+										const std::vector<miniTau>&);
+	bool pass_2lss1tau_FlipAR_selection(const std::vector<miniLepton>&,
+										const std::vector<miniTau>&);
+	bool pass_3l_SR_selection(const std::vector<miniLepton>&,
+							  const std::vector<miniLepton>&,
+							  const std::vector<miniLepton>&,
+							  const std::vector<miniTau>&,
+							  int, int, int, float, TH1* h_cutflow=0);
+	bool pass_3l1tau_SR_selection(const std::vector<miniLepton>&,
+								  const std::vector<miniTau>&);
+	bool pass_3l1tau_FakeAR_selection(const std::vector<miniLepton>&,
+									  const std::vector<miniTau>&);
+	bool pass_3l1tau_CR_selection(const std::vector<miniLepton>&,
+								  const std::vector<miniTau>&);
+	bool pass_3l1tau_FakeARCR_selection(const std::vector<miniLepton>&,
+										const std::vector<miniTau>&);
+	bool pass_2l2tau_SR_selection(const std::vector<miniLepton>&,
+								  const std::vector<miniTau>&);
+	bool pass_2l2tau_FakeAR_selection(const std::vector<miniLepton>&,
+									  //const std::vector<miniTau>&,
+									  const std::vector<miniTau>&);
+	bool pass_2l2tau_CR_selection(const std::vector<miniLepton>&,
+								  const std::vector<miniTau>&);
+	bool pass_2l2tau_FakeARCR_selection(const std::vector<miniLepton>&,
+										//const std::vector<miniTau>&,
+										const std::vector<miniTau>&);
+	*/
 	
  protected:
 	Analysis_types  anaType_;
