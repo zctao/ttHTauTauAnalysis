@@ -12,4 +12,4 @@ tar -zcvf $cmssw.tgz $cmssw \
 > $log
 
 # copy to eos
-xrdcp -f CMSSW_9_4_7.tgz root://cmseos.fnal.gov//store/user/ztao/Condor/
+xrdcp -f $cmssw.tgz root://cmseos.fnal.gov//store/user/ztao/Condor/
