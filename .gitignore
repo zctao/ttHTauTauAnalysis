@@ -10,11 +10,13 @@ ttHtautauAnalyzer/python/__init__.py
 ttHtautauAnalyzer/test/*.root
 ttHtautauAnalyzer/test/crab/
 ttHtautauAnalyzer/test/*.txt
+ttHtautauAnalyzer/test/evlist/
 ttHtautauAnalyzer/test/EventDump*.py
 ttHtautauAnalyzer/scripts/task_to_resubmit.txt
 ttHtautauAnalyzer/scripts/task_to_resubmit_updated.txt
 ttHtautauAnalyzer/scripts/task_to_kill.txt
 ttHtautauAnalyzer/scripts/eoscleanlist_*.txt
+ttHtautauAnalyzer/scripts/*.root
 
 *.d
 *.so

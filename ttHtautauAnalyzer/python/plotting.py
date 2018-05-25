@@ -1,4 +1,4 @@
-from ROOT import THStack, TLegend, TH1, TCanvas, gPad
+from ROOT import THStack, TLegend, TH1, TTree, TCanvas, gPad, gDirectory
 from ROOT import kRed, kBlack, kGreen, kViolet, kAzure
 from ROOT import Double
 
@@ -112,3 +112,9 @@ def GetLabelName(hist):
         return "Fakes"
     else:
         return hist.GetName()
+
+
+def DrawHistfromTree(tree, variable, selection=""):
+    tree.Draw(variable+">>htree", selection)
+    htree = gDirectory.Get("htree")
+    return htree

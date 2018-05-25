@@ -1,5 +1,6 @@
 from ROOT import TTree, TH1D, TH2D
 from math import sqrt
+from plotting import DrawHistfromTree
 
 DataSamples = ['DoubleMuon','SingleMuon','DoubleEG','SingleElectron','MuonEG']
 
@@ -11,6 +12,16 @@ SamplesInChannel = {'ttH':['ttH'],
                     'fakes_data':DataSamples,
                     'flips_data':DataSamples,
                     'data_obs':DataSamples}
+
+datasamples = ['data_e','data_mu','data_dieg','data_dimu','data_mueg']
+SamplesInChannel2017 = {'ttH':['ttHJetToNonbb'],
+                        'TTW':['TTW_psw','TTWW'],
+                        'TTZ':['TTZ','TTGJets'],
+                        'EWK':['WZ','ZZ','WW'],
+                        'Rares':['WWW','WWZ','WZZ','ZZZ','tZq','TTTT'], # WpWp
+                        'fakes_data':datasamples,
+                        'flips_data':datasamples,
+                        'data_obs':datasamples} 
 
 BTagSysts = ['LFUp','LFDown','HFUp','HFDown',
              'HFStats1Up','HFStats1Down','HFStats2Up','HFStats2Down',
@@ -115,6 +126,7 @@ def getEventWeight(event, name):
         weight = event.event_weight_FRm_ecDown
 
     return weight
+        
 
 def getShapeFromTree(tree, histname, var_x, var_y, nbin, xmin, xmax, binningMap):
     
@@ -151,6 +163,7 @@ def getShapeFromMergingTrees(trees, histname, var_x, var_y, nbin, xmin, xmax,
     for tree in trees:
         for ev in tree:
             eventID = (ev.run, ev.lumi, ev.nEvent)
+            #eventID = (ev.run, int(ev.GetLeaf('ls').GetValue()), ev.nEvent)
             
             if eventID in eventIDlist:
                 continue
@@ -165,7 +178,7 @@ def getShapeFromMergingTrees(trees, histname, var_x, var_y, nbin, xmin, xmax,
 
     #print eventIDlist
     return h  # also eventIDlist?
-    
+
 def getBin(x, y, binningMap):
     if binningMap is None:
         return x
@@ -309,19 +322,20 @@ def getClosureTestShape(h_nominal, closTest, infile, syst_coname='_CMS_ttHl_',
     return h_clos
 
 
-def printYields(label, histlist):
-    hname1 = 'x_'+label
-    hname2 = 'x_'+label+'_gentau'
-    hname3 = 'x_'+label+'_faketau'
+def printYields(label, histlist, var='x'):
+    hname1 = var+'_'+label
+    hname2 = var+'_'+label+'_gentau'
+    hname3 = var+'_'+label+'_faketau'
 
     yields = [-1., -1., -1.]
 
     for hist in histlist:
-        if hist.GetName()==hname1:
+        
+        if hname1 == hist.GetName():
             yields[0]=hist.Integral()
-        elif hist.GetName()==hname2:
+        elif hname2 == hist.GetName():
             yields[1]=hist.Integral()
-        elif hist.GetName()==hname3:
+        elif hname3 == hist.GetName():
             yields[2]=hist.Integral()
 
         if yields[0]!= -1. and yields[1]!=-1. and yields[2]!=-1.:
