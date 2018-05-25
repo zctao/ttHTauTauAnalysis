@@ -10,7 +10,7 @@ SFHelper::SFHelper(Analysis_types analysis, Selection_types selection,
 	_debug = debug;
 
 	TString tauIDWP = (analysis==Analyze_1l2tau or analysis==Analyze_2l2tau) ?
-		"dR03mvaTight" : "dR03mvaMedium";  // FIXME
+	    "dR03mvaMedium" : "dR03mvaLoose";
 	
 	if (not _isdata) {
 		Set_up_TauSF_Lut(tauIDWP);
@@ -161,7 +161,7 @@ void SFHelper::Set_up_FakeRate_Lut(TString tauIDWP/*"dR03mvaTight"*/)
 	
 	//taus
 	// for 1l2tau
-	file_fr_tau = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/FR_tau_2016.root").c_str(), "read");
+	file_fr_tau = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/FR_tau_2017_v1.root").c_str(), "read");
 	
 	g_fakerate_tau_mvaM_etaL_mc = (TGraphAsymmErrors*) file_fr_tau->Get("jetToTauFakeRate/"+tauIDWP+"/absEtaLt1_5/jetToTauFakeRate_mc_hadTaus_pt");
 	g_fakerate_tau_mvaM_etaH_mc = (TGraphAsymmErrors*) file_fr_tau->Get("jetToTauFakeRate/"+tauIDWP+"/absEta1_5to9_9/jetToTauFakeRate_mc_hadTaus_pt");
