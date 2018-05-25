@@ -109,7 +109,8 @@ process.maxEvents = cms.untracked.PSet(
 
 ############################
 ### Filters for running on data
-if options.isData:
+#if options.isData:
+if True:
     # primary vertex filter
     process.primaryVertexFilter = cms.EDFilter("GoodVertexFilter",
                                                vertexCollection = cms.InputTag('offlineSlimmedPrimaryVertices'),
@@ -234,7 +235,6 @@ process.ttHtaus.do_sync = cms.bool(options.doSync)
 process.ttHtaus.doCutFlow = cms.bool(options.doCutFlow)
 process.ttHtaus.doJERsmear = cms.bool(options.doJERSmearing)
 process.ttHtaus.verbosity = cms.int32(1)
-process.ttHtaus.doEGammaScaleSmear = cms.bool(not options.doSync)
 # DeepCSV WPs 
 process.ttHtaus.csv_loose_wp = cms.double(0.1522)
 process.ttHtaus.csv_medium_wp = cms.double(0.4941)
@@ -260,26 +260,14 @@ process.Timing = cms.Service("Timing",
 #process.Tracer = cms.Service('Tracer')
 
 #Path
-if options.isData:
-    process.p = cms.Path(
-        process.primaryVertexFilter *
-        process.patJetCorrFactorsUpdatedJEC * process.updatedPatJetsUpdatedJEC *     
-        #process.egmGsfElectronIDSequence *
-        process.egammaPostRecoSeq *
-        process.rerunMvaIsolationSequence * process.NewTauIDsEmbedded * # *getattr(process, "NewTauIDsEmbedded")
-        process.fullPatMetSequence *
-        process.ttHLeptons *
-        process.QGTagger *
-        process.ttHtaus
-    )
-else:
-    process.p = cms.Path(
-        process.patJetCorrFactorsUpdatedJEC * process.updatedPatJetsUpdatedJEC *
-        #process.egmGsfElectronIDSequence *
-        process.egammaPostRecoSeq *
-        process.rerunMvaIsolationSequence * process.NewTauIDsEmbedded * # *getattr(process, "NewTauIDsEmbedded")
-        process.fullPatMetSequence *
-        process.ttHLeptons *
-        process.QGTagger *
-        process.ttHtaus
-    )
+process.p = cms.Path(
+    process.primaryVertexFilter *
+    process.patJetCorrFactorsUpdatedJEC * process.updatedPatJetsUpdatedJEC *     
+    #process.egmGsfElectronIDSequence *
+    process.egammaPostRecoSeq *
+    process.rerunMvaIsolationSequence * process.NewTauIDsEmbedded * # *getattr(process, "NewTauIDsEmbedded")
+    process.fullPatMetSequence *
+    process.ttHLeptons *
+    process.QGTagger *
+    process.ttHtaus
+)
