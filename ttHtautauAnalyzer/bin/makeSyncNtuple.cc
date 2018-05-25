@@ -76,8 +76,11 @@ int main(int argc, char** argv)
 	TTree *synctree_3l1tau_fake = 0;
 	TTree *synctree_2l2tau_sr = 0;
 	TTree *synctree_2l2tau_fake = 0;
-	TTree *synctree_ttWctrl = 0;
-	TTree *synctree_ttZctrl = 0;
+	TTree *synctree_ttWctrl_sr = 0;
+	TTree *synctree_ttWctrl_fake = 0;
+	TTree *synctree_ttWctrl_flip = 0;
+	TTree *synctree_ttZctrl_sr = 0;
+	TTree *synctree_ttZctrl_fake = 0;
 
 	if (makeObjectNtuple) {
 		cout << "Object ntuple ... " << endl;
@@ -174,16 +177,35 @@ int main(int argc, char** argv)
 
 	if (makeControl) {
 		cout << "ttW control region ... " << endl;
-		synctree_ttWctrl = makeSyncTree(cdir+infile.c_str(), "syncTree_ttWctrl",
-										treename, Analyze_2lss, Control_ttW,
-										evaluateMVA, doHTT, debug);
-		synctree_ttZctrl = makeSyncTree(cdir+infile.c_str(), "syncTree_ttZctrl",
-										treename, Analyze_3l, Control_ttZ,
-										evaluateMVA, doHTT, debug);
+		synctree_ttWctrl_sr =
+			makeSyncTree(cdir+infile.c_str(), "syncTree_ttWctrl_SR",
+						 treename, Analyze_2lss, Control_ttW,
+						 evaluateMVA, doHTT, debug);
+		synctree_ttWctrl_fake =
+			makeSyncTree(cdir+infile.c_str(), "syncTree_ttWctrl_Fake",
+						 treename, Analyze_2lss, Control_FakeAR_ttW,
+						 evaluateMVA, doHTT, debug);
+		synctree_ttWctrl_flip =
+			makeSyncTree(cdir+infile.c_str(), "syncTree_ttWctrl_Flip",
+						 treename, Analyze_2lss, Control_FlipAR_ttW,
+						 evaluateMVA, doHTT, debug);	
+		cout << "ttZ control region ..." << endl;
+		synctree_ttZctrl_sr =
+			makeSyncTree(cdir+infile.c_str(), "syncTree_ttZctrl_SR",
+						 treename, Analyze_3l, Control_ttZ,
+						 evaluateMVA, doHTT, debug);
+		synctree_ttZctrl_fake =
+			makeSyncTree(cdir+infile.c_str(), "syncTree_ttZctrl_Fake",
+						 treename, Analyze_3l, Control_FakeAR_ttZ,
+						 evaluateMVA, doHTT, debug);
+			
 		// event count
 		cout << "Control region : " << endl;
-		cout << "ttW : " << synctree_ttWctrl->GetEntries() << endl;
-		cout << "ttZ : " << synctree_ttZctrl->GetEntries() << endl;
+		cout << "ttW : " << synctree_ttWctrl_sr->GetEntries() << endl;
+		cout << "ttW fakeAR : " << synctree_ttWctrl_fake->GetEntries() << endl;
+		cout << "ttW flipAR : " << synctree_ttWctrl_flip->GetEntries() << endl;
+		cout << "ttZ : " << synctree_ttZctrl_sr->GetEntries() << endl;
+		cout << "ttZ fakeAR : " << synctree_ttZctrl_fake->GetEntries() << endl;
 	}
 	
 	// create output file
@@ -211,8 +233,11 @@ int main(int argc, char** argv)
 	}
 
 	if (makeControl) {
-		synctree_ttWctrl->Write();
-		synctree_ttZctrl->Write();
+		synctree_ttWctrl_sr->Write();
+		synctree_ttWctrl_fake->Write();
+		synctree_ttWctrl_flip->Write();
+		synctree_ttZctrl_sr->Write();
+		synctree_ttZctrl_fake->Write();
 	}
 	
 	fileout->Close();
@@ -750,7 +775,8 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		
 		// tauSF_weight
 		// UPDATE NEEDED
-		syncntuple.tauSF_weight = sf_helper.Get_TauIDSF_weight(*taus);
+		if (anatype!=Analyze_2lss and anatype!=Analyze_3l)
+			syncntuple.tauSF_weight = sf_helper.Get_TauIDSF_weight(*taus);
 		
 		// triggerSF
 		// UPDATE NEEDED

@@ -986,12 +986,24 @@ bool EventSelector::pass_ttW_CR_selection(Selection_types seltype,
 	// lepton charge
 	bool pass_lepCharge = pass_2l_2lSS(fakeableLeps);
 	// invert the cut for charge flip region
-	if (seltype==Control_FlipAR_ttW)   // Application_Flip_2lss
+	if (seltype==Control_FlipAR_ttW)   // Application_Flip
 		pass_lepCharge = not pass_lepCharge;
 
 	if (not pass_lepCharge) {
 		if (verbose_) std::cout << "FAIL lepton charge requirement" << std::endl;
 		return false;
+	}
+
+	assert(fakeableLeps.size()>1);
+    bool lep1IsElectron = abs(fakeableLeps[0].pdgId())==11;
+	bool lep2IsElectron = abs(fakeableLeps[1].pdgId())==11;
+	if (seltype==Control_FlipAR_ttW) {
+		// at least one electron
+		if ( not (lep1IsElectron or lep2IsElectron) ) {
+			if (verbose_)
+				std::cout << "FAIL: neither leptons are electrons" << std::endl;
+			return false;
+		}
 	}
 
 	///////////////////////////////
@@ -1321,6 +1333,7 @@ bool EventSelector::pass_ttZ_CR_selection(Selection_types seltype,
 		return false;
 	}
 	
+	/* only in 3l
 	///////////////////////////////
 	// FIXME: Necessary?
 	// No tau passing "byLooseIsolationMVArun2v1DBdR03oldDMwLT"
@@ -1334,6 +1347,7 @@ bool EventSelector::pass_ttZ_CR_selection(Selection_types seltype,
 		return false;
 	}
 	///////////////////////////////
+	*/
 	
 	///////////////////////////////
 	// lepton ID
@@ -1361,6 +1375,16 @@ bool EventSelector::pass_ttZ_CR_selection(Selection_types seltype,
 		if (verbose_) std::cout << "FAIL lepton pT cut" << std::endl;
 		return false;
 	}
+
+	/* only in 3l
+	///////////////////////////////
+	// No more than 3 tight leptons
+	if (tightLeps.size() > 3) {
+		if (verbose_)
+			std::cout << "FAIL due to more than 3 tight leptons" << std::endl;
+		return false;
+	}
+	*/
 	
 	///////////////////////////////
 	// MC Matching
@@ -1372,12 +1396,14 @@ bool EventSelector::pass_ttZ_CR_selection(Selection_types seltype,
 		}
 	}
 
+	/* only in 3l
 	///////////////////////////////
 	// veto H->ZZ*->4l
 	if (not pass_HZZ4l_veto(looseLeps)) {
 		if (verbose_) std::cout << "FAIL H->ZZ*->4l veto" << std::endl;
 		return false;
 	}
+	*/
 
 	///////////////////////////////
 	// reverted Z mass veto: 91.2 +/- 10 GeV (SFOS)
