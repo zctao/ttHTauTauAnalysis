@@ -101,6 +101,7 @@ int main(int argc, char** argv)
 
 	// mva ntuple
 	bool doHTT = evaluateMVA;
+	// FIXME
 	bool CR = (selType==Control_ttW or selType==Control_ttZ or Control_WZ);
 	mvaNtuple mvantuple(anaType, systematics, version, doHTT, evaluateMVA, CR);
 	mvantuple.setup_branches(tree_mva);
@@ -233,7 +234,11 @@ int main(int argc, char** argv)
 		}
 		
 		if (selType==Application_Fake_1l2tau or selType==Application_Fake_2lss1tau or
-			selType==Application_Fake_3l1tau or selType==Application_Fake_2l2tau) {
+			selType==Application_Fake_3l1tau or selType==Application_Fake_2l2tau or
+			selType==Control_FakeAR_1l2tau or selType==Control_FakeAR_2lss1tau or
+			selType==Control_FakeAR_3l1tau or selType==Control_FakeAR_2l2tau or
+			selType==Control_FakeAR_ttW or selType==Control_FakeAR_ttZ or
+			selType==Control_FakeAR_WZ) {
 			// Fake application region weights
 			Set_FR_weights(selType, sfhelper, evNtuple, mvantuple, *leptons, *taus,
 						   systematics);
@@ -282,8 +287,6 @@ void Set_FR_weights(Selection_types seltype, SFHelper& sfhelper,
 					const std::vector<miniLepton>& leptons,
 					const std::vector<miniTau>& taus, bool syst)
 {
-	assert(seltype==Application_Fake_2lss1tau or seltype==Application_Fake_3l1tau or
-		   seltype==Application_Fake_1l2tau or seltype==Application_Fake_2l2tau);
 	assert(sfhelper.getSelType()==seltype);
 	
 	mvantuple.event_weight = sfhelper.Get_FR_weight(leptons, taus);
@@ -297,14 +300,18 @@ void Set_FR_weights(Selection_types seltype, SFHelper& sfhelper,
 			sfhelper.Get_FR_weight(leptons,taus,"FRe_ptUp");
 		mvantuple.event_weight_FRe_ptDown =
 			sfhelper.Get_FR_weight(leptons,taus,"FRe_ptDown");
-		mvantuple.event_weight_FRe_bUp =
-			sfhelper.Get_FR_weight(leptons,taus,"FRe_bUp");
-		mvantuple.event_weight_FRe_bDown =
-			sfhelper.Get_FR_weight(leptons,taus,"FRe_bDown");
-		mvantuple.event_weight_FRe_ecUp =
-			sfhelper.Get_FR_weight(leptons,taus,"FRe_ecUp");
-		mvantuple.event_weight_FRe_ecDown =
-			sfhelper.Get_FR_weight(leptons,taus,"FRe_ecDown");
+		mvantuple.event_weight_FRe_beUp =
+			sfhelper.Get_FR_weight(leptons,taus,"FRe_beUp");
+		mvantuple.event_weight_FRe_beDown =
+			sfhelper.Get_FR_weight(leptons,taus,"FRe_beDown");
+		//mvantuple.event_weight_FRe_bUp =
+		//	sfhelper.Get_FR_weight(leptons,taus,"FRe_bUp");
+		//mvantuple.event_weight_FRe_bDown =
+		//	sfhelper.Get_FR_weight(leptons,taus,"FRe_bDown");
+		//mvantuple.event_weight_FRe_ecUp =
+		//	sfhelper.Get_FR_weight(leptons,taus,"FRe_ecUp");
+		//mvantuple.event_weight_FRe_ecDown =
+		//	sfhelper.Get_FR_weight(leptons,taus,"FRe_ecDown");
 		mvantuple.event_weight_FRm_normUp =
 			sfhelper.Get_FR_weight(leptons,taus,"FRm_normUp");
 		mvantuple.event_weight_FRm_normDown =
@@ -313,14 +320,18 @@ void Set_FR_weights(Selection_types seltype, SFHelper& sfhelper,
 			sfhelper.Get_FR_weight(leptons,taus,"FRm_ptUp");
 		mvantuple.event_weight_FRm_ptDown =
 			sfhelper.Get_FR_weight(leptons,taus,"FRm_ptDown");
-		mvantuple.event_weight_FRm_bUp =
-			sfhelper.Get_FR_weight(leptons,taus,"FRm_bUp");
-		mvantuple.event_weight_FRm_bDown =
-			sfhelper.Get_FR_weight(leptons,taus,"FRm_bDown");
-		mvantuple.event_weight_FRm_ecUp =
-			sfhelper.Get_FR_weight(leptons,taus,"FRm_ecUp");
-		mvantuple.event_weight_FRm_ecDown =
-			sfhelper.Get_FR_weight(leptons,taus,"FRm_ecDown");
+		mvantuple.event_weight_FRm_beUp =
+			sfhelper.Get_FR_weight(leptons,taus,"FRm_beUp");
+		mvantuple.event_weight_FRm_beDown =
+			sfhelper.Get_FR_weight(leptons,taus,"FRm_beDown");
+		//mvantuple.event_weight_FRm_bUp =
+		//	sfhelper.Get_FR_weight(leptons,taus,"FRm_bUp");
+		//mvantuple.event_weight_FRm_bDown =
+		//	sfhelper.Get_FR_weight(leptons,taus,"FRm_bDown");
+		//mvantuple.event_weight_FRm_ecUp =
+		//	sfhelper.Get_FR_weight(leptons,taus,"FRm_ecUp");
+		//mvantuple.event_weight_FRm_ecDown =
+		//	sfhelper.Get_FR_weight(leptons,taus,"FRm_ecDown");
 		
 		if (seltype==Application_Fake_1l2tau or seltype==Application_Fake_2l2tau) {
 			mvantuple.event_weight_FRjt_normUp =

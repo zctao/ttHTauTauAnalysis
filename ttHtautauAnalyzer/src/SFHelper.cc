@@ -10,7 +10,7 @@ SFHelper::SFHelper(Analysis_types analysis, Selection_types selection,
 	_debug = debug;
 
 	TString tauIDWP = (analysis==Analyze_1l2tau or analysis==Analyze_2l2tau) ?
-		"dR03mvaTight" : "dR03mvaMedium";
+		"dR03mvaTight" : "dR03mvaMedium";  // FIXME
 	
 	if (not _isdata) {
 		Set_up_TauSF_Lut(tauIDWP);
@@ -23,12 +23,22 @@ SFHelper::SFHelper(Analysis_types analysis, Selection_types selection,
 			Set_up_triggerSF_Lut();
 	}
 
-	if (_selection == Application_Fake_2lss1tau or _selection == Application_Fake_1l2tau
-		or _selection == Application_Fake_3l1tau or _selection == Application_Fake_2l2tau) {
+	if (_selection == Application_Fake_2lss1tau or
+		_selection == Application_Fake_1l2tau or
+		_selection == Application_Fake_3l1tau or
+		_selection == Application_Fake_2l2tau or
+		_selection == Control_FakeAR_1l2tau or
+		_selection == Control_FakeAR_2lss1tau or
+		_selection == Control_FakeAR_3l1tau or
+		_selection == Control_FakeAR_2l2tau or
+		_selection == Control_FakeAR_ttW or
+		_selection == Control_FakeAR_ttZ) {
 		Set_up_FakeRate_Lut(tauIDWP);
 	}
 
-	if (_selection == Application_Flip_2lss1tau) {
+	if (_selection == Application_Flip_2lss1tau or
+		_selection == Control_FlipAR_2lss1tau or
+		_selection == Control_FlipAR_ttW) {
 		Set_up_ChargeMisID_Lut();
 	}
 }
@@ -46,11 +56,22 @@ SFHelper::~SFHelper()
 			Delete_triggerSF_Lut();
 	}
 
-	if (_selection == Application_Fake_2lss1tau) {
+	if (_selection == Application_Fake_2lss1tau or
+		_selection == Application_Fake_1l2tau or
+		_selection == Application_Fake_3l1tau or
+		_selection == Application_Fake_2l2tau or
+		_selection == Control_FakeAR_1l2tau or
+		_selection == Control_FakeAR_2lss1tau or
+		_selection == Control_FakeAR_3l1tau or
+		_selection == Control_FakeAR_2l2tau or
+		_selection == Control_FakeAR_ttW or
+		_selection == Control_FakeAR_ttZ) {
 		Delete_FakeRate_Lut();
 	}
 
-	if (_selection == Application_Flip_2lss1tau) {
+	if (_selection == Application_Flip_2lss1tau or
+		_selection == Control_FlipAR_2lss1tau or
+		_selection == Control_FlipAR_ttW) {
 		Delete_ChargeMisID_Lut();
 	}
 }
@@ -109,29 +130,34 @@ void SFHelper::Set_up_PUWeight_hist()
 void SFHelper::Set_up_FakeRate_Lut(TString tauIDWP/*"dR03mvaTight"*/)
 {
 	// electrons and muons
-	file_fr_lep = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/FR_data_ttH_mva.root").c_str(),"read");
+	file_fr_lep = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/ttH_fr-v1_0_1.root").c_str(),"read");
 	assert(file_fr_lep->IsOpen());
 	
-	h_fakerate_el = (TH2F*) file_fr_lep->Get("FR_mva075_el_data_comb");
-	h_fakerate_mu = (TH2F*) file_fr_lep->Get("FR_mva075_mu_data_comb");
+	//h_fakerate_el = (TH2F*) file_fr_lep->Get("FR_mva090_el_data_comb");
+	h_fakerate_el = (TH2F*) file_fr_lep->Get("FR_mva090_el_data_comb_NC");
+	h_fakerate_mu = (TH2F*) file_fr_lep->Get("FR_mva090_mu_data_comb");
 
 	// systematics
-	h_fakerate_el_normUp = (TH2F*) file_fr_lep->Get("FR_mva075_el_data_comb_up");
-	h_fakerate_el_normDown = (TH2F*) file_fr_lep->Get("FR_mva075_el_data_comb_down");
-	h_fakerate_el_ptUp = (TH2F*) file_fr_lep->Get("FR_mva075_el_data_comb_pt1");
-	h_fakerate_el_ptDown = (TH2F*) file_fr_lep->Get("FR_mva075_el_data_comb_pt2");
-	h_fakerate_el_bUp = (TH2F*) file_fr_lep->Get("FR_mva075_el_data_comb_b1");
-	h_fakerate_el_bDown = (TH2F*) file_fr_lep->Get("FR_mva075_el_data_comb_b2");
-	h_fakerate_el_ecUp = (TH2F*) file_fr_lep->Get("FR_mva075_el_data_comb_ec1");
-	h_fakerate_el_ecDown = (TH2F*) file_fr_lep->Get("FR_mva075_el_data_comb_ec2");
-	h_fakerate_mu_normUp = (TH2F*) file_fr_lep->Get("FR_mva075_mu_data_comb_up");
-	h_fakerate_mu_normDown = (TH2F*) file_fr_lep->Get("FR_mva075_mu_data_comb_down");
-	h_fakerate_mu_ptUp = (TH2F*) file_fr_lep->Get("FR_mva075_mu_data_comb_pt1");
-	h_fakerate_mu_ptDown = (TH2F*) file_fr_lep->Get("FR_mva075_mu_data_comb_pt2");
-	h_fakerate_mu_bUp = (TH2F*) file_fr_lep->Get("FR_mva075_mu_data_comb_b1");
-	h_fakerate_mu_bDown = (TH2F*) file_fr_lep->Get("FR_mva075_mu_data_comb_b2");
-	h_fakerate_mu_ecUp = (TH2F*) file_fr_lep->Get("FR_mva075_mu_data_comb_ec1");
-	h_fakerate_mu_ecDown = (TH2F*) file_fr_lep->Get("FR_mva075_mu_data_comb_ec2");
+	h_fakerate_el_normUp = (TH2F*) file_fr_lep->Get("FR_mva090_el_data_comb_NC_up");
+	h_fakerate_el_normDown = (TH2F*) file_fr_lep->Get("FR_mva090_el_data_comb_NC_down");
+	h_fakerate_el_ptUp = (TH2F*) file_fr_lep->Get("FR_mva090_el_data_comb_NC_pt1");
+	h_fakerate_el_ptDown = (TH2F*) file_fr_lep->Get("FR_mva090_el_data_comb_NC_pt2");
+	h_fakerate_el_beUp = (TH2F*) file_fr_lep->Get("FR_mva090_el_data_comb_NC_be1");
+	h_fakerate_el_beDown = (TH2F*) file_fr_lep->Get("FR_mva090_el_data_comb_NC_be2");
+	//h_fakerate_el_bUp = (TH2F*) file_fr_lep->Get("FR_mva090_el_data_comb_NC_b1");
+	//h_fakerate_el_bDown = (TH2F*) file_fr_lep->Get("FR_mva090_el_data_comb_NC_b2");
+	//h_fakerate_el_ecUp = (TH2F*) file_fr_lep->Get("FR_mva090_el_data_comb_NC_ec1");
+	//h_fakerate_el_ecDown = (TH2F*) file_fr_lep->Get("FR_mva090_el_data_comb_NC_ec2");
+	h_fakerate_mu_normUp = (TH2F*) file_fr_lep->Get("FR_mva090_mu_data_comb_up");
+	h_fakerate_mu_normDown = (TH2F*) file_fr_lep->Get("FR_mva090_mu_data_comb_down");
+	h_fakerate_mu_ptUp = (TH2F*) file_fr_lep->Get("FR_mva090_mu_data_comb_pt1");
+	h_fakerate_mu_ptDown = (TH2F*) file_fr_lep->Get("FR_mva090_mu_data_comb_pt2");
+	h_fakerate_mu_beUp = (TH2F*) file_fr_lep->Get("FR_mva090_mu_data_comb_be1");
+	h_fakerate_mu_beDown = (TH2F*) file_fr_lep->Get("FR_mva090_mu_data_comb_be2");
+	//h_fakerate_mu_bUp = (TH2F*) file_fr_lep->Get("FR_mva090_mu_data_comb_b1");
+	//h_fakerate_mu_bDown = (TH2F*) file_fr_lep->Get("FR_mva090_mu_data_comb_b2");
+	//h_fakerate_mu_ecUp = (TH2F*) file_fr_lep->Get("FR_mva090_mu_data_comb_ec1");
+	//h_fakerate_mu_ecDown = (TH2F*) file_fr_lep->Get("FR_mva090_mu_data_comb_ec2");
 	
 	//taus
 	// for 1l2tau
@@ -1029,18 +1055,24 @@ float SFHelper::Get_FakeRate_lep(float lepConePt, float lepEta,
 	else if (syst=="FRe_ptDown" and isEle) {
 		fakerate = read2DHist(h_fakerate_el_ptDown, lepConePt, std::abs(lepEta));
 	}
-	else if (syst=="FRe_bUp" and isEle) {
-		fakerate = read2DHist(h_fakerate_el_bUp, lepConePt, std::abs(lepEta));
+	else if (syst=="FRe_beUp" and isEle) {
+		fakerate = read2DHist(h_fakerate_el_beUp, lepConePt, std::abs(lepEta));
 	}
-	else if (syst=="FRe_bDown" and isEle) {
-		fakerate = read2DHist(h_fakerate_el_bDown, lepConePt, std::abs(lepEta));
+	else if (syst=="FRe_beDown" and isEle) {
+		fakerate = read2DHist(h_fakerate_el_beDown, lepConePt, std::abs(lepEta));
 	}
-	else if (syst=="FRe_ecUp" and isEle) {
-		fakerate = read2DHist(h_fakerate_el_ecUp, lepConePt, std::abs(lepEta));
-	}
-	else if (syst=="FRe_ecDown" and isEle) {
-		fakerate = read2DHist(h_fakerate_el_ecDown, lepConePt, std::abs(lepEta));
-	}
+	//else if (syst=="FRe_bUp" and isEle) {
+	//	fakerate = read2DHist(h_fakerate_el_bUp, lepConePt, std::abs(lepEta));
+	//}
+	//else if (syst=="FRe_bDown" and isEle) {
+	//	fakerate = read2DHist(h_fakerate_el_bDown, lepConePt, std::abs(lepEta));
+	//}
+	//else if (syst=="FRe_ecUp" and isEle) {
+	//	fakerate = read2DHist(h_fakerate_el_ecUp, lepConePt, std::abs(lepEta));
+	//}
+	//else if (syst=="FRe_ecDown" and isEle) {
+	//	fakerate = read2DHist(h_fakerate_el_ecDown, lepConePt, std::abs(lepEta));
+	//}
 	else if (syst=="FRm_normUp" and isMuon) {
 		fakerate = read2DHist(h_fakerate_mu_normUp, lepConePt, std::abs(lepEta));
 	}
@@ -1053,18 +1085,24 @@ float SFHelper::Get_FakeRate_lep(float lepConePt, float lepEta,
 	else if (syst=="FRm_ptDown" and isMuon) {
 		fakerate = read2DHist(h_fakerate_mu_ptDown, lepConePt, std::abs(lepEta));
 	}
-	else if (syst=="FRm_bUp" and isMuon) {
-		fakerate = read2DHist(h_fakerate_mu_bUp, lepConePt, std::abs(lepEta));
+	else if (syst=="FRm_beUp" and isMuon) {
+		fakerate = read2DHist(h_fakerate_mu_beUp, lepConePt, std::abs(lepEta));
 	}
-	else if (syst=="FRm_bDown" and isMuon) {
-		fakerate = read2DHist(h_fakerate_mu_bDown, lepConePt, std::abs(lepEta));
+	else if (syst=="FRm_beDown" and isMuon) {
+		fakerate = read2DHist(h_fakerate_mu_beDown, lepConePt, std::abs(lepEta));
 	}
-	else if (syst=="FRm_ecUp" and isMuon) {
-		fakerate = read2DHist(h_fakerate_mu_ecUp, lepConePt, std::abs(lepEta));
-	}
-	else if (syst=="FRm_ecDown" and isMuon) {
-		fakerate = read2DHist(h_fakerate_mu_ecDown, lepConePt, std::abs(lepEta));
-	}
+	//else if (syst=="FRm_bUp" and isMuon) {
+	//	fakerate = read2DHist(h_fakerate_mu_bUp, lepConePt, std::abs(lepEta));
+	//}
+	//else if (syst=="FRm_bDown" and isMuon) {
+	//	fakerate = read2DHist(h_fakerate_mu_bDown, lepConePt, std::abs(lepEta));
+	//}
+	//else if (syst=="FRm_ecUp" and isMuon) {
+	//	fakerate = read2DHist(h_fakerate_mu_ecUp, lepConePt, std::abs(lepEta));
+	//}
+	//else if (syst=="FRm_ecDown" and isMuon) {
+	//	fakerate = read2DHist(h_fakerate_mu_ecDown, lepConePt, std::abs(lepEta));
+	//}
 	else if (isEle)
 		fakerate = read2DHist(h_fakerate_el, lepConePt, std::abs(lepEta));
 	else if (isMuon)
@@ -1138,8 +1176,8 @@ float SFHelper::Get_FR_weight(const std::vector<miniLepton>& leps,
 	float F1=-1., F2=-1., F3=-1.,F4=-1.;
 	float f1=0., f2=0., f3=0., f4=0.;
 	float FR_weight = 0.;
-	
-	if (_selection==Application_Fake_1l2tau) {
+
+	if (_analysis==Analyze_1l2tau) {
 		assert(leps.size() >= 1);
 		assert(taus.size() >= 2);
 
@@ -1164,7 +1202,7 @@ float SFHelper::Get_FR_weight(const std::vector<miniLepton>& leps,
 		FR_weight = F1 * F2 * F3;
 		if (_debug) std::cout << "FR_weight : " << F1 * F2 * F3 << std::endl;
 	}
-	else if (_selection==Application_Fake_2lss1tau) {
+	else if (_analysis==Analyze_2lss1tau or _analysis==Analyze_2lss) {
 		assert(leps.size() >= 2);
 		assert(leps[0].passFakeableSel() and leps[1].passFakeableSel());
 
@@ -1186,7 +1224,7 @@ float SFHelper::Get_FR_weight(const std::vector<miniLepton>& leps,
 		FR_weight = -1. * F1 * F2;
 		if (_debug) std::cout << "FR_weight : " << -1 * F1 * F2 << std::endl;
 	}
-	else if (_selection==Application_Fake_3l1tau) {
+	else if (_analysis==Analyze_3l1tau or _analysis==Analyze_3l) {
 		assert(leps.size() >= 3);
 		assert(leps[0].passFakeableSel() and leps[1].passFakeableSel() and
 			   leps[2].passFakeableSel());
@@ -1214,7 +1252,7 @@ float SFHelper::Get_FR_weight(const std::vector<miniLepton>& leps,
 		FR_weight = F1 * F2 * F3;
 		if (_debug) std::cout << "FR_weight : " << F1 * F2 * F3 << std::endl;
 	}
-	else if (_selection==Application_Fake_2l2tau) {
+	else if (_analysis==Analyze_2l2tau) {
 		assert(leps.size() >= 2);
 		assert(taus.size() >= 2);
 		

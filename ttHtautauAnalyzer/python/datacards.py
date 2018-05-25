@@ -31,9 +31,11 @@ BTagSysts = ['LFUp','LFDown','HFUp','HFDown',
 ThSysts = ['x1Up','x1Down','y1Up','y1Down']
 
 FakeRateLepSysts = ['FRe_normUp','FRe_normDown','FRe_ptUp','FRe_ptDown',
-                    'FRe_bUp','FRe_bDown','FRe_ecUp','FRe_ecDown',
+                    #'FRe_bUp','FRe_bDown','FRe_ecUp','FRe_ecDown',
+                    'FRe_beUp','FRe_beDown',
                     'FRm_normUp','FRm_normDown','FRm_ptUp','FRm_ptDown',
-                    'FRm_bUp','FRm_bDown','FRm_ecUp','FRm_ecDown']
+                    #'FRm_bUp','FRm_bDown','FRm_ecUp','FRm_ecDown',
+                    'FRm_beUp','FRm_beDown']
 
 FakeTauSysts = ['FRjt_normUp','FRjt_normDown','FRjt_shapeUp','FRjt_shapeDown']
 

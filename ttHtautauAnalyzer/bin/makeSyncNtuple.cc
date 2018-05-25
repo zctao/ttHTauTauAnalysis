@@ -763,7 +763,8 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		// FR_weight
 		// UPDATE NEEDED
 		if (seltype==Application_Fake_1l2tau or seltype==Application_Fake_2lss1tau or
-			seltype==Application_Fake_3l1tau or seltype==Application_Fake_2l2tau)
+			seltype==Application_Fake_3l1tau or seltype==Application_Fake_2l2tau or
+			seltype==Control_FakeAR_ttW or seltype==Control_FakeAR_ttZ)
 			syncntuple.FR_weight = sf_helper.Get_FR_weight(leptons,*taus);
 		else if (seltype==Application_Flip_2lss1tau)
 			syncntuple.FR_weight =

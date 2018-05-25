@@ -45,18 +45,22 @@ void mvaNtuple::setup_branches(TTree* tree)
 		tree->Branch("event_weight_FRe_normDown",&event_weight_FRe_normDown);
 		tree->Branch("event_weight_FRe_ptUp",&event_weight_FRe_ptUp);
 		tree->Branch("event_weight_FRe_ptDown",&event_weight_FRe_ptDown);
-		tree->Branch("event_weight_FRe_bUp",&event_weight_FRe_bUp);
-		tree->Branch("event_weight_FRe_bDown",&event_weight_FRe_bDown);
-		tree->Branch("event_weight_FRe_ecUp",&event_weight_FRe_ecUp);
-		tree->Branch("event_weight_FRe_ecDown",&event_weight_FRe_ecDown);
+		tree->Branch("event_weight_FRe_beUp",&event_weight_FRe_beUp);
+		tree->Branch("event_weight_FRe_beDown",&event_weight_FRe_beDown);
+		//tree->Branch("event_weight_FRe_bUp",&event_weight_FRe_bUp);
+		//tree->Branch("event_weight_FRe_bDown",&event_weight_FRe_bDown);
+		//tree->Branch("event_weight_FRe_ecUp",&event_weight_FRe_ecUp);
+		//tree->Branch("event_weight_FRe_ecDown",&event_weight_FRe_ecDown);
 		tree->Branch("event_weight_FRm_normUp",&event_weight_FRm_normUp);
 		tree->Branch("event_weight_FRm_normDown",&event_weight_FRm_normDown);
 		tree->Branch("event_weight_FRm_ptUp",&event_weight_FRm_ptUp);
 		tree->Branch("event_weight_FRm_ptDown",&event_weight_FRm_ptDown);
-		tree->Branch("event_weight_FRm_bUp",&event_weight_FRm_bUp);
-		tree->Branch("event_weight_FRm_bDown",&event_weight_FRm_bDown);
-		tree->Branch("event_weight_FRm_ecUp",&event_weight_FRm_ecUp);
-		tree->Branch("event_weight_FRm_ecDown",&event_weight_FRm_ecDown);
+		tree->Branch("event_weight_FRm_beUp",&event_weight_FRm_beUp);
+		tree->Branch("event_weight_FRm_beDown",&event_weight_FRm_beDown);
+		//tree->Branch("event_weight_FRm_bUp",&event_weight_FRm_bUp);
+		//tree->Branch("event_weight_FRm_bDown",&event_weight_FRm_bDown);
+		//tree->Branch("event_weight_FRm_ecUp",&event_weight_FRm_ecUp);
+		//tree->Branch("event_weight_FRm_ecDown",&event_weight_FRm_ecDown);
 	}		
 
 	// generic variables

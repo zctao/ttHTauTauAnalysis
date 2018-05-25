@@ -235,6 +235,8 @@ class mvaNtuple
 	float event_weight_FRe_normDown;
 	float event_weight_FRe_ptUp;
 	float event_weight_FRe_ptDown;
+	float event_weight_FRe_beUp;
+	float event_weight_FRe_beDown;
 	float event_weight_FRe_bUp;
 	float event_weight_FRe_bDown;
 	float event_weight_FRe_ecUp;
@@ -243,6 +245,8 @@ class mvaNtuple
 	float event_weight_FRm_normDown;
 	float event_weight_FRm_ptUp;
 	float event_weight_FRm_ptDown;
+	float event_weight_FRm_beUp;
+	float event_weight_FRm_beDown;
 	float event_weight_FRm_bUp;
 	float event_weight_FRm_bDown;
 	float event_weight_FRm_ecUp;

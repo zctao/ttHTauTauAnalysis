@@ -126,18 +126,22 @@ class SFHelper
 	TH2F *h_fakerate_el_normDown;
 	TH2F *h_fakerate_el_ptUp;
 	TH2F *h_fakerate_el_ptDown;
-	TH2F *h_fakerate_el_bUp;
-	TH2F *h_fakerate_el_bDown;
-	TH2F *h_fakerate_el_ecUp;
-	TH2F *h_fakerate_el_ecDown;
+	TH2F *h_fakerate_el_beUp;
+	TH2F *h_fakerate_el_beDown;
+	//TH2F *h_fakerate_el_bUp;
+	//TH2F *h_fakerate_el_bDown;
+	//TH2F *h_fakerate_el_ecUp;
+	//TH2F *h_fakerate_el_ecDown;
 	TH2F *h_fakerate_mu_normUp;
 	TH2F *h_fakerate_mu_normDown;
 	TH2F *h_fakerate_mu_ptUp;
 	TH2F *h_fakerate_mu_ptDown;
-	TH2F *h_fakerate_mu_bUp;
-	TH2F *h_fakerate_mu_bDown;
-	TH2F *h_fakerate_mu_ecUp;
-	TH2F *h_fakerate_mu_ecDown;
+	TH2F *h_fakerate_mu_beUp;
+	TH2F *h_fakerate_mu_beDown;
+	//TH2F *h_fakerate_mu_bUp;
+	//TH2F *h_fakerate_mu_bDown;
+	//TH2F *h_fakerate_mu_ecUp;
+	//TH2F *h_fakerate_mu_ecDown;
 
 	// Jet to tau fake rate
 	TFile* file_fr_tau;
