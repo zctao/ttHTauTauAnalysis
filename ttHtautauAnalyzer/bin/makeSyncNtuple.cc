@@ -774,14 +774,12 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		}
 		
 		// leptonSF_weight
-		// UPDATE NEEDED
+		// UPDATE NEEDED: loose vs reco
 		syncntuple.leptonSF_weight = sf_helper.Get_LeptonIDSF_weight(leptons);
 		
 		// tauSF_weight
-		// UPDATE NEEDED
-		if (anatype!=Analyze_2lss and anatype!=Analyze_3l)
-			syncntuple.tauSF_weight = sf_helper.Get_TauIDSF_weight(*taus);
-		
+		syncntuple.tauSF_weight = sf_helper.Get_TauIDSF_weight(*taus);
+			
 		// triggerSF
 		// UPDATE NEEDED
 		bool hlt1LTriggered =

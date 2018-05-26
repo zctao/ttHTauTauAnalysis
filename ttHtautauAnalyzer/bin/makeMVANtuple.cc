@@ -381,14 +381,11 @@ void Set_SR_weights(Analysis_types anatype, SFHelper& sfhelper,
 	float hlt_sf = 1.;
 
 	// lepton ID scale factor
-	// NEED UPDATE
-	//float lepid_sf = sfhelper.Get_LeptonIDSF_weight(leptons);
-	float lepid_sf = 1.;
+	// NEED UPDATE: loose vs reco
+	float lepid_sf = sfhelper.Get_LeptonIDSF_weight(leptons);
 
 	// tau ID scale factor
-	// NEED UPDATE
-	//float tauid_sf = sfhelper.Get_TauIDSF_weight(taus);
-	float tauid_sf = 1.;
+	float tauid_sf = sfhelper.Get_TauIDSF_weight(taus);
 	
 	// btag scale factor
 	float btag_sf = sfhelper.Get_EvtCSVWeight(jets,"NA");
@@ -430,11 +427,10 @@ void Set_SR_weights(Analysis_types anatype, SFHelper& sfhelper,
 
 		// tau ID
 		if (anatype==Analyze_2lss1tau or anatype==Analyze_3l1tau) {
-			// NEED UPDATE
-			//mvantuple.event_weight_FRjt_normUp = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_normUp");
-			//mvantuple.event_weight_FRjt_normDown = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_normDown");
-			//mvantuple.event_weight_FRjt_shapeUp = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_shapeUp");
-			//mvantuple.event_weight_FRjt_shapeDown = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_shapeDown");
+			mvantuple.event_weight_FRjt_normUp = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_normUp");
+			mvantuple.event_weight_FRjt_normDown = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_normDown");
+			mvantuple.event_weight_FRjt_shapeUp = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_shapeUp");
+			mvantuple.event_weight_FRjt_shapeDown = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_shapeDown");
 		}
 
 		// lepton ID?

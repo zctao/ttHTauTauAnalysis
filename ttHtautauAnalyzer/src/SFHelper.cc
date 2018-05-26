@@ -211,17 +211,19 @@ void SFHelper::Set_up_LeptonSF_Lut()
 	h_recoToLoose_leptonSF_gsf = (TH2F*)(file_recoToLoose_leptonSF_gsf->Get("EGamma_SF2D"));
 
 	//// tight vs loose
-	if (_analysis == Analyze_2lss1tau) {
+	if (_analysis == Analyze_2lss1tau or _analysis == Analyze_2lss 
+		or _analysis == Analyze_2l2tau // ?
+		) {
 		/// for muon
 		file_looseToTight_leptonSF_mu_2lss = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/lepton_sf/lepMVAEffSF_m_2lss.root").c_str(),"read");
 		h_looseToTight_leptonSF_mu_2lss = (TH2F*)(file_looseToTight_leptonSF_mu_2lss->Get("sf"));
 		
 		/// for electron
-		file_looseToTight_leptonSF_el_2lss = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/lepton_sf/lepMVAEffSF_e_2lss.root").c_str(),"read");
+		file_looseToTight_leptonSF_el_2lss = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/lepton_sf/lepMVAEffSF_e_2lss.root.root").c_str(),"read");
 		h_looseToTight_leptonSF_el_2lss = (TH2F*)(file_looseToTight_leptonSF_el_2lss->Get("sf"));
 	}
 	
-	if (_analysis == Analyze_3l1tau) {
+	if (_analysis == Analyze_3l1tau or _analysis == Analyze_3l) {
 		/// for muon
 		file_looseToTight_leptonSF_mu_3l = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/lepton_sf/lepMVAEffSF_m_3l.root").c_str(),"read");
 		h_looseToTight_leptonSF_mu_3l = (TH2F*)(file_looseToTight_leptonSF_mu_3l->Get("sf"));
@@ -689,9 +691,10 @@ float SFHelper::Get_LeptonIDSF_weight(const std::vector<miniLepton>& leptons)
 	size_t nleps = 0;
 	if (_analysis==Analyze_1l2tau)
 		nleps = 1;
-	else if (_analysis==Analyze_2lss1tau)
+	else if (_analysis==Analyze_2lss1tau or _analysis==Analyze_2lss or
+			 _analysis==Analyze_2l2tau)
 		nleps = 2;
-	else if (_analysis==Analyze_3l1tau)
+	else if (_analysis==Analyze_3l1tau or _analysis==Analyze_3l)
 		nleps = 3;
 
 	assert(leptons.size() >= nleps);
@@ -745,6 +748,12 @@ float SFHelper::Get_LeptonSF_loose(float lepPt, float lepEta,
 {
 	float sf =1.;
 
+	////////////////////////
+	// !!UPDATE NEEDED!!
+	// for now:
+	return sf;
+	////////////////////////
+
 	if (isMu) {
 		sf *= read2DHist(h_recoToLoose_leptonSF_mu1, lepPt, std::abs(lepEta));		
 		sf *= read2DHist(h_recoToLoose_leptonSF_mu2, lepPt, std::abs(lepEta));
@@ -777,7 +786,8 @@ float SFHelper::Get_LeptonSF_tight_vs_loose(float lepPt, float lepEta,
 {
 	float sf = 1.;
 	
-	if (_analysis == Analyze_2lss1tau) {
+	if (_analysis == Analyze_2lss1tau or //_analysis == Analyze_2l2tau or
+		_analysis == Analyze_2lss) {
 		if (isMu) {
 			sf = read2DHist(h_looseToTight_leptonSF_mu_2lss,
 							lepPt, std::abs(lepEta));
@@ -787,7 +797,7 @@ float SFHelper::Get_LeptonSF_tight_vs_loose(float lepPt, float lepEta,
 							lepPt, std::abs(lepEta));
 		}
 	}
-	else if (_analysis == Analyze_3l1tau) {
+	else if (_analysis == Analyze_3l1tau or _analysis == Analyze_3l) {
 		if (isMu) {
 			sf = read2DHist(h_looseToTight_leptonSF_mu_3l,
 							lepPt, std::abs(lepEta));
@@ -927,7 +937,8 @@ float SFHelper::Get_TauIDSF(float tauPt, float tauEta, bool isGenMatched, TStrin
 	assert(not _isdata);
 
 	// tau ID efficiency data/MC scale factor
-	float tauEff_sf = 0.95;
+	// https://twiki.cern.ch/twiki/bin/view/CMS/TauIDRecommendation13TeV#Tau_ID_efficiency
+	float tauEff_sf = 1.00;
 
 	// tau ID fake rate data/MC scale factor
 	float tauFR_sf = tauEta < 1.497 ?
@@ -961,8 +972,11 @@ float SFHelper::Get_TauIDSF(float tauPt, float tauEta, bool isGenMatched, TStrin
 float SFHelper::Get_TauIDSF_weight(const std::vector<miniTau>& taus, TString syst)
 {
 	size_t ntaus = 1;
-	if (_analysis==Analyze_1l2tau)
+	if (_analysis==Analyze_1l2tau or _analysis==Analyze_2l2tau)
 		ntaus = 2;
+	else if (_analysis==Analyze_2lss or _analysis==Analyze_3l)
+		ntaus = 0;
+	// TODO: ttW,ttZ control regions ?
 
 	assert(taus.size()>=ntaus);
 
