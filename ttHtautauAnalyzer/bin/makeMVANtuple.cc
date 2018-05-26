@@ -243,10 +243,14 @@ int main(int argc, char** argv)
 			Set_FR_weights(selType, sfhelper, evNtuple, mvantuple, *leptons, *taus,
 						   systematics);
 		}
-		else if (selType==Application_Flip_2lss1tau) {
+		else if (selType==Application_Flip_2lss1tau or
+				 selType==Control_FlipAR_2lss1tau) {
 			// Charge flip weights
 			mvantuple.event_weight =
 				sfhelper.Get_ChargeFlipWeight(*leptons, taus->at(0).charge());
+		}
+		else if (selType==Control_FlipAR_ttW) {
+			mvantuple.event_weight = sfhelper.Get_ChargeFlipWeight(*leptons);
 		}
 		else { // signal region selection
 			if (isdata)

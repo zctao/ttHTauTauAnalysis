@@ -181,8 +181,8 @@ void SFHelper::Set_up_FakeRate_Lut(TString tauIDWP/*"dR03mvaTight"*/)
 
 void SFHelper::Set_up_ChargeMisID_Lut()
 {
-	file_eleMisCharge = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/QF_data_el.root").c_str(), "read");
-	h_chargeMisId = (TH2F*) file_eleMisCharge->Get("chargeMisId");
+	file_eleMisCharge = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/eChargeMisIdRates").c_str(), "read");
+	h_chargeMisId = (TH2D*) file_eleMisCharge->Get("eChargeMisIdRates");
 }
 
 void SFHelper::Set_up_LeptonSF_Lut()
@@ -1321,16 +1321,15 @@ float SFHelper::Get_ChargeFlipWeight(const std::vector<miniLepton>& leps,
 	float P2_misCharge =
 	    Get_EleChargeMisIDProb(leps[1], tauCharge);
 
-	// only one of the above two can be non-zero
-	//assert(P1_misCharge*P2_misCharge==0.);
-
 	if (_debug) {
 		std::cout << "tau charge : " << tauCharge << std::endl;
-		std::cout << "lep0 pt conept eta : " << leps[0].pt() << " "
-				  << leps[0].conept() << " " << leps[0].eta() << std::endl;
+		std::cout << "lep0 pt conept eta charge : " << leps[0].pt() << " "
+				  << leps[0].conept() << " " << leps[0].eta() << " "
+				  << leps[0].charge() << std::endl;
 		std::cout << "p1_mischarge : " << P1_misCharge << std::endl;
-		std::cout << "lep1 pt conept eta : " << leps[1].pt() << " "
-				  << leps[1].conept() << " " << leps[1].eta() << std::endl;
+		std::cout << "lep1 pt conept eta charge : " << leps[1].pt() << " "
+				  << leps[1].conept() << " " << leps[1].eta() << " "
+				  << leps[1].charge() << std::endl;
 		std::cout << "p2_mischarge : " << P2_misCharge << std::endl;
 	}
 
@@ -1344,19 +1343,19 @@ float SFHelper::Get_EleChargeMisIDProb(const miniLepton& lepton, int tauCharge)
 	
 	// electron
 	assert(abs(lepton.pdgId())==11);
-	
-	return Get_EleChargeMisIDProb(lepton.pt(), lepton.eta(),
-								  lepton.charge(), tauCharge);
-}
 
-float SFHelper::Get_EleChargeMisIDProb(float elePt, float eleEta,
-									   int eleCharge, int tauCharge)
-{	
-	// only apply the charge flip rate to the electron that is same sign as tau
-	// due to the tau charge requirement in signal region
-	if (eleCharge * tauCharge < 0) return 0;
+	if (_selection==Application_Flip_2lss1tau or _selection==Control_FlipAR_ttW) {
+		// only apply the charge flip rate to the electron that is same sign as tau
+		// due to the tau charge requirement in signal region
+		if (lepton.charge() * tauCharge < 0) return 0;
+	}
+	else {
+		assert(_selection==Control_FlipAR_2lss1tau);
+		// only apply to the electron that is opposite sign as tau
+		if (lepton.charge() * tauCharge > 0) return 0;
+	}
 	
-	return read2DHist(h_chargeMisId, elePt, std::abs(eleEta));
+	return read2DHist(h_chargeMisId, lepton.pt(), std::abs(lepton.eta()));
 }
 
 float SFHelper::read2DHist(TH2* h2d, float x, float y)

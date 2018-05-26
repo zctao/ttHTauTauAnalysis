@@ -73,9 +73,9 @@ class SFHelper
 	float Get_EvtCSVWeight(const std::vector<miniJet>&, const std::string&);
 	float Get_JetCSVWeight(const miniJet&, std::string);
 	
-	float Get_ChargeFlipWeight(const std::vector<miniLepton>&, int);
-	float Get_EleChargeMisIDProb(float,float,int,int);
-	float Get_EleChargeMisIDProb(const miniLepton&, int);
+	float Get_ChargeFlipWeight(const std::vector<miniLepton>&, int tauCharge=0);
+	//float Get_EleChargeMisIDProb(float,float,int,int tauCharge=0);
+	float Get_EleChargeMisIDProb(const miniLepton&, int tauCharge=0);
 
 	float Get_LeptonIDSF(float,float,bool,bool,bool);
 	float Get_LeptonIDSF(const miniLepton&);
@@ -91,7 +91,7 @@ class SFHelper
 	float Get_TauIDSF(const pat::Tau&, bool, TString syst="NA");
 #endif
 	float Get_TauIDSF_weight(const std::vector<miniTau>&, TString syst="NA");
-		
+	
 	// utilities
 	float read2DHist(TH2*, float, float);
 	float evalTGraph(TGraphAsymmErrors*, float);
@@ -191,7 +191,7 @@ class SFHelper
 
 	// Electron Charge MisID
 	TFile *file_eleMisCharge;
-	TH2F *h_chargeMisId;
+	TH2D *h_chargeMisId;
 
 	// trigger scale factors
 	// 1l2tau

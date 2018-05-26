@@ -761,14 +761,17 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		syncntuple.bTagSF_weight = sf_helper.Get_EvtCSVWeight(jets,"NA");
 
 		// FR_weight
-		// UPDATE NEEDED
 		if (seltype==Application_Fake_1l2tau or seltype==Application_Fake_2lss1tau or
 			seltype==Application_Fake_3l1tau or seltype==Application_Fake_2l2tau or
 			seltype==Control_FakeAR_ttW or seltype==Control_FakeAR_ttZ)
 			syncntuple.FR_weight = sf_helper.Get_FR_weight(leptons,*taus);
-		else if (seltype==Application_Flip_2lss1tau)
+		else if (seltype==Application_Flip_2lss1tau) {
 			syncntuple.FR_weight =
 				sf_helper.Get_ChargeFlipWeight(leptons, taus->at(0).charge());
+		}
+		else if (seltype==Control_FlipAR_ttW) {
+			syncntuple.FR_weight = sf_helper.Get_ChargeFlipWeight(leptons);
+		}
 		
 		// leptonSF_weight
 		// UPDATE NEEDED
