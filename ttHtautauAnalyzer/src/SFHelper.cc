@@ -385,22 +385,17 @@ float SFHelper::Get_HLTSF(const std::vector<miniLepton>& leptons,
 						 const std::vector<miniTau>& taus,
 						 bool hlt1LTriggered, bool hltXTriggered)
 {
-	if (_analysis==Analyze_2lss1tau) {
+	if (_analysis==Analyze_2lss1tau or _analysis==Analyze_2lss or
+		_analysis==Analyze_2l2tau) {
 		assert(leptons.size()>1);
-		int lepcat = -1;
-		if (abs(leptons[0].pdgId())==13 and abs(leptons[1].pdgId())==13)
-			lepcat = 0;
-		else if (abs(leptons[0].pdgId())==11 and abs(leptons[1].pdgId())==11)
-			lepcat = 1;
-		else lepcat = 2;
-		return Get_HLTSF_2l1tau(lepcat);
+		return Get_HLTSF_2l(leptons);
 	}
 	else if (_analysis==Analyze_1l2tau) {
 		assert(leptons.size()>0);
 		return Get_HLTSF_1l2tau(leptons[0], taus, hlt1LTriggered, hltXTriggered);
 	}
-	else if (_analysis==Analyze_3l1tau) {
-		return Get_HLTSF_3l1tau();
+	else if (_analysis==Analyze_3l1tau or _analysis==Analyze_3l) {
+		return Get_HLTSF_3l();
 	}
 	else {
 		std::cout << "SFHelper::Get_HLTSF() : WARNING! analysis type not supported."
@@ -409,28 +404,44 @@ float SFHelper::Get_HLTSF(const std::vector<miniLepton>& leptons,
 	}
 }
 
-float SFHelper::Get_HLTSF_2l1tau(int lepCategory)
+float SFHelper::Get_HLTSF_2l(const std::vector<miniLepton>& leptons)
 {
-	assert(_analysis==Analyze_2lss1tau);
-	
-	// lepCategory: 0=mumu; 1=ee; 2=emu
-	if (lepCategory == 0)
-		return 1.00;
-	else if (lepCategory == 1)
-		return 1.01;
-	else if (lepCategory == 2)
-		return 1.01;
+	assert(_analysis==Analyze_2lss1tau or _analysis==Analyze_2lss);
+	assert(leptons.size()>1);
+	// assume leptons are already sorted in descending order by pT
 
-	std::cerr << "not valid lepton category !" << std::endl;
-	assert(0);
-	return 0.;
+	float hltsf = 1.;
+	
+	// function of leading lepton pt only for now
+	if (abs(leptons[0].pdgId())==13 and abs(leptons[1].pdgId())==13) { // 2mu
+		if (leptons[0].conept() < 35.) // pT < 35
+			hltsf = 0.972;  // +/- 0.006
+		else  // pT >= 35
+			hltsf = 0.994;  // +/- 0.001
+	}
+	else if (abs(leptons[0].pdgId())==11 and abs(leptons[1].pdgId())==11) { // 2ele
+		if (leptons[0].conept() < 30.) // pT < 30
+			hltsf = 0.937;  // +/- 0.027
+		else  // pT >= 30
+			hltsf = 0.991;  // +/- 0.002
+	}
+	else { // ele+mu
+		if (leptons[0].conept() < 35.)
+			hltsf = 0.952;  // +/- 0.008
+		else if (leptons[0].conept() < 50.)
+			hltsf = 0.983;  // +/- 0.003
+		else
+			hltsf = 1.0;  // +/- 0.001
+	}
+
+	return hltsf;
 }
 
-float SFHelper::Get_HLTSF_3l1tau()
+float SFHelper::Get_HLTSF_3l()
 {
-	assert(_analysis==Analyze_3l1tau);
+	assert(_analysis==Analyze_3l1tau or _analysis==Analyze_3l);
 
-	return 1.;
+	return 1.;  // +/- 0.05
 }
 
 #if !defined(__ACLIC__) && !defined(__ROOTCLING__)

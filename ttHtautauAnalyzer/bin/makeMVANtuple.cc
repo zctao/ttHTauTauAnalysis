@@ -150,6 +150,9 @@ int main(int argc, char** argv)
 	for (int i = 0; i < nEntries; ++i) {
 		tree_in->GetEntry(i);
 
+		// reject one LS: https://hypernews.cern.ch/HyperNews/CMS/get/physics-validation/3067.html
+		if (evNtuple.run==305366 and evNtuple.ls==935) continue;
+		
 		//////////////////////////////////////
 		/// Reconstruct objects for event selection
 		//////////////////////////////////////
@@ -377,18 +380,15 @@ void Set_SR_weights(Analysis_types anatype, SFHelper& sfhelper,
 	// Pileup
 	// FIXME
 	//float pu_weight = sfhelper.Get_PUWeight(evntuple.npuTrue);
-	float pu_weight = 1;
-
+	float pu_weight = 1.;
+	
 	// HLT scale factor
-	// FIXME
-	/*
 	bool hlt1LTriggered =
 		trighelper.pass_single_lep_triggers(evntuple.triggerBits);
 	bool hltXTriggered =
 		trighelper.pass_leptau_cross_triggers(evntuple.triggerBits);
+	// UPDATEME: 1l2tau
 	float hlt_sf = sfhelper.Get_HLTSF(leptons, taus, hlt1LTriggered, hltXTriggered);
-	*/
-	float hlt_sf = 1.;
 
 	// lepton ID scale factor
 	// NEED UPDATE: loose vs reco
