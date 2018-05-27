@@ -6,6 +6,7 @@
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "CondFormats/BTauObjects/interface/BTagCalibration.h"
 #include "CondTools/BTau/interface/BTagCalibrationReader.h"
+#include "PhysicsTools/Utilities/interface/LumiReWeighting.h"
 #endif
 #include "miniLepton.h"
 #include "miniTau.h"
@@ -17,17 +18,19 @@
 #include "TH1.h"
 #include "TH2.h"
 #include "TF1.h"
+#include "TString.h"
 #include "TGraphAsymmErrors.h"
 
 #include <iostream>
 #include <algorithm>
 #include <assert.h>
+#include <string.h>
 
 class SFHelper
 {
  public:
 	// constructor and destructor
-	SFHelper(Analysis_types, Selection_types, bool, bool debug=false);
+	SFHelper(Analysis_types, Selection_types, std::string, bool, bool debug=false);
 	~SFHelper();
 
 	// member functions
@@ -108,15 +111,6 @@ class SFHelper
 	Analysis_types _analysis;
 	Selection_types _selection;
 
-	//float _hlt_sf;      // trigger scale factor
-	//float _lepIDEff_sf; // lepton ID efficiency scale factor
-	//float _csv_weight;  // btag csv re-weighting
-	//float _pu_weight;   // pileup weight
-	//float _tauID_sf;    // tau ID scale factor
-	//float _mc_weight;   // gen weight
-	//float _FR_weight;   // fake rate weight;
-	//float _QF_weight;   // charge flip weight;
-
 	// Fake lepton rate 
 	TFile *file_fr_lep;
 	TH2F *h_fakerate_el;
@@ -160,8 +154,19 @@ class SFHelper
 	TF1 *f_fakerate_tau_mvaM_etaH_ratio_shapeDown;
 
 	// PU weight
-	TFile* file_puweight;
-	TH1F *h_puweight;
+	//TFile* file_puweight;
+	//TH1F *h_puweight;
+	/////
+	edm::LumiReWeighting LumiWeights_;
+	//TFile* file_pu_data;
+	//TFile* file_pu_mc;
+	//TH1D *h_pu_data;
+	//TH1D *h_pu_data_plus;
+	//TH1D *h_pu_data_minus;
+	//TH1D *h_pu_mc;
+	//TH1D *h_pu_weight;
+	//TH1D *h_pu_weight_plus;
+	//TH1D *h_pu_weight_minus;
 	
 	// Lepton ID scale factor lookup tables
 	TFile* file_recoToLoose_leptonSF_mu1;
@@ -258,7 +263,8 @@ class SFHelper
 	void Set_up_FakeRate_Lut(TString tauIDWP="dR03mvaTight");
 	void Set_up_TauSF_Lut(TString tauIDWP="dR03mvaMedium");
 	void Set_up_ChargeMisID_Lut();
-	void Set_up_PUWeight_hist();
+	//void Set_up_PUWeight_hist();
+	void Set_up_PUWeights(const std::string&);
 	void Set_up_LeptonSF_Lut();
 	void Set_up_triggerSF_Lut();
 

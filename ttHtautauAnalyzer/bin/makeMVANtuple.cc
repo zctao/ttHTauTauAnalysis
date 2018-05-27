@@ -54,7 +54,7 @@ int main(int argc, char** argv)
 		("infile,i", po::value<string>(&infile), "input file")
 		//("outdir,o", po::value<string>(&outdir)->default_value("./"), "output directory")
 		("outname,o", po::value<string>(&outname)->default_value("mvaNtuple.root"), "output file name")	
-		//("sample,s", po::value<string>(&sample), "sample name")
+		("sample,s", po::value<string>(&sample), "sample name")
 		("anatype", po::value<string>(&analysis_type), "analysis type")
 		("seltype", po::value<string>(&selection_type), "selection type")
 		("version,v", po::value<string>(&version)->default_value("2017"), "analysis version")
@@ -120,7 +120,7 @@ int main(int argc, char** argv)
 
 	//////////////////////////////////////////////
 	// Scale Factor Helper
-	SFHelper sfhelper(anaType, selType, isdata);
+	SFHelper sfhelper(anaType, selType, sample, isdata);
 
 	//////////////////////////////////////////////
 	// event selector
@@ -378,9 +378,7 @@ void Set_SR_weights(Analysis_types anatype, SFHelper& sfhelper,
 	float mc_weight = evntuple.MC_weight;
 	
 	// Pileup
-	// FIXME
-	//float pu_weight = sfhelper.Get_PUWeight(evntuple.npuTrue);
-	float pu_weight = 1.;
+	float pu_weight = sfhelper.Get_PUWeight(evntuple.npuTrue);
 	
 	// HLT scale factor
 	bool hlt1LTriggered =

@@ -2,7 +2,7 @@
 
 // constructor
 SFHelper::SFHelper(Analysis_types analysis, Selection_types selection,
-				   bool isdata, bool debug)
+				   std::string samplename, bool isdata, bool debug)
 {
 	_analysis = analysis;
 	_selection = selection;
@@ -14,7 +14,8 @@ SFHelper::SFHelper(Analysis_types analysis, Selection_types selection,
 	
 	if (not _isdata) {
 		Set_up_TauSF_Lut(tauIDWP);
-		Set_up_PUWeight_hist();
+		//Set_up_PUWeight_hist();
+		Set_up_PUWeights(samplename);
 		Set_up_LeptonSF_Lut();
 #if !defined(__ACLIC__) && !defined(__ROOTCLING__)
 		Set_up_BTagCalibration_Readers();
@@ -47,7 +48,7 @@ SFHelper::~SFHelper()
 {
 	if (not _isdata) {
 		Delete_TauSF_Lut();
-		Delete_PUWeight_hist();
+		//Delete_PUWeight_hist();
 		Delete_LeptonSF_Lut();
 #if !defined(__ACLIC__) && !defined(__ROOTCLING__)
 		Delete_BTagCalibration_Readers();
@@ -119,12 +120,23 @@ void SFHelper::Set_up_TauSF_Lut(TString tauIDWP/*"dR03mvaMedium"*/)
 	f_fakerate_tau_mvaM_etaH_ratio_shapeDown = (TF1*) file_fr_tau->Get("jetToTauFakeRate/"+tauIDWP+"/absEta1_5to9_9/fitFunction_data_div_mc_hadTaus_pt_par2Down");
 }
 
+/*
 void SFHelper::Set_up_PUWeight_hist()
 {
 	//file_puweight = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/data/PU_weights/PU_weights_2016_271036_284044.root").c_str(), "read");
 	file_puweight = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/pu_weight/PU_weights_MCSummer2016_271036_284044.root").c_str(), "read");
 	
 	h_puweight = (TH1F*) file_puweight->Get("h_ratio_data_MC");
+}
+*/
+
+void SFHelper::Set_up_PUWeights(const std::string& samplename)
+{
+	std::string fname_pu_data = std::string(getenv("CMSSW_BASE"))+"/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/pu_weight/PileupData_ReRecoJSON_Full2017.root";
+    std::string fname_pu_mc = std::string(getenv("CMSSW_BASE"))+"/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/pu_weight/pileup_2017.root";
+
+	LumiWeights_ = edm::LumiReWeighting(fname_pu_mc, fname_pu_data,
+										samplename, "pileup");
 }
 
 void SFHelper::Set_up_FakeRate_Lut(TString tauIDWP/*"dR03mvaTight"*/)
@@ -319,8 +331,13 @@ void SFHelper::Delete_ChargeMisID_Lut()
 
 void SFHelper::Delete_PUWeight_hist()
 {
-	file_puweight->Close();
-	delete file_puweight;
+	//file_puweight->Close();
+	//delete file_puweight;
+	
+	//file_pu_data->Close();
+	//file_pu_mc->Close();
+	//delete file_pu_data;
+	//delete file_pu_mc;
 }
 
 void SFHelper::Delete_LeptonSF_Lut()
@@ -925,10 +942,13 @@ float SFHelper::Get_JetCSVWeight(const miniJet& jet, std::string sys/*pass by co
 
 float SFHelper::Get_PUWeight(int nPU)
 {
+	/*
 	assert(not _isdata);
 	
 	int xbin = h_puweight->FindBin(nPU);
 	return h_puweight->GetBinContent(xbin);
+	*/
+	return LumiWeights_.weight(nPU);
 }
 
 #if !defined(__ACLIC__) && !defined(__ROOTCLING__)

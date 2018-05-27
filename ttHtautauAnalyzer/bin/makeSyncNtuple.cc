@@ -271,7 +271,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 
 	//////////////////////////////////////////////
 	// Set up SFHelper
-	SFHelper sf_helper(anatype, seltype, false, debug);
+	SFHelper sf_helper(anatype, seltype, "ttHJetToNonbb_M125_amcatnlo", false, debug);
 
 	//////////////////////////////////////////////
 	// trigger Helper
@@ -755,8 +755,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		// weights
 		syncntuple.MC_weight = evNtuple.MC_weight;
 
-		// UPDATE NEEDED
-		syncntuple.PU_weight = evNtuple.PU_weight;
+		syncntuple.PU_weight = sf_helper.Get_PUWeight(evNtuple.npuTrue);
 
 		syncntuple.bTagSF_weight = sf_helper.Get_EvtCSVWeight(jets,"NA");
 
