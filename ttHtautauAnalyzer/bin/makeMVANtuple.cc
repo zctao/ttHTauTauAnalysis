@@ -6,6 +6,7 @@
 #include <TParameter.h>
 
 #include "boost/program_options.hpp"
+#include "boost/algorithm/string.hpp"
 
 #include "../interface/miniLepton.h"
 #include "../interface/miniTau.h"
@@ -31,7 +32,7 @@ void Set_FR_weights(Selection_types, SFHelper&, eventNtuple&, mvaNtuple&,
 void Set_SR_weights(Analysis_types,SFHelper&, eventNtuple&, mvaNtuple&,
 					TriggerHelper&,
 					const std::vector<miniLepton>&, const std::vector<miniTau>&,
-					const std::vector<miniJet>&, bool);
+					const std::vector<miniJet>&, bool, std::string);
 
 int main(int argc, char** argv)
 {
@@ -39,6 +40,7 @@ int main(int argc, char** argv)
 	namespace po = boost::program_options;
 
 	string infile, outname, sample, analysis_type, selection_type, intree, version;
+	string enCorr;
 	string mem_filename, mem_treename;
 	float xsection;
 	bool systematics, isdata, evaluateMVA;//, requireMCMatching;
@@ -56,6 +58,7 @@ int main(int argc, char** argv)
 		("anatype", po::value<string>(&analysis_type), "analysis type")
 		("seltype", po::value<string>(&selection_type), "selection type")
 		("version,v", po::value<string>(&version)->default_value("2017"), "analysis version")
+		("correction,c", po::value<string>(&enCorr)->default_value("NA"), "Energy correction for tau and jets: NA, JESUp, JESDown, TESUp, TESDown")
 		("xsection,x", po::value<float>(&xsection)->default_value(1.),"cross section of the sample")
 		("treename", po::value<string>(&intree)->default_value("ttHtaus/eventTree"))
 		("isdata,d", po::value<bool>(&isdata)->default_value(false))
@@ -79,10 +82,17 @@ int main(int argc, char** argv)
 		cout << desc << endl;
 		return 1;
 	}
-	
+
 	Analysis_types anaType = Types_enum::getAnaType(analysis_type);
 	Selection_types selType = Types_enum::getSelType(selection_type);
 
+	bool CR = boost::algorithm::contains(selection_type,"_ttW") or
+		boost::algorithm::contains(selection_type,"_ttZ") or
+		boost::algorithm::contains(selection_type,"_WZ");
+	
+	assert(enCorr=="NA" or enCorr=="JESUp" or enCorr=="JESDown" or enCorr=="TESUp" or
+		   enCorr=="TESDown");
+	
 	//////////////////////////////////////////////
 	// open file and read tree
 	cout << "Open root file : " << infile << endl;
@@ -101,8 +111,6 @@ int main(int argc, char** argv)
 
 	// mva ntuple
 	bool doHTT = evaluateMVA;
-	// FIXME
-	bool CR = (selType==Control_ttW or selType==Control_ttZ or Control_WZ);
 	mvaNtuple mvantuple(anaType, systematics, version, doHTT, evaluateMVA, CR);
 	mvantuple.setup_branches(tree_mva);
 
@@ -149,13 +157,14 @@ int main(int argc, char** argv)
 		auto leptons_fakeable = evNtuple.buildLeptons('F');  // fakeable
 		auto leptons_tight = evNtuple.buildLeptons('T');  // tight
 
-		auto taus_fakeable = evNtuple.buildTaus(true, anaType);  // fakeable
-		auto taus_tight = evNtuple.buildTaus(false, anaType);  // tight
+		auto taus_fakeable = evNtuple.buildTaus(true, anaType, enCorr.c_str());  // fakeable
+		auto taus_tight = evNtuple.buildTaus(false, anaType, enCorr.c_str());  // tight
 
 		//auto jets = evNtuple.buildJets();
 		// Jet cleaning based on analysis type
 		auto jets = evNtuple.buildCleanedJets(0.4, anaType, selType,
-											  &leptons_fakeable, &taus_fakeable);
+											  &leptons_fakeable, &taus_fakeable,
+											  enCorr.c_str());
 
 		int nbtags_loose, nbtags_medium;
 		std::tie(nbtags_loose, nbtags_medium) = evNtuple.count_btags(jets);
@@ -257,7 +266,7 @@ int main(int argc, char** argv)
 				mvantuple.event_weight = 1;
 			else
 				Set_SR_weights(anaType, sfhelper, evNtuple, mvantuple, trighelper,
-							   *leptons, *taus, jets, systematics);
+							   *leptons, *taus, jets, systematics, enCorr);
 		}
 		
 		tree_mva->Fill();
@@ -355,7 +364,8 @@ void Set_SR_weights(Analysis_types anatype, SFHelper& sfhelper,
 					TriggerHelper& trighelper,
 					const std::vector<miniLepton>& leptons,
 					const std::vector<miniTau>& taus,
-					const std::vector<miniJet>& jets, bool syst)
+					const std::vector<miniJet>& jets, bool syst,
+					std::string JES)
 {
 	assert(sfhelper.getAnaType()==anatype);
 	
@@ -388,8 +398,8 @@ void Set_SR_weights(Analysis_types anatype, SFHelper& sfhelper,
 	float tauid_sf = sfhelper.Get_TauIDSF_weight(taus);
 	
 	// btag scale factor
-	float btag_sf = sfhelper.Get_EvtCSVWeight(jets,"NA");
-	// FIXME for JEC: JESUp and JESDown
+	if (JES != "JESUp" and JES != "JESDown") JES = "NA";
+	float btag_sf = sfhelper.Get_EvtCSVWeight(jets,JES);
 
 	////////////////////
 	mvantuple.event_weight =

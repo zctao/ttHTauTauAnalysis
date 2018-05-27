@@ -72,7 +72,8 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorLeps(bool loose) const
 }
 */
 
-std::vector<miniTau> eventNtuple::buildTaus(bool loose, Analysis_types anatype) const
+std::vector<miniTau> eventNtuple::buildTaus(bool loose, Analysis_types anatype,
+											const TString& tec, float minPt) const
 {
 	std::string selTauWP;
 	if (anatype==Analyze_1l2tau or anatype==Analyze_2l2tau)
@@ -80,10 +81,11 @@ std::vector<miniTau> eventNtuple::buildTaus(bool loose, Analysis_types anatype) 
 	else
 		selTauWP = "L";
 
-	return buildTaus(loose, selTauWP);
+	return buildTaus(loose, selTauWP, tec, minPt);
 }
 
-std::vector<miniTau> eventNtuple::buildTaus(bool loose, std::string tightWPDef) const
+std::vector<miniTau> eventNtuple::buildTaus(bool loose, std::string tightWPDef,
+											const TString& tec, float minPt) const
 {
 	std::vector<miniTau> taus;
 		
@@ -91,6 +93,20 @@ std::vector<miniTau> eventNtuple::buildTaus(bool loose, std::string tightWPDef) 
 		
 		TLorentzVector tauP4;
 		tauP4.SetPtEtaPhiE(tau_pt->at(t),tau_eta->at(t),tau_phi->at(t),tau_E->at(t));
+		
+		// tauES uncertainties
+		// https://twiki.cern.ch/twiki/bin/view/CMS/TauIDRecommendation13TeV#Tau_energy_scale
+		float unc = 0.03;
+		float shift = 0.;
+		if (tec.EqualTo("tesup", TString::ECaseCompare::kIgnoreCase))
+			shift = 1.;
+		else if (tec.EqualTo("tesdown", TString::ECaseCompare::kIgnoreCase))
+			shift = -1.;
+
+		tauP4 *= 1.+shift*unc;
+
+		if (tauP4.Pt() < minPt) continue;
+		
 		miniTau tau(tauP4,tau_charge->at(t),tau_decayMode->at(t),
 					tau_idPreselection->at(t), tau_idSelection->at(t));
 		if (tau_mcMatchType->size()>0)

@@ -31,16 +31,18 @@ class eventNtuple
 	std::vector<TLorentzVector> buildFourVectorLeps(bool loose=false) const;
 	std::vector<TLorentzVector> buildFourVectorTaus(std::vector<int>&, bool loose=false) const;
 	//std::vector<miniTau> buildTaus(std::string) const;
-	std::vector<miniTau> buildTaus(bool loose=false, std::string tightWPDef="L") const;
-	std::vector<miniTau> buildTaus(bool, Analysis_types) const;
+	std::vector<miniTau> buildTaus(bool loose=false, std::string tightWPDef="L",
+								   const TString& tec="NA", float minPt=20.) const;
+	std::vector<miniTau> buildTaus(bool, Analysis_types,
+								   const TString& tec="NA", float minPt=20.) const;
 	std::vector<TLorentzVector> buildFourVectorTaus(bool loose=false) const;
 	std::vector<TLorentzVector> buildFourVectorTauDaugsCharged(bool loose=false) const;
 	std::vector<TLorentzVector> buildFourVectorTauDaugsNeutral(bool loose=false) const;
-	std::vector<miniJet> buildJets(const TString& jec="na", float minPt=25.) const;
+	std::vector<miniJet> buildJets(const TString& jec="NA", float minPt=25.) const;
 	std::vector<miniJet> buildCleanedJets(float,Analysis_types,Selection_types,
 										  std::vector<miniLepton> const * const,
 										  std::vector<miniTau> const * const,
-										  const TString& jec="na",
+										  const TString& jec="NA",
 										  float minPt=25.) const;
 	std::tuple<int, int> count_btags(const std::vector<miniJet>&) const ;
 	std::vector<TLorentzVector> buildFourVectorJets() const;
