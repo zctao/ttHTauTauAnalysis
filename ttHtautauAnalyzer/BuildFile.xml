@@ -5,6 +5,7 @@
 <use name="PhysicsTools/Utilities"/>
 <use name="root"/>
 <use name="HadTop/HTT_kinfit"/>
+<use name="TriggerSF/TauTriggerSFs2017"/>
 <export>
   <use name="root"/>
   <lib name = "1"/>

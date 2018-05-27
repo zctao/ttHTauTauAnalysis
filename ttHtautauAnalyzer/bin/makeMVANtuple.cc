@@ -385,7 +385,6 @@ void Set_SR_weights(Analysis_types anatype, SFHelper& sfhelper,
 		trighelper.pass_single_lep_triggers(evntuple.triggerBits);
 	bool hltXTriggered =
 		trighelper.pass_leptau_cross_triggers(evntuple.triggerBits);
-	// UPDATEME: 1l2tau
 	float hlt_sf = sfhelper.Get_HLTSF(leptons, taus, hlt1LTriggered, hltXTriggered);
 
 	// lepton ID scale factor

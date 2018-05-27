@@ -249,67 +249,67 @@ void SFHelper::Set_up_LeptonSF_Lut()
 void SFHelper::Set_up_triggerSF_Lut()
 {
 	assert(_analysis == Analyze_1l2tau);
-	
+
 	// Single Muon triggers
-	file_Mu22OR_eff = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/trigger_sf/Muon_Mu22OR_eta2p1_eff.root").c_str(),"read");
-	assert(file_Mu22OR_eff->IsOpen());
-	g_Mu_ZMassEtaLt0p9_MC = (TGraphAsymmErrors*)file_Mu22OR_eff->Get("ZMassEtaLt0p9_MC");
-	g_Mu_ZMassEta0p9to1p2_MC = (TGraphAsymmErrors*)file_Mu22OR_eff->Get("ZMassEta0p9to1p2_MC");
-	g_Mu_ZMassEta1p2to2p1_MC = (TGraphAsymmErrors*)file_Mu22OR_eff->Get("ZMassEta1p2to2p1_MC");
-	g_Mu_ZMassEtaLt0p9_Data = (TGraphAsymmErrors*)file_Mu22OR_eff->Get("ZMassEtaLt0p9_Data");
-	g_Mu_ZMassEta0p9to1p2_Data = (TGraphAsymmErrors*)file_Mu22OR_eff->Get("ZMassEta0p9to1p2_Data");
-	g_Mu_ZMassEta1p2to2p1_Data = (TGraphAsymmErrors*)file_Mu22OR_eff->Get("ZMassEta1p2to2p1_Data");	
+	file_Mu_SingleMu_hlt_eff = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/trigger_sf/Muon_IsoMu24orIsoMu27_eff.root").c_str(),"read");
+	assert(file_Mu_SingleMu_hlt_eff->IsOpen());
+	g_Mu_ZMassEtaLt0p9_MC = (TGraphAsymmErrors*)file_Mu_SingleMu_hlt_eff->Get("ZMassEtaLt0p9_MC");
+	g_Mu_ZMassEta0p9to1p2_MC = (TGraphAsymmErrors*)file_Mu_SingleMu_hlt_eff->Get("ZMassEta0p9to1p2_MC");
+	g_Mu_ZMassEta1p2to2p1_MC = (TGraphAsymmErrors*)file_Mu_SingleMu_hlt_eff->Get("ZMassEta1p2to2p1_MC");
+	g_Mu_ZMassEtaGt2p1_MC = (TGraphAsymmErrors*)file_Mu_SingleMu_hlt_eff->Get("ZMassEtaGt2p1_MC");
+	g_Mu_ZMassEtaLt0p9_Data = (TGraphAsymmErrors*)file_Mu_SingleMu_hlt_eff->Get("ZMassEtaLt0p9_Data");
+	g_Mu_ZMassEta0p9to1p2_Data = (TGraphAsymmErrors*)file_Mu_SingleMu_hlt_eff->Get("ZMassEta0p9to1p2_Data");
+	g_Mu_ZMassEta1p2to2p1_Data = (TGraphAsymmErrors*)file_Mu_SingleMu_hlt_eff->Get("ZMassEta1p2to2p1_Data");
+	g_Mu_ZMassEtaGt2p1_Data = (TGraphAsymmErrors*)file_Mu_SingleMu_hlt_eff->Get("ZMassEtaGt2p1_Data");
 
-	// Single Electron triggers
-	file_Ele25WPTight_eff = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/trigger_sf/Electron_Ele25WPTight_eff.root").c_str(),"read");
-	assert(file_Ele25WPTight_eff->IsOpen());
-	g_Ele_ZMassEtaLt1p48_MC = (TGraphAsymmErrors*)file_Ele25WPTight_eff->Get("ZMassEtaLt1p48_MC");
-	g_Ele_ZMassEta1p48to2p1_MC = (TGraphAsymmErrors*)file_Ele25WPTight_eff->Get("ZMassEta1p48to2p1_MC");
-	g_Ele_ZMassEtaGt2p1_MC = (TGraphAsymmErrors*)file_Ele25WPTight_eff->Get("ZMassEtaGt2p1_MC");
-	g_Ele_ZMassEtaLt1p48_Data = (TGraphAsymmErrors*)file_Ele25WPTight_eff->Get("ZMassEtaLt1p48_Data");
-	g_Ele_ZMassEta1p48to2p1_Data = (TGraphAsymmErrors*)file_Ele25WPTight_eff->Get("ZMassEta1p48to2p1_Data");
-	g_Ele_ZMassEtaGt2p1_Data = (TGraphAsymmErrors*)file_Ele25WPTight_eff->Get("ZMassEtaGt2p1_Data");
+	// Single Eletron triggers
+	file_Ele_SingleElE_hlt_eff = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/trigger_sf/Electron_Ele32orEle35_eff.root").c_str(),"read");
+	assert(file_Ele_SingleElE_hlt_eff->IsOpen());
+	g_Ele_ZMassEtaLt1p48_MC = (TGraphAsymmErrors*)file_Ele_SingleElE_hlt_eff->Get("ZMassEtaLt1p48_MC");
+	g_Ele_ZMassEta1p48to2p1_MC = (TGraphAsymmErrors*)file_Ele_SingleElE_hlt_eff->Get("ZMassEta1p48to2p1_MC");
+	g_Ele_ZMassEtaLt1p48_Data = (TGraphAsymmErrors*)file_Ele_SingleElE_hlt_eff->Get("ZMassEtaLt1p48_Data");
+	g_Ele_ZMassEta1p48to2p1_Data = (TGraphAsymmErrors*)file_Ele_SingleElE_hlt_eff->Get("ZMassEta1p48to2p1_Data");
 
-	// Muon leg of mu tau cross trigger
-	file_Mu19leg_eff = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/trigger_sf/Muon_Mu19leg_2016BtoH_eff.root").c_str(),"read");
-	assert(file_Mu19leg_eff->IsOpen());
-	g_Muleg_ZMassEtaLt0p9_MC = (TGraphAsymmErrors*)file_Mu19leg_eff->Get("ZMassEtaLt0p9_MC");
-	g_Muleg_ZMassEta0p9to1p2_MC = (TGraphAsymmErrors*)file_Mu19leg_eff->Get("ZMassEta0p9to1p2_MC");
-	g_Muleg_ZMassEta1p2to2p1_MC = (TGraphAsymmErrors*)file_Mu19leg_eff->Get("ZMassEta1p2to2p1_MC");
-	g_Muleg_ZMassEtaLt0p9_Data = (TGraphAsymmErrors*)file_Mu19leg_eff->Get("ZMassEtaLt0p9_Data");
-	g_Muleg_ZMassEta0p9to1p2_Data = (TGraphAsymmErrors*)file_Mu19leg_eff->Get("ZMassEta0p9to1p2_Data");
-	g_Muleg_ZMassEta1p2to2p1_Data = (TGraphAsymmErrors*)file_Mu19leg_eff->Get("ZMassEta1p2to2p1_Data");
+	// Muon leg of MuTau cross triggers
+	file_Mu_MuTau_hlt_eff = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/trigger_sf/Muon_MuTau_IsoMu20_eff.root").c_str(),"read");
+	assert(file_Mu_MuTau_hlt_eff->IsOpen());
+	g_Muleg_ZMassEtaLt0p9_MC = (TGraphAsymmErrors*)file_Mu_MuTau_hlt_eff->Get("ZMassEtaLt0p9_MC");
+	g_Muleg_ZMassEta0p9to1p2_MC = (TGraphAsymmErrors*)file_Mu_MuTau_hlt_eff->Get("ZMassEta0p9to1p2_MC");
+	g_Muleg_ZMassEta1p2to2p1_MC = (TGraphAsymmErrors*)file_Mu_MuTau_hlt_eff->Get("ZMassEta1p2to2p1_MC");
+	g_Muleg_ZMassEtaGt2p1_MC = (TGraphAsymmErrors*)file_Mu_MuTau_hlt_eff->Get("ZMassEtaGt2p1_MC");
+	g_Muleg_ZMassEtaLt0p9_Data = (TGraphAsymmErrors*)file_Mu_MuTau_hlt_eff->Get("ZMassEtaLt0p9_Data");
+	g_Muleg_ZMassEta0p9to1p2_Data = (TGraphAsymmErrors*)file_Mu_MuTau_hlt_eff->Get("ZMassEta0p9to1p2_Data");
+	g_Muleg_ZMassEta1p2to2p1_Data = (TGraphAsymmErrors*)file_Mu_MuTau_hlt_eff->Get("ZMassEta1p2to2p1_Data");
+	g_Muleg_ZMassEtaGt2p1_Data = (TGraphAsymmErrors*)file_Mu_MuTau_hlt_eff->Get("ZMassEtaGt2p1_Data");
+
+	// Electron leg of EleTau cross triggers
+	file_Ele_EleTau_hlt_eff = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/trigger_sf/Electron_EleTau_Ele24_eff.root").c_str(),"read");
+	assert(file_Ele_EleTau_hlt_eff->IsOpen());
+	g_Eleleg_ZMassEtaLt1p48_MC = (TGraphAsymmErrors*)file_Ele_EleTau_hlt_eff->Get("ZMassEtaLt1p48_MC");
+	g_Eleleg_ZMassEta1p48to2p1_MC = (TGraphAsymmErrors*)file_Ele_EleTau_hlt_eff->Get("ZMassEta1p48to2p1_MC");
+	g_Eleleg_ZMassEtaLt1p48_Data = (TGraphAsymmErrors*)file_Ele_EleTau_hlt_eff->Get("ZMassEtaLt1p48_Data");
+	g_Eleleg_ZMassEta1p48to2p1_Data = (TGraphAsymmErrors*)file_Ele_EleTau_hlt_eff->Get("ZMassEta1p48to2p1_Data");
+
+	// tau leg of lepton-tau cross triggers
+	tauTrigSFhelper = new TauTriggerSFs2017(std::string(getenv("CMSSW_BASE")) + "/src/TriggerSF/TauTriggerSFs2017/data/tauTriggerEfficiencies2017.root","medium");
+	
+}
+
+/*
+void SFHelper::Set_up_triggerSF_Lut()
+{
+	assert(_analysis == Analyze_1l2tau);
+	
+
 
 	// Electron leg of e tau cross trigger
 	file_Ele24leg_eff = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/trigger_sf/Electron_Ele24_eff.root").c_str(),"read");
 	assert(file_Ele24leg_eff->IsOpen());
-	g_Eleleg_ZMassEtaLt1p48_MC = (TGraphAsymmErrors*)file_Ele24leg_eff->Get("ZMassEtaLt1p48_MC");
-	g_Eleleg_ZMassEta1p48to2p1_MC = (TGraphAsymmErrors*)file_Ele24leg_eff->Get("ZMassEta1p48to2p1_MC");
-	g_Eleleg_ZMassEtaGt2p1_MC = (TGraphAsymmErrors*)file_Ele24leg_eff->Get("ZMassEtaGt2p1_MC");
-	g_Eleleg_ZMassEtaLt1p48_Data = (TGraphAsymmErrors*)file_Ele24leg_eff->Get("ZMassEtaLt1p48_Data");
-	g_Eleleg_ZMassEta1p48to2p1_Data = (TGraphAsymmErrors*)file_Ele24leg_eff->Get("ZMassEta1p48to2p1_Data");
-	g_Eleleg_ZMassEtaGt2p1_Data = (TGraphAsymmErrors*)file_Ele24leg_eff->Get("ZMassEtaGt2p1_Data");
 
-	// Tau leg of mu tau cross trigger
-	file_mt_Tauleg_eff = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/trigger_sf/trigger_sf_mt.root").c_str(),"read");
-	assert(file_mt_Tauleg_eff->IsOpen());
-	g_mt_mc_genuine_barrel_TightIso = (TGraphAsymmErrors*)file_mt_Tauleg_eff->Get("mc_genuine_barrel_TightIso");
-	g_mt_mc_genuine_endcap_TightIso = (TGraphAsymmErrors*)file_mt_Tauleg_eff->Get("mc_genuine_endcap_TightIso");
-	g_mt_data_genuine_barrel_TightIso = (TGraphAsymmErrors*)file_mt_Tauleg_eff->Get("data_genuine_barrel_TightIso");
-	g_mt_data_genuine_endcap_TightIso = (TGraphAsymmErrors*)file_mt_Tauleg_eff->Get("data_genuine_endcap_TightIso");
 
-	// Tau leg of e tau cross trigger
-	file_et_Tauleg_eff = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/trigger_sf/trigger_sf_et.root").c_str(),"read");
-	assert(file_et_Tauleg_eff->IsOpen());
-	g_et_mc_genuine_barrel_TightIso = (TGraphAsymmErrors*)file_et_Tauleg_eff->Get("mc_genuine_barrel_TightIso");
-	g_et_mc_genuine_endcap_TightIso = (TGraphAsymmErrors*)file_et_Tauleg_eff->Get("mc_genuine_endcap_TightIso");
-	g_et_data_genuine_barrel_TightIso_dm0 = (TGraphAsymmErrors*)file_et_Tauleg_eff->Get("data_genuine_barrel_TightIso_dm0");
-	g_et_data_genuine_barrel_TightIso_dm1 = (TGraphAsymmErrors*)file_et_Tauleg_eff->Get("data_genuine_barrel_TightIso_dm1");
-	g_et_data_genuine_barrel_TightIso_dm10 = (TGraphAsymmErrors*)file_et_Tauleg_eff->Get("data_genuine_barrel_TightIso_dm10");
-	g_et_data_genuine_endcap_TightIso_dm0 = (TGraphAsymmErrors*)file_et_Tauleg_eff->Get("data_genuine_endcap_TightIso_dm0");
-	g_et_data_genuine_endcap_TightIso_dm1 = (TGraphAsymmErrors*)file_et_Tauleg_eff->Get("data_genuine_endcap_TightIso_dm1");
-	g_et_data_genuine_endcap_TightIso_dm10 = (TGraphAsymmErrors*)file_et_Tauleg_eff->Get("data_genuine_endcap_TightIso_dm10");
+
 }
+*/
 
 void SFHelper::Delete_FakeRate_Lut()
 {
@@ -376,19 +376,17 @@ void SFHelper::Delete_LeptonSF_Lut()
 
 void SFHelper::Delete_triggerSF_Lut()
 {
-	file_Mu22OR_eff->Close();
-	file_Ele25WPTight_eff->Close();
-	file_Mu19leg_eff->Close();
-	file_Ele24leg_eff->Close();
-	file_et_Tauleg_eff->Close();
-	file_mt_Tauleg_eff->Close();
+	file_Mu_SingleMu_hlt_eff->Close();
+	file_Ele_SingleElE_hlt_eff->Close();
+	file_Mu_MuTau_hlt_eff->Close();
+	file_Ele_EleTau_hlt_eff->Close();
 	
-	delete file_Mu22OR_eff;
-	delete file_Ele25WPTight_eff;
-	delete file_Mu19leg_eff;
-	delete file_Ele24leg_eff;
-	delete file_et_Tauleg_eff;
-	delete file_mt_Tauleg_eff;
+	delete file_Mu_SingleMu_hlt_eff;
+	delete file_Ele_SingleElE_hlt_eff;
+	delete file_Mu_MuTau_hlt_eff;
+	delete file_Ele_EleTau_hlt_eff;
+
+	delete tauTrigSFhelper;
 }
 
 #if !defined(__ACLIC__) && !defined(__ROOTCLING__)
@@ -461,57 +459,40 @@ float SFHelper::Get_HLTSF_3l()
 	return 1.;  // +/- 0.05
 }
 
-#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
-float SFHelper::Get_HLTSF_1l2tau(const miniLepton& lepton,
-								 const std::vector<pat::Tau>& taus,
-								 bool passHLT1l, bool passHLT1l1tau)
-{
-	assert(taus.size()>1);
-	return Get_HLTSF_1l2tau(lepton.pt(), lepton.eta(), lepton.pdgId(),
-							taus[0].pt(), taus[0].eta(), taus[0].decayMode(),
-							taus[1].pt(), taus[1].eta(), taus[1].decayMode(),
-							passHLT1l, passHLT1l1tau);
-}
-#endif
 float SFHelper::Get_HLTSF_1l2tau(const miniLepton& lepton,
 								 const std::vector<miniTau>& taus,
 								 bool passHLT1l, bool passHLT1l1tau)
 {
-	assert(taus.size()>1);
-	return Get_HLTSF_1l2tau(lepton.pt(), lepton.eta(), lepton.pdgId(),
-							taus[0].pt(), taus[0].eta(), taus[0].decaymode(),
-							taus[1].pt(), taus[1].eta(), taus[1].decaymode(),
-							passHLT1l, passHLT1l1tau);
-}
-
-float SFHelper::Get_HLTSF_1l2tau(float lepPt, float lepEta, int lepPdgId,
-								 float tau0Pt, float tau0Eta, int decaymode0,
-								 float tau1Pt, float tau1Eta, int decaymode1,
-								 bool passHLT1l, bool passHLT1l1tau)
-{
 	assert(_analysis==Analyze_1l2tau);
-	assert(abs(lepPdgId)==11 or abs(lepPdgId)==13);
+	assert(taus.size()>1);
 
 	// trigger efficiency for single lepton trigger
-	float eff_L_data = Get_trig_eff_singleLep(lepPt, lepEta, lepPdgId, true);
-	float eff_L_mc = Get_trig_eff_singleLep(lepPt, lepEta, lepPdgId, false);
+	float eff_L_data = Get_trig_eff_singleLep(lepton.pt(), lepton.eta(),
+											  lepton.pdgId(), true);
+	float eff_L_mc = Get_trig_eff_singleLep(lepton.pt(), lepton.eta(),
+											lepton.pdgId(), false);
 	
  	// trigger efficiency for lepton leg of lep tau cross trigger
-	float eff_l_data =
-		Get_trig_eff_lepLeg_crossTrigger(lepPt, lepEta, lepPdgId, true);
-	float eff_l_mc =
-		Get_trig_eff_lepLeg_crossTrigger(lepPt, lepEta, lepPdgId, false);
-	
+	float eff_l_data = Get_trig_eff_lepLeg_crossTrigger(lepton.pt(), lepton.eta(),
+														lepton.pdgId(), true);
+	float eff_l_mc = Get_trig_eff_lepLeg_crossTrigger(lepton.pt(), lepton.eta(),
+													  lepton.pdgId(), false);
+
 	// trigger efficiency for tau leg of lep tau cross trigger
-	float eff_t0_data =
-		Get_trig_eff_tauLeg_crossTrigger(tau0Pt,tau0Eta, decaymode0, lepPdgId, 1);
-	float eff_t0_mc =
-		Get_trig_eff_tauLeg_crossTrigger(tau0Pt,tau0Eta, decaymode0, lepPdgId, 0);
-	float eff_t1_data =
-		Get_trig_eff_tauLeg_crossTrigger(tau1Pt,tau1Eta, decaymode1, lepPdgId, 1);
-	float eff_t1_mc =
-		Get_trig_eff_tauLeg_crossTrigger(tau1Pt,tau1Eta, decaymode1, lepPdgId, 0);
-	
+	float eff_t0_data, eff_t0_mc, eff_t1_data, eff_t1_mc;
+	if (abs(lepton.pdgId())==11) { // ele+tau
+		eff_t0_data = tauTrigSFhelper->getETauEfficiencyData(taus[0].pt(),taus[0].eta(),taus[0].phi());
+		eff_t0_mc = tauTrigSFhelper->getETauEfficiencyMC(taus[0].pt(),taus[0].eta(),taus[0].phi());
+		eff_t1_data = tauTrigSFhelper->getETauEfficiencyData(taus[1].pt(),taus[1].eta(),taus[1].phi());
+		eff_t1_mc = tauTrigSFhelper->getETauEfficiencyMC(taus[1].pt(),taus[1].eta(),taus[1].phi());
+	}
+	else { // mu+tau
+		eff_t0_data = tauTrigSFhelper->getMuTauEfficiencyData(taus[0].pt(),taus[0].eta(),taus[0].phi());
+		eff_t0_mc = tauTrigSFhelper->getMuTauEfficiencyMC(taus[0].pt(),taus[0].eta(),taus[0].phi());
+		eff_t1_data = tauTrigSFhelper->getMuTauEfficiencyData(taus[1].pt(),taus[1].eta(),taus[1].phi());
+		eff_t1_mc = tauTrigSFhelper->getMuTauEfficiencyMC(taus[1].pt(),taus[1].eta(),taus[1].phi());
+	}
+
 	// compute trigger efficiency based on triggered HLT paths
 	float eff_data = Compute_trig_eff_OR_1l2tau(eff_L_data,eff_l_data,eff_t0_data,
 												eff_t1_data, passHLT1l,
@@ -521,7 +502,29 @@ float SFHelper::Get_HLTSF_1l2tau(float lepPt, float lepEta, int lepPdgId,
 	
 	// scale factor
 	return std::min( eff_data/std::max(1.e-6f, eff_mc), 1.e+1f);
+
 }
+
+/*
+float SFHelper::Get_HLTSF_1l2tau(float lepPt, float lepEta, int lepPdgId,
+								 float tau0Pt, float tau0Eta, int decaymode0,
+								 float tau1Pt, float tau1Eta, int decaymode1,
+								 bool passHLT1l, bool passHLT1l1tau)
+{
+	
+	assert(abs(lepPdgId)==11 or abs(lepPdgId)==13);
+	
+	// trigger efficiency for tau leg of lep tau cross trigger
+	float eff_t0_data =
+		Get_trig_eff_tauLeg_crossTrigger(tau0Pt,tau0Eta, decaymode0, lepPdgId, 1);
+	float eff_t0_mc =
+		Get_trig_eff_tauLeg_crossTrigger(tau0Pt,tau0Eta, decaymode0, lepPdgId, 0);
+	float eff_t1_data =
+		Get_trig_eff_tauLeg_crossTrigger(tau1Pt,tau1Eta, decaymode1, lepPdgId, 1);
+	float eff_t1_mc =
+		Get_trig_eff_tauLeg_crossTrigger(tau1Pt,tau1Eta, decaymode1, lepPdgId, 0);	
+}
+*/
 
 float SFHelper::Compute_trig_eff_OR_1l2tau(float eff_L, float eff_l,
 										   float eff_tau0, float eff_tau1,
@@ -564,10 +567,10 @@ float SFHelper::Get_trig_eff_lepLeg_crossTrigger(float pt, float eta, int pdgid,
 		else {
 			// shouldn't be here
 			assert(0);
-			if (isdata)
-				eff = readTGraph(g_Eleleg_ZMassEtaGt2p1_Data, pt);
-			else
-				eff = readTGraph(g_Eleleg_ZMassEtaGt2p1_MC, pt);
+			//if (isdata)
+			//	eff = readTGraph(g_Eleleg_ZMassEtaGt2p1_Data, pt);
+			//else
+			//	eff = readTGraph(g_Eleleg_ZMassEtaGt2p1_MC, pt);
 		}
 	}
 	else if (abs(pdgid)==13) {  // Muon
@@ -599,7 +602,7 @@ float SFHelper::Get_trig_eff_lepLeg_crossTrigger(float pt, float eta, int pdgid,
 
 	return eff;
 }
-
+/*
 float SFHelper::Get_trig_eff_tauLeg_crossTrigger(float pt, float eta,
 												 int decaymode, int lepPdgid,
 												 bool isdata)
@@ -654,7 +657,7 @@ float SFHelper::Get_trig_eff_tauLeg_crossTrigger(float pt, float eta,
 	
 	return eff;
 }
-
+*/
 float SFHelper::Get_trig_eff_singleLep(float pt, float eta, int pdgid, bool isdata)
 {
 	assert(_analysis==Analyze_1l2tau);
@@ -677,10 +680,10 @@ float SFHelper::Get_trig_eff_singleLep(float pt, float eta, int pdgid, bool isda
 		else {
 			// shouldn't be here
 			assert(0);
-			if (isdata)
-				eff = readTGraph(g_Ele_ZMassEtaGt2p1_Data, pt);
-			else
-				eff = readTGraph(g_Ele_ZMassEtaGt2p1_MC, pt);
+			//if (isdata)
+			//	eff = readTGraph(g_Ele_ZMassEtaGt2p1_Data, pt);
+			//else
+			//	eff = readTGraph(g_Ele_ZMassEtaGt2p1_MC, pt);
 		}
 	}
 	else if (abs(pdgid)==13) {  // Muon

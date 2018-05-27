@@ -37,6 +37,9 @@ LeptonID package:
 
 	git clone https://github.com/zctao/ttH-LeptonID.git ttH/LeptonID
 	
+For lepton-tau cross trigger scale factor:
+
+	git clone -b tauTriggers2017_MCv2_PreReMiniaod https://github.com/truggles/TauTriggerSFs2017 TriggerSF/TauTriggerSFs2017
 
 Compile:
 

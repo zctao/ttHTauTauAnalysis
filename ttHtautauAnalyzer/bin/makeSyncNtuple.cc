@@ -780,7 +780,6 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		syncntuple.tauSF_weight = sf_helper.Get_TauIDSF_weight(*taus);
 			
 		// triggerSF
-		// UPDATE NEEDED
 		bool hlt1LTriggered =
 				trig_helper.pass_single_lep_triggers(evNtuple.triggerBits);
 		bool hltXTriggered =

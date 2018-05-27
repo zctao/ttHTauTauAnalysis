@@ -8,6 +8,7 @@
 #include "CondTools/BTau/interface/BTagCalibrationReader.h"
 #include "PhysicsTools/Utilities/interface/LumiReWeighting.h"
 #endif
+#include "TriggerSF/TauTriggerSFs2017/interface/TauTriggerSFs2017.h"
 #include "miniLepton.h"
 #include "miniTau.h"
 #include "miniJet.h"
@@ -40,12 +41,8 @@ class SFHelper
 	float Get_HLTSF_3l();
 	float Get_HLTSF_1l2tau(const miniLepton&, const std::vector<miniTau>&, bool,
 						   bool);
-	float Get_HLTSF_1l2tau(float, float, int, float, float, int, float, float,
-						   int, bool, bool);
-#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
-	float Get_HLTSF_1l2tau(const miniLepton&, const std::vector<pat::Tau>&, bool,
-						   bool);
-#endif
+	//float Get_HLTSF_1l2tau(float, float, int, float, float, int, float, float,
+	//					   int, bool, bool);
 	float Compute_trig_eff_OR_1l2tau(float, float, float, float, bool, bool);
 	float Get_trig_eff_lepLeg_crossTrigger(float, float, int, bool);
 	float Get_trig_eff_tauLeg_crossTrigger(float, float, int, int, bool);
@@ -200,53 +197,39 @@ class SFHelper
 
 	// trigger scale factors
 	// 1l2tau
-	TFile *file_Mu22OR_eff;
+	TFile *file_Mu_SingleMu_hlt_eff;
 	TGraphAsymmErrors* g_Mu_ZMassEtaLt0p9_MC;
 	TGraphAsymmErrors* g_Mu_ZMassEta0p9to1p2_MC;
 	TGraphAsymmErrors* g_Mu_ZMassEta1p2to2p1_MC;
+	TGraphAsymmErrors* g_Mu_ZMassEtaGt2p1_MC;
 	TGraphAsymmErrors* g_Mu_ZMassEtaLt0p9_Data;
 	TGraphAsymmErrors* g_Mu_ZMassEta0p9to1p2_Data;
-	TGraphAsymmErrors* g_Mu_ZMassEta1p2to2p1_Data;	
-
-	TFile *file_Ele25WPTight_eff;
+	TGraphAsymmErrors* g_Mu_ZMassEta1p2to2p1_Data;
+	TGraphAsymmErrors* g_Mu_ZMassEtaGt2p1_Data;
+	
+	TFile *file_Ele_SingleElE_hlt_eff;
 	TGraphAsymmErrors* g_Ele_ZMassEtaLt1p48_MC;
 	TGraphAsymmErrors* g_Ele_ZMassEta1p48to2p1_MC;
-	TGraphAsymmErrors* g_Ele_ZMassEtaGt2p1_MC;
 	TGraphAsymmErrors* g_Ele_ZMassEtaLt1p48_Data;
 	TGraphAsymmErrors* g_Ele_ZMassEta1p48to2p1_Data;
-	TGraphAsymmErrors* g_Ele_ZMassEtaGt2p1_Data;
-
-	TFile *file_Mu19leg_eff;
+	
+	TFile *file_Mu_MuTau_hlt_eff;
 	TGraphAsymmErrors* g_Muleg_ZMassEtaLt0p9_MC;
 	TGraphAsymmErrors* g_Muleg_ZMassEta0p9to1p2_MC;
 	TGraphAsymmErrors* g_Muleg_ZMassEta1p2to2p1_MC;
+	TGraphAsymmErrors* g_Muleg_ZMassEtaGt2p1_MC;
 	TGraphAsymmErrors* g_Muleg_ZMassEtaLt0p9_Data;
 	TGraphAsymmErrors* g_Muleg_ZMassEta0p9to1p2_Data;
 	TGraphAsymmErrors* g_Muleg_ZMassEta1p2to2p1_Data;
-
-	TFile *file_Ele24leg_eff;
+	TGraphAsymmErrors* g_Muleg_ZMassEtaGt2p1_Data;
+	
+	TFile *file_Ele_EleTau_hlt_eff;
 	TGraphAsymmErrors* g_Eleleg_ZMassEtaLt1p48_MC;
 	TGraphAsymmErrors* g_Eleleg_ZMassEta1p48to2p1_MC;
-	TGraphAsymmErrors* g_Eleleg_ZMassEtaGt2p1_MC;
 	TGraphAsymmErrors* g_Eleleg_ZMassEtaLt1p48_Data;
 	TGraphAsymmErrors* g_Eleleg_ZMassEta1p48to2p1_Data;
-	TGraphAsymmErrors* g_Eleleg_ZMassEtaGt2p1_Data;
 
-	TFile *file_mt_Tauleg_eff;
-	TGraphAsymmErrors* g_mt_mc_genuine_barrel_TightIso;
-	TGraphAsymmErrors* g_mt_mc_genuine_endcap_TightIso;
-	TGraphAsymmErrors* g_mt_data_genuine_barrel_TightIso;
-	TGraphAsymmErrors* g_mt_data_genuine_endcap_TightIso;
-	
-	TFile *file_et_Tauleg_eff;
-	TGraphAsymmErrors* g_et_mc_genuine_barrel_TightIso;
-	TGraphAsymmErrors* g_et_mc_genuine_endcap_TightIso;
-	TGraphAsymmErrors* g_et_data_genuine_barrel_TightIso_dm0;
-	TGraphAsymmErrors* g_et_data_genuine_barrel_TightIso_dm1;
-	TGraphAsymmErrors* g_et_data_genuine_barrel_TightIso_dm10;
-	TGraphAsymmErrors* g_et_data_genuine_endcap_TightIso_dm0;
-	TGraphAsymmErrors* g_et_data_genuine_endcap_TightIso_dm1;
-	TGraphAsymmErrors* g_et_data_genuine_endcap_TightIso_dm10;
+	TauTriggerSFs2017* tauTrigSFhelper;
 	
 	// CSV
 #if !defined(__ACLIC__) && !defined(__ROOTCLING__)
