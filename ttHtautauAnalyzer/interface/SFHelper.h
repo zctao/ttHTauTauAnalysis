@@ -244,7 +244,8 @@ class SFHelper
 #endif
 	
 	void Set_up_FakeRate_Lut(TString tauIDWP="dR03mvaTight");
-	void Set_up_TauSF_Lut(TString tauIDWP="dR03mvaMedium");
+	//void Set_up_TauSF_Lut(TString tauIDWP="dR03mvaMedium");
+	void Set_up_TauFR_Lut(TString tauIDWP="dR03mvaMedium");
 	void Set_up_ChargeMisID_Lut();
 	//void Set_up_PUWeight_hist();
 	void Set_up_PUWeights(const std::string&);
@@ -252,7 +253,7 @@ class SFHelper
 	void Set_up_triggerSF_Lut();
 
 	void Delete_FakeRate_Lut();
-	void Delete_TauSF_Lut();
+	void Delete_TauFR_Lut();
 	void Delete_ChargeMisID_Lut();
 	void Delete_PUWeight_hist();
 	void Delete_LeptonSF_Lut();

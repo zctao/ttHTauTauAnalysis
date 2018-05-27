@@ -11,9 +11,10 @@ SFHelper::SFHelper(Analysis_types analysis, Selection_types selection,
 
 	TString tauIDWP = (analysis==Analyze_1l2tau or analysis==Analyze_2l2tau) ?
 	    "dR03mvaMedium" : "dR03mvaLoose";
+
+	Set_up_TauFR_Lut(tauIDWP);
 	
 	if (not _isdata) {
-		Set_up_TauSF_Lut(tauIDWP);
 		//Set_up_PUWeight_hist();
 		Set_up_PUWeights(samplename);
 		Set_up_LeptonSF_Lut();
@@ -46,8 +47,9 @@ SFHelper::SFHelper(Analysis_types analysis, Selection_types selection,
 
 SFHelper::~SFHelper()
 {
-	if (not _isdata) {
-		Delete_TauSF_Lut();
+	Delete_TauFR_Lut();
+	
+	if (not _isdata) {	
 		//Delete_PUWeight_hist();
 		Delete_LeptonSF_Lut();
 #if !defined(__ACLIC__) && !defined(__ROOTCLING__)
@@ -102,10 +104,13 @@ void SFHelper::Set_up_BTagCalibration_Readers()
 }
 #endif
 
-void SFHelper::Set_up_TauSF_Lut(TString tauIDWP/*"dR03mvaMedium"*/)
+void SFHelper::Set_up_TauFR_Lut(TString tauIDWP/*"dR03mvaMedium"*/)
 {
-	file_fr_tau = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/FR_tau_2016.root").c_str(), "read");
+	//taus fake rate
+	file_fr_tau = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/FR_tau_2017_v1.root").c_str(), "read");
 	
+	g_fakerate_tau_mvaM_etaL_mc = (TGraphAsymmErrors*) file_fr_tau->Get("jetToTauFakeRate/"+tauIDWP+"/absEtaLt1_5/jetToTauFakeRate_mc_hadTaus_pt");
+	g_fakerate_tau_mvaM_etaH_mc = (TGraphAsymmErrors*) file_fr_tau->Get("jetToTauFakeRate/"+tauIDWP+"/absEta1_5to9_9/jetToTauFakeRate_mc_hadTaus_pt");
 	f_fakerate_tau_mvaM_etaL_ratio = (TF1*) file_fr_tau->Get("jetToTauFakeRate/"+tauIDWP+"/absEtaLt1_5/fitFunction_data_div_mc_hadTaus_pt");
 	f_fakerate_tau_mvaM_etaH_ratio = (TF1*) file_fr_tau->Get("jetToTauFakeRate/"+tauIDWP+"/absEta1_5to9_9/fitFunction_data_div_mc_hadTaus_pt");
 
@@ -170,30 +175,11 @@ void SFHelper::Set_up_FakeRate_Lut(TString tauIDWP/*"dR03mvaTight"*/)
 	//h_fakerate_mu_bDown = (TH2F*) file_fr_lep->Get("FR_mva090_mu_data_comb_b2");
 	//h_fakerate_mu_ecUp = (TH2F*) file_fr_lep->Get("FR_mva090_mu_data_comb_ec1");
 	//h_fakerate_mu_ecDown = (TH2F*) file_fr_lep->Get("FR_mva090_mu_data_comb_ec2");
-	
-	//taus
-	// for 1l2tau
-	file_fr_tau = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/FR_tau_2017_v1.root").c_str(), "read");
-	
-	g_fakerate_tau_mvaM_etaL_mc = (TGraphAsymmErrors*) file_fr_tau->Get("jetToTauFakeRate/"+tauIDWP+"/absEtaLt1_5/jetToTauFakeRate_mc_hadTaus_pt");
-	g_fakerate_tau_mvaM_etaH_mc = (TGraphAsymmErrors*) file_fr_tau->Get("jetToTauFakeRate/"+tauIDWP+"/absEta1_5to9_9/jetToTauFakeRate_mc_hadTaus_pt");
-	f_fakerate_tau_mvaM_etaL_ratio = (TF1*) file_fr_tau->Get("jetToTauFakeRate/"+tauIDWP+"/absEtaLt1_5/fitFunction_data_div_mc_hadTaus_pt");
-	f_fakerate_tau_mvaM_etaH_ratio = (TF1*) file_fr_tau->Get("jetToTauFakeRate/"+tauIDWP+"/absEta1_5to9_9/fitFunction_data_div_mc_hadTaus_pt");
-
-	// systematics
-	f_fakerate_tau_mvaM_etaL_ratio_normUp = (TF1*) file_fr_tau->Get("jetToTauFakeRate/"+tauIDWP+"/absEtaLt1_5/fitFunction_data_div_mc_hadTaus_pt_par1Up");
-	f_fakerate_tau_mvaM_etaL_ratio_normDown = (TF1*) file_fr_tau->Get("jetToTauFakeRate/"+tauIDWP+"/absEtaLt1_5/fitFunction_data_div_mc_hadTaus_pt_par1Down");
-	f_fakerate_tau_mvaM_etaL_ratio_shapeUp = (TF1*) file_fr_tau->Get("jetToTauFakeRate/"+tauIDWP+"/absEtaLt1_5/fitFunction_data_div_mc_hadTaus_pt_par2Up");
-	f_fakerate_tau_mvaM_etaL_ratio_shapeDown = (TF1*) file_fr_tau->Get("jetToTauFakeRate/"+tauIDWP+"/absEtaLt1_5/fitFunction_data_div_mc_hadTaus_pt_par2Down");
-	f_fakerate_tau_mvaM_etaH_ratio_normUp = (TF1*) file_fr_tau->Get("jetToTauFakeRate/"+tauIDWP+"/absEta1_5to9_9/fitFunction_data_div_mc_hadTaus_pt_par1Up");
-	f_fakerate_tau_mvaM_etaH_ratio_normDown = (TF1*) file_fr_tau->Get("jetToTauFakeRate/"+tauIDWP+"/absEta1_5to9_9/fitFunction_data_div_mc_hadTaus_pt_par1Down");
-	f_fakerate_tau_mvaM_etaH_ratio_shapeUp = (TF1*) file_fr_tau->Get("jetToTauFakeRate/"+tauIDWP+"/absEta1_5to9_9/fitFunction_data_div_mc_hadTaus_pt_par2Up");
-	f_fakerate_tau_mvaM_etaH_ratio_shapeDown = (TF1*) file_fr_tau->Get("jetToTauFakeRate/"+tauIDWP+"/absEta1_5to9_9/fitFunction_data_div_mc_hadTaus_pt_par2Down");
 }
 
 void SFHelper::Set_up_ChargeMisID_Lut()
 {
-	file_eleMisCharge = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/eChargeMisIdRates").c_str(), "read");
+	file_eleMisCharge = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/ElectronChargeMisIdRates_2017.root").c_str(), "read");
 	h_chargeMisId = (TH2D*) file_eleMisCharge->Get("eChargeMisIdRates");
 }
 
@@ -231,7 +217,7 @@ void SFHelper::Set_up_LeptonSF_Lut()
 		h_looseToTight_leptonSF_mu_2lss = (TH2F*)(file_looseToTight_leptonSF_mu_2lss->Get("sf"));
 		
 		/// for electron
-		file_looseToTight_leptonSF_el_2lss = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/lepton_sf/lepMVAEffSF_e_2lss.root.root").c_str(),"read");
+		file_looseToTight_leptonSF_el_2lss = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/lepton_sf/lepMVAEffSF_e_2lss.root").c_str(),"read");
 		h_looseToTight_leptonSF_el_2lss = (TH2F*)(file_looseToTight_leptonSF_el_2lss->Get("sf"));
 	}
 	
@@ -295,29 +281,13 @@ void SFHelper::Set_up_triggerSF_Lut()
 	
 }
 
-/*
-void SFHelper::Set_up_triggerSF_Lut()
-{
-	assert(_analysis == Analyze_1l2tau);
-	
-
-
-	// Electron leg of e tau cross trigger
-	file_Ele24leg_eff = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/trigger_sf/Electron_Ele24_eff.root").c_str(),"read");
-	assert(file_Ele24leg_eff->IsOpen());
-
-
-
-}
-*/
-
 void SFHelper::Delete_FakeRate_Lut()
 {
-	file_fr_lep->Close();		
+	file_fr_lep->Close();	
 	delete file_fr_lep;
 }
 
-void SFHelper::Delete_TauSF_Lut()
+void SFHelper::Delete_TauFR_Lut()
 {
 	file_fr_tau->Close();		
 	delete file_fr_tau;
@@ -421,7 +391,8 @@ float SFHelper::Get_HLTSF(const std::vector<miniLepton>& leptons,
 
 float SFHelper::Get_HLTSF_2l(const std::vector<miniLepton>& leptons)
 {
-	assert(_analysis==Analyze_2lss1tau or _analysis==Analyze_2lss);
+	assert(_analysis==Analyze_2lss1tau or _analysis==Analyze_2lss or
+		   _analysis==Analyze_2l2tau);
 	assert(leptons.size()>1);
 	// assume leptons are already sorted in descending order by pT
 

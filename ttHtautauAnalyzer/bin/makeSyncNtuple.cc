@@ -601,8 +601,43 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		syncntuple.MHT = mht;
 		syncntuple.metLD = metld;
 
+		// weights
+		syncntuple.MC_weight = evNtuple.MC_weight;
+
+		syncntuple.PU_weight = sf_helper.Get_PUWeight(evNtuple.npuTrue);
+
+		syncntuple.bTagSF_weight = sf_helper.Get_EvtCSVWeight(jets,"NA");
+
+		// FR_weight
+		if (seltype==Application_Fake_1l2tau or seltype==Application_Fake_2lss1tau or
+			seltype==Application_Fake_3l1tau or seltype==Application_Fake_2l2tau or
+			seltype==Control_FakeAR_ttW or seltype==Control_FakeAR_ttZ)
+			syncntuple.FR_weight = sf_helper.Get_FR_weight(leptons,*taus);
+		else if (seltype==Application_Flip_2lss1tau) {
+			syncntuple.FR_weight =
+				sf_helper.Get_ChargeFlipWeight(leptons, taus->at(0).charge());
+		}
+		else if (seltype==Control_FlipAR_ttW) {
+			syncntuple.FR_weight = sf_helper.Get_ChargeFlipWeight(leptons);
+		}
+		
+		// leptonSF_weight
+		// UPDATE NEEDED: loose vs reco
+		syncntuple.leptonSF_weight = sf_helper.Get_LeptonIDSF_weight(leptons);
+		
+		// tauSF_weight
+		syncntuple.tauSF_weight = sf_helper.Get_TauIDSF_weight(*taus);
+			
+		// triggerSF
+		bool hlt1LTriggered =
+				trig_helper.pass_single_lep_triggers(evNtuple.triggerBits);
+		bool hltXTriggered =
+			trig_helper.pass_leptau_cross_triggers(evNtuple.triggerBits);
+		syncntuple.triggerSF_weight =
+			sf_helper.Get_HLTSF(leptons, *taus, hlt1LTriggered, hltXTriggered);
+		
 		if (anatype==Analyze_NA or seltype==Selection_NA or
-			seltype==Control_ttW or seltype==Control_ttZ) {
+			anatype==Analyze_2lss or anatype==Analyze_3l) {
 			tree_out->Fill();
 			continue;
 		}
@@ -751,41 +786,6 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 					mvantuple.mva_2l2tau_BDT3;
 			}
 		}
-
-		// weights
-		syncntuple.MC_weight = evNtuple.MC_weight;
-
-		syncntuple.PU_weight = sf_helper.Get_PUWeight(evNtuple.npuTrue);
-
-		syncntuple.bTagSF_weight = sf_helper.Get_EvtCSVWeight(jets,"NA");
-
-		// FR_weight
-		if (seltype==Application_Fake_1l2tau or seltype==Application_Fake_2lss1tau or
-			seltype==Application_Fake_3l1tau or seltype==Application_Fake_2l2tau or
-			seltype==Control_FakeAR_ttW or seltype==Control_FakeAR_ttZ)
-			syncntuple.FR_weight = sf_helper.Get_FR_weight(leptons,*taus);
-		else if (seltype==Application_Flip_2lss1tau) {
-			syncntuple.FR_weight =
-				sf_helper.Get_ChargeFlipWeight(leptons, taus->at(0).charge());
-		}
-		else if (seltype==Control_FlipAR_ttW) {
-			syncntuple.FR_weight = sf_helper.Get_ChargeFlipWeight(leptons);
-		}
-		
-		// leptonSF_weight
-		// UPDATE NEEDED: loose vs reco
-		syncntuple.leptonSF_weight = sf_helper.Get_LeptonIDSF_weight(leptons);
-		
-		// tauSF_weight
-		syncntuple.tauSF_weight = sf_helper.Get_TauIDSF_weight(*taus);
-			
-		// triggerSF
-		bool hlt1LTriggered =
-				trig_helper.pass_single_lep_triggers(evNtuple.triggerBits);
-		bool hltXTriggered =
-			trig_helper.pass_leptau_cross_triggers(evNtuple.triggerBits);
-		syncntuple.triggerSF_weight =
-			sf_helper.Get_HLTSF(leptons, *taus, hlt1LTriggered, hltXTriggered);
 		
 		tree_out->Fill();
 		
