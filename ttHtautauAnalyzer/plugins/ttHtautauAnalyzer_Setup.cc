@@ -29,10 +29,10 @@ void ttHtautauAnalyzer::Set_up_histograms()
 	h_CutFlow_ = fs_->make<TH1D>("h_CutFlow","",15,0,15);
 
 	// pileup
-	h_npuTrue_ = fs_->make<TH1D>("h_npuTrue","",80,0,80);
-	h_npuInTime_ = fs_->make<TH1D>("h_npuInTime","",80,0,80);
-	h_npuTrue_genweight_ = fs_->make<TH1D>("h_npuTree_genweight","",80,0,80);
-	h_npuInTime_genweight_ = fs_->make<TH1D>("h_npuInTime_genweight","",80,0,80);
+	h_npuTrue_ = fs_->make<TH1D>("h_npuTrue","",200,0,200);
+	h_npuInTime_ = fs_->make<TH1D>("h_npuInTime","",200,0,200);
+	h_npuTrue_genweight_ = fs_->make<TH1D>("h_npuTree_genweight","",200,0,200);
+	h_npuInTime_genweight_ = fs_->make<TH1D>("h_npuInTime_genweight","",200,0,200);
 
 	// HLT and filters
 	h_hlt_ = fs_->make<TH1I>("h_hlt","",30,0,30);
