@@ -201,6 +201,15 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		mc_weight = genWeight;// / std::abs(genWeight);
 
 		if (event_lhe_info.isValid()) {
+			// tHq, tHW samples: nominal weight is inverted
+			// retrieve SM weight:
+			if (sample_name_.EqualTo("thq",TString::ECaseCompare::kIgnoreCase)){
+				mc_weight *= (event_lhe_info->weights()[893].wgt)/(event_lhe_info->originalXWGTUP());
+			}
+			else if (sample_name_.EqualTo("thw",TString::ECaseCompare::kIgnoreCase)){
+				mc_weight *= (event_lhe_info->weights()[1091].wgt)/(event_lhe_info->originalXWGTUP());
+			}
+
 			if (event_lhe_info->weights().size() > 6) {
 				mc_weight_scale_muF0p5 = // muF = 0.5 | muR = 1
 					mc_weight * (event_lhe_info->weights()[2].wgt)/

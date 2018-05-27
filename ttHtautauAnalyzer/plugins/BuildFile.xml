@@ -13,6 +13,7 @@
 <use name = "CommonTools/UtilAlgos" />
 <use name = "SimDataFormats/PileupSummaryInfo" />
 <use name = "SimDataFormats/GeneratorProducts" />
+<use name = "SimGeneral/HepPDTRecord"/>
 <use name = "HLTrigger/HLTcore" />
 <use name = "CondFormats/BTauObjects" />
 <use name = "JetMETCorrections/Objects" />
