@@ -377,6 +377,23 @@ bool EventSelector::pass_1l2tau_inclusive_selection(
 	}
 
 	/////////////////////////////////
+	// tau eta (to match trigger)
+	if (verbose_) {
+		std::cout << "Two leading tau eta : " << fakeableTaus[0].eta() << " "
+				  << fakeableTaus[1].eta() << std::endl;
+	}
+
+	bool passTauEta =
+		fabs(fakeableTaus[0].eta())<2.1 and fabs(fakeableTaus[1].eta())<2.1;
+	if (passTauEta) {
+		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "tau eta");
+	}
+	else {
+		if (verbose_) std::cout << "FAIL tau eta requirement" << std::endl;
+		return false;
+	}
+	
+	/////////////////////////////////
 	// At least 3 selected jets
 	if (verbose_) std::cout << "nJets = " << njets << std::endl;
 	
