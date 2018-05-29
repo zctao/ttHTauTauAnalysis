@@ -10,5 +10,5 @@ Transfer_Input_Files = makeMVANtuples_condor.sh
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
 x509userproxy = $ENV(X509_USER_PROXY)
-Arguments = may2018 ttHJetToNonbb
+Arguments = may2018v2 mvaNtupleList_.log ttHJetToNonbb
 Queue 1

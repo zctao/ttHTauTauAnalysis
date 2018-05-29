@@ -10,7 +10,8 @@ parser.add_argument('samples', nargs='+', help="sample names")
 parser.add_argument('--datasetlist', type=str,
                     default="../dataFiles/DatasetList_2017reMiniAODv2.csv")
 parser.add_argument('--analysis', nargs='+',
-                    choices=['1l2tau','2lss1tau','3l1tau','2l2tau'],
+                    choices=['1l2tau','2lss1tau','3l1tau','2l2tau','control_ttW',
+                             'control_ttZ'],
                     help="analysis type")
 parser.add_argument('--selection', nargs='+', type=str, help="selection type")
 parser.add_argument('-r','--redirector',type=str,
@@ -24,10 +25,13 @@ parser.add_argument('-o','--outdir', type=str, default="./", help="Output direct
 #parser.add_argument('-s','--doSystematics', action='store_true',
 #                    help="include event weights for systematic uncertainties")
 parser.add_argument('-c','--corrections', nargs='+',
-                    choices=['jesup','jesdown','tesup','tesdown'], default=[],
-                    help="Jet/Tau energy correction")
+                    choices=['NA','JESUp','JESDown','TESUp','TESDown'],
+                    default=['NA'], help="Jet/Tau energy correction")
 parser.add_argument('--transfer_inputs', action='store_true',
                     help="Copy input files locally from EOS")
+parser.add_argument('-l', '--log', type=str, help="Log name")
+parser.add_argument('--dryrun', action='store_true',
+                    help="Print the command instead of actually executing it")
 
 args = parser.parse_args()
 
@@ -35,9 +39,13 @@ datasets = { 'data_e':'SingleElectron','data_mu':'SingleMuon','data_dieg':'Doubl
              'data_dimu':'DoubleMuon','data_mueg':'MuonEG'}
 samplelist_dict = getDatasetDict(args.datasetlist)
 
-mvantupleList = open('mvaNtupleList_'+args.version+'.log','w')
+logfile = 'mvaNtupleList_'+args.version+'.log'
+if args.log is not None:
+    logfile = args.log
 
-anatypes=['1l2tau','2lss1tau','3l1tau','2l2tau']
+mvantupleList = open(logfile,'w')
+
+anatypes=['1l2tau','2lss1tau','3l1tau','2l2tau','control_ttW','control_ttZ'] # WZ
 if args.analysis is not None:  # if analysis types are explicitly set
     anatypes = args.analysis
     
@@ -67,25 +75,42 @@ for sample in args.samples:
     ntuplename = args.redirector + ntuplename
     
     if args.transfer_inputs:
-        os.system('xrdcp -s '+ntuplename+' .')
+        if args.dryrun:
+            print 'xrdcp -s '+ntuplename+' .'
+        else:
+            os.system('xrdcp -s '+ntuplename+' .')
         ntuplename = filename
         
-    for anatype in anatypes:
-        print anatype
+    for atype in anatypes:
+        print atype
         
+        anatype = atype
         # selection types
-        seltypes = ['signal_'+anatype, 'control_fake_'+anatype]
-        if anatype=='2lss1tau':
-            seltypes.append('control_ttW')
-        if anatype=='3l1tau':
-            seltypes.append('control_ttZ')
-            #seltypes.append('control_WZ')  # TODO
-            
+        seltypes = ['signal_'+anatype, 'control_'+anatype]
+
         if 'data' in sample:  # collision data
             seltypes.append('application_fake_'+anatype)
             seltypes.append('control_fakeAR_'+anatype)
             if anatype=='2lss1tau':
                 seltypes.append("application_flip_2lss1tau")
+                seltypes.append("control_flipAR_2lss1tau")
+        
+        # special cases
+        if atype=='control_ttW':
+            anatype = '2lss'
+            seltypes = ['control_ttW']
+            if 'data' in sample:
+                seltypes += ['control_fakeAR_ttW','control_flipAR_ttW']
+        if atype=='control_ttZ':
+            anatype = '3l'
+            seltypes = ['control_ttZ']
+            if 'data' in sample:
+                seltypes.append('control_fakeAR_ttZ')
+        if atype=='control_WZ':
+            anatype = '3l'
+            seltypes = ['control_WZ']
+            if 'data' in sample:
+                seltypes.append('control_fakeAR_WZ')       
 
         if args.selection is not None: # if selection types are explicitly set
             seltypes = args.selection
@@ -93,32 +118,46 @@ for sample in args.samples:
         for seltype in seltypes:
             print seltype
 
-            os.system('mkdir -p '+args.outdir+args.version+'/')
+            if args.dryrun:
+                print 'mkdir -p '+args.outdir+args.version+'/'
+            else:
+                os.system('mkdir -p '+args.outdir+args.version+'/')
+                
             print "make output directory:", args.outdir+args.version+'/'
             
             outname = args.outdir+args.version+'/mvaNtuple_'+sample+'_'+seltype+'.root'
             argument = ' -i '+ntuplename+' -o '+outname+' --anatype '+anatype+' --seltype '+seltype
             
             if 'data' in sample:
-                os.system('makeMVANtuple'+argument+' --isdata true')
+                if args.dryrun:
+                    print 'makeMVANtuple'+argument+' --isdata true'
+                else:
+                    os.system('makeMVANtuple'+argument+' --isdata true')
                 mvantupleList.write(outname+'\n')
             else:
                 cross_section = samplelist_dict[sample]['xsection']
-                os.system('makeMVANtuple'+argument+' --isdata false -x '+cross_section)
-                mvantupleList.write(outname+'\n')
-                
+
                 for ec in args.corrections:
-                    ntuplename_ec = ntuplename.replace('_incl.root',
-                                                       '_incl_'+ec+'.root')
-                    outname_ec = outname.replace('.root','_'+ec+'.root')
-                    argument_ec = argument.replace(ntuplename, ntuplename_ec)
-                    argument_ec = argument.replace(outname, outname_ec)
-                    
-                    os.system('makeMVANtuple'+argument+' --isdata false -x '+cross_section)
-                    mvantupleList.write(outname_ec+'\n')
+                    if ec.lower() in ['jesup','jesdown','tesup','tesdown']:
+                        outname_ec = outname.replace('.root','_'+ec.lower()+'.root')
+                        argument_ec = argument.replace(outname, outname_ec)
+                        if args.dryrun:
+                            print 'makeMVANtuple'+argument_ec+' --isdata false -x '+cross_section+' --correction '+ec
+                        else:
+                            os.system('makeMVANtuple'+argument_ec+' --isdata false -x '+cross_section+' --correction '+ec)
+                        mvantupleList.write(outname_ec+'\n')
+                    else: # nominal
+                        if args.dryrun:
+                            print 'makeMVANtuple'+argument+' --isdata false -x '+cross_section
+                        else:
+                            os.system('makeMVANtuple'+argument+' --isdata false -x '+cross_section)
+                        mvantupleList.write(outname+'\n')
 
     stop = timer()
     print "Process", sample, "took", (stop-start)/60., "min"
 
     if args.transfer_inputs:
-        os.system('rm '+filename)
+        if args.dryrun:
+            print 'rm '+filename
+        else:
+            os.system('rm '+filename)

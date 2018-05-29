@@ -21,14 +21,7 @@ def getNtupleFileName(sample,selection,channel=None,correction=None,eosprefix=''
                 filename += selection.replace('signal','application_flip')+'.root'
             else:  # data_obs
                 filename += selection+'.root'
-        elif 'control_fake' in selection:
-            if 'fakes' in channel:
-                filename += selection.replace('control_fake','control_fakeAR')+'.root'
-            elif 'flips' in channel:
-                filename += selection.replace('control_fake','control_flipAR')+'.root'
-            else:  # data_obs
-                filename += selection+'.root'
-        else:  # control_ttZ, control_ttW, control_WZ
+        elif 'control' in selection:
             if 'fakes' in channel:
                 filename += selection.replace('control','control_fakeAR')+'.root'
             elif 'flips' in channel:
@@ -40,7 +33,7 @@ def getNtupleFileName(sample,selection,channel=None,correction=None,eosprefix=''
         filename += selection+'.root'
         
         if correction is not None:  # jesup, jesdown, tesup, tesdown
-            filename = filename.replace('.root','_'+correction+'.root')
+            filename = filename.replace('.root','_'+correction.lower()+'.root')
 
     filename = eosprefix + filename
             
@@ -237,8 +230,8 @@ def getHistSuffixandWeightNames_mc(sample, selection, addSyst, matchGenTau=False
 if __name__ == "__main__":
 
     Selections=['signal_1l2tau', 'signal_2lss1tau', 'signal_3l1tau', 'signal_2l2tau',
-                'control_fake_1l2tau', 'control_fake_2lss1tau', 'control_fake_3l1tau',
-                'control_fake_2l2tau', 'control_ttW', 'control_ttZ', 'control_WZ']
+                'control_1l2tau', 'control_2lss1tau', 'control_3l1tau',
+                'control_2l2tau', 'control_ttW', 'control_ttZ', 'control_WZ']
     Channels=['ttH','TTW','TTZ','EWK','Rares','fakes_data','flips_data','data_obs',
               'TT','ST','DY']
     
