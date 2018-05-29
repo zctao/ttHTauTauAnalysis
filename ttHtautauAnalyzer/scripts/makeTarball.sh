@@ -7,7 +7,6 @@ tar -zcvf $cmssw.tgz $cmssw \
 --exclude=external \
 --exclude=tmp \
 --exclude=doc \
---exclude=test \
 --exclude-vcs \
 > $log
 
