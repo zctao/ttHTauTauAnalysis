@@ -279,8 +279,10 @@ std::vector<miniJet> eventNtuple::buildJets(const TString& jec ,float minPt) con
 		else if (jec.EqualTo("jesdown", TString::ECaseCompare::kIgnoreCase))
 			shift = -1.;
 
-		float unc = jet_jesUnc->at(j);
-		jp4 *= 1.+shift*unc;
+		if (shift != 0.) {
+			float unc = jet_jesUnc->at(j);
+			jp4 *= 1.+shift*unc;
+		}
 		
 		if (jp4.Pt() < minPt) continue;
 		

@@ -26,6 +26,7 @@
 #include <algorithm>
 #include <assert.h>
 #include <string.h>
+#include <map>
 
 class SFHelper
 {
@@ -259,7 +260,8 @@ class SFHelper
 	void Delete_LeptonSF_Lut();
 	void Delete_triggerSF_Lut();
 
-
+	static const std::map<std::string,std::string> PUSampleNameMap_;
+	
 	//float Get_LeptonSF_loose(float,float,bool,bool);
 	//float Get_LeptonSF_tight_vs_loose(float,float,bool,bool);
 	//float Get_LeptonSF_loose(const miniLepton&);

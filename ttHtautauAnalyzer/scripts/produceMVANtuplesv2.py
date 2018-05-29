@@ -126,7 +126,7 @@ for sample in args.samples:
             print "make output directory:", args.outdir+args.version+'/'
             
             outname = args.outdir+args.version+'/mvaNtuple_'+sample+'_'+seltype+'.root'
-            argument = ' -i '+ntuplename+' -o '+outname+' --anatype '+anatype+' --seltype '+seltype
+            argument = ' -i '+ntuplename+' -o '+outname+' --anatype '+anatype+' --seltype '+seltype+' -s '+sample
             
             if 'data' in sample:
                 if args.dryrun:
