@@ -376,6 +376,7 @@ bool EventSelector::pass_1l2tau_inclusive_selection(
 		return false;
 	}
 
+	/*
 	/////////////////////////////////
 	// tau eta (to match trigger)
 	if (verbose_) {
@@ -392,6 +393,7 @@ bool EventSelector::pass_1l2tau_inclusive_selection(
 		if (verbose_) std::cout << "FAIL tau eta requirement" << std::endl;
 		return false;
 	}
+	*/
 	
 	/////////////////////////////////
 	// At least 3 selected jets
