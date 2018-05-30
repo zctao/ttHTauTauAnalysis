@@ -119,13 +119,17 @@ for sample in args.samples:
             print seltype
 
             if args.dryrun:
-                print 'mkdir -p '+args.outdir+args.version+'/'
+                print 'mkdir -p '+args.outdir
             else:
-                os.system('mkdir -p '+args.outdir+args.version+'/')
+                os.system('mkdir -p '+args.outdir)
                 
-            print "make output directory:", args.outdir+args.version+'/'
-            
-            outname = args.outdir+args.version+'/mvaNtuple_'+sample+'_'+seltype+'.root'
+            print "make output directory:", args.outdir
+
+            outdirectory = args.outdir
+            if args.outdir[-1]!='/':
+                outdirectory += '/'
+                
+            outname = outdirectory+'mvaNtuple_'+sample+'_'+seltype+'.root'
             argument = ' -i '+ntuplename+' -o '+outname+' --anatype '+anatype+' --seltype '+seltype+' -s '+sample
             
             if 'data' in sample:

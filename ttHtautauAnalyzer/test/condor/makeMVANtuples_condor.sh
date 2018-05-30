@@ -1,7 +1,9 @@
 #!/bin/bash
 
-version=$1
-logname=$2
+ntupleversion=$1
+outputversion=$2
+logname=$3
+shift
 shift
 shift
 samples=$@
@@ -30,17 +32,17 @@ if [[ $scramexit -ne 0 ]]; then
 fi
 
 echo "CMSSW: "$CMSSW_BASE
-echo Arguments passed to this script are: $version $samples
+echo Arguments passed to this script are: $ntupleversion $outputversion $logname $samples
 
 cd $workdir
-produceMVANtuplesv2.py $samples --datasetlist $cmssw/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/DatasetList_2017reMiniAODv2.csv --version $version -o ./ --transfer_inputs -c NA JESUp JESDown TESUp TESDown --log $logname
+produceMVANtuplesv2.py $samples --datasetlist $cmssw/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/DatasetList_2017reMiniAODv2.csv --version $ntupleversion -o $outputversion --transfer_inputs -c NA JESUp JESDown TESUp TESDown --log $logname
 
 echo "*******************************************"
 # copy output to eos
-# all output root files should be under $workdir/$version/
-#eos root://cmseos.fnal.gov mkdir -p /store/user/ztao/Condor/mvaNtuples/$version
-outdir=root://cmseos.fnal.gov//store/user/ztao/Condor/mvaNtuples/$version
-cd $workdir/$version/
+# all output root files should be under $workdir/$outputversion/
+#eos root://cmseos.fnal.gov mkdir -p /store/user/ztao/Condor/mvaNtuples/$outputversion
+outdir=root://cmseos.fnal.gov//store/user/ztao/Condor/mvaNtuples/$outputversion
+cd $workdir/$outputversion
 for file in *.root
 do
 	echo "xrdcp -f ${file} ${outdir}/${file}"
@@ -55,4 +57,4 @@ do
 done
 cd $workdir
 rm -rf $cmssw
-rm -rf $version/
+rm -rf $outputversion/
