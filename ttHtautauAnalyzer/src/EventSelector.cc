@@ -1496,7 +1496,7 @@ bool EventSelector::pass_2l2tau_inclusive_selection(
 
 	/////////////////////////////////
 	// Z mass veto: 91.2 +/- 10 GeV (SFOS)
-	if ( pass_Zmass_veto(fakeableLeps, true, false) ) {
+	if ( pass_Zmass_veto(looseLeps, true, false) ) {
 		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "Zmass veto");
 	}
 	else
@@ -1728,6 +1728,10 @@ bool EventSelector::pass_Zmass_veto(const std::vector<miniLepton>& leps,
 			if (invMass > (91.2 - 10.0) and invMass < (91.2 + 10.0)) {
 				if (verbose_) {
 					std::cout << "FAIL Z mass veto" << std::endl;
+				    std::cout << "pt eta phi mass : " << it->pt() << " " << it->eta()
+							  << " " << it->phi() << " " << it->mass() << std::endl;
+					std::cout << "pt eta phi mass : " << it2->pt() << " " << it2->eta()
+							  << " " << it2->phi() << " " << it2->mass() << std::endl;
 					std::cout << "lepton pair invariant mass : " << invMass
 							  << std::endl;
 				}
