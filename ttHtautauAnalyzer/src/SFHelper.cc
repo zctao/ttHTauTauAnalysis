@@ -150,7 +150,7 @@ const std::map<std::string, std::string> SFHelper::PUSampleNameMap_ = {
 	{"tHq","THQ"},
 	{"tHW","THW"},
 	{"TTGJets","TTGJets"},
-	//{"ttHJetTobb","ttHJetTobb_M125_amcatnlo"},
+	{"ttHJetTobb","ttHJetTobb_M125_amcatnlo"},
 	{"ttHJetToNonbb","ttHJetToNonbb_M125_amcatnlo"},
 	{"ttHToNonbb","ttHToNonbb_M125_powheg"},
 	{"TTToDiLep","TTTo2L2Nu"},
@@ -170,11 +170,12 @@ const std::map<std::string, std::string> SFHelper::PUSampleNameMap_ = {
 	{"WJets","WJetsToLNu"},
 	{"WpWpJJ","WpWpJJ_EWK_QCD"},
 	{"WW","WWTo2L2Nu"},
-	{"WWds","WWTo2L2Nu_DoubleScattering"}, // FIXME
+	//{"WWds","WWTo2L2Nu_DoubleScattering"}, // FIXME
 	{"WWTo2L2Nuds","WWTo2L2Nu_DoubleScattering"},
 	{"WWW","WWW_4F"},
 	{"WWZ","WWZ_4F"},
 	{"WZ","WZTo3LNu"}, // FIXME
+	{"WZTo3LNu","WZTo3LNu"},
 	{"WZZ","WZZ"},
 	{"ZZ","ZZTo4L"},
 	{"ZZ_ext","ZZTo4L_ext1"},
@@ -238,6 +239,14 @@ void SFHelper::Set_up_ChargeMisID_Lut()
 void SFHelper::Set_up_LeptonSF_Lut()
 {
 	//// loose vs reco
+	/// muons
+	file_recoToLoose_leptonSF_mu = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/lepton_sf/scaleFactors.root").c_str(),"read");
+	
+	h_recoToLoose_leptonSF_mu = (TH2D*)(file_recoToLoose_leptonSF_mu->Get("NUM_ttHLoo_DEN_LooseID"));
+	
+	///////////////////////////////////////////////////
+	// out-dated
+	
 	/// for muons
 	// loose vs reco
 	file_recoToLoose_leptonSF_mu1 = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/lepton_sf/TnP_NUM_LooseID_DENOM_generalTracks_VAR_map_pt_eta.root").c_str(),"read");
@@ -259,7 +268,8 @@ void SFHelper::Set_up_LeptonSF_Lut()
 	h_recoToLoose_leptonSF_el2 = (TH2F*)(file_recoToLoose_leptonSF_el->Get("MVAVLooseElectronToMini4"));
 	h_recoToLoose_leptonSF_el3 = (TH2F*)(file_recoToLoose_leptonSF_el->Get("MVAVLooseElectronToConvVetoIHit1"));
 	h_recoToLoose_leptonSF_gsf = (TH2F*)(file_recoToLoose_leptonSF_gsf->Get("EGamma_SF2D"));
-
+	///////////////////////////////////////////////////
+	
 	//// tight vs loose
 	if (_analysis == Analyze_2lss1tau or _analysis == Analyze_2lss 
 		or _analysis == Analyze_2l2tau // ?
@@ -380,6 +390,10 @@ void SFHelper::Delete_LeptonSF_Lut()
 	delete file_recoToLoose_leptonSF_el;
 	delete file_recoToLoose_leptonSF_gsf;
 
+	file_recoToLoose_leptonSF_mu->Close();
+	
+	delete file_recoToLoose_leptonSF_mu;
+	
 	if (_analysis == Analyze_2lss1tau) {
 		file_looseToTight_leptonSF_mu_2lss->Close();
 		file_looseToTight_leptonSF_el_2lss->Close();
@@ -801,13 +815,17 @@ float SFHelper::Get_LeptonSF_loose(float lepPt, float lepEta,
 								   bool isEle, bool isMu)
 {
 	float sf =1.;
-
+	if (isMu) {
+		sf *= read2DHist(h_recoToLoose_leptonSF_mu, lepPt, fabs(lepEta));
+	}
 	////////////////////////
-	// !!UPDATE NEEDED!!
-	// for now:
+	// UPDATE NEEDED for electron
+	////////////////////////
+	
 	return sf;
-	////////////////////////
-
+	
+	/*
+	// out-dated
 	if (isMu) {
 		sf *= read2DHist(h_recoToLoose_leptonSF_mu1, lepPt, std::abs(lepEta));		
 		sf *= read2DHist(h_recoToLoose_leptonSF_mu2, lepPt, std::abs(lepEta));
@@ -823,6 +841,7 @@ float SFHelper::Get_LeptonSF_loose(float lepPt, float lepEta,
 	}
 
 	return sf;
+	*/
 }
 
 //#if !defined(__ACLIC__) && !defined(__ROOTCLING__)

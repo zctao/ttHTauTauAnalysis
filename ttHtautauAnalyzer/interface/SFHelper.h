@@ -192,6 +192,9 @@ class SFHelper
 	TH2F *h_looseToTight_leptonSF_mu_3l;
 	TH2F *h_looseToTight_leptonSF_el_3l;
 
+	TFile* file_recoToLoose_leptonSF_mu;
+	TH2D *h_recoToLoose_leptonSF_mu; 
+
 	// Electron Charge MisID
 	TFile *file_eleMisCharge;
 	TH2D *h_chargeMisId;
