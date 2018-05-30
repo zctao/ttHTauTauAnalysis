@@ -12,7 +12,14 @@ void mvaNtuple::setup_branches(TTree* tree)
 	tree->Branch("event_weight", &event_weight);
 	tree->Branch("xsection_weight", &xsection_weight);
 	tree->Branch("xsection_weight_gen", &xsection_weight);
-		
+
+	tree->Branch("pu_weight", &pu_weight);
+	tree->Branch("mc_weight", &mc_weight);
+	tree->Branch("btag_sf", &btag_sf);
+	tree->Branch("lepid_sf", &lepid_sf);
+	tree->Branch("tauid_sf", &tauid_sf);
+	tree->Branch("hlt_sf", &hlt_sf);
+	
 	tree->Branch("isGenMatchedTau", &isGenMatchedTau);
 	tree->Branch("HiggsDecayType", &HiggsDecayType);
 	
@@ -83,7 +90,8 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("lep_E", &lep0_E);
 		}
 		else if (anatype_ == Analyze_2lss1tau or anatype_ == Analyze_2l2tau or
-				 anatype_ == Analyze_3l1tau) {
+				 anatype_ == Analyze_3l1tau or anatype_ == Analyze_2lss or
+				 anatype_ == Analyze_3l) {
 			tree->Branch("lep1_conePt", &lep0_conept);
 			tree->Branch("lep1_eta", &lep0_eta);
 			tree->Branch("lep1_phi", &lep0_phi);
@@ -93,7 +101,7 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("lep2_phi", &lep1_phi);
 			tree->Branch("lep2_E", &lep1_E);
 				
-			if (anatype_ == Analyze_3l1tau) {
+			if (anatype_ == Analyze_3l1tau or anatype_ == Analyze_3l) {
 				tree->Branch("lep3_conePt", &lep2_conept);
 				tree->Branch("lep3_eta", &lep2_eta);
 				tree->Branch("lep3_phi", &lep2_phi);
@@ -102,6 +110,8 @@ void mvaNtuple::setup_branches(TTree* tree)
 
 			tree->Branch("mll", &mll);
 		}
+		else
+			std::cerr << "WARNING! Unknown analysis type" << std::endl;
 		
 		// taus
 		if (anatype_ == Analyze_1l2tau or anatype_ == Analyze_2l2tau) {
@@ -119,9 +129,7 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("tau_eta", &tau0_eta);
 			tree->Branch("tau_phi", &tau0_phi);
 			tree->Branch("tau_E", &tau0_E);
-		}
-		else
-			std::cerr << "WARNING! Unknown analysis type" << std::endl;
+		}	
 	}
 	
 	if (anatype_ == Analyze_2lss1tau) {
@@ -936,10 +944,13 @@ void mvaNtuple::compute_HTT_input_variables(const miniJet& bjet,
 void mvaNtuple::compute_HTT(const std::vector<miniJet>& jets)
 {
 	assert(doHTT_);
-	assert(jets.size()>=3);
 	
 	HTT = -9999.;
 	HadTop_pt = -9999.;
+
+	//assert(jets.size()>=3);
+	if (jets.size()<3)
+		return;
 	
 	for (auto bjet = jets.begin(); bjet != jets.end(); ++bjet) {
 		for (auto wjet1 = jets.begin(); wjet1 != jets.end(); ++wjet1) {
@@ -999,19 +1010,18 @@ void mvaNtuple::evaluate_BDTs()
 			 mindr_lep0_jet, mindr_lep1_jet, mindr_tau0_jet, nJet, met, tau0_pt};
 		mva_2lss1tau_BDT3 = mva_eval_->evaluate_bdt_2lss1tau_BDT3(vars3_2l1tau);
 		
-		float vars4_2l1tau[19] =
+		float vars4_2l1tau[18] =
 			{avg_dr_jet, dr_lep0_tau, dr_lep1_tau, dr_leps, lep1_conept, mT_met_lep0,
 			 mT_met_lep1, mvis_lep1_tau, max_lep_eta, mbb, mindr_lep0_jet,
-			 mindr_lep1_jet, mindr_tau0_jet, nJet, met, tau0_pt, HTT, Hj_tagger,
-			 HadTop_pt};
+			 mindr_lep1_jet, mindr_tau0_jet, nJet, met, tau0_pt, HTT, HadTop_pt};
 		mva_2lss1tau_BDT4 = mva_eval_->evaluate_bdt_2lss1tau_BDT4(vars4_2l1tau);
 
-		float vars5_2l1tau[20] =
-			{avg_dr_jet, dr_lep0_tau, dr_lep1_tau, dr_leps, lep1_conept, mT_met_lep0,
-			 mT_met_lep1, mvis_lep1_tau, max_lep_eta, mbb, mindr_lep0_jet,
-			 mindr_lep1_jet, mindr_tau0_jet, nJet, met, tau0_pt, mem_LR, HTT,
-			 Hj_tagger, HadTop_pt};
-		mva_2lss1tau_BDT5 = mva_eval_->evaluate_bdt_2lss1tau_BDT5(vars5_2l1tau);
+		//float vars5_2l1tau[20] =
+		//	{avg_dr_jet, dr_lep0_tau, dr_lep1_tau, dr_leps, lep1_conept, mT_met_lep0,
+		//	 mT_met_lep1, mvis_lep1_tau, max_lep_eta, mbb, mindr_lep0_jet,
+		//	 mindr_lep1_jet, mindr_tau0_jet, nJet, met, tau0_pt, mem_LR, HTT,
+		//	 Hj_tagger, HadTop_pt};
+		//mva_2lss1tau_BDT5 = mva_eval_->evaluate_bdt_2lss1tau_BDT5(vars5_2l1tau);
 
 		float vars6_2l1tau[2] = {mva_2lss1tau_BDT2, mva_2lss1tau_BDT1};
 		mva_2lss1tau_BDT6 = mva_eval_->evaluate_bdt_2lss1tau_BDT6(vars6_2l1tau);

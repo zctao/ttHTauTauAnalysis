@@ -63,7 +63,7 @@ class MVAEvaluator
 	float inputVars_2lss1tau_BDT1_[15];
 	float inputVars_2lss1tau_BDT2_[16];
 	float inputVars_2lss1tau_BDT3_[18];
-	float inputVars_2lss1tau_BDT4_[19];
+	float inputVars_2lss1tau_BDT4_[18];
 	float inputVars_2lss1tau_BDT5_[20];
 	float inputVars_2lss1tau_BDT6_[2];
 	float inputVars_3l1tau_BDT1_[13];

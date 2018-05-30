@@ -218,8 +218,8 @@ int main(int argc, char** argv)
 										nbtags_loose, nbtags_medium);
 
 		// FIXME
-		if (doHTT and not CR) mvantuple.compute_HTT(jets);
-		if (evaluateMVA and not CR) mvantuple.evaluate_BDTs();
+		//if (doHTT and not CR) mvantuple.compute_HTT(jets);
+		//if (evaluateMVA and not CR) mvantuple.evaluate_BDTs();
 		
 		//////////////////////////////////////
 		/// Event ID
@@ -388,7 +388,7 @@ void Set_SR_weights(Analysis_types anatype, SFHelper& sfhelper,
 	float hlt_sf = sfhelper.Get_HLTSF(leptons, taus, hlt1LTriggered, hltXTriggered);
 
 	// lepton ID scale factor
-	// NEED UPDATE: loose vs reco
+	// NEED UPDATE: electron loose vs reco
 	float lepid_sf = sfhelper.Get_LeptonIDSF_weight(leptons);
 
 	// tau ID scale factor
@@ -402,6 +402,13 @@ void Set_SR_weights(Analysis_types anatype, SFHelper& sfhelper,
 	mvantuple.event_weight =
 		pu_weight * mc_weight * btag_sf * lepid_sf * tauid_sf * hlt_sf;
 
+	mvantuple.pu_weight = pu_weight;
+	mvantuple.mc_weight = mc_weight;
+	mvantuple.btag_sf = btag_sf;
+	mvantuple.lepid_sf = lepid_sf;
+	mvantuple.tauid_sf = tauid_sf;
+	mvantuple.hlt_sf = hlt_sf;
+	
 	////////////////////
 	if (syst) { // systematic uncertainties
 		// theoretical uncertainties
