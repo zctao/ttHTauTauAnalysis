@@ -50,6 +50,8 @@ class MVAEvaluator
 	float evaluate_bdt_2l2tau_BDT3(float*);
 	float evaluate_bdt_2l2tau_BDT4(float*);
 
+	float transform_output(float);
+
  protected:
 
 	bool verbose_;

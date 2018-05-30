@@ -49,7 +49,8 @@ float MVAEvaluator::evaluate_bdt_HTT(float Vars[7])
 	for (size_t i=0; i<7; ++i)
 		inputVars_HTT_[i] = Vars[i];
 
-	return reader_HTT_ -> EvaluateMVA("BDT");
+	float mva = reader_HTT_ -> EvaluateMVA("BDT");
+	return transform_output(mva);
 }
 
 void MVAEvaluator::setup_tmva_reader_HjTagger()
@@ -108,7 +109,8 @@ float MVAEvaluator::evaluate_bdt_1l2tau_BDT1(float Vars[13])
 	for (size_t i=0; i<13; ++i)
 		inputVars_1l2tau_BDT1_[i] = Vars[i];
 
-	return reader_1l2tau_BDT1_ -> EvaluateMVA("BDT");
+	float mva = reader_1l2tau_BDT1_ -> EvaluateMVA("BDT");
+	return transform_output(mva);
 }
 
 void MVAEvaluator::setup_tmva_reader_1l2tau_BDT2()
@@ -149,7 +151,8 @@ float MVAEvaluator::evaluate_bdt_1l2tau_BDT2(float Vars[17])
 	for (size_t i=0; i<17; ++i)
 		inputVars_1l2tau_BDT2_[i] = Vars[i];
 
-	return reader_1l2tau_BDT2_ -> EvaluateMVA("BDT");
+	float mva = reader_1l2tau_BDT2_ -> EvaluateMVA("BDT");
+	return transform_output(mva);
 }
 
 void MVAEvaluator::setup_tmva_reader_2lss1tau_BDT1()
@@ -188,7 +191,8 @@ float MVAEvaluator::evaluate_bdt_2lss1tau_BDT1(float Vars[15])
 	for (size_t i=0; i<15; ++i)
 		inputVars_2lss1tau_BDT1_[i] = Vars[i];
 
-	return reader_2lss1tau_BDT1_ -> EvaluateMVA("BDT");
+	float mva = reader_2lss1tau_BDT1_ -> EvaluateMVA("BDT");
+	return transform_output(mva);
 }
 
 void MVAEvaluator::setup_tmva_reader_2lss1tau_BDT2()
@@ -228,7 +232,8 @@ float MVAEvaluator::evaluate_bdt_2lss1tau_BDT2(float Vars[16])
 	for (size_t i=0; i<16; ++i)
 		inputVars_2lss1tau_BDT2_[i] = Vars[i];
 
-	return reader_2lss1tau_BDT2_ -> EvaluateMVA("BDT");
+	float mva = reader_2lss1tau_BDT2_ -> EvaluateMVA("BDT");
+	return transform_output(mva);
 }
 
 void MVAEvaluator::setup_tmva_reader_2lss1tau_BDT3()
@@ -270,7 +275,8 @@ float MVAEvaluator::evaluate_bdt_2lss1tau_BDT3(float Vars[18])
 	for (size_t i=0; i<18; ++i)
 		inputVars_2lss1tau_BDT3_[i] = Vars[i];
 
-	return reader_2lss1tau_BDT3_ -> EvaluateMVA("BDT");
+	float mva = reader_2lss1tau_BDT3_ -> EvaluateMVA("BDT");
+	return transform_output(mva);
 }
 
 void MVAEvaluator::setup_tmva_reader_2lss1tau_BDT4()
@@ -312,7 +318,8 @@ float MVAEvaluator::evaluate_bdt_2lss1tau_BDT4(float Vars[18])
 	for (size_t i=0; i<18; ++i)
 		inputVars_2lss1tau_BDT4_[i] = Vars[i];
 
-	return reader_2lss1tau_BDT4_ -> EvaluateMVA("BDT");
+	float mva = reader_2lss1tau_BDT4_ -> EvaluateMVA("BDT");
+	return transform_output(mva);
 }
 
 void MVAEvaluator::setup_tmva_reader_2lss1tau_BDT5()
@@ -356,7 +363,8 @@ float MVAEvaluator::evaluate_bdt_2lss1tau_BDT5(float Vars[20])
 	for (size_t i=0; i<20; ++i)
 		inputVars_2lss1tau_BDT5_[i] = Vars[i];
 
-	return reader_2lss1tau_BDT5_ -> EvaluateMVA("BDT");
+	float mva = reader_2lss1tau_BDT5_ -> EvaluateMVA("BDT");
+	return transform_output(mva);
 }
 
 void MVAEvaluator::setup_tmva_reader_2lss1tau_BDT6()
@@ -382,7 +390,8 @@ float MVAEvaluator::evaluate_bdt_2lss1tau_BDT6(float Vars[2])
 	inputVars_2lss1tau_BDT6_[0] = Vars[0];
 	inputVars_2lss1tau_BDT6_[1] = Vars[1];
 
-	return reader_2lss1tau_BDT6_ -> EvaluateMVA("BDT");
+	float mva = reader_2lss1tau_BDT6_ -> EvaluateMVA("BDT");
+	return transform_output(mva);
 }
 
 void MVAEvaluator::setup_tmva_reader_3l1tau_BDT1()
@@ -419,7 +428,8 @@ float MVAEvaluator::evaluate_bdt_3l1tau_BDT1(float Vars[13])
 	for (size_t i=0; i<13; ++i)
 		inputVars_3l1tau_BDT1_[i] = Vars[i];
 
-	return reader_3l1tau_BDT1_ -> EvaluateMVA("BDT");
+	float mva = reader_3l1tau_BDT1_ -> EvaluateMVA("BDT");
+	return transform_output(mva);
 }
 
 void MVAEvaluator::setup_tmva_reader_3l1tau_BDT2()
@@ -458,7 +468,8 @@ float MVAEvaluator::evaluate_bdt_3l1tau_BDT2(float Vars[15])
 	for (size_t i=0; i<15; ++i)
 		inputVars_3l1tau_BDT2_[i] = Vars[i];
 
-	return reader_3l1tau_BDT2_ -> EvaluateMVA("BDT");
+	float mva = reader_3l1tau_BDT2_ -> EvaluateMVA("BDT");
+	return transform_output(mva);
 }
 
 void MVAEvaluator::setup_tmva_reader_3l1tau_BDT3()
@@ -494,7 +505,8 @@ float MVAEvaluator::evaluate_bdt_3l1tau_BDT3(float Vars[12])
 	for (size_t i=0; i<12; ++i)
 		inputVars_3l1tau_BDT3_[i] = Vars[i];
 
-	return reader_3l1tau_BDT3_ -> EvaluateMVA("BDT");
+	float mva = reader_3l1tau_BDT3_ -> EvaluateMVA("BDT");
+	return transform_output(mva);
 }
 
 void MVAEvaluator::setup_tmva_reader_3l1tau_BDT4()
@@ -520,7 +532,8 @@ float MVAEvaluator::evaluate_bdt_3l1tau_BDT4(float Vars[2])
 	inputVars_3l1tau_BDT4_[0] = Vars[0];
 	inputVars_3l1tau_BDT4_[1] = Vars[1];
 
-	return reader_3l1tau_BDT4_ -> EvaluateMVA("BDT");
+	float mva = reader_3l1tau_BDT4_ -> EvaluateMVA("BDT");
+	return transform_output(mva);
 }
 
 void MVAEvaluator::setup_tmva_reader_2l2tau_BDT1()
@@ -558,7 +571,8 @@ float MVAEvaluator::evaluate_bdt_2l2tau_BDT1(float Vars[14])
 	for (size_t i=0; i<14; ++i)
 		inputVars_2l2tau_BDT1_[i] = Vars[i];
 
-	return reader_2l2tau_BDT1_ -> EvaluateMVA("BDT");
+	float mva = reader_2l2tau_BDT1_ -> EvaluateMVA("BDT");
+	return transform_output(mva);
 }
 
 void MVAEvaluator::setup_tmva_reader_2l2tau_BDT2()
@@ -593,7 +607,8 @@ float MVAEvaluator::evaluate_bdt_2l2tau_BDT2(float Vars[11])
 	for (size_t i=0; i<11; ++i)
 		inputVars_2l2tau_BDT2_[i] = Vars[i];
 
-	return reader_2l2tau_BDT2_ -> EvaluateMVA("BDT");
+	float mva = reader_2l2tau_BDT2_ -> EvaluateMVA("BDT");
+	return transform_output(mva);
 }
 
 void MVAEvaluator::setup_tmva_reader_2l2tau_BDT3()
@@ -630,7 +645,8 @@ float MVAEvaluator::evaluate_bdt_2l2tau_BDT3(float Vars[13])
 	for (size_t i=0; i<13; ++i)
 		inputVars_2l2tau_BDT3_[i] = Vars[i];
 
-	return reader_2l2tau_BDT3_ -> EvaluateMVA("BDT");
+	float mva = reader_2l2tau_BDT3_ -> EvaluateMVA("BDT");
+	return transform_output(mva);
 }
 
 void MVAEvaluator::setup_tmva_reader_2l2tau_BDT4()
@@ -656,5 +672,12 @@ float MVAEvaluator::evaluate_bdt_2l2tau_BDT4(float Vars[2])
 	inputVars_2l2tau_BDT4_[0] = Vars[0];
 	inputVars_2l2tau_BDT4_[1] = Vars[1];
 
-	return reader_2l2tau_BDT4_ -> EvaluateMVA("BDT");
+	float mva = reader_2l2tau_BDT4_ -> EvaluateMVA("BDT");
+	return transform_output(mva);
+}
+
+float MVAEvaluator::transform_output(float mvaoutput)
+{
+	float newoutput = 1. / (1. + std::sqrt((1. - mvaoutput) / (1. + mvaoutput)));
+	return newoutput;
 }
