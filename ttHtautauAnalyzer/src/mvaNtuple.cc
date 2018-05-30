@@ -80,6 +80,8 @@ void mvaNtuple::setup_branches(TTree* tree)
 	tree->Branch("ptmiss", &met);
 	tree->Branch("metLD", &metLD);
 
+	tree->Branch("mvaOutput", &mva_output);
+	
 	// set branch for kinematic variables
 	if (version_=="2017") {
 		// electrons and muons
@@ -990,6 +992,8 @@ void mvaNtuple::evaluate_BDTs()
 			 dr_lep_tau_lead, costS_tau, nbtags_loose, tau0_pt, tau1_pt, HTT,
 			 HadTop_pt};
 		mva_1l2tau_BDT2 = mva_eval_->evaluate_bdt_1l2tau_BDT2(vars2_1l2tau);
+
+		mva_output = mva_1l2tau_BDT2;
 	}
 	else if (anatype_ == Analyze_2lss1tau) {
 		float vars1_2l1tau[15] =
@@ -1025,6 +1029,8 @@ void mvaNtuple::evaluate_BDTs()
 
 		float vars6_2l1tau[2] = {mva_2lss1tau_BDT2, mva_2lss1tau_BDT1};
 		mva_2lss1tau_BDT6 = mva_eval_->evaluate_bdt_2lss1tau_BDT6(vars6_2l1tau);
+
+		mva_output = mva_2lss1tau_BDT4;
     }
 	else if (anatype_ == Analyze_3l1tau) {
 		float vars1_3l1tau[13] =
@@ -1046,6 +1052,8 @@ void mvaNtuple::evaluate_BDTs()
 
 		float vars4_3l1tau[2] = {mva_3l1tau_BDT2, mva_3l1tau_BDT1};
 		mva_3l1tau_BDT4 = mva_eval_->evaluate_bdt_3l1tau_BDT4(vars4_3l1tau);
+
+		mva_output = mva_3l1tau_BDT3;
 	}
 	else if (anatype_ == Analyze_2l2tau) {
 		float vars1_2l2tau[14] =
@@ -1067,6 +1075,8 @@ void mvaNtuple::evaluate_BDTs()
 
 		float vars4_2l2tau[2] = {mva_2l2tau_BDT2, mva_2l2tau_BDT1};
 		mva_2l2tau_BDT4 = mva_eval_->evaluate_bdt_2l2tau_BDT4(vars4_2l2tau);
+
+		mva_output = mva_2l2tau_BDT3;
 	}
 }
 

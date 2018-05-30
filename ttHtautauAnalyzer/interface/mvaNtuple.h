@@ -313,6 +313,8 @@ class mvaNtuple
 	//float mva_ttbar;
 	//float mva_ttV;
 
+	float mva_output = -9999.;
+	
 	// out-dated
 	float mva_1l2tau_BDT1 = -9999.;
 	float mva_1l2tau_BDT2 = -9999.;
