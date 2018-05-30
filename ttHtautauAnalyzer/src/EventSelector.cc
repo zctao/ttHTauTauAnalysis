@@ -960,6 +960,21 @@ bool EventSelector::pass_ttW_CR_selection(Selection_types seltype,
 		if (verbose_) std::cout << "FAIL generic 2l selection" << std::endl;
 		return false;
 	}
+
+	/////////////////////////////////
+	// raise pT cut to 15 GeV for sub-leading lepton
+	// for all 2lss categories
+	assert(fakeableLeps.size()>1);
+	if (verbose_) {
+		std::cout << "lep2 pdgid conept pt : " << fakeableLeps[1].pdgId() << " "
+				  << fakeableLeps[1].conept() << " " << fakeableLeps[1].pt()
+				  << std::endl;;
+	}
+	bool passTightLepPt = fakeableLeps[1].conept() >= 15.;
+	if (not passTightLepPt) {
+		if (verbose_) std::cout << "FAIL lepton pT cut" << std::endl;
+		return false;
+	}
 	
 	/////////////////////////////////
 	// No tau passing "byLooseIsolationMVArun2v1DBdR03oldDMwLT"
