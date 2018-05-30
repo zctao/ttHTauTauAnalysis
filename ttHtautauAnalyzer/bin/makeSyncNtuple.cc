@@ -271,7 +271,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 
 	//////////////////////////////////////////////
 	// Set up SFHelper
-	SFHelper sf_helper(anatype, seltype, "ttHJetToNonbb_M125_amcatnlo", false, debug);
+	SFHelper sf_helper(anatype, seltype, "ttHJetToNonbb", false, debug);
 
 	//////////////////////////////////////////////
 	// trigger Helper
