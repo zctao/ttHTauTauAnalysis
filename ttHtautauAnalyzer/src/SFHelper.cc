@@ -200,7 +200,7 @@ void SFHelper::Set_up_PUWeights(const std::string& samplename)
 void SFHelper::Set_up_FakeRate_Lut(TString tauIDWP/*"dR03mvaTight"*/)
 {
 	// electrons and muons
-	file_fr_lep = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/ttH_fr-v1_0_1.root").c_str(),"read");
+	file_fr_lep = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/FR_lep_ttH_mva090_2017_CERN_2018May29.root").c_str(),"read");
 	assert(file_fr_lep->IsOpen());
 	
 	//h_fakerate_el = (TH2F*) file_fr_lep->Get("FR_mva090_el_data_comb");
