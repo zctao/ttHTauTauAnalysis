@@ -118,6 +118,8 @@ def getHistogramFromMCNtuple(variable, sample, selection, luminosity, eosPrefix=
     SumGenWeight = tree.GetUserInfo().FindObject('SumGenWeight').GetVal()
     xsection = tree.GetUserInfo().FindObject('xsection').GetVal()
     # or get cross section directly from CSV config
+    if xsection < 0.:
+        print "WARNING: cross section for sample", sample, " is not valid!"
 
     # get histogram
     label = (sample+sample_suffix).lower()
@@ -232,7 +234,7 @@ if __name__ == "__main__":
     Selections=['signal_1l2tau', 'signal_2lss1tau', 'signal_3l1tau', 'signal_2l2tau',
                 'control_1l2tau', 'control_2lss1tau', 'control_3l1tau',
                 'control_2l2tau', 'control_ttW', 'control_ttZ', 'control_WZ']
-    Channels=['ttH','TTW','TTZ','EWK','Rares','fakes_data','flips_data','data_obs',
+    Channels=['ttH','TTW','TTZ','EWK','Rares','tH','Conversion','ggH','VH','fakes_data','flips_data','data_obs',
               'TT','ST','DY']
     
     parser = argparse.ArgumentParser()

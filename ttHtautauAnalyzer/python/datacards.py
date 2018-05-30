@@ -16,9 +16,13 @@ SamplesInChannel = {'ttH':['ttH'],
 datasamples = ['data_e','data_mu','data_dieg','data_dimu','data_mueg']
 SamplesInChannel2017 = {'ttH':['ttHJetToNonbb'],
                         'TTW':['TTW_psw','TTWW'],
-                        'TTZ':['TTZ','TTGJets'],
-                        'EWK':['WZ','ZZ','WW'],
-                        'Rares':['WWW','WWZ','WZZ','ZZZ','tZq','TTTT'], # WpWp
+                        'TTZ':['TTZ'],
+                        'EWK':['WZTo3LNu','ZZ','WW'],
+                        'Rares':['WWW','WWZ','WZZ','ZZZ','tZq','TTTT','WpWpJJ', 'WWTo2L2Nuds'],
+                        'tH':['tHq','tHW'],
+                        'Conversion':['TTGJets'],
+                        'ggH':['ggHZZ4l'],
+                        'VH':['VHToNonbb'],
                         'fakes_data':datasamples,
                         'flips_data':datasamples,
                         'data_obs':datasamples} 
