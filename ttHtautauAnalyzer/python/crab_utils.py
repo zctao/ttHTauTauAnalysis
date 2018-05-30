@@ -34,6 +34,7 @@ def getSampleFullname(sample, datalist):
         sample = sample.replace('fakes_','')
         sample = sample.replace('flips_','')
         sample = sample.replace('obs_','')
+        sample = sample.replace('_missingLumis','')
     sample = sample.replace('_jesup','')
     sample = sample.replace('_jesdown','')
     sample = sample.replace('_tesup','')
