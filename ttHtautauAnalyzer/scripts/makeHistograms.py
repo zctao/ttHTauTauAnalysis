@@ -138,7 +138,7 @@ def getHistogramFromMCNtuple(variable, sample, selection, luminosity, xmin, xmax
         print "WARNING: cross section for sample", sample, " is not valid!"
 
     # get histogram
-    label = (sample+sample_suffix).lower()
+    label = sample.lower()+sample_suffix
     hist = getHistogramfromTrees([tree], label, variable, xmin, xmax, nbins,
                                  weight_name=evtweight, transform=transform)
 
@@ -233,8 +233,8 @@ def getHistSuffixandWeightNames_mc(sample, selection, addSyst, matchGenTau=False
     if not addSyst:
         return hnamelist, wnamelist
 
-    #systlist = ['JESUp','JESDown','TESUp','TESDown']
-    systlist = []
+    systlist = ['JESUp','JESDown','TESUp','TESDown']
+    #systlist = []
 
     for btsys in dc.BTagSysts:
         systlist.append('btag_'+btsys)
@@ -320,7 +320,7 @@ if __name__ == "__main__":
             
         if 'data' in channel:  # Collision data
 
-            hnames, weightnames = getHistSuffixandWeightNames_data(channel, args.selection, args.systematics)
+            hnames, weightnames = getHistSuffixandWeightNames_data(channel, args.selection, args.systematics, syst_label=args.sys_coname)
             for hsuffix, wname in zip(hnames, weightnames):
                 
                 h = getHistogramFromDataNtuples(var, channel, args.selection,
@@ -356,7 +356,7 @@ if __name__ == "__main__":
 
                 histograms_sample = []
                     
-                hnames, weightnames = getHistSuffixandWeightNames_mc(sample, args.selection, args.systematics, args.genTauSplit, args.hDecaySplit)
+                hnames, weightnames = getHistSuffixandWeightNames_mc(sample, args.selection, args.systematics, args.genTauSplit, args.hDecaySplit, syst_label=args.sys_coname)
                 for hsuffix, wname in zip(hnames, weightnames):
                     #print hsuffix, wname
                     
@@ -396,14 +396,16 @@ if __name__ == "__main__":
                     dc.printYields('ttH_htt', histograms_mcch, var, args.genTauSplit)
                     dc.printYields('ttH_hww', histograms_mcch, var, args.genTauSplit)
                     dc.printYields('ttH_hzz', histograms_mcch, var, args.genTauSplit)
-                        
+
+                print "---------------------------------------"
                 dc.printYields(channel, histograms_mcch, var, args.genTauSplit)
 
     #if args.verbose>=2:
     #    print "Done making histograms for variable", var
 
     # write datacards to file
-    print args.outname
+    print "======================================="
+    print
     outfile = TFile(args.outname, 'recreate')
 
     for histogram in histograms_var:
@@ -415,3 +417,4 @@ if __name__ == "__main__":
         histogram.Write()
 
     print "Output file:", args.outname
+    print
