@@ -13,7 +13,9 @@ parser.add_argument('--analysis', nargs='+',
                     choices=['1l2tau','2lss1tau','3l1tau','2l2tau','control_ttW',
                              'control_ttZ'],
                     help="analysis type")
-parser.add_argument('--selection', nargs='+', type=str, help="selection type")
+parser.add_argument('--jobtypes', nargs='+', choices=['datacard','control'],
+                    default=['datacard','control'],
+                    help="For making datacards or for control regions")
 parser.add_argument('-r','--redirector',type=str,
                     default='root://cmsxrootd.fnal.gov/',
                     help="redirector for xrootd")
@@ -112,10 +114,18 @@ for sample in args.samples:
             if 'data' in sample:
                 seltypes.append('control_fakeAR_WZ')       
 
-        if args.selection is not None: # if selection types are explicitly set
-            seltypes = args.selection
+        #if args.selection is not None: # if selection types are explicitly set
+        #    seltypes = args.selection
 
         for seltype in seltypes:
+
+            if 'control_' in seltype:
+                if 'control' not in args.jobtypes:
+                    continue
+            else:
+                if 'datacard' not in args.jobtypes:
+                    continue
+            
             print seltype
 
             if args.dryrun:

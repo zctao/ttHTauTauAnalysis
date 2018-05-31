@@ -35,7 +35,7 @@ echo "CMSSW: "$CMSSW_BASE
 echo Arguments passed to this script are: $ntupleversion $outputversion $logname $samples
 
 cd $workdir
-produceMVANtuplesv2.py $samples --datasetlist $cmssw/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/DatasetList_2017reMiniAODv2.csv --version $ntupleversion -o $outputversion --transfer_inputs -c NA JESUp JESDown TESUp TESDown --log $logname
+produceMVANtuplesv2.py $samples --datasetlist $cmssw/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/DatasetList_2017reMiniAODv2.csv --version $ntupleversion -o $outputversion --log $logname --transfer_inputs -c NA JESUp JESDown TESUp TESDown --jobtypes datacard control
 
 echo "*******************************************"
 # copy output to eos
