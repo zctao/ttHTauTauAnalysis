@@ -1,0 +1,14 @@
+universe = vanilla
+Executable = makeMVANtuples_condor_ctrl.sh
+Error = log/job.error.$(Cluster)-$(Process) 
+Output = log/job.output.$(Cluster)-$(Process) 
+Log = log/job.log.$(Cluster)-$(Process)
+stream_output = false
+stream_error = false
+notification = never
+Transfer_Input_Files = makeMVANtuples_condor_ctrl.sh
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT
+x509userproxy = $ENV(X509_USER_PROXY)
+Arguments = may2018v2 may2018v2_1 mvaNtupleList_ctrl_data_dieg.log data_dieg
+Queue 1
