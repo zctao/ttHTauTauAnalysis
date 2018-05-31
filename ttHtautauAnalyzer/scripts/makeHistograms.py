@@ -5,6 +5,7 @@ import math
 gROOT.SetBatch(True)
 import ttHTauTauAnalysis.ttHtautauAnalyzer.plotting as myplt
 import ttHTauTauAnalysis.ttHtautauAnalyzer.datacards as dc
+from ttHTauTauAnalysis.ttHtautauAnalyzer.crab_utils import getDatasetDict
 
 import argparse
 
@@ -112,7 +113,8 @@ def transform_mva(mva):
 def getHistogramFromMCNtuple(variable, sample, selection, luminosity, xmin, xmax,
                              nbins, eosPrefix='', sample_suffix='',
                              evtweight='event_weight', treename='mva',
-                             makeBinPositive=False, transform=False):
+                             makeBinPositive=False, transform=False,
+                             datasetlist_dict=None):
     # sample_suffix = _gentau, _faketau, _htt, _hww, _hzz, _<systematics>, ...
 
     jec=None
@@ -131,9 +133,8 @@ def getHistogramFromMCNtuple(variable, sample, selection, luminosity, xmin, xmax
     tree = infile.Get(treename)
 
     # get sample cross section and SumGenWeight from tree user info
-    SumGenWeight = tree.GetUserInfo().FindObject('SumGenWeight').GetVal()
-    xsection = tree.GetUserInfo().FindObject('xsection').GetVal()
-    # or get cross section directly from CSV config
+    SumGenWeight = tree.GetUserInfo().FindObject('SumGenWeight').GetVal()  
+    xsection = tree.GetUserInfo().FindObject('xsection').GetVal() if datasetlist_dict is None else float(datasetlist_dict[sample]['xsection'])
     if xsection < 0.:
         print "WARNING: cross section for sample", sample, " is not valid!"
 
@@ -300,11 +301,12 @@ if __name__ == "__main__":
     eosDirectoryString = 'root://cmsxrootd.fnal.gov/'+args.eostopdir+args.version+'/'
     
     histograms_var = []
-
     var = args.var
 
-    print
-    
+    # dataset list dictionary
+    datalist_dict = getDatasetDict(args.datasetlist)
+
+    print 
     if args.verbose>=1:
         print "Making histograms with variable :", var
     
@@ -368,7 +370,8 @@ if __name__ == "__main__":
                                                  evtweight=wname,
                                                  treename=args.treename,
                                                  makeBinPositive=args.posbins,
-                                                 transform=args.transform)
+                                                 transform=args.transform,
+                                                 datasetlist_dict=datalist_dict)
                     histograms_sample.append(h)
                     #print h.Integral()
 
