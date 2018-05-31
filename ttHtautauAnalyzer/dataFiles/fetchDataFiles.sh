@@ -22,52 +22,58 @@ cd -
 
 mkdir -p $dir_mva/1l2tau/
 cd $dir_mva/1l2tau/
-wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/1l_2tau_XGB_plainKin_evtLevelTT_TTH_13Var.xml
-wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/1l_2tau_XGB_HTT_evtLevelSUM_TTH_VT_17Var.xml
+wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/master/data/evtLevel_2018March/1l_2tau_XGB_HTT_evtLevelSUM_TTH_VT_17Var.xml
+#wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/1l_2tau_XGB_plainKin_evtLevelTT_TTH_13Var.xml
 cd -
 
 mkdir -p $dir_mva/2lss1tau/
 cd $dir_mva/2lss1tau/
-wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/2lss_1tau_XGB_plainKin_evtLevelTTV_TTH_15Var.xml
-wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/2lss_1tau_XGB_plainKin_evtLevelTT_TTH_16Var.xml
-wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/2lss_1tau_XGB_plainKin_evtLevelSUM_TTH_M_18Var.xml
-wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/2lss_1tau_XGB_HTT_evtLevelSUM_TTH_M_19Var.xml
-wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/2lss_1tau_XGB_HTTMEM_evtLevelSUM_TTH_M_20Var.xml
-wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/2lss_1tau_XGB_JointBDT_plainKin_1B_M.xml
+wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/master/data/evtLevel_2018March/2lss_1tau_XGB_HTT_evtLevelSUM_TTH_M_18Var.xml
+#wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/2lss_1tau_XGB_plainKin_evtLevelTTV_TTH_15Var.xml
+#wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/2lss_1tau_XGB_plainKin_evtLevelTT_TTH_16Var.xml
+#wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/2lss_1tau_XGB_plainKin_evtLevelSUM_TTH_M_18Var.xml
+#wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/2lss_1tau_XGB_HTT_evtLevelSUM_TTH_M_19Var.xml
+#wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/2lss_1tau_XGB_HTTMEM_evtLevelSUM_TTH_M_20Var.xml
+#wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/2lss_1tau_XGB_JointBDT_plainKin_1B_M.xml
 cd -
 
 mkdir -p $dir_mva/3l1tau/
 cd $dir_mva/3l1tau/
-wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/3l_1tau_XGB_plainKin_evtLevelTTV_TTH_13Var.xml
-wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/3l_1tau_XGB_plainKin_evtLevelTT_TTH_15Var.xml
-wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/3l_1tau_XGB_plainKin_evtLevelSUM_TTH_M_12Var.xml
-wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/3l_1tau_XGB_JointBDT_plainKin_1B_M.xml
+wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/master/data/evtLevel_2018March/3l_1tau_XGB_plainKin_evtLevelSUM_TTH_M_12Var.xml
+#wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/3l_1tau_XGB_plainKin_evtLevelTTV_TTH_13Var.xml
+#wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/3l_1tau_XGB_plainKin_evtLevelTT_TTH_15Var.xml
+#wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/3l_1tau_XGB_JointBDT_plainKin_1B_M.xml
 cd -
 
 mkdir -p $dir_mva/2l2tau/
 cd $dir_mva/2l2tau/
-wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/2l_2tau_XGB_plainKin_evtLevelTTV_TTH_14Var.xml
-wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/2l_2tau_XGB_plainKin_evtLevelTT_TTH_11Var.xml
-wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/2l_2tau_XGB_plainKin_evtLevelSUM_TTH_VT_13Var.xml
-wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/2l_2tau_XGB_JointBDT_plainKin_1B_VT.xml
+wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/master/data/evtLevel_2018March/2l_2tau_XGB_plainKin_evtLevelSUM_TTH_VT_13Var.xml
+#wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/2l_2tau_XGB_plainKin_evtLevelTTV_TTH_14Var.xml
+#wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/2l_2tau_XGB_plainKin_evtLevelTT_TTH_11Var.xml
+#wget https://raw.githubusercontent.com/HEP-KBFI/tth-htt/7b35df2ea61eac0c75cfd036b9ae89e363be57cb/data/evtLevel_2018March/2l_2tau_XGB_JointBDT_plainKin_1B_VT.xml
 cd -
 
 ### fake rate
-# UPDATE ME
+# lepton fake rate
+wget https://github.com/HEP-KBFI/tth-htt/blob/master/data/FR_lep_ttH_mva090_2017_CERN_2018May29.root?raw=true -O FR_lep_ttH_mva090_2017_CERN_2018May29.root
+#OUTDATED scp ztao@lxplus.cern.ch:/afs/cern.ch/user/g/gpetrucc/public_html/drop/plots/ttH/94X/ttH/lepMVA/v1.0.1/fr-comb/ttH_fr-v1_0_1.root .
+# tau fake rate
+#scp ztao@lxplus.cern.ch:/afs/cern.ch/user/v/veelken/public/ttHAnalysis/jetToTauFakeRate/FR_tau_2017_v1.root .
+
+# electron charge mis-id rate
+#scp ztao@lxplus.cern.ch:/afs/cern.ch/work/s/ssawant/public/ttHAnalysis/eChargeMisId/ElectronChargeMisIdRates_2017.root .
 
 ### scale factors
 dir_sf=trigger_sf
 mkdir -p $dir_sf
-# trigger sf UPDATE ME
+# loose vs reco
+## muon
+#wget http://www.hep.uniovi.es/sscruz/ttH/may28/scaleFactors.root
 ## 1l2tau
-# single lepton trigger
-#wget https://github.com/CMS-HTT/LeptonEfficiencies/blob/master/Muon/Run2016BtoH/Muon_Mu22OR_eta2p1_eff.root?raw=true -O $dir_sf/Muon_Mu22OR_eta2p1_eff.root
-#wget https://github.com/CMS-HTT/LeptonEfficiencies/blob/master/Electron/Run2016BtoH/Electron_Ele25WPTight_eff.root?raw=true -O $dir_sf/Electron_Ele25WPTight_eff.root
-# lepton leg of lepton+tau cross trigger
-#wget https://github.com/CMS-HTT/LeptonEfficiencies/blob/master/Electron/Run2016BtoH/Electron_Ele24_eff.root?raw=true -O $dir_sf/Electron_Ele24_eff.root
-#wget https://github.com/CMS-HTT/LeptonEfficiencies/blob/master/Muon/Run2016BtoH/Muon_Mu19leg_2016BtoH_eff.root?raw=true -O $dir_sf/Muon_Mu19leg_2016BtoH_eff.root
+# single lepton trigger and lepton leg of the cross triggers
+#scp ztao@lxplus.cern.ch:/afs/cern.ch/user/v/veelken/public/triggerSFs2017/*.root $dir_sf/.
 # tau leg of lepton+tau cross trigger
-#cp /afs/cern.ch/work/t/tstreble/public/triggerSF_weights/trigger_sf_*.root $dir_sf/.
+# retrieve from https://github.com/truggles/TauTriggerSFs2017/tree/tauTriggers2017_MCv2_PreReMiniaod
 
 # b-tagging
 #wget https://twiki.cern.ch/twiki/pub/CMS/BtagRecommendation94X/DeepCSV_94XSF_V1_B_F.csv # not working
@@ -75,6 +81,11 @@ mkdir -p $dir_sf
 ### lepton ID scale factor and fake rate
 mkdir -p lepton_sf
 # UPDATE ME
+#scp ztao@lxplus.cern.ch:/afs/cern.ch/work/s/sesanche/public/forTTH/SFs_may17/lepMVAEffSF_e_2lss.root lepton_sf/.
+#scp ztao@lxplus.cern.ch:/afs/cern.ch/work/s/sesanche/public/forTTH/SFs_may17/lepMVAEffSF_m_2lss.root lepton_sf/.
+#scp ztao@lxplus.cern.ch:/afs/cern.ch/work/s/sesanche/public/forTTH/SFs_may17/lepMVAEffSF_e_3l.root lepton_sf/.
+#scp ztao@lxplus.cern.ch:/afs/cern.ch/work/s/sesanche/public/forTTH/SFs_may17/lepMVAEffSF_m_3l.root lepton_sf/.
+
 
 ### Data cards
 mkdir -p datacard
