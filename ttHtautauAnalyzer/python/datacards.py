@@ -28,7 +28,9 @@ SamplesInChannel2017 = {'ttH':['ttHJetToNonbb'],
                         'DY':['DYJets_M50','DYJets_M50_ext','DYJets_M10to50'],
                         'fakes_data':datasamples,
                         'flips_data':datasamples,
-                        'data_obs':datasamples} 
+                        'data_obs':datasamples}
+
+Channels=['ttH','TTW','TTZ','EWK','Rares','tH','Conversion','ggH','VH','fakes_data','flips_data','data_obs','TT','ST','DY']
 
 BTagSysts = ['LFUp','LFDown','HFUp','HFDown',
              'HFStats1Up','HFStats1Down','HFStats2Up','HFStats2Down',
