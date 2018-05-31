@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 from ROOT import TFile, TH1D, TTree, gROOT
+import math
 gROOT.SetBatch(True)
 import ttHTauTauAnalysis.ttHtautauAnalyzer.plotting as myplt
 import ttHTauTauAnalysis.ttHtautauAnalyzer.datacards as dc
@@ -40,21 +41,24 @@ def getNtupleFileName(sample,selection,channel=None,correction=None,eosprefix=''
     return filename
 
     
-def getHistogramfromTrees(trees,sample_label,variable,weight_name='event_weight'):
+def getHistogramfromTrees(trees, sample_label, variable, xmin, xmax, nbins,
+                          weight_name='event_weight', transform=False):
 
     if len(trees)<1:
         print "getHistogramfromTrees: No input trees!"
         return None
 
     # extract temporary histogram from tree
-    htmp = myplt.DrawHistfromTree(trees[0], variable)
-    nbin = htmp.GetNbinsX()
-    xmin = htmp.GetXaxis().GetXmin()
-    xmax = htmp.GetXaxis().GetXmax()
+    #htmp = myplt.DrawHistfromTree(trees[0], variable)
+    #nbin = htmp.GetNbinsX()
+    #xmin = htmp.GetXaxis().GetXmin()
+    #xmax = htmp.GetXaxis().GetXmax()
+    #print "nbin, xmin, xmax = ", nbin, xmin, xmax
 
     # setup output histogram
     histname = variable+'_'+sample_label
-    h = TH1D(histname, "", nbin, xmin, xmax)
+    
+    h = TH1D(histname, "", nbins, xmin, xmax)
     h.Sumw2()
     
     eventIDlist = []
@@ -62,6 +66,11 @@ def getHistogramfromTrees(trees,sample_label,variable,weight_name='event_weight'
     singletree = len(trees)==1
     
     for tree in trees:
+        if tree.GetEntries()==0:
+            if args.verbose>3:
+                print "WARNING: empty tree for", sample_label
+            continue
+        
         for ev in tree:
 
             # if there are more than one trees, need to merge the entries by
@@ -87,6 +96,8 @@ def getHistogramfromTrees(trees,sample_label,variable,weight_name='event_weight'
 
             value = ev.GetLeaf(variable).GetValue()
             # modify here if dealing with special case, e.g. 2D mapping
+            if transform and 'mvaOutput' in variable:
+                value = transform_mva(value)
             
             evtweight = ev.GetLeaf(weight_name).GetValue()
 
@@ -94,9 +105,14 @@ def getHistogramfromTrees(trees,sample_label,variable,weight_name='event_weight'
 
     return h
 
-def getHistogramFromMCNtuple(variable, sample, selection, luminosity, eosPrefix='',
-                             sample_suffix='', evtweight='event_weight',
-                             treename='mva', makeBinPositive=False):
+def transform_mva(mva):
+    newmva = 1. / (1. + math.sqrt((1. - mva) / (1. + mva)))
+    return newmva
+
+def getHistogramFromMCNtuple(variable, sample, selection, luminosity, xmin, xmax,
+                             nbins, eosPrefix='', sample_suffix='',
+                             evtweight='event_weight', treename='mva',
+                             makeBinPositive=False, transform=False):
     # sample_suffix = _gentau, _faketau, _htt, _hww, _hzz, _<systematics>, ...
 
     jec=None
@@ -123,7 +139,8 @@ def getHistogramFromMCNtuple(variable, sample, selection, luminosity, eosPrefix=
 
     # get histogram
     label = (sample+sample_suffix).lower()
-    hist = getHistogramfromTrees([tree], label, variable, weight_name=evtweight)
+    hist = getHistogramfromTrees([tree], label, variable, xmin, xmax, nbins,
+                                 weight_name=evtweight, transform=transform)
 
     # scale
     lumi = luminosity*1000  # convert from 1/fb to 1/pb
@@ -137,9 +154,10 @@ def getHistogramFromMCNtuple(variable, sample, selection, luminosity, eosPrefix=
     
     return hist
 
-def getHistogramFromDataNtuples(variable, channel, selection, eosPrefix='',
-                                channel_suffix='', evtweight='event_weight',
-                                treename='mva', makeBinPositive=False):
+def getHistogramFromDataNtuples(variable, channel, selection, xmin, xmax, nbins,
+                                eosPrefix='', channel_suffix='',
+                                evtweight='event_weight', treename='mva',
+                                makeBinPositive=False, transform=False):
     # determine event weight string based on histname
 
     
@@ -154,7 +172,8 @@ def getHistogramFromDataNtuples(variable, channel, selection, eosPrefix='',
 
     # get histogram
     label = channel+channel_suffix
-    hist = getHistogramfromTrees(trees, label, variable, weight_name=evtweight)
+    hist = getHistogramfromTrees(trees, label, variable, xmin, xmax, nbins,
+                                 weight_name=evtweight, transform=transform)
 
     # make bin contents positive if needed
     if makeBinPositive:
@@ -214,7 +233,8 @@ def getHistSuffixandWeightNames_mc(sample, selection, addSyst, matchGenTau=False
     if not addSyst:
         return hnamelist, wnamelist
 
-    systlist = ['JESUp','JESDown','TESUp','TESDown']
+    #systlist = ['JESUp','JESDown','TESUp','TESDown']
+    systlist = []
 
     for btsys in dc.BTagSysts:
         systlist.append('btag_'+btsys)
@@ -234,12 +254,14 @@ if __name__ == "__main__":
     Selections=['signal_1l2tau', 'signal_2lss1tau', 'signal_3l1tau', 'signal_2l2tau',
                 'control_1l2tau', 'control_2lss1tau', 'control_3l1tau',
                 'control_2l2tau', 'control_ttW', 'control_ttZ', 'control_WZ']
-    Channels=['ttH','TTW','TTZ','EWK','Rares','tH','Conversion','ggH','VH','fakes_data','flips_data','data_obs',
-              'TT','ST','DY']
+    Channels=['ttH','TTW','TTZ','EWK','Rares','tH','Conversion','ggH','VH','fakes_data','flips_data','data_obs','TT','ST','DY']
     
     parser = argparse.ArgumentParser()
     parser.add_argument('selection', choices=Selections, help="Types of analysis")
-    parser.add_argument('vars', type=str, nargs='+', help="Variables to plot")
+    parser.add_argument('var', type=str, help="Variable to plot")
+    parser.add_argument('xmin', type=float, help="lower limit of histograms")
+    parser.add_argument('xmax', type=float, help="upper limit of histograms")
+    parser.add_argument('-b','--nbins', type=int, default=100, help="Number of bins")
     parser.add_argument('-c','--channels', nargs='+', choices=Channels,
                         default=['ttH','TTW','TTZ','EWK','Rares','fakes_data',
                                  'flips_data','data_obs'],
@@ -266,6 +288,8 @@ if __name__ == "__main__":
                         help="EOS directory to store mva ntuples")
     parser.add_argument('--version', type=str, default="may2018",
                         help="mva ntuple version")
+    parser.add_argument('--transform', action='store_true',
+                        help="Transform mva output")
     #parser.add_argument('--transfer_inputs', action='store_true',
     #                    help="Copy input files locally before processing")
 
@@ -275,102 +299,119 @@ if __name__ == "__main__":
 
     eosDirectoryString = 'root://cmsxrootd.fnal.gov/'+args.eostopdir+args.version+'/'
     
-    histograms_all = []
-    firstvar = True
-    for var in args.vars:
-        histograms_var = []
-        
-        for channel in args.channels:
+    histograms_var = []
 
-            if firstvar:
-                print "======================================="
-                print "processing channel:", channel
-                print "---------------------------------------"
-                
+    var = args.var
+
+    print
+    
+    if args.verbose>=1:
+        print "Making histograms with variable :", var
+    
+    for channel in args.channels:
+
+        if 'flip' in channel and '2lss' not in args.selection:
+            continue
+        
+        print "======================================="
+        print "processing channel:", channel
+        print "---------------------------------------"
             
-            if 'data' in channel:  # Collision data
+            
+        if 'data' in channel:  # Collision data
 
-                hnames, weightnames = getHistSuffixandWeightNames_data(channel, args.selection, args.systematics)
+            hnames, weightnames = getHistSuffixandWeightNames_data(channel, args.selection, args.systematics)
+            for hsuffix, wname in zip(hnames, weightnames):
+                
+                h = getHistogramFromDataNtuples(var, channel, args.selection,
+                                                args.xmin, args.xmax, args.nbins,
+                                                eosPrefix=eosDirectoryString,
+                                                channel_suffix=hsuffix,
+                                                evtweight=wname,
+                                                treename=args.treename,
+                                                makeBinPositive=args.posbins,
+                                                transform=args.transform)
+                histograms_var.append(h)
+
+                if args.verbose>=1 and wname=='event_weight':#histname=='x_'+channel:
+                    yields = h.Integral()
+                    print channel, "\t", '%.5f'%yields
+                    
+                # closure test
+                # TODO
+                
+        else:  # MC
+            histograms_mcch = []
+            samples = getSampleListByChannel(channel)
+            if args.verbose>=1:
+                print '\tyields',
+                if args.genTauSplit:
+                    print '\tyields(gentau)\tyields(faketau)'
+                else:
+                    print
+                    
+            firstsample = True
+            
+            for sample in samples:
+
+                histograms_sample = []
+                    
+                hnames, weightnames = getHistSuffixandWeightNames_mc(sample, args.selection, args.systematics, args.genTauSplit, args.hDecaySplit)
                 for hsuffix, wname in zip(hnames, weightnames):
-                
-                    h = getHistogramFromDataNtuples(var, channel, args.selection,
-                                                    eosPrefix=eosDirectoryString,
-                                                    channel_suffix=hsuffix,
-                                                    evtweight=wname,
-                                                    treename=args.treename,
-                                                    makeBinPositive=args.posbins)
-                    histograms_var.append(h)
+                    #print hsuffix, wname
+                    
+                    h = getHistogramFromMCNtuple(var, sample, args.selection,
+                                                 args.luminosity,
+                                                 args.xmin, args.xmax, args.nbins,
+                                                 eosPrefix=eosDirectoryString,
+                                                 sample_suffix=hsuffix,
+                                                 evtweight=wname,
+                                                 treename=args.treename,
+                                                 makeBinPositive=args.posbins,
+                                                 transform=args.transform)
+                    histograms_sample.append(h)
+                    #print h.Integral()
 
-                    if args.verbose>=1 and firstvar: # and histname=='x_'+channel:
-                        yields = h.Integral()
-                        print channel, "\t", '%.5f'%yields
-                    
-                    # closure test
-                    # TODO
-                
-            else:  # MC
-                histograms_mcch = []
-                samples = getSampleListByChannel(channel)
-                if args.verbose>=1 and firstvar:
-                    print '\tyields\tyields(gentau)\tyields(faketau)'
-                    
-                firstsample = True
-                
-                for sample in samples:
-
-                    histograms_sample = []
-                    
-                    hnames, weightnames = getHistSuffixandWeightNames_mc(sample, args.selection, args.systematics, args.genTauSplit, args.hDecaySplit)
-                    for hsuffix, wname in zip(hnames, weightnames):
-                        #print hsuffix, wname
-                    
-                        h = getHistogramFromMCNtuple(var, sample, args.selection,
-                                                     args.luminosity,
-                                                     eosPrefix=eosDirectoryString,
-                                                     sample_suffix=hsuffix,
-                                                     evtweight=wname,
-                                                     treename=args.treename,
-                                                     makeBinPositive=args.posbins)
-                        histograms_sample.append(h)
-                        #print h.Integral()
-
-                    if args.verbose>=2 and len(samples)>1 and firstvar:
-                        dc.printYields(sample.lower(), histograms_sample, var)
+                if args.verbose>=2 and len(samples)>1:
+                    dc.printYields(sample.lower(), histograms_sample, var,
+                                   args.genTauSplit)
                         
 
-                    if firstsample:
-                        histograms_mcch = [h.Clone(h.GetName().replace(sample.lower(),channel)) for h in histograms_sample]
-                        #print histograms_mcch[0].GetName()
-                    else:
-                        for hc, hs in zip(histograms_mcch, histograms_sample):
-                            hc.Add(hs)
+                if firstsample:
+                    histograms_mcch = [h.Clone(h.GetName().replace(sample.lower(),channel)) for h in histograms_sample]
+                    #print histograms_mcch[0].GetName()
+                else:
+                    for hc, hs in zip(histograms_mcch, histograms_sample):
+                        hc.Add(hs)
 
-                    firstsample = False
-                    if len(samples)>1:
-                        histograms_var += histograms_sample   
+                firstsample = False
+                if len(samples)>1:
+                    histograms_var += histograms_sample   
 
-                assert(histograms_mcch!=[])
-                histograms_var += histograms_mcch
+            assert(histograms_mcch!=[])
+            histograms_var += histograms_mcch
 
-                if args.verbose>=1 and firstvar:
-                    if channel=='ttH' and args.hDecaySplit:
-                        dc.printYields('ttH_htt', histograms_mcch, var)
-                        dc.printYields('ttH_hww', histograms_mcch, var)
-                        dc.printYields('ttH_hzz', histograms_mcch, var)
+            if args.verbose>=1:
+                if channel=='ttH' and args.hDecaySplit:
+                    dc.printYields('ttH_htt', histograms_mcch, var, args.genTauSplit)
+                    dc.printYields('ttH_hww', histograms_mcch, var, args.genTauSplit)
+                    dc.printYields('ttH_hzz', histograms_mcch, var, args.genTauSplit)
                         
-                    dc.printYields(channel, histograms_mcch, var)
+                dc.printYields(channel, histograms_mcch, var, args.genTauSplit)
 
-        histograms_all += histograms_var
-        if args.verbose>=2:
-            print "Done making histograms for variable", var
-        
-        firstvar = False
+    #if args.verbose>=2:
+    #    print "Done making histograms for variable", var
 
     # write datacards to file
     print args.outname
     outfile = TFile(args.outname, 'recreate')
 
-    for histogram in histograms_all:
+    for histogram in histograms_var:
+        # rename and write histograms to disk
+        histname = histogram.GetName()
+        if 'mvaOutput' in histname:
+            histname = histname.replace(var,'x')
+        histogram.SetName(histname)
         histogram.Write()
 
     print "Output file:", args.outname

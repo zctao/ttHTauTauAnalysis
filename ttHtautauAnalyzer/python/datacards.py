@@ -16,13 +16,16 @@ SamplesInChannel = {'ttH':['ttH'],
 datasamples = ['data_e','data_mu','data_dieg','data_dimu','data_mueg']
 SamplesInChannel2017 = {'ttH':['ttHJetToNonbb'],
                         'TTW':['TTW_psw','TTWW'],
-                        'TTZ':['TTZ'],
+                        'TTZ':['TTZ','TTZ_M1to10'],
                         'EWK':['WZTo3LNu','ZZ','WW'],
                         'Rares':['WWW','WWZ','WZZ','ZZZ','tZq','TTTT','WpWpJJ', 'WWTo2L2Nuds'],
                         'tH':['tHq','tHW'],
                         'Conversion':['TTGJets'],
                         'ggH':['ggHZZ4l'],
                         'VH':['VHToNonbb'],
+                        'TT':['TTToDiLep','TTToSemiLep','TTToHad'],
+                        'ST':['ST_sLep_psw','ST_tT','ST_tTbar','ST_tWT_psw','ST_tWTbar_psw','ST_tWll'],
+                        'DY':['DYJets_M50','DYJets_M50_ext','DYJets_M10to50'],
                         'fakes_data':datasamples,
                         'flips_data':datasamples,
                         'data_obs':datasamples} 
@@ -328,7 +331,7 @@ def getClosureTestShape(h_nominal, closTest, infile, syst_coname='_CMS_ttHl_',
     return h_clos
 
 
-def printYields(label, histlist, var='x'):
+def printYields(label, histlist, var='x', genTauSplit=True):
     hname1 = var+'_'+label
     hname2 = var+'_'+label+'_gentau'
     hname3 = var+'_'+label+'_faketau'
@@ -347,4 +350,8 @@ def printYields(label, histlist, var='x'):
         if yields[0]!= -1. and yields[1]!=-1. and yields[2]!=-1.:
             break
 
-    print label,'\t','%.5f'%yields[0],'\t','%.5f'%yields[1],'\t','%.5f'%yields[2]
+    print label,'\t','%.5f'%yields[0],
+    if genTauSplit:
+        print '\t','%.5f'%yields[1],'\t','%.5f'%yields[2]
+    else:
+        print
