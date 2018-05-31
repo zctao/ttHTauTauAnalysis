@@ -150,6 +150,9 @@ for sample in args.samples:
                 mvantupleList.write(outname+'\n')
             else:
                 cross_section = samplelist_dict[sample]['xsection']
+                
+                if cross_section=='' or cross_section is None:
+                    cross_section='-99.'
 
                 for ec in args.corrections:
                     if ec.lower() in ['jesup','jesdown','tesup','tesdown']:
