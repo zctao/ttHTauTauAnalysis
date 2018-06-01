@@ -102,6 +102,9 @@ def getShapefromSamples_data(anaType, channel, histname, treename, var_x, var_y,
 
 if __name__ == "__main__":
 
+    print "Deprecated. Use makeHistograms.py instead."
+    exit()
+    
     parser = argparse.ArgumentParser()
     parser.add_argument('anaType', choices=['1l2tau','2lss1tau','3l1tau'],
                         help="Analysis type")
