@@ -1,6 +1,7 @@
 from ROOT import TTree, TH1D, TH2D
 from math import sqrt
 from plotting import DrawHistfromTree
+import array
 
 DataSamples = ['DoubleMuon','SingleMuon','DoubleEG','SingleElectron','MuonEG']
 
@@ -197,6 +198,14 @@ def getBin(x, y, binningMap):
         return read2DHist(x, y, binningMap)
             
 
+def getUniformBinEdges(nbins, xlow=0., xup=1.):
+    binEdges=[]
+    for i in xrange(nbins+1):
+        binEdges.append( xlow + i*float(xup-xlow)/nbins )
+
+    return array.array('d',binEdges)
+    
+    
 def read2DHist(x, y, h2d):
     
     xaxis = h2d.GetXaxis()
