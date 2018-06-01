@@ -43,7 +43,7 @@ int main(int argc, char** argv)
 	string enCorr;
 	string mem_filename, mem_treename;
 	float xsection;
-	bool systematics, isdata, evaluateMVA;//, requireMCMatching;
+	bool systematics, isdata, evaluateMVA, genMatching;
 	bool updateSF, setTreeWeight, addMEM;
 	bool requireTrigger, looseSelection;
 	//string tauWP;
@@ -66,7 +66,7 @@ int main(int argc, char** argv)
 		("add_mem", po::value<bool>(&addMEM)->default_value(false))
 		("mem_filename", po::value<string>(&mem_filename)->default_value("mem_output.root"))
 		("mem_treename", po::value<string>(&mem_treename)->default_value("mem"))
-		//("mc_matching,m", po::value<bool>(&requireMCMatching)->default_value(true))
+		("gen_matching,m", po::value<bool>(&genMatching)->default_value(false))
 		("evaluateMVA,e", po::value<bool>(&evaluateMVA)->default_value(true))
 		("systematics", po::value<bool>(&systematics)->default_value(true))
 		("update_sf,u", po::value<bool>(&updateSF)->default_value(true))
@@ -124,7 +124,7 @@ int main(int argc, char** argv)
 
 	//////////////////////////////////////////////
 	// event selector
-	EventSelector evt_selector(false, !isdata, looseSelection);
+	EventSelector evt_selector(false, !isdata, genMatching, looseSelection);
 
 	//////////////////////////////////////////////
 	// total number of events processed
@@ -217,9 +217,11 @@ int main(int argc, char** argv)
 										metp4.Pt(), metp4.Phi(), mht,
 										nbtags_loose, nbtags_medium);
 
-		// FIXME
-		//if (doHTT and not CR) mvantuple.compute_HTT(jets);
-		//if (evaluateMVA and not CR) mvantuple.evaluate_BDTs();
+		//////////////////////////////////////
+		// Gen Matching flags
+		if (not isdata) {
+			
+		}
 		
 		//////////////////////////////////////
 		/// Event ID
@@ -228,11 +230,14 @@ int main(int argc, char** argv)
 		mvantuple.lumi = evNtuple.ls;
 		mvantuple.nEvent = evNtuple.nEvent;
 
-		if (not isdata) { 
-			mvantuple.isGenMatchedTau = evNtuple.isGenMatchedTau;
+		if (not isdata) {
 			mvantuple.HiggsDecayType = evNtuple.HiggsDecayType;
-			mvantuple.xsection_weight = xsection/nProcessed;
-			mvantuple.xsection_weight_gen = xsection/SumGenWeight;
+			mvantuple.xsection_weight = xsection/nProcessed; // deprecated
+			mvantuple.xsection_weight_gen = xsection/SumGenWeight; // deprecated
+			mvantuple.isGenMatchedLep =
+				evt_selector.pass_MCMatch_Leps(anaType, *leptons);
+			mvantuple.isGenMatchedTau =
+				evt_selector.pass_MCMatch_Taus(anaType, *taus);
 		}
 		
 		//////////////////////////////////////

@@ -26,10 +26,12 @@ class EventSelector
 		isMC_ = isMC;
 	}
 
-	EventSelector(bool verbose, bool isMC, bool looseSelection=false) {
+	EventSelector(bool verbose, bool isMC, bool genMatching=true,
+				  bool looseSelection=false) {
 		verbose_ = verbose;
 		isMC_ = isMC;
 		looseselection_ = looseSelection;
+		genMatching_ = genMatching;
 		anaType_ = Analyze_NA;
 		selType_ = Selection_NA;
 	}
@@ -128,12 +130,18 @@ class EventSelector
 	bool pass_HZZ4l_veto(const std::vector<miniLepton>&);
 	bool pass_MCMatch(const std::vector<miniLepton>&, int,
 					  const std::vector<miniTau>&, int);
+	bool pass_MCMatch(Analysis_types, const std::vector<miniLepton>&,
+					  const std::vector<miniTau>&);
+	bool pass_MCMatch_Leps(Analysis_types, const std::vector<miniLepton>&);
+	bool pass_MCMatch_Taus(Analysis_types, const std::vector<miniTau>&);
 	
  protected:
+	
 	Analysis_types  anaType_;
 	Selection_types selType_;
 	bool verbose_;
 	bool isMC_;
+	bool genMatching_;
 	bool looseselection_;
 };
 

@@ -534,7 +534,8 @@ bool EventSelector::pass_1l2tau_selection(Selection_types seltype,
 
 	///////////////////////////////
 	// MC Matching
-	if (isMC_ and (seltype==Signal_1l2tau or seltype==Control_1l2tau)) {// CR too?
+	if (isMC_ and (seltype==Signal_1l2tau or seltype==Control_1l2tau) // CR too?
+		and genMatching_) {
 		bool passMCMatch = pass_MCMatch(fakeableLeps, 1, fakeableTaus, 2);
 		if (not passMCMatch) {
 			if (verbose_) std::cout << "FAIL MC Matching" << std::endl;
@@ -920,7 +921,8 @@ bool EventSelector::pass_2lss1tau_selection(Selection_types seltype,
 	
 	///////////////////////////////
 	// MC Matching
-	if (isMC_ and (seltype==Signal_2lss1tau or seltype==Control_2lss1tau)) {
+	if (isMC_ and (seltype==Signal_2lss1tau or seltype==Control_2lss1tau)
+		and genMatching_) {
 		bool passMCMatch = pass_MCMatch(fakeableLeps, 2, selectedTaus, 0);
 		if (not passMCMatch) {
 			if (verbose_) std::cout << "FAIL MC Matching" << std::endl;
@@ -1042,7 +1044,7 @@ bool EventSelector::pass_ttW_CR_selection(Selection_types seltype,
 
 	///////////////////////////////
 	// MC Matching
-	if (isMC_ and (seltype==Control_ttW) ) {  // Signal_2lss
+	if (isMC_ and (seltype==Control_ttW) and genMatching_) {  // Signal_2lss
 		bool passMCMatch = pass_MCMatch(fakeableLeps, 2, tightTaus, 0);
 		if (not passMCMatch) {
 			if (verbose_) std::cout << "FAIL MC Matching" << std::endl;
@@ -1315,7 +1317,8 @@ bool EventSelector::pass_3l1tau_selection(Selection_types seltype,
 
 	///////////////////////////////
 	// MC Matching
-	if (isMC_ and (seltype==Signal_3l1tau or seltype==Control_3l1tau)) { // CR too?
+	if (isMC_ and (seltype==Signal_3l1tau or seltype==Control_3l1tau) // CR too?
+		and genMatching_) { 
 		bool passMCMatch = pass_MCMatch(fakeableLeps, 3, selectedTaus, 0);
 		if (not passMCMatch) {
 			if (verbose_) std::cout << "FAIL MC Matching" << std::endl;
@@ -1422,7 +1425,7 @@ bool EventSelector::pass_ttZ_CR_selection(Selection_types seltype,
 	
 	///////////////////////////////
 	// MC Matching
-	if (isMC_ and (seltype==Control_ttZ)) {
+	if (isMC_ and (seltype==Control_ttZ) and genMatching_) {
 		bool passMCMatch = pass_MCMatch(fakeableLeps, 3, tightTaus, 0);
 		if (not passMCMatch) {
 			if (verbose_) std::cout << "FAIL MC Matching" << std::endl;
@@ -1649,7 +1652,8 @@ bool EventSelector::pass_2l2tau_selection(Selection_types seltype,
 	}
 
 	// MC Matching
-	if (isMC_ and (seltype==Signal_2l2tau or seltype==Control_2l2tau)) {
+	if (isMC_ and (seltype==Signal_2l2tau or seltype==Control_2l2tau)
+		and genMatching_) {
 		bool passMCMatch = pass_MCMatch(fakeableLeps, 2, fakeableTaus, 2);
 		if (not passMCMatch) {
 			if (verbose_) std::cout << "FAIL MC Matching" << std::endl;
@@ -1696,6 +1700,58 @@ bool EventSelector::pass_MCMatch(const std::vector<miniLepton>& leptons, int nLe
 	}
 
 	return passMCMatch;
+}
+
+bool EventSelector::pass_MCMatch(Analysis_types anatype,
+								 const std::vector<miniLepton>& leptons,
+								 const std::vector<miniTau>& taus)
+{
+	if (anatype==Analyze_1l2tau) {
+		return pass_MCMatch(leptons, 1, taus, 2);
+	}
+	else if (anatype==Analyze_2lss1tau or anatype==Analyze_2lss) {
+		return pass_MCMatch(leptons, 2, taus, 0);
+	}
+	else if (anatype==Analyze_3l1tau or anatype==Analyze_3l) {
+		return pass_MCMatch(leptons, 3, taus, 0);
+	}
+	else if (anatype==Analyze_2l2tau) {
+		return pass_MCMatch(leptons, 2, taus, 2);
+	}
+	else
+		return false;
+}
+
+bool EventSelector::pass_MCMatch_Leps(Analysis_types anatype,
+									  const std::vector<miniLepton>& leptons)
+{
+	std::vector<miniTau> dummy;
+	if (anatype==Analyze_1l2tau) {
+		return pass_MCMatch(leptons, 1, dummy, 0);
+	}
+	else if (anatype==Analyze_2lss1tau or anatype==Analyze_2lss or
+			 anatype==Analyze_2l2tau) {
+		return pass_MCMatch(leptons, 2, dummy, 0);
+	}
+	else if (anatype==Analyze_3l1tau or anatype==Analyze_3l) {
+		return pass_MCMatch(leptons, 3, dummy, 0);
+	}
+	else
+		return false;
+}
+
+bool EventSelector::pass_MCMatch_Taus(Analysis_types anatype,
+									  const std::vector<miniTau>& taus)
+{
+	std::vector<miniLepton> dummy;
+	if (anatype==Analyze_1l2tau or anatype==Analyze_2l2tau) {
+		return pass_MCMatch(dummy, 0, taus, 2);
+	}
+	else if (anatype==Analyze_2lss1tau or anatype==Analyze_3l1tau) {
+		return pass_MCMatch(dummy, 0, taus, 1);
+	}
+	else
+		return false;
 }
 
 bool EventSelector::pass_pairMass_veto(const std::vector<miniLepton>& leps)

@@ -26,6 +26,8 @@ parser.add_argument('--version', type=str, default="may2018",
 parser.add_argument('-o','--outdir', type=str, default="./", help="Output directory")
 #parser.add_argument('-s','--doSystematics', action='store_true',
 #                    help="include event weights for systematic uncertainties")
+parser.add_argument('-m','--genmatching', action='store_true',
+                    help="Require gen matching in event selections")
 parser.add_argument('-c','--corrections', nargs='+',
                     choices=['NA','JESUp','JESDown','TESUp','TESDown'],
                     default=['NA'], help="Jet/Tau energy correction")
@@ -50,6 +52,8 @@ mvantupleList = open(logfile,'w')
 anatypes=['1l2tau','2lss1tau','3l1tau','2l2tau','control_ttW','control_ttZ'] # WZ
 if args.analysis is not None:  # if analysis types are explicitly set
     anatypes = args.analysis
+
+genmatch_str = ' -m true' if args.genmatching else ' -m false'
     
 for sample in args.samples:
     start = timer()
@@ -141,6 +145,7 @@ for sample in args.samples:
                 
             outname = outdirectory+'mvaNtuple_'+sample+'_'+seltype+'.root'
             argument = ' -i '+ntuplename+' -o '+outname+' --anatype '+anatype+' --seltype '+seltype+' -s '+sample
+            argument+=genmatch_str
             
             if 'data' in sample:
                 if args.dryrun:

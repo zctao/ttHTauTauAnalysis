@@ -264,6 +264,7 @@ class mvaNtuple
 	double xsection_weight_gen = -9999.;
 	
 	// selection flags
+	int isGenMatchedLep = -9999;
 	int isGenMatchedTau = -9999;
 	int HiggsDecayType = -9999;
 

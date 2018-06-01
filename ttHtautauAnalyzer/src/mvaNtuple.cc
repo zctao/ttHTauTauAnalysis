@@ -19,7 +19,8 @@ void mvaNtuple::setup_branches(TTree* tree)
 	tree->Branch("lepid_sf", &lepid_sf);
 	tree->Branch("tauid_sf", &tauid_sf);
 	tree->Branch("hlt_sf", &hlt_sf);
-	
+
+	tree->Branch("isGenMatchedLep", &isGenMatchedLep);
 	tree->Branch("isGenMatchedTau", &isGenMatchedTau);
 	tree->Branch("HiggsDecayType", &HiggsDecayType);
 	
