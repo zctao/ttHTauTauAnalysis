@@ -43,7 +43,7 @@ def getNtupleFileName(sample,selection,channel=None,correction=None,eosprefix=''
 
     
 def getHistogramfromTrees(trees, sample_label, variable, xmin, xmax, nbins,
-                          weight_name='event_weight', transform=False):
+                          selection, weight_name='event_weight', transform=False):
 
     if len(trees)<1:
         print "getHistogramfromTrees: No input trees!"
@@ -73,7 +73,6 @@ def getHistogramfromTrees(trees, sample_label, variable, xmin, xmax, nbins,
             continue
         
         for ev in tree:
-
             # if there are more than one trees, need to merge the entries by
             # removing duplicate events based on evnet ID: (run, lumi, nEvent)
             if not singletree:
@@ -83,6 +82,17 @@ def getHistogramfromTrees(trees, sample_label, variable, xmin, xmax, nbins,
                     continue
                 eventIDlist.append(eventID)
 
+            ##########
+            # gen matching
+            if not 'data' in sample_label:
+                if '1l2tau' in selection or '2l2tau' in selection:
+                    if not (ev.isGenMatchedLep and ev.isGenMatchedTau):
+                        continue
+                else:
+                    if not ev.isGenMatchedLep:
+                        continue
+            ##########
+                
             # gen match and higgs decay mode filters if necessary
             if 'gentau' in sample_label.lower() and not ev.isGenMatchedTau:
                 continue
@@ -140,7 +150,7 @@ def getHistogramFromMCNtuple(variable, sample, selection, luminosity, xmin, xmax
 
     # get histogram
     label = sample.lower()+sample_suffix
-    hist = getHistogramfromTrees([tree], label, variable, xmin, xmax, nbins,
+    hist = getHistogramfromTrees([tree],label, variable, xmin, xmax, nbins, selection,
                                  weight_name=evtweight, transform=transform)
 
     # scale
@@ -173,8 +183,8 @@ def getHistogramFromDataNtuples(variable, channel, selection, xmin, xmax, nbins,
 
     # get histogram
     label = channel+channel_suffix
-    hist = getHistogramfromTrees(trees, label, variable, xmin, xmax, nbins,
-                                 weight_name=evtweight, transform=transform)
+    hist = getHistogramfromTrees(trees, label, variable, xmin, xmax, nbins, selection,
+                                 weight_name=evtweight,transform=transform)
 
     # make bin contents positive if needed
     if makeBinPositive:
@@ -277,6 +287,7 @@ if __name__ == "__main__":
     parser.add_argument('-v', '--verbose', action='count', #action='store_true',
                         help='Verbosity')
     parser.add_argument('-d','--datasetlist', type=str, default="DatasetList.csv")
+    #parser.add_argument('-m','--genmatch', action='store_true')
     parser.add_argument('-p','--posbins', action='store_true',
                         help="make histogram bins positive")
     parser.add_argument('--genTauSplit', action='store_true',

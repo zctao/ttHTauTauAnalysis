@@ -216,12 +216,6 @@ int main(int argc, char** argv)
 		mvantuple.compute_all_variables(*leptons, *taus, jets,
 										metp4.Pt(), metp4.Phi(), mht,
 										nbtags_loose, nbtags_medium);
-
-		//////////////////////////////////////
-		// Gen Matching flags
-		if (not isdata) {
-			
-		}
 		
 		//////////////////////////////////////
 		/// Event ID
