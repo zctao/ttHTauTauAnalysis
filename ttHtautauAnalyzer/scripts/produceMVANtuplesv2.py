@@ -16,6 +16,8 @@ parser.add_argument('--analysis', nargs='+',
 parser.add_argument('--jobtypes', nargs='+', choices=['datacard','control'],
                     default=['datacard','control'],
                     help="For making datacards or for control regions")
+parser.add_argument('--selection', choices=['application_fake','signal','control',
+                                            'control_fakeAR'])
 parser.add_argument('-r','--redirector',type=str,
                     default='root://cmsxrootd.fnal.gov/',
                     help="redirector for xrootd")
@@ -100,7 +102,7 @@ for sample in args.samples:
             if anatype=='2lss1tau':
                 seltypes.append("application_flip_2lss1tau")
                 seltypes.append("control_flipAR_2lss1tau")
-        
+                
         # special cases
         if atype=='control_ttW':
             anatype = '2lss'
@@ -116,18 +118,18 @@ for sample in args.samples:
             anatype = '3l'
             seltypes = ['control_WZ']
             if 'data' in sample:
-                seltypes.append('control_fakeAR_WZ')       
+                seltypes.append('control_fakeAR_WZ')
 
-        #if args.selection is not None: # if selection types are explicitly set
-        #    seltypes = args.selection
+        if args.selection is not None: # if selection types are explicitly set
+            seltypes =[args.selection+'_'+anatype]
 
         for seltype in seltypes:
 
             if 'control_' in seltype:
-                if 'control' not in args.jobtypes:
+                if 'control' not in args.jobtypes and args.selection is None:
                     continue
             else:
-                if 'datacard' not in args.jobtypes:
+                if 'datacard' not in args.jobtypes and args.selection is None:
                     continue
             
             print seltype
