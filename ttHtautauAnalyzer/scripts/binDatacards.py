@@ -38,7 +38,14 @@ for key in infile.GetListOfKeys():
     
     for channel in args.channels:
         if 'x_'+channel in h.GetName():
-            histogramsToRebin.append(h)
+
+            skip = False
+            if args.sysname in h.GetName(): # for shape systematics
+                if '_thu_shape_' in h.GetName() and not (channel in ['ttH','TTW','TTZ']):
+                    skip = True
+            if not skip:
+                histogramsToRebin.append(h)
+                
             break
 
 def getBinEdges(anatype):
@@ -56,6 +63,20 @@ def getBinEdges(anatype):
 
     return array.array('d', binEdges)
 
+def updateHistName(hname):
+    newname = hname
+    
+    if '_TES' in hname:
+        newname = hname.replace('_TES','_tauES')
+    if 'x_ttH' in hname and '_thu_shape_' in hname:
+        newname = hname.replace('_thu_shape_', '_thu_shape_ttH_')
+    if 'x_TTW' in hname and '_thu_shape_' in hname:
+        newname = hname.replace('_thu_shape_', '_thu_shape_ttW_')
+    if 'x_TTZ' in hname and '_thu_shape_' in hname:
+        newname = hname.replace('_thu_shape_', '_thu_shape_ttZ_')
+
+    return newname
+
 histogramsRebinned=[]
 
 for hist in histogramsToRebin:
@@ -65,11 +86,14 @@ for hist in histogramsToRebin:
     ngroup = len(xbins)-1
     hname = hist.GetName()
 
+    # rename if necessary
+    hname = updateHistName(hname)
+    
     #hist.Sumw2()
     hist_rebinned = hist.Rebin(ngroup, hname, xbins)
     
     if args.positvebins:
-        dc.makeBinContentsPositive(hist_rebinned, verbosity=args.verbose)
+        dc.makeBinContentsPositive(hist_rebinned, verbosity=args.verbose)    
 
     histogramsRebinned.append(hist_rebinned)
 
