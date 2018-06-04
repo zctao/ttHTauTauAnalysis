@@ -914,7 +914,7 @@ float SFHelper::Get_EvtCSVWeight(const std::vector<miniJet>& jets,
 
 	for (const auto & j : jets) {
 		double w = Get_JetCSVWeight(j, sys);
-		weight_evt *= w;
+		if (w!=0) weight_evt *= w;
 	}
 
 	return weight_evt;
@@ -939,9 +939,9 @@ float SFHelper::Get_JetCSVWeight(const miniJet& jet, std::string sys/*pass by co
 
 	double weight_jet = 1.;
 
-	if (sys == "JESUp")
+	if (sys == "JESUp" and jf != BTagEntry::FLAV_C)
 		sys = "up_jes";
-	else if (sys == "JESDown")
+	else if (sys == "JESDown" and jf != BTagEntry::FLAV_C)
 		sys = "down_jes";
 	else if (sys == "LFUp" and jf == BTagEntry::FLAV_B)
 		sys = "up_lf";
@@ -980,7 +980,12 @@ float SFHelper::Get_JetCSVWeight(const miniJet& jet, std::string sys/*pass by co
 
 	weight_jet = BTagCaliReader->eval_auto_bounds(sys, jf, std::abs(eta), pt, csv);
 	
-	if (sys == "central") assert(weight_jet > 0.);
+	if ((sys == "central" or sys=="up_jes" or sys=="down_jes") and weight_jet==0.) {
+		std::cerr << "SFHelper::Get_JetCSVWeight" << std::endl;
+		std::cerr << "sys jetflavor |eta| pt csv : " << sys << " " << jf << " "
+				  << std::abs(eta) << " " << pt << " " << csv << std::endl;
+	}
+	//assert(weight_jet > 0.);
 
 	return weight_jet;
 }
@@ -1017,27 +1022,27 @@ float SFHelper::Get_TauIDSF(float tauPt, float tauEta, bool isGenMatched, TStrin
 	float tauEff_sf = 1.00;
 
 	// tau ID fake rate data/MC scale factor
-	float tauFR_sf = tauEta < 1.497 ?
+	float tauFR_sf = fabs(tauEta) < 1.497 ?
 	    readTF(f_fakerate_tau_mvaM_etaL_ratio, tauPt) :
 		readTF(f_fakerate_tau_mvaM_etaH_ratio, tauPt);
 
 	if (syst=="FRjt_normUp") {
-		tauFR_sf = tauEta < 1.497 ?
+		tauFR_sf = fabs(tauEta) < 1.497 ?
 			readTF(f_fakerate_tau_mvaM_etaL_ratio_normUp, tauPt) :
 			readTF(f_fakerate_tau_mvaM_etaH_ratio_normUp, tauPt);
 	}
 	else if (syst=="FRjt_normDown") {
-		tauFR_sf = tauEta < 1.497 ?
+		tauFR_sf = fabs(tauEta) < 1.497 ?
 			readTF(f_fakerate_tau_mvaM_etaL_ratio_normDown, tauPt) :
 			readTF(f_fakerate_tau_mvaM_etaH_ratio_normDown, tauPt);
 	}
 	else if (syst=="FRjt_shapeUp") {
-		tauFR_sf = tauEta < 1.497 ?
+		tauFR_sf = fabs(tauEta) < 1.497 ?
 			readTF(f_fakerate_tau_mvaM_etaL_ratio_shapeUp, tauPt) :
 			readTF(f_fakerate_tau_mvaM_etaH_ratio_shapeUp, tauPt);
 	}
 	else if (syst=="FRjt_shapeDown") {
-		tauFR_sf = tauEta < 1.497 ?
+		tauFR_sf = fabs(tauEta) < 1.497 ?
 			readTF(f_fakerate_tau_mvaM_etaL_ratio_shapeDown, tauPt) :
 			readTF(f_fakerate_tau_mvaM_etaH_ratio_shapeDown, tauPt);
 	}
