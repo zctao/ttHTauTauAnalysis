@@ -15,6 +15,8 @@ parser.add_argument('-c','--channels', nargs='+', choices=dc.Channels,
                     help="Channels to bin datacards")
 parser.add_argument('-p','--positvebins', action='store_true',
                     help="Make bin contents positive")
+parser.add_argument('-w','--scalebywidth', action='store_true',
+                    help="Scale histograms by bin width")
 parser.add_argument('--nosystematics', action='store_true',
                     help="Only include nominal ones")
 parser.add_argument('--sysname', type=str, default='_CMS_ttHl_',
@@ -95,6 +97,10 @@ for hist in histogramsToRebin:
     if args.positvebins:
         dc.makeBinContentsPositive(hist_rebinned, verbosity=args.verbose)    
 
+    if args.scalebywidth:
+        hist_rebinned.Scale(1.,'width')
+        # set y axis label?
+        
     histogramsRebinned.append(hist_rebinned)
 
 # write to file
