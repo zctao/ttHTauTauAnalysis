@@ -74,8 +74,13 @@ template <typename T> void ttHtautauAnalyzer::addIDFlags(std::vector<T>& leptons
 		lep.addUserInt("isTightCharge", isTightCharge(lep));
 		lep.addUserFloat("conePt", ConePt(lep));
 		// MC matching
-		if (not isdata_)
+		if (not isdata_) {
 			lep.addUserInt("MCMatchType", getMCMatchType(lep, *MC_particles));
+			lep.addUserInt("isGenPhotonMatched",
+						   isGenPhotonMatched(lep, *MC_particles, false));
+			lep.addUserInt("isPromptGenPhotonMatched",
+						   isGenPhotonMatched(lep, *MC_particles, true));
+		}
 	}
 }
 template void ttHtautauAnalyzer::addIDFlags(std::vector<pat::Electron>&,
@@ -454,6 +459,59 @@ float ttHtautauAnalyzer::getMHT(std::vector<miniLepton>& leptons,
 
 /////////////////////
 // MC truth matching
+bool ttHtautauAnalyzer::isGenPhotonMatched(const pat::Electron& patEle, const std::vector<reco::GenParticle>& gen_particles, bool isPromptPhoton)
+{
+	for (const auto& gen : gen_particles) {
+		if (gen.pdgId() != 22) continue;
+		if (gen.status() != 1) continue;
+
+		float dR = reco::deltaR(gen.eta(), gen.phi(), patEle.eta(), patEle.phi());
+		if (dR > 0.3) continue;
+		if (gen.pt() < 0.5*patEle.pt()) continue;
+
+		if (isPromptPhoton) {
+			if (not gen.isPromptFinalState()) continue;
+		}
+
+		// found match
+		return true;
+	}
+
+	return false;
+}
+// dummy
+bool ttHtautauAnalyzer::isGenPhotonMatched(const pat::Muon& patMuon, const std::vector<reco::GenParticle>& gen_particles, bool isPromptPhoton)
+{
+	return false;
+}
+
+const reco::GenParticle* ttHtautauAnalyzer::getMatchedGenParticle(const pat::Electron& patEle, const std::vector<reco::GenParticle>& gen_particles)
+{
+	const reco::GenParticle* out = NULL;
+	float dRmin = 666.;
+	
+	// loop over genParticle collections to find match
+	for (auto& gen : gen_particles) {
+		if (abs(gen.pdgId()) == 11) {
+			auto genStatus = gen.statusFlags();
+
+			if (not (genStatus.isPrompt() or
+					 genStatus.isDirectPromptTauDecayProduct()))
+				continue;
+
+			float dR = reco::deltaR(gen.eta(),gen.phi(),patEle.eta(),patEle.phi());
+			if (dR > 0.2) continue;
+			if (gen.pt() < 8.) continue;
+
+			if (dR > dRmin) continue;  // find the closest in dR
+			
+			dRmin = dR;
+			out = &gen;
+		}
+	}
+	
+	return out;
+}
 
 const reco::GenParticle* ttHtautauAnalyzer::getMatchedGenParticle(const pat::Muon& patMu, const std::vector<reco::GenParticle>& gen_particles)
 {
@@ -477,34 +535,6 @@ const reco::GenParticle* ttHtautauAnalyzer::getMatchedGenParticle(const pat::Muo
 
 			if (dR > dRmin) continue;  // find the closest in dR
 
-			dRmin = dR;
-			out = &gen;
-		}
-	}
-
-	return out;
-}
-
-const reco::GenParticle* ttHtautauAnalyzer::getMatchedGenParticle(const pat::Electron& patEle, const std::vector<reco::GenParticle>& gen_particles)
-{
-	const reco::GenParticle* out = NULL;
-	float dRmin = 666.;
-	
-	// loop over genParticle collections to find match
-	for (auto& gen : gen_particles) {
-		if (abs(gen.pdgId()) == 11) {
-			auto genStatus = gen.statusFlags();
-
-			if (not (genStatus.isPrompt() or
-					 genStatus.isDirectPromptTauDecayProduct()))
-				continue;
-
-			float dR = reco::deltaR(gen.eta(),gen.phi(),patEle.eta(),patEle.phi());
-			if (dR > 0.2) continue;
-			if (gen.pt() < 8.) continue;
-
-			if (dR > dRmin) continue;  // find the closest in dR
-			
 			dRmin = dR;
 			out = &gen;
 		}

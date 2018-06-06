@@ -68,8 +68,11 @@ void ttHtautauAnalyzer::write_ntuple_electrons(const std::vector<pat::Electron>&
 		evNtuple_.ele_isChargeConsistent->push_back(ele.isGsfCtfScPixChargeConsistent() + ele.isGsfScPixChargeConsistent() > 1);
 		evNtuple_.ele_passesConversionVeto->push_back(ele.passConversionVeto());
 		evNtuple_.ele_nMissingHits->push_back(ele.userFloat("numMissingHits"));
-		if (!isdata_)
+		if (!isdata_) {
 			evNtuple_.ele_mcMatchType->push_back(ele.userInt("MCMatchType"));
+			evNtuple_.ele_isGenPhotonMatched->push_back(ele.userInt("isGenPhotonMatched"));
+			evNtuple_.ele_isPromptGenPhotonMatched->push_back(ele.userInt("isPromptGenPhotonMatched"));
+		}
 		if (ele.hasUserFloat("ecalTrkEnergyPostCorr")) {
 			evNtuple_.ele_ecalTrkEnergyPreCorr->push_back(ele.userFloat("ecalTrkEnergyPreCorr"));
 			evNtuple_.ele_ecalTrkEnergyPostCorr->push_back(ele.userFloat("ecalTrkEnergyPostCorr"));

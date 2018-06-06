@@ -616,6 +616,8 @@ void eventNtuple::initialize()
 	ele_passesConversionVeto->clear();
 	ele_nMissingHits->clear();
 	ele_mcMatchType->clear();
+	ele_isGenPhotonMatched->clear();
+	ele_isPromptGenPhotonMatched->clear();
 	ele_ecalTrkEnergyPreCorr->clear();
 	ele_ecalTrkEnergyPostCorr->clear();
 	ele_energyScaleValue->clear();
@@ -841,6 +843,8 @@ void eventNtuple::setup_branches(TTree* tree)
 	tree->Branch("ele_ismvasel",             &ele_ismvasel);
 	tree->Branch("ele_isfakeablesel",        &ele_isfakeablesel);
 	tree->Branch("ele_mcMatchType",          &ele_mcMatchType);
+	tree->Branch("ele_isGenPhotonMatched",   &ele_isGenPhotonMatched);
+	tree->Branch("ele_isPromptGenPhotonMatched", &ele_isPromptGenPhotonMatched);
 	tree->Branch("ele_ecalTrkEnergyPreCorr",  &ele_ecalTrkEnergyPreCorr);
 	tree->Branch("ele_ecalTrkEnergyPostCorr", &ele_ecalTrkEnergyPostCorr);
 	tree->Branch("ele_energyScaleValue",      &ele_energyScaleValue);
@@ -1060,6 +1064,8 @@ void eventNtuple::set_branch_address(TTree* tree)
 	tree->SetBranchAddress("ele_ismvasel",             &ele_ismvasel);
 	tree->SetBranchAddress("ele_isfakeablesel",        &ele_isfakeablesel);
 	tree->SetBranchAddress("ele_mcMatchType",          &ele_mcMatchType);
+	tree->SetBranchAddress("ele_isGenPhotonMatched",   &ele_isGenPhotonMatched);
+	tree->SetBranchAddress("ele_isPromptGenPhotonMatched", &ele_isPromptGenPhotonMatched);
 	tree->SetBranchAddress("ele_ecalTrkEnergyPreCorr", &ele_ecalTrkEnergyPreCorr);
 	tree->SetBranchAddress("ele_ecalTrkEnergyPostCorr",&ele_ecalTrkEnergyPostCorr);
 	tree->SetBranchAddress("ele_energyScaleValue",     &ele_energyScaleValue);

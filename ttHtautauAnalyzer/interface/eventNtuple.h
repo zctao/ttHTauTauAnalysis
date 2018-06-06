@@ -196,6 +196,8 @@ class eventNtuple
 	std::vector<int>   *ele_passesConversionVeto = 0;
 	std::vector<int>   *ele_nMissingHits = 0;
 	std::vector<int>   *ele_mcMatchType = 0;
+	std::vector<int>   *ele_isGenPhotonMatched = 0;
+	std::vector<int>   *ele_isPromptGenPhotonMatched = 0;
 	std::vector<float> *ele_ecalTrkEnergyPreCorr = 0;
 	std::vector<float> *ele_ecalTrkEnergyPostCorr = 0;
 	std::vector<float> *ele_energyScaleValue = 0;

@@ -143,12 +143,14 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 				 std::vector<pat::Tau>&, std::vector<pat::Jet>&);
 	float getMHT(std::vector<miniLepton>&, std::vector<pat::Tau>&,
 				 std::vector<pat::Jet>&);
-	
-	const reco::GenParticle* getMatchedGenParticle(const pat::Muon&, const std::vector<reco::GenParticle>&);
+
 	const reco::GenParticle* getMatchedGenParticle(const pat::Electron&, const std::vector<reco::GenParticle>&);
+	const reco::GenParticle* getMatchedGenParticle(const pat::Muon&, const std::vector<reco::GenParticle>&);
 	const reco::GenParticle* getMatchedGenParticle(const pat::Tau&, const std::vector<reco::GenParticle>&);
 	template <typename T> int getMCMatchType(const T&, const std::vector<reco::GenParticle>&);
-
+	bool isGenPhotonMatched(const pat::Electron&, const std::vector<reco::GenParticle>&, bool);
+	bool isGenPhotonMatched(const pat::Muon&, const std::vector<reco::GenParticle>&, bool); // dummy
+	
 	int HiggsDaughterPdgId(const std::vector<reco::GenParticle>&);
 
 	// vertices
