@@ -30,7 +30,7 @@ parser.add_argument('-o','--outdir', type=str,
 parser.add_argument('-d','--dryrun', action='store_true',
                     help="Run the script without actually submitting crab jobs")
 parser.add_argument('--lumimask', type=str,
-                    default='https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions17/13TeV/ReReco/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt', help='Lumi mask to run on data sample')
+                    default='https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions17/13TeV/ReReco/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON_v1.txt', help='Lumi mask to run on data sample')
 parser.add_argument('-a','--automatic', action='store_true',
                     help="Automatic data splitting")
 parser.add_argument('-b','--batch_lpc', action='store_true',
