@@ -222,7 +222,7 @@ std::vector<pat::Tau> ttHtautauAnalyzer::getCorrectedTaus(
 // better to move this to leptonID package
 bool ttHtautauAnalyzer::isLooseID(const pat::Tau& tau) const
 {
-	bool passKinematic = tau.pt() > 20. and std::abs(tau.eta()) < 2.3;
+	bool passKinematic = tau.pt() > 18. and std::abs(tau.eta()) < 2.3;
 
 	// tauID("byVLooseIsolationMVArun2017v2DBoldDMdR0p3wLT2017")
 	bool passID = tau.userFloat("idPreselection") > 0.5;
