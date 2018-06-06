@@ -1018,8 +1018,8 @@ float SFHelper::Get_TauIDSF(float tauPt, float tauEta, bool isGenMatched, TStrin
 	assert(not _isdata);
 
 	// tau ID efficiency data/MC scale factor
-	// https://twiki.cern.ch/twiki/bin/view/CMS/TauIDRecommendation13TeV#Tau_ID_efficiency
-	float tauEff_sf = 1.00;
+	// https://indico.cern.ch/event/719250/contributions/2971854/attachments/1635435/2609013/tauid_recommendations2017.pdf
+	float tauEff_sf = 0.89; // dR03mvaLoose or dR03mvaMedium
 
 	// tau ID fake rate data/MC scale factor
 	float tauFR_sf = fabs(tauEta) < 1.497 ?
