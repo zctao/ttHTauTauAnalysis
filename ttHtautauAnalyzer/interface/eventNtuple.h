@@ -32,9 +32,10 @@ class eventNtuple
 	std::vector<TLorentzVector> buildFourVectorTaus(std::vector<int>&, bool loose=false) const;
 	//std::vector<miniTau> buildTaus(std::string) const;
 	std::vector<miniTau> buildTaus(bool loose=false, std::string tightWPDef="L",
-								   const TString& tec="NA", float minPt=20.) const;
-	std::vector<miniTau> buildTaus(bool, Analysis_types,
-								   const TString& tec="NA", float minPt=20.) const;
+								   const TString& tec="NA", bool isdata=false,
+								   float minPt=20.) const;
+	std::vector<miniTau> buildTaus(bool, Analysis_types, const TString& tec="NA",
+								   bool isdata=false, float minPt=20.) const;
 	std::vector<TLorentzVector> buildFourVectorTaus(bool loose=false) const;
 	std::vector<TLorentzVector> buildFourVectorTauDaugsCharged(bool loose=false) const;
 	std::vector<TLorentzVector> buildFourVectorTauDaugsNeutral(bool loose=false) const;

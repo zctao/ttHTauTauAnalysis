@@ -73,7 +73,8 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorLeps(bool loose) const
 */
 
 std::vector<miniTau> eventNtuple::buildTaus(bool loose, Analysis_types anatype,
-											const TString& tec, float minPt) const
+											const TString& tec, bool isdata,
+											float minPt) const
 {
 	std::string selTauWP;
 	if (anatype==Analyze_1l2tau or anatype==Analyze_2l2tau)
@@ -81,11 +82,12 @@ std::vector<miniTau> eventNtuple::buildTaus(bool loose, Analysis_types anatype,
 	else
 		selTauWP = "L";
 
-	return buildTaus(loose, selTauWP, tec, minPt);
+	return buildTaus(loose, selTauWP, tec, isdata, minPt);
 }
 
 std::vector<miniTau> eventNtuple::buildTaus(bool loose, std::string tightWPDef,
-											const TString& tec, float minPt) const
+											const TString& tec, bool isdata,
+											float minPt) const
 {
 	std::vector<miniTau> taus;
 		
@@ -94,17 +96,28 @@ std::vector<miniTau> eventNtuple::buildTaus(bool loose, std::string tightWPDef,
 		TLorentzVector tauP4;
 		tauP4.SetPtEtaPhiE(tau_pt->at(t),tau_eta->at(t),tau_phi->at(t),tau_E->at(t));
 		
-		// tauES uncertainties
+		// tauES and uncertainties
 		// https://twiki.cern.ch/twiki/bin/view/CMS/TauIDRecommendation13TeV#Tau_energy_scale
-		float unc = 0.03;
-		float shift = 0.;
-		if (tec.EqualTo("tesup", TString::ECaseCompare::kIgnoreCase))
-			shift = 1.;
-		else if (tec.EqualTo("tesdown", TString::ECaseCompare::kIgnoreCase))
-			shift = -1.;
+		// AN-18-098 Table 14
+		if (not isdata) {
+			float tauES_sf = 1.;
+			if ( tau_mcMatchType->at(t)>=1 and tau_mcMatchType->at(t)<=5 ) {
+				// gen matched tau only ?
+				if (tau_decayMode->at(t)==0) tauES_sf = 0.97;
+				else if (tau_decayMode->at(t)==1) tauES_sf = 0.98;
+				else if (tau_decayMode->at(t)==10) tauES_sf = 0.99;
+			}
 
-		tauP4 *= 1.+shift*unc;
+			float unc = 0.03;
+			float shift = 0.;
+			if (tec.EqualTo("tesup", TString::ECaseCompare::kIgnoreCase))
+				shift = 1.;
+			else if (tec.EqualTo("tesdown", TString::ECaseCompare::kIgnoreCase))
+				shift = -1.;
 
+			tauP4 *= (tauES_sf+shift*unc);
+		}
+		
 		if (tauP4.Pt() < minPt) continue;
 		
 		miniTau tau(tauP4,tau_charge->at(t),tau_decayMode->at(t),

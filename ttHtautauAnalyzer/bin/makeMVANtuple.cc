@@ -160,8 +160,8 @@ int main(int argc, char** argv)
 		auto leptons_fakeable = evNtuple.buildLeptons('F');  // fakeable
 		auto leptons_tight = evNtuple.buildLeptons('T');  // tight
 
-		auto taus_fakeable = evNtuple.buildTaus(true, anaType, enCorr.c_str());  // fakeable
-		auto taus_tight = evNtuple.buildTaus(false, anaType, enCorr.c_str());  // tight
+		auto taus_fakeable = evNtuple.buildTaus(true, anaType, enCorr.c_str(), isdata);
+		auto taus_tight = evNtuple.buildTaus(false, anaType, enCorr.c_str(), isdata);
 
 		//auto jets = evNtuple.buildJets();
 		// Jet cleaning based on analysis type
