@@ -171,17 +171,20 @@ class SFHelper
 	TFile* file_recoToLoose_leptonSF_mu2;
 	TFile* file_recoToLoose_leptonSF_mu3;
 	TFile* file_recoToLoose_leptonSF_mu4;
-	TH2F *h_recoToLoose_leptonSF_mu1;
+	//TH2F *h_recoToLoose_leptonSF_mu1;
+	TGraphAsymmErrors *g_recoToLoose_leptonSF_mu1;
 	TH2F *h_recoToLoose_leptonSF_mu2;
 	TH2F *h_recoToLoose_leptonSF_mu3;
-	TGraphAsymmErrors *h_recoToLoose_leptonSF_mu4;
+	TH2D *h_recoToLoose_leptonSF_mu4;
 	
-	TFile* file_recoToLoose_leptonSF_el;
+	//TFile* file_recoToLoose_leptonSF_el;
+	//TH2F *h_recoToLoose_leptonSF_el1;
+	//TH2F *h_recoToLoose_leptonSF_el2;
+	//TH2F *h_recoToLoose_leptonSF_el3;
 	TFile* file_recoToLoose_leptonSF_gsf;
-	TH2F *h_recoToLoose_leptonSF_el1;
-	TH2F *h_recoToLoose_leptonSF_el2;
-	TH2F *h_recoToLoose_leptonSF_el3;
 	TH2F *h_recoToLoose_leptonSF_gsf;
+	TFile* file_recoToLoose_leptonSF_gsf_low;
+	TH2F *h_recoToLoose_leptonSF_gsf_low;
 	
 	TFile* file_looseToTight_leptonSF_mu_2lss;
 	TFile* file_looseToTight_leptonSF_el_2lss;
@@ -191,9 +194,6 @@ class SFHelper
 	TH2F *h_looseToTight_leptonSF_el_2lss;
 	TH2F *h_looseToTight_leptonSF_mu_3l;
 	TH2F *h_looseToTight_leptonSF_el_3l;
-
-	TFile* file_recoToLoose_leptonSF_mu;
-	TH2D *h_recoToLoose_leptonSF_mu; 
 
 	// Electron Charge MisID
 	TFile *file_eleMisCharge;

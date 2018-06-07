@@ -68,7 +68,14 @@ dir_sf=trigger_sf
 mkdir -p $dir_sf
 # loose vs reco
 ## muon
+#wget https://welmeten.web.cern.ch/welmeten/Trk_Eff_Zmumu_2017/fits.root -O trk_Eff.root
+#wget https://twiki.cern.ch/twiki/pub/CMS/MuonReferenceEffs2017/RunBCDEF_SF_ID.root -O muon_RunBCDEF_SF_ID.root
+#wget https://twiki.cern.ch/twiki/pub/CMS/MuonReferenceEffs2017/RunBCDEF_SF_ID_JPsi.root -O muon_RunBCDEF_SF_ID_JPsi.root
 #wget http://www.hep.uniovi.es/sscruz/ttH/may28/scaleFactors.root
+## electron
+#wget https://twiki.cern.ch/twiki/pub/CMS/Egamma2017DataRecommendations/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root
+#wget https://twiki.cern.ch/twiki/pub/CMS/Egamma2017DataRecommendations/egammaEffi.txt_EGM2D_runBCDEF_passingRECO_lowEt.root
+
 ## 1l2tau
 # single lepton trigger and lepton leg of the cross triggers
 #scp ztao@lxplus.cern.ch:/afs/cern.ch/user/v/veelken/public/triggerSFs2017/*.root $dir_sf/.
