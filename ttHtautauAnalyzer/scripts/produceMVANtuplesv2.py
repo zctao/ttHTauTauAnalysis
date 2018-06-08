@@ -19,7 +19,7 @@ parser.add_argument('--jobtypes', nargs='+', choices=['datacard','control'],
 parser.add_argument('--selection', choices=['application_fake','signal','control',
                                             'control_fakeAR'])
 parser.add_argument('-r','--redirector',type=str,
-                    default='root://cmsxrootd.fnal.gov/',
+                    default='root://cms-xrd-global.cern.ch/',
                     help="redirector for xrootd")
 parser.add_argument('-t','--topeosdir', type=str,
                     default="/store/user/ztao/ttHtaus_94X/")

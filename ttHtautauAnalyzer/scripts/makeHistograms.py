@@ -308,7 +308,7 @@ if __name__ == "__main__":
 
     ######
 
-    eosDirectoryString = 'root://cmsxrootd.fnal.gov/'+args.eostopdir+args.version+'/'
+    eosDirectoryString = 'root://cms-xrd-global.cern.ch/'+args.eostopdir+args.version+'/'
     
     histograms_var = []
     var = args.var

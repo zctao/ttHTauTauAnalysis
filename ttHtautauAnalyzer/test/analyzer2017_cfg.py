@@ -83,7 +83,7 @@ options.register('doSync', False,
 
 ###
 options.maxEvents = -1
-options.inputFiles='file:/uscms/home/ztao/nobackup/datasample/ttH_94X/ttHJetToNonbb.root'
+options.inputFiles='file:/afs/cern.ch/work/z/ztao/public/workspace/datasample/ttH_94X/ttHJetToNonbb.root'
 #/store/mc/RunIIFall17MiniAOD/ttHJetToNonbb_M125_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/20000/0CF65340-0200-E811-ABB7-0025905C53F0.root
 
 # get and parse the command line arguments

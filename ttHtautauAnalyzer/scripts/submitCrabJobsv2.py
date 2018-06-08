@@ -27,6 +27,8 @@ parser.add_argument('--systematics', nargs='+',
                     default=['nominal'], help="Energy correction")
 parser.add_argument('-o','--outdir', type=str,
                     default='/store/user/ztao/ttHtaus_94X', help="Output directory")
+parser.add_argument('-w','--workarea', type=str,
+                    default='/afs/cern.ch/work/z/ztao/public/workspace/crab')
 parser.add_argument('-d','--dryrun', action='store_true',
                     help="Run the script without actually submitting crab jobs")
 parser.add_argument('--lumimask', type=str,
@@ -72,7 +74,7 @@ template = '''from CRABClient.UserUtilities import config
 config = config()
 config.General.requestName = '%(name)s'
 config.General.transferLogs = True
-config.General.workArea = '/uscms/home/ztao/nobackup/crab'
+config.General.workArea = '%(workarea)s'
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = '%(configfile)s'
 config.JobType.pyCfgParams = %(cfgparams)s
@@ -117,6 +119,7 @@ for sample in samples:
         vd['name'] = jobname
         vd['dataset'] = "'"+dataset_dict[sample]['dataset']+"'"
         vd['configfile'] = args.config
+        vd['workarea'] = args.workarea
         vd['cfgparams'] = parameterset
         vd['DBS'] = args.dbs
         vd['unit'] = dataset_dict[sample]['unitPerJob']

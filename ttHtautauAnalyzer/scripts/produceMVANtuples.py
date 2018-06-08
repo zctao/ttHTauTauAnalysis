@@ -23,7 +23,7 @@ parser.add_argument('-o','--outdir', type=str, default='./', help="Output direct
 parser.add_argument('-l','--list', type=str, default='ntuplelist.log',
                     help="list of event ntuple to be processed")
 parser.add_argument('-r','--redirector', type=str,
-                    default='root://cmsxrootd.fnal.gov/',help="redirector for xrootd")
+                    default='root://cms-xrd-global.cern.ch/',help="redirector for xrootd")
 parser.add_argument('-v','--version', choices=['2016','2017','test'],
                     help="Version of analysis")
 

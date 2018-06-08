@@ -15,8 +15,6 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 process.option = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 
 options.maxEvents = -1
-#options.inputFiles = 'file:/uscms/home/ztao/nobackup/datasample/ttH_80X/ttZ.root'
-#options.inputFiles = 'file:/uscms/home/ztao/nobackup/datasample/ttH_80X/ttHnonbb.root'
 # ttHnonbb
 #'root://cmsxrootd.fnal.gov//store/mc/RunIISummer16MiniAODv2/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/00D10AF2-76BE-E611-8EFB-001E67457DFA.root'
 #options.inputFiles = '/store/user/matze/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/faster_v8_ttH_maod_p1_3a2fa29ab1d54ae0995b28f27b405be9/ttH_maod_100897.root'

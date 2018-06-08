@@ -1,9 +1,9 @@
 #!/bin/bash
 
-redirector='root://cmsxrootd.fnal.gov/'
+redirector='root://cms-xrd-global.cern.ch/'
 eostopdir='/store/user/ztao/ttHtaus_94X/'
 datasetlist='../dataFiles/DatasetList_2017reMiniAODv2.csv'
-outdir='/uscms/home/ztao/nobackup/mvaNtuples/'
+outdir='/afs/cern.ch/work/z/ztao/public/workspace/mvaNtuples/'
 version='may2018'
 
 samples='ttHJetToNonbb data_e'

@@ -2,7 +2,7 @@
 
 date=${1:-30apr2018}
 
-outdir=/uscms/home/ztao/nobackup/ttHTT_syncNtuple/94X/$date/
+outdir=/afs/cern.ch/work/z/ztao/public/workspace/ttHTT_syncNtuple/94X/$date/
 mkdir -p $outdir
 
 echo 'producing sync ntuple with event selection turned off'
