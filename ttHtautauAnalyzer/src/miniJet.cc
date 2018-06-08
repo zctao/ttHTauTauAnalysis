@@ -18,6 +18,21 @@ TLorentzVector miniJet::p4() const
 	return j;
 }
 
+float miniJet::mass() const
+{
+	return p4().M();
+}
+
+LorentzVector miniJet::lorentzvector() const
+{
+	LorentzVector l;
+	l.SetPt(pt_);
+	l.SetEta(eta_);
+	l.SetPhi(phi_);
+	l.SetM(mass());
+	return l;
+}
+
 void miniJet::dump() const
 {
 	std::cout << "pt: " << pt() << " eta: " << eta() << " phi: " << phi()

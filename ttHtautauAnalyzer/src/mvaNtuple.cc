@@ -939,9 +939,23 @@ void mvaNtuple::compute_HTT_input_variables(const miniJet& bjet,
 	pT_Wj2 = wjet2.pt();
 	m_Wj1Wj2 = (wjet1.p4()+wjet2.p4()).M();
 
-	kinFit_->fit(bjet.p4(), wjet1.p4(), wjet2.p4());
+	//kinFit_->fit(bjet.p4(), wjet1.p4(), wjet2.p4());
+	kinFit_->fit(bjet.lorentzvector(), wjet1.lorentzvector(), wjet2.lorentzvector());
 	nllKinFit = kinFit_->nll();
 	pT_b_o_kinFit_pT_b = (bjet.pt()) / (kinFit_->fittedBJet().Pt());
+
+	/*
+	std::cout << "HTT input variables: " << std::endl;
+	std::cout << "CSV_b = " << CSV_b << std::endl;
+	std::cout << "qg_Wj2 = " << qg_Wj2 << std::endl;
+	std::cout << "pT_bWj1Wj2 = " << pT_bWj1Wj2 << std::endl;
+	std::cout << "pT_Wj2 = " << pT_Wj2 << std::endl;
+	std::cout << "m_Wj1Wj2 = " << m_Wj1Wj2 << std::endl;
+	std::cout << "nllKinFit = " << nllKinFit << std::endl;
+	std::cout << "pT_b = " << bjet.pt() << std::endl;
+	std::cout << "kinFit_pT_b = " << kinFit_->fittedBJet().Pt() << std::endl;
+	std::cout << "pT_b_o_kinFit_pT_b = " << pT_b_o_kinFit_pT_b << std::endl;
+	*/
 }
 
 void mvaNtuple::compute_HTT(const std::vector<miniJet>& jets)
@@ -961,20 +975,36 @@ void mvaNtuple::compute_HTT(const std::vector<miniJet>& jets)
 			for (auto wjet2 = wjet1+1; wjet2 != jets.end(); ++wjet2) {
 				if (wjet2 == bjet) continue;
 				if (wjet2 == wjet1) continue;
-
+				/*
+				std::cout << "start computing HTT with jet triplet: " << std::endl;
+				std::cout << "bjet : "; bjet->dump();
+				std::cout << "wjet1 : "; wjet1->dump();
+				std::cout << "wjet2 : " ; wjet2->dump();
+				*/
 				compute_HTT_input_variables(*bjet, *wjet1, *wjet2);
 
-				float vars[7] = {CSV_b, qg_Wj2, pT_bWj1Wj2, pT_Wj2, m_Wj1Wj2,
-								 nllKinFit, pT_b_o_kinFit_pT_b};
+				float vars[7] = {CSV_b, qg_Wj2, pT_bWj1Wj2, m_Wj1Wj2, nllKinFit,
+								 pT_b_o_kinFit_pT_b, pT_Wj2};
 				
 				float htt = mva_eval_->evaluate_bdt_HTT(vars);
+				//std::cout << "htt for this tripet : " << htt << std::endl;
+				
 				if (htt > HTT) {
 					HTT = htt;
 					HadTop_pt = (bjet->p4() + wjet1->p4() + wjet2->p4()).Pt();
 				}
+				/*
+				std::cout << "best HTT/HadTop_pt so far : " << HTT << " " << HadTop_pt << std::endl;
+				std::cout << "----------" << std::endl;
+				*/
 			}
 		}
 	}
+	/*
+	std::cout << "Best HTT : " << HTT << std::endl;
+	std::cout << "HadTop_pt : " << HadTop_pt << std::endl;
+	std::cout << "===========" << std::endl;
+	*/
 }
 
 void mvaNtuple::evaluate_BDTs()

@@ -9,6 +9,10 @@
 #include <string>
 #include <iostream>
 
+#include <Math/LorentzVector.h>
+#include <Math/PtEtaPhiM4D.h>
+typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > LorentzVector;
+
 class miniJet {
  public:
 	// constructors and destructors	
@@ -25,7 +29,9 @@ class miniJet {
 	float flavor() const {return flavor_;}
 	float qgLikelihood() const {return qgLikelihood_;}
 
+    float mass() const;
 	TLorentzVector p4() const;
+    LorentzVector lorentzvector() const;
 	void dump() const;
 	
  protected:
