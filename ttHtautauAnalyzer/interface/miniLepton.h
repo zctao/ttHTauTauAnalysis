@@ -18,7 +18,8 @@ class miniLepton
 #endif
 	miniLepton(const TLorentzVector&, float, int pdgid=-9999, int charge=-9999, 
 			   bool isloose=false, bool isfakeable=false, bool istight=false,
-			   bool tightcharge=false, int mcmatchtype=-9999);
+			   bool tightcharge=false, int mcmatchtype=-9999,
+			   bool matchedtophoton=false);
 	//miniLepton(float, float);
 	
 	~miniLepton(){};
@@ -33,6 +34,7 @@ class miniLepton
 	void set_charge(int icharge) {charge_ = icharge;}
 	void set_pdgId(int id) {pdgid_ = id;}
 	void set_MCMatchType(int imctype) {mcmatchtype_ = imctype;}
+	void set_isGenPhotonMatched(bool ismatched) {isgenphotonmatched_ = ismatched;}
 
 	// TODO: check value was set before returning
 	float pt() const {return pt_;}
@@ -47,6 +49,7 @@ class miniLepton
 	bool passFakeableSel() const {return isfakeable_;}
 	bool passTightSel() const {return istight_;}
 	int MCMatchType() const {return mcmatchtype_;}
+	bool isGenPhotonMatched() const {return isgenphotonmatched_;}
 	bool isGenMatched() const;
 	TLorentzVector p4() const;
 
@@ -66,6 +69,7 @@ class miniLepton
 	bool  isfakeable_;
 	bool  istight_;
 	int   mcmatchtype_;
+	bool  isgenphotonmatched_;
 };
 
 #endif

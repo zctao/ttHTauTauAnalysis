@@ -267,6 +267,7 @@ class mvaNtuple
 	int isGenMatchedLep = -9999;
 	int isGenMatchedTau = -9999;
 	int HiggsDecayType = -9999;
+	int isGenPhotonMatched = -9999;
 
 	// TEST
 	// Four vector product of all combinations

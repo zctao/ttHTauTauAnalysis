@@ -29,6 +29,8 @@ miniLepton::miniLepton(const pat::Electron& ele)
 		mcmatchtype_ = ele.userInt("MCMatchType");
 	else
 		mcmatchtype_ = -9999;
+
+	isgenphotonmatched_ = false;
 }
 
 miniLepton::miniLepton(const pat::Muon& mu)
@@ -59,13 +61,15 @@ miniLepton::miniLepton(const pat::Muon& mu)
 		mcmatchtype_ = mu.userInt("MCMatchType");
 	else
 		mcmatchtype_ = -9999;
+
+	isgenphotonmatched_ = false;
 }
 	
 #endif
 
 miniLepton::miniLepton(const TLorentzVector& l, float conept, int pdgid,
 					   int charge, bool isloose, bool isfakeable, bool istight,
-					   bool tightcharge, int mcmatchtype)
+					   bool tightcharge, int mcmatchtype, bool matchedtophoton)
 {
 	pt_ = l.Pt();
 	eta_ = l.Eta();
@@ -79,6 +83,7 @@ miniLepton::miniLepton(const TLorentzVector& l, float conept, int pdgid,
 	isfakeable_ = isfakeable;
 	istight_ = istight;
 	mcmatchtype_ = mcmatchtype;
+	isgenphotonmatched_ = matchedtophoton;
 }
 
 TLorentzVector miniLepton::p4() const

@@ -23,6 +23,7 @@ void mvaNtuple::setup_branches(TTree* tree)
 	tree->Branch("isGenMatchedLep", &isGenMatchedLep);
 	tree->Branch("isGenMatchedTau", &isGenMatchedTau);
 	tree->Branch("HiggsDecayType", &HiggsDecayType);
+	tree->Branch("isGenPhotonMatched", &isGenPhotonMatched);
 	
 	if (dosystematics_) {
 		tree->Branch("event_weight_thu_shape_x1Up",&event_weight_thu_shape_x1Up);

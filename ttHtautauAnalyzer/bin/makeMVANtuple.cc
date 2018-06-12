@@ -232,6 +232,8 @@ int main(int argc, char** argv)
 				evt_selector.pass_MCMatch_Leps(anaType, *leptons);
 			mvantuple.isGenMatchedTau =
 				evt_selector.pass_MCMatch_Taus(anaType, *taus);
+			mvantuple.isGenPhotonMatched =
+				evt_selector.is_MCMatch_Photon(anaType, *leptons);
 		}
 		
 		//////////////////////////////////////

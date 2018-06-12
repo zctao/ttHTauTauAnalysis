@@ -134,6 +134,7 @@ class EventSelector
 					  const std::vector<miniTau>&);
 	bool pass_MCMatch_Leps(Analysis_types, const std::vector<miniLepton>&);
 	bool pass_MCMatch_Taus(Analysis_types, const std::vector<miniTau>&);
+	bool is_MCMatch_Photon(Analysis_types, const std::vector<miniLepton>&);
 	
  protected:
 	

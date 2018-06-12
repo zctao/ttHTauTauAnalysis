@@ -1754,6 +1754,29 @@ bool EventSelector::pass_MCMatch_Taus(Analysis_types anatype,
 		return false;
 }
 
+bool EventSelector::is_MCMatch_Photon(Analysis_types anatype,
+									  const std::vector<miniLepton>& leptons)
+{
+	int nLeps = 0;
+	if (anatype==Analyze_1l2tau)
+		nLeps = 1;
+	else if (anatype==Analyze_2lss or anatype==Analyze_2lss1tau or
+			 anatype==Analyze_2l2tau)
+		nLeps = 2;
+	else if (anatype==Analyze_3l or anatype==Analyze_3l1tau)
+		nLeps = 3;
+
+	int ilep = 0;
+	for (const auto & lep : leptons) {
+		if (ilep >= nLeps) break;
+		if (abs(lep.pdgId())==11 and lep.isGenPhotonMatched())
+			return true;
+		ilep++;
+	}
+	
+	return false;
+}
+
 bool EventSelector::pass_pairMass_veto(const std::vector<miniLepton>& leps)
 {
 	if (leps.size()<2) return true;

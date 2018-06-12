@@ -44,6 +44,10 @@ std::vector<miniLepton> eventNtuple::buildLeptons(char WP) const
 					   ele_charge->at(l), true, ele_isfakeablesel->at(l),
 					   ele_ismvasel->at(l), ele_istightcharge->at(l));
 		if (ele_mcMatchType->size()>0) lep.set_MCMatchType(ele_mcMatchType->at(l));
+		if (ele_isPromptGenPhotonMatched)
+			lep.set_isGenPhotonMatched(ele_isPromptGenPhotonMatched->at(l));
+		//if (ele_isGenPhotonMatched)
+		//	lep.set_isGenPhotonMatched(ele_isGenPhotonMatched->at(l));
 		leptons.push_back(lep);
 	}
 	// sort by conept
