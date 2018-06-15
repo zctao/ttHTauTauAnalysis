@@ -245,7 +245,17 @@ int main(int argc, char** argv)
 			tree_mva->Fill();
 			continue;
 		}
-		
+
+		if (isdata) {
+			mvantuple.event_weight = 1;
+		}
+		else {
+			// bad naming: should be Set_MC_weights
+			Set_SR_weights(anaType, sfhelper, evNtuple, mvantuple, trighelper,
+						   *leptons, *taus, jets, systematics, enCorr);
+		}
+
+		// if not signal region selection, overwrite event_weight with FF method
 		if (selType==Application_Fake_1l2tau or selType==Application_Fake_2lss1tau or
 			selType==Application_Fake_3l1tau or selType==Application_Fake_2l2tau or
 			selType==Control_FakeAR_1l2tau or selType==Control_FakeAR_2lss1tau or
@@ -264,13 +274,6 @@ int main(int argc, char** argv)
 		}
 		else if (selType==Control_FlipAR_ttW) {
 			mvantuple.event_weight = sfhelper.Get_ChargeFlipWeight(*leptons);
-		}
-		else { // signal region selection
-			if (isdata)
-				mvantuple.event_weight = 1;
-			else
-				Set_SR_weights(anaType, sfhelper, evNtuple, mvantuple, trighelper,
-							   *leptons, *taus, jets, systematics, enCorr);
 		}
 		
 		tree_mva->Fill();
