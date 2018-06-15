@@ -352,6 +352,15 @@ void Set_FR_weights(Selection_types seltype, SFHelper& sfhelper,
 		//	sfhelper.Get_FR_weight(leptons,taus,"FRm_ecUp");
 		//mvantuple.event_weight_FRm_ecDown =
 		//	sfhelper.Get_FR_weight(leptons,taus,"FRm_ecDown");
+
+		mvantuple.event_weight_FR_TT =
+			sfhelper.Get_FR_weight(leptons,taus,"FR_TT");
+		mvantuple.event_weight_FR_QCD =
+			sfhelper.Get_FR_weight(leptons,taus,"FR_QCD");
+		mvantuple.event_weight_FR_el_QCD_mu_TT =
+			sfhelper.Get_FR_weight(leptons,taus,"FR_el_QCD_mu_TT");
+		mvantuple.event_weight_FR_el_TT_mu_QCD =
+			sfhelper.Get_FR_weight(leptons,taus,"FR_el_TT_mu_QCD");
 		
 		if (seltype==Application_Fake_1l2tau or seltype==Application_Fake_2l2tau) {
 			mvantuple.event_weight_FRjt_normUp =

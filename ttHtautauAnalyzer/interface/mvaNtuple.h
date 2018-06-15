@@ -251,6 +251,10 @@ class mvaNtuple
 	float event_weight_FRm_bDown = -9999.;
 	float event_weight_FRm_ecUp = -9999.;
 	float event_weight_FRm_ecDown = -9999.;
+	float event_weight_FR_TT = -9999.;
+	float event_weight_FR_QCD = -9999.;
+	float event_weight_FR_el_QCD_mu_TT = -9999.;
+	float event_weight_FR_el_TT_mu_QCD = -9999.;
 
 	// scale factors
 	float pu_weight = -9999.;

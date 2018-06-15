@@ -134,6 +134,10 @@ class SFHelper
 	//TH2F *h_fakerate_mu_bDown;
 	//TH2F *h_fakerate_mu_ecUp;
 	//TH2F *h_fakerate_mu_ecDown;
+	TH2F *h_fakerate_el_TT;
+	TH2F *h_fakerate_el_QCD;
+	TH2F *h_fakerate_mu_TT;
+	TH2F *h_fakerate_mu_QCD;
 
 	// Jet to tau fake rate
 	TFile* file_fr_tau;

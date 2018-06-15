@@ -228,6 +228,11 @@ void SFHelper::Set_up_FakeRate_Lut(TString tauIDWP/*"dR03mvaTight"*/)
 	//h_fakerate_mu_bDown = (TH2F*) file_fr_lep->Get("FR_mva090_mu_data_comb_b2");
 	//h_fakerate_mu_ecUp = (TH2F*) file_fr_lep->Get("FR_mva090_mu_data_comb_ec1");
 	//h_fakerate_mu_ecDown = (TH2F*) file_fr_lep->Get("FR_mva090_mu_data_comb_ec2");
+
+	h_fakerate_el_TT = (TH2F*) file_fr_lep->Get("FR_mva090_el_TT");
+	h_fakerate_el_QCD = (TH2F*) file_fr_lep->Get("FR_mva090_el_QCD_NC");
+	h_fakerate_mu_TT = (TH2F*) file_fr_lep->Get("FR_mva090_mu_TT");
+	h_fakerate_mu_QCD = (TH2F*) file_fr_lep->Get("FR_mva090_mu_QCD");
 }
 
 void SFHelper::Set_up_ChargeMisID_Lut()
@@ -1200,6 +1205,19 @@ float SFHelper::Get_FakeRate_lep(float lepConePt, float lepEta,
 	//else if (syst=="FRm_ecDown" and isMuon) {
 	//	fakerate = read2DHist(h_fakerate_mu_ecDown, lepConePt, std::abs(lepEta));
 	//}
+	else if ((syst=="FR_TT" or syst=="FR_el_TT_mu_QCD") and isEle) {
+		fakerate = read2DHist(h_fakerate_el_TT, lepConePt, std::abs(lepEta));
+	}
+	else if ((syst=="FR_QCD" or syst=="FR_el_QCD_mu_TT") and isEle) {
+		fakerate = read2DHist(h_fakerate_el_QCD, lepConePt, std::abs(lepEta));
+	}
+	else if ((syst=="FR_TT" or syst=="FR_el_QCD_mu_TT") and isMuon) {
+		fakerate = read2DHist(h_fakerate_mu_TT, lepConePt, std::abs(lepEta));
+	}
+	else if ((syst=="FR_QCD" or syst=="FR_el_TT_mu_QCD") and isMuon) {
+		fakerate = read2DHist(h_fakerate_mu_QCD, lepConePt, std::abs(lepEta));
+	}
+	//
 	else if (isEle)
 		fakerate = read2DHist(h_fakerate_el, lepConePt, std::abs(lepEta));
 	else if (isMuon)

@@ -70,6 +70,10 @@ void mvaNtuple::setup_branches(TTree* tree)
 		//tree->Branch("event_weight_FRm_bDown",&event_weight_FRm_bDown);
 		//tree->Branch("event_weight_FRm_ecUp",&event_weight_FRm_ecUp);
 		//tree->Branch("event_weight_FRm_ecDown",&event_weight_FRm_ecDown);
+		tree->Branch("event_weight_FR_TT", &event_weight_FR_TT);
+		tree->Branch("event_weight_FR_QCD", &event_weight_FR_QCD);
+		tree->Branch("event_weight_FR_el_QCD_mu_TT", &event_weight_FR_el_QCD_mu_TT);
+		tree->Branch("event_weight_FR_el_TT_mu_QCD", &event_weight_FR_el_TT_mu_QCD);
 	}		
 
 	// generic variables
