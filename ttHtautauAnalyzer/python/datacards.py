@@ -1,4 +1,4 @@
-from ROOT import TTree, TH1D, TH2D
+from ROOT import TTree, TH1D, TH2D, TFile
 from math import sqrt
 from plotting import DrawHistfromTree
 import array
@@ -313,16 +313,11 @@ def getNtupleFileName_data(ntuplelist, anatype, channel, sample):
 
 
 def getClosureTestShape(h_nominal, closTest, infile, syst_coname='_CMS_ttHl_',
-                        hname_ele = 'x_TT_DL_FR_TT_MC_minus_FR_QCD_MC_ele',
-                        hname_mu = 'x_TT_DL_FR_TT_MC_minus_FR_QCD_MC_mu'):
+                        hname_ele = 'x_TT_FR_TT_MC_minus_FR_QCD_MC_el',
+                        hname_mu = 'x_TT_FR_TT_MC_minus_FR_QCD_MC_mu'):
 
-    assert(h_nominal.GetName()=='x_fakes_data')
+    #assert(h_nominal.GetName()=='x_fakes_data')
     assert(closTest in ClosureTests)
-    
-    # get number of bins and x range from h_nominal
-    nbin = h_nominal.GetNbinsX()
-    xmin = h_nominal.GetBinLowEdge(1)
-    xmax = h_nominal.GetBinLowEdge(nbin)+h_nominal.GetBinWidth(nbin)
 
     # open file and get histograms
     f_clos = TFile(infile, 'read')
@@ -331,13 +326,15 @@ def getClosureTestShape(h_nominal, closTest, infile, syst_coname='_CMS_ttHl_',
     assert('Clos_e' in closTest or 'Clos_m' in closTest)
     
     h_ttbar_minus_qcd_fr = f_clos.Get(hname)
+    h_ttbar_minus_qcd_fr.SetDirectory(0)
 
-    h_clos = TH1D("x_fakes_data"+syst_coname+closTest)
-    h_clos.Sumw2()
+    h_clos = h_nominal.Clone("x_fakes_data"+syst_coname+closTest)
+    h_clos.SetDirectory(0)
+    #h_clos.Sumw2()
 
     factor = 1. if 'shapeUp' in closTest else -1.
 
-    h_clos.Add(h_nominal, h_ttbar_minus_qcd_fr, 1., factor)
+    h_clos.Add(h_ttbar_minus_qcd_fr, factor)
 
     return h_clos
 

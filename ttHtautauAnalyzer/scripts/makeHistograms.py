@@ -213,8 +213,6 @@ def getHistSuffixandWeightNames_data(channel, selection, addSyst,
     systlist = [frl for frl in dc.FakeRateLepSysts]
     if '1l2tau' in selection or '2l2tau' in selection:
         systlist += [frjt for frjt in dc.FakeTauSysts]
-        # closure test
-        #systlist += [clos for clos in dc.ClosureTests]
 
     hnamelist += [syst_label+syst for syst in systlist]
     wnamelist += ['event_weight_'+syst for syst in systlist]
@@ -280,6 +278,8 @@ if __name__ == "__main__":
     parser.add_argument('-l','--luminosity', type=float, default=1.,
                         help="Integrated luminosity (1/fb)")
     parser.add_argument('--treename', type=str, default="mva", help="Input tree name")
+    parser.add_argument('--closureFile', type=str,
+                        help="Auxiliary file for closure systematic uncertainty")
     parser.add_argument('-s','--systematics', action='store_true',
                         help="Include systematics")
     parser.add_argument('--sys_coname', type=str, default='_CMS_ttHl_',
@@ -349,9 +349,13 @@ if __name__ == "__main__":
                     yields = h.Integral()
                     print channel, "\t", '%.5f'%yields
                     
-                # closure test
-                # TODO
-                
+                # Closure test
+                if args.systematics and 'fakes_data' in h.GetName() and wname=='event_weight' and args.closureFile is not None and ('2lss1tau' in args.selection or '3l1tau' in args.selection):
+                    for clos in dc.ClosureTests:
+                        h_clos = dc.getClosureTestShape(h, clos, args.closureFile,
+                                                        syst_coname='_CMS_ttHl17_')
+                        histograms_var.append(h_clos)
+                             
         else:  # MC
             histograms_mcch = []
             samples = getSampleListByChannel(channel)
