@@ -16,12 +16,17 @@ SamplesInChannel = {'ttH':['ttH'],
 
 datasamples = ['data_e','data_mu','data_dieg','data_dimu','data_mueg']
 SamplesInChannel2017 = {'ttH':['ttHJetToNonbb'],
-                        'TTW':['TTW_psw','TTWW'],
+                        'TTW':['TTW_psw'],
+                        'TTWW':['TTWW'],
                         'TTZ':['TTZ','TTZ_M1to10'],
                         'EWK':['WZTo3LNu','ZZ_ext','WW'],
                         'Rares':['WWW','WWZ','WZZ','ZZZ','tZq','TTTT','WpWpJJ', 'WWTo2L2Nuds'],
                         'tH':['tHq','tHW'],
+                        'tHq':['tHq'],
+                        'tHW':['tHW'],
                         'Conversion':['TTGJets'],
+                        'conversions':['TTGJets'],
+                        'Convs':['TTGJets'],
                         'ggH':['ggHZZ4l'],
                         'VH':['VHToNonbb'],
                         'TT':['TTToDiLep','TTToSemiLep','TTToHad'],
@@ -31,7 +36,8 @@ SamplesInChannel2017 = {'ttH':['ttHJetToNonbb'],
                         'flips_data':datasamples,
                         'data_obs':datasamples}
 
-Channels=['ttH','TTW','TTZ','EWK','Rares','tH','Conversion','ggH','VH','fakes_data','flips_data','data_obs','TT','ST','DY']
+#Channels=['ttH','TTW','TTZ','EWK','Rares','tH','Conversion','ggH','VH','fakes_data','flips_data','data_obs','TT','ST','DY']
+Channels=list(SamplesInChannel2017.keys())
 
 BTagSysts = ['LFUp','LFDown','HFUp','HFDown',
              'HFStats1Up','HFStats1Down','HFStats2Up','HFStats2Down',

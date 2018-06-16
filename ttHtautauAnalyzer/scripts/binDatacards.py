@@ -19,7 +19,7 @@ parser.add_argument('-w','--scalebywidth', action='store_true',
                     help="Scale histograms by bin width")
 parser.add_argument('--nosystematics', action='store_true',
                     help="Only include nominal ones")
-parser.add_argument('--sysname', type=str, default='_CMS_ttHl_',
+parser.add_argument('--sysname', type=str, default='_CMS_ttHl17_',
                     help="label for systematics")
 parser.add_argument('-v','--verbose', action='store_true')
 
@@ -72,10 +72,13 @@ def updateHistName(hname):
         newname = hname.replace('_TES','_tauES')
     if 'x_ttH' in hname and '_thu_shape_' in hname:
         newname = hname.replace('_thu_shape_', '_thu_shape_ttH_')
+        newname = newname.replace(args.sysname,'_CMS_ttHl_')
     if 'x_TTW' in hname and '_thu_shape_' in hname:
         newname = hname.replace('_thu_shape_', '_thu_shape_ttW_')
+        newname = newname.replace(args.sysname,'_CMS_ttHl_')
     if 'x_TTZ' in hname and '_thu_shape_' in hname:
         newname = hname.replace('_thu_shape_', '_thu_shape_ttZ_')
+        newname = newname.replace(args.sysname,'_CMS_ttHl_')
 
     return newname
 

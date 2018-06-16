@@ -282,7 +282,7 @@ if __name__ == "__main__":
                         help="Auxiliary file for closure systematic uncertainty")
     parser.add_argument('-s','--systematics', action='store_true',
                         help="Include systematics")
-    parser.add_argument('--sys_coname', type=str, default='_CMS_ttHl_',
+    parser.add_argument('--sys_coname', type=str, default='_CMS_ttHl17_',
                         help="Common string in histogram names for systematics")
     parser.add_argument('-v', '--verbose', action='count', #action='store_true',
                         help='Verbosity')
@@ -353,7 +353,7 @@ if __name__ == "__main__":
                 if args.systematics and 'fakes_data' in h.GetName() and wname=='event_weight' and args.closureFile is not None and ('2lss1tau' in args.selection or '3l1tau' in args.selection):
                     for clos in dc.ClosureTests:
                         h_clos = dc.getClosureTestShape(h, clos, args.closureFile,
-                                                        syst_coname='_CMS_ttHl17_')
+                                                        syst_coname=args.sys_coname)
                         histograms_var.append(h_clos)
                              
         else:  # MC
