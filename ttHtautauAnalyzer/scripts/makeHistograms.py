@@ -43,7 +43,8 @@ def getNtupleFileName(sample,selection,channel=None,correction=None,eosprefix=''
 
     
 def getHistogramfromTrees(trees, sample_label, variable, xmin, xmax, nbins,
-                          selection, weight_name='event_weight', transform=False):
+                          selection, weight_name='event_weight', transform=False,
+                          isPhotonConvs=False):
 
     if len(trees)<1:
         print "getHistogramfromTrees: No input trees!"
@@ -85,12 +86,17 @@ def getHistogramfromTrees(trees, sample_label, variable, xmin, xmax, nbins,
             ##########
             # gen matching
             if not 'data' in sample_label:
-                if '1l2tau' in selection or '2l2tau' in selection:
-                    if not (ev.isGenMatchedLep and ev.isGenMatchedTau):
-                        continue
-                else:
-                    if not ev.isGenMatchedLep:
-                        continue
+                genmatched=False
+                if isPhotonConvs:
+                    genmatched = ev.isGenPhotonMatched
+                elif '1l2tau' in selection or '2l2tau' in selection:
+                    genmatched = ev.isGenMatchedLep and ev.isGenMatchedTau
+                else: # 2lss1tau or 3l1tau
+                    genmatched = ev.isGenMatchedLep
+
+                if not genmatched:
+                    continue
+                
             ##########
                 
             # gen match and higgs decay mode filters if necessary
@@ -124,7 +130,7 @@ def getHistogramFromMCNtuple(variable, sample, selection, luminosity, xmin, xmax
                              nbins, eosPrefix='', sample_suffix='',
                              evtweight='event_weight', treename='mva',
                              makeBinPositive=False, transform=False,
-                             datasetlist_dict=None):
+                             datasetlist_dict=None, isPhotonConvs=False):
     # sample_suffix = _gentau, _faketau, _htt, _hww, _hzz, _<systematics>, ...
 
     jec=None
@@ -151,7 +157,8 @@ def getHistogramFromMCNtuple(variable, sample, selection, luminosity, xmin, xmax
     # get histogram
     label = sample.lower()+sample_suffix
     hist = getHistogramfromTrees([tree],label, variable, xmin, xmax, nbins, selection,
-                                 weight_name=evtweight, transform=transform)
+                                 weight_name=evtweight, transform=transform,
+                                 isPhotonConvs=isPhotonConvs)
 
     # scale
     lumi = luminosity*1000  # convert from 1/fb to 1/pb
@@ -329,7 +336,6 @@ if __name__ == "__main__":
         print "processing channel:", channel
         print "---------------------------------------"
             
-            
         if 'data' in channel:  # Collision data
 
             hnames, weightnames = getHistSuffixandWeightNames_data(channel, args.selection, args.systematics, syst_label=args.sys_coname)
@@ -385,7 +391,8 @@ if __name__ == "__main__":
                                                  treename=args.treename,
                                                  makeBinPositive=args.posbins,
                                                  transform=args.transform,
-                                                 datasetlist_dict=datalist_dict)
+                                                 datasetlist_dict=datalist_dict,
+                                                 isPhotonConvs='conv' in channel.lower())
                     histograms_sample.append(h)
                     #print h.Integral()
 
