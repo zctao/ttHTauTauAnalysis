@@ -55,7 +55,8 @@ cd -
 
 ### fake rate
 # lepton fake rate
-wget https://github.com/HEP-KBFI/tth-htt/blob/master/data/FR_lep_ttH_mva090_2017_CERN_2018May29.root?raw=true -O FR_lep_ttH_mva090_2017_CERN_2018May29.root
+wget  https://github.com/gpetruc/cmgtools-lite/blob/94X_dev_ttH/TTHAnalysis/data/fakerate/FR_data_ttH_mva.root?raw=true -O FR_data_ttH_mva.root
+#wget https://github.com/HEP-KBFI/tth-htt/blob/master/data/FR_lep_ttH_mva090_2017_CERN_2018May29.root?raw=true -O FR_lep_ttH_mva090_2017_CERN_2018May29.root
 #OUTDATED scp ztao@lxplus.cern.ch:/afs/cern.ch/user/g/gpetrucc/public_html/drop/plots/ttH/94X/ttH/lepMVA/v1.0.1/fr-comb/ttH_fr-v1_0_1.root .
 # tau fake rate
 #scp ztao@lxplus.cern.ch:/afs/cern.ch/user/v/veelken/public/ttHAnalysis/jetToTauFakeRate/FR_tau_2017_v1.root .
