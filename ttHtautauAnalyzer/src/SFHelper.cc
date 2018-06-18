@@ -200,7 +200,8 @@ void SFHelper::Set_up_PUWeights(const std::string& samplename)
 void SFHelper::Set_up_FakeRate_Lut(TString tauIDWP/*"dR03mvaTight"*/)
 {
 	// electrons and muons
-	file_fr_lep = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/FR_lep_ttH_mva090_2017_CERN_2018May29.root").c_str(),"read");
+	//file_fr_lep = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/FR_lep_ttH_mva090_2017_CERN_2018May29.root").c_str(),"read");
+	file_fr_lep = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/FR_data_ttH_mva.root").c_str(),"read");
 	assert(file_fr_lep->IsOpen());
 	
 	//h_fakerate_el = (TH2F*) file_fr_lep->Get("FR_mva090_el_data_comb");
@@ -465,7 +466,7 @@ float SFHelper::Get_HLTSF(const std::vector<miniLepton>& leptons,
 	}
 }
 
-float SFHelper::Get_HLTSF_2l(const std::vector<miniLepton>& leptons)
+float SFHelper::Get_HLTSF_2l(const std::vector<miniLepton>& leptons, TString syst)
 {
 	assert(_analysis==Analyze_2lss1tau or _analysis==Analyze_2lss or
 		   _analysis==Analyze_2l2tau);
@@ -476,24 +477,45 @@ float SFHelper::Get_HLTSF_2l(const std::vector<miniLepton>& leptons)
 	
 	// function of leading lepton pt only for now
 	if (abs(leptons[0].pdgId())==13 and abs(leptons[1].pdgId())==13) { // 2mu
-		if (leptons[0].conept() < 35.) // pT < 35
+		if (leptons[0].conept() < 35.) { // pT < 35
 			hltsf = 0.972;  // +/- 0.006
-		else  // pT >= 35
+			if (syst=="triggerUp") hltsf += 0.006;
+			if (syst=="triggerDown") hltsf -= 0.006;
+		}
+		else { // pT >= 35
 			hltsf = 0.994;  // +/- 0.001
+			if (syst=="triggerUp") hltsf += 0.001;
+			if (syst=="triggerDown") hltsf -= 0.001;
+		}
 	}
 	else if (abs(leptons[0].pdgId())==11 and abs(leptons[1].pdgId())==11) { // 2ele
-		if (leptons[0].conept() < 30.) // pT < 30
+		if (leptons[0].conept() < 30.) { // pT < 30
 			hltsf = 0.937;  // +/- 0.027
-		else  // pT >= 30
+			if (syst=="triggerUp") hltsf += 0.027;
+			if (syst=="triggerDown") hltsf -= 0.027;
+		}
+		else { // pT >= 30
 			hltsf = 0.991;  // +/- 0.002
+			if (syst=="triggerUp") hltsf += 0.002;
+			if (syst=="triggerDown") hltsf -= 0.002;
+		}
 	}
 	else { // ele+mu
-		if (leptons[0].conept() < 35.)
+		if (leptons[0].conept() < 35.) {
 			hltsf = 0.952;  // +/- 0.008
-		else if (leptons[0].conept() < 50.)
+			if (syst=="triggerUp") hltsf += 0.008;
+			if (syst=="triggerDown") hltsf -= 0.008;
+		}
+		else if (leptons[0].conept() < 50.) {
 			hltsf = 0.983;  // +/- 0.003
-		else
+			if (syst=="triggerUp") hltsf += 0.003;
+			if (syst=="triggerDown") hltsf -= 0.003;
+		}
+		else {
 			hltsf = 1.0;  // +/- 0.001
+			if (syst=="triggerUp") hltsf += 0.001;
+			if (syst=="triggerDown") hltsf -= 0.001;
+		}
 	}
 
 	return hltsf;

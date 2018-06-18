@@ -434,6 +434,13 @@ void Set_SR_weights(Analysis_types anatype, SFHelper& sfhelper,
 		mvantuple.event_weight_thu_shape_y1Down =
 			mvantuple.event_weight / mc_weight * evntuple.MC_weight_scale_muR0p5;
 
+		// trigger
+		if (anatype==Analyze_2lss1tau or anatype==Analyze_2lss or
+			anatype==Analyze_2l2tau) {
+			mvantuple.event_weight_triggerUp = mvantuple.event_weight / hlt_sf * (sfhelper.Get_HLTSF_2l(leptons, "triggerUp"));
+			mvantuple.event_weight_triggerDown = mvantuple.event_weight / hlt_sf * (sfhelper.Get_HLTSF_2l(leptons, "triggerDown"));
+		}
+		
 		// b-tagging
 		mvantuple.event_weight_btag_LFUp = mvantuple.event_weight / btag_sf * (sfhelper.Get_EvtCSVWeight(jets, "LFUp"));
 		mvantuple.event_weight_btag_LFDown = mvantuple.event_weight / btag_sf * (sfhelper.Get_EvtCSVWeight(jets, "LFDown"));
@@ -459,7 +466,7 @@ void Set_SR_weights(Analysis_types anatype, SFHelper& sfhelper,
 			mvantuple.event_weight_FRjt_shapeUp = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_shapeUp");
 			mvantuple.event_weight_FRjt_shapeDown = mvantuple.event_weight / tauid_sf * sfhelper.Get_TauIDSF_weight(taus, "FRjt_shapeDown");
 		}
-
+		
 		// lepton ID?
 	}
 }

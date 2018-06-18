@@ -38,7 +38,7 @@ class SFHelper
 	// member functions
 	float Get_HLTSF(const std::vector<miniLepton>&, const std::vector<miniTau>&,
 					bool, bool);
-	float Get_HLTSF_2l(const std::vector<miniLepton>&);
+	float Get_HLTSF_2l(const std::vector<miniLepton>&, TString syst="NA");
 	float Get_HLTSF_3l();
 	float Get_HLTSF_1l2tau(const miniLepton&, const std::vector<miniTau>&, bool,
 						   bool);

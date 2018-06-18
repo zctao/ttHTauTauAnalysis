@@ -252,6 +252,9 @@ def getHistSuffixandWeightNames_mc(sample, selection, addSyst, matchGenTau=False
     systlist = ['JESUp','JESDown','TESUp','TESDown']
     #systlist = []
 
+    if '2lss' in selection or '2l2tau' in selection:
+        systlist += ['triggerUp','triggerDown']
+
     for btsys in dc.BTagSysts:
         systlist.append('btag_'+btsys)
     for thu in dc.ThSysts:
