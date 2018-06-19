@@ -786,7 +786,8 @@ float SFHelper::Get_trig_eff_singleLep(float pt, float eta, int pdgid, bool isda
 }
 
 //#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
-float SFHelper::Get_LeptonIDSF_weight(const std::vector<miniLepton>& leptons)
+float SFHelper::Get_LeptonIDSF_weight(const std::vector<miniLepton>& leptons,
+									  TString syst)
 {
 	size_t nleps = 0;
 	if (_analysis==Analyze_1l2tau)
@@ -801,50 +802,49 @@ float SFHelper::Get_LeptonIDSF_weight(const std::vector<miniLepton>& leptons)
 
 	float lepSF = 1.;
 	for (size_t ilep = 0; ilep < nleps; ilep++) {
-		lepSF *= Get_LeptonIDSF(leptons[ilep]);
+		lepSF *= Get_LeptonIDSF(leptons[ilep], syst);
 	}
 
 	return lepSF;
 }
 
-float SFHelper::Get_LeptonIDSF(const miniLepton& lepton)
+float SFHelper::Get_LeptonIDSF(const miniLepton& lepton, TString syst)
 {
 	assert(not _isdata);
 	
 	assert(lepton.passLooseSel());
 
 	float sf = 1.;
-	sf *= Get_LeptonSF_loose(lepton);
+	sf *= Get_LeptonSF_loose(lepton, syst);
 	// SF fakeable to loose is currently assumed to be 1.
 	if (lepton.passTightSel())
-		sf *= Get_LeptonSF_tight_vs_loose(lepton);
+		sf *= Get_LeptonSF_tight_vs_loose(lepton, syst);
 
 	return sf;
 }
 //#endif
 float SFHelper::Get_LeptonIDSF(float lepPt, float lepEta, bool isEle, bool isMu,
-							   bool isTight)
+							   bool isTight, TString syst)
 {
 	assert(not _isdata);
 	
 	float sf = 1.;
-	sf *= Get_LeptonSF_loose(lepPt, lepEta, isEle, isMu);
+	sf *= Get_LeptonSF_loose(lepPt, lepEta, isEle, isMu, syst);
 	// SF fakeable to loose is currently assumed to be 1.
 	if (isTight)
-		sf *= Get_LeptonSF_tight_vs_loose(lepPt, lepEta, isEle, isMu);
+		sf *= Get_LeptonSF_tight_vs_loose(lepPt, lepEta, isEle, isMu, syst);
 
 	return sf;
 }
 //#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
-float SFHelper::Get_LeptonSF_loose(const miniLepton& lepton)
+float SFHelper::Get_LeptonSF_loose(const miniLepton& lepton, TString syst)
 {
-	return Get_LeptonSF_loose(lepton.pt(), lepton.eta(),
-							  abs(lepton.pdgId())==11,
-							  abs(lepton.pdgId())==13);
+	return Get_LeptonSF_loose(lepton.pt(), lepton.eta(), abs(lepton.pdgId())==11,
+							  abs(lepton.pdgId())==13, syst);
 }
 //#endif
 float SFHelper::Get_LeptonSF_loose(float lepPt, float lepEta,
-								   bool isEle, bool isMu)
+								   bool isEle, bool isMu, TString syst)
 {
 	float sf =1.;
 	if (isMu) {
@@ -856,6 +856,9 @@ float SFHelper::Get_LeptonSF_loose(float lepPt, float lepEta,
 			sf *= read2DHist(h_recoToLoose_leptonSF_mu3, lepPt, fabs(lepEta));
 		
 		sf *= read2DHist(h_recoToLoose_leptonSF_mu4, lepPt, fabs(lepEta));
+
+		if (syst=="lepEff_mulooseUp") sf *= 1+0.02;
+		if (syst=="lepEff_mulooseDown") sf *= 1-0.02;
 	}
 	else if (isEle) {
 		if (lepPt > 20) {
@@ -874,17 +877,18 @@ float SFHelper::Get_LeptonSF_loose(float lepPt, float lepEta,
 }
 
 //#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
-float SFHelper::Get_LeptonSF_tight_vs_loose(const miniLepton& lepton)
+float SFHelper::Get_LeptonSF_tight_vs_loose(const miniLepton& lepton, TString syst)
 {
 	assert(lepton.passTightSel());
 
 	return Get_LeptonSF_tight_vs_loose(lepton.pt(), lepton.eta(),
 									   abs(lepton.pdgId())==11,
-									   abs(lepton.pdgId())==13);
+									   abs(lepton.pdgId())==13,
+									   syst);
 }
 //#endif
 float SFHelper::Get_LeptonSF_tight_vs_loose(float lepPt, float lepEta,
-											bool isEle, bool isMu)
+											bool isEle, bool isMu, TString syst)
 {
 	float sf = 1.;
 	
@@ -910,6 +914,17 @@ float SFHelper::Get_LeptonSF_tight_vs_loose(float lepPt, float lepEta,
 		}
 	}
 
+	if (syst=="lepEff_mutightUp" and isMu) sf *= 1+0.02;
+	else if (syst=="lepEff_mutightDown" and isMu) sf *= 1-0.02;
+	else if (syst=="lepEff_eltightUp" and isEle) {
+		if (lepPt > 25.) sf *= 1+0.03;
+		else sf *= 1+0.05;
+	}
+	else if (syst=="lepEff_eltightDown" and isEle) {
+		if (lepPt > 25.) sf *= 1-0.03;
+		else sf *= 1-0.05;
+	}
+	
 	return sf;
 }
 
@@ -1327,12 +1342,15 @@ float SFHelper::Get_FR_weight(const std::vector<miniLepton>& leps,
 		F3 = taus[1].passTightSel() ? -1. : f3/(1.-f3);
 
 		if (_debug) {
-			std::cout << "lep pdgid passTight? : " << leps[0].pdgId() << " "
-					  << leps[0].passTightSel() << std::endl;
+			std::cout << "lep pdgid passTight? conept eta : " << leps[0].pdgId()
+					  << " " << leps[0].passTightSel() << " " << leps[0].conept()
+					  << " " << leps[0].eta() << std::endl;
 			std::cout << "f1 F1 : " << f1 << " " << F1 << std::endl;
-			std::cout << "tau0 passTight? : " << taus[0].passTightSel() << std::endl;
+			std::cout << "tau0 passTight? pt eta : " << taus[0].passTightSel()
+					  << " " << taus[0].pt() << " " << taus[0].eta() << std::endl;
 			std::cout << "f2 F2 : " << f2 << " " << F2 << std::endl;
-			std::cout << "tau1 passTight? : " << taus[1].passTightSel() << std::endl;
+			std::cout << "tau1 passTight? : " << taus[1].passTightSel()
+					  << " " << taus[1].pt() << " " << taus[1].eta() << std::endl;
 			std::cout << "f3 F3 : " << f3 << " " << F3 << std::endl;
 		}
 
@@ -1350,11 +1368,13 @@ float SFHelper::Get_FR_weight(const std::vector<miniLepton>& leps,
 		F2 = leps[1].passTightSel() ? -1. : f2/(1.-f2);
 
 		if (_debug) {
-			std::cout << "lep0 pdgid passTight? : " << leps[0].pdgId() << " "
-					  << leps[0].passTightSel() << std::endl;
+			std::cout << "lep0 pdgid passTight? conept eta : " << leps[0].pdgId()
+					  << " " << leps[0].passTightSel() << " " << leps[0].conept()
+					  << " " << leps[0].eta() << std::endl;
 			std::cout << "f1 F1 : " << f1 << " " << F1 << std::endl;
-			std::cout << "lep1 pdgid passTight? : " << leps[1].pdgId() << " "
-					  << leps[1].passTightSel() << std::endl;
+			std::cout << "lep1 pdgid passTight? conept eta : " << leps[1].pdgId()
+					  << " " << leps[1].passTightSel() << " " << leps[1].conept()
+					  << " " << leps[1].eta() << std::endl;
 			std::cout << "f2 F2 : " << f2 << " " << F2 << std::endl;
 		}
 
@@ -1375,14 +1395,17 @@ float SFHelper::Get_FR_weight(const std::vector<miniLepton>& leps,
 		F3 = leps[2].passTightSel() ? -1. : f2/(1.-f3);
 
 		if (_debug) {
-			std::cout << "lep0 pdgid passTight? : " << leps[0].pdgId() << " "
-					  << leps[0].passTightSel() << std::endl;
+			std::cout << "lep0 pdgid passTight? conept eta : " << leps[0].pdgId()
+					  << " " << leps[0].passTightSel() << " " << leps[0].conept()
+					  << " " << leps[0].eta() << std::endl;
 			std::cout << "f1 F1 : " << f1 << " " << F1 << std::endl;
-			std::cout << "lep1 pdgid passTight? : " << leps[1].pdgId() << " "
-					  << leps[1].passTightSel() << std::endl;
+			std::cout << "lep1 pdgid passTight? conept eta : " << leps[1].pdgId()
+					  << " " << leps[1].passTightSel() << " " << leps[1].conept()
+					  << " " << leps[1].eta() << std::endl;
 			std::cout << "f2 F2 : " << f2 << " " << F2 << std::endl;
-			std::cout << "lep2 pdgid passTight? : " << leps[2].pdgId() << " "
-					  << leps[2].passTightSel() << std::endl;
+			std::cout << "lep2 pdgid passTight? conept eta : " << leps[2].pdgId()
+					  << " " << leps[2].passTightSel() << " " << leps[2].conept()
+					  << " " << leps[2].eta() << std::endl;
 			std::cout << "f3 F3 : " << f3 << " " << F3 << std::endl;
 		}
 
@@ -1404,17 +1427,21 @@ float SFHelper::Get_FR_weight(const std::vector<miniLepton>& leps,
 		F4 = taus[1].passTightSel() ? -1. : f4/(1.-f4);
 		
 		if (_debug) {
-			std::cout << "lep0 pdgid passTight? : " << leps[0].pdgId() << " "
-					  << leps[0].passTightSel() << std::endl;
+			std::cout << "lep0 pdgid passTight? conept eta : " << leps[0].pdgId()
+					  << " " << leps[0].passTightSel() << " " << leps[0].conept()
+					  << " " << leps[0].eta() << std::endl;
 			std::cout << "f1 F1 : " << f1 << " " << F1 << std::endl;
-			std::cout << "lep1 pdgid passTight? : " << leps[1].pdgId() << " "
-					  << leps[1].passTightSel() << std::endl;
+			std::cout << "lep1 pdgid passTight? conept eta : " << leps[1].pdgId()
+					  << " " << leps[1].passTightSel() << " " << leps[1].conept()
+					  << " " << leps[1].eta() << std::endl;
 			std::cout << "f2 F2 : " << f2 << " " << F2 << std::endl;
-			std::cout << "tau0 passTight? : " << taus[0].passTightSel()
-					  << std::endl;
+			std::cout << "lep2 pdgid passTight? conept eta : " << leps[2].pdgId()
+					  << " " << leps[2].passTightSel() << " " << leps[2].conept()
+					  << " " << leps[2].eta() << std::endl;
 			std::cout << "f3 F3 : " << f3 << " " << F3 << std::endl;
-			std::cout << "tau1 passTight? : " << taus[1].passTightSel()
-					  << std::endl;
+			std::cout << "lep3 pdgid passTight? conept eta : " << leps[3].pdgId()
+					  << " " << leps[3].passTightSel() << " " << leps[3].conept()
+					  << " " << leps[3].eta() << std::endl;
 			std::cout << "f4 F4 : " << f4 << " " << F4 << std::endl;
 		}
 

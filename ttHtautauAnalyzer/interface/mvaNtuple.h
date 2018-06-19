@@ -253,6 +253,14 @@ class mvaNtuple
 	float event_weight_FRm_ecDown = -9999.;
 	float event_weight_triggerUp = -9999.;
 	float event_weight_triggerDown = -9999.;
+	float event_weight_lepEff_mulooseUp = -9999.;
+	float event_weight_lepEff_mulooseDown = -9999.;
+	float event_weight_lepEff_ellooseUp = -9999.;
+	float event_weight_lepEff_ellooseDown = -9999.;
+	float event_weight_lepEff_mutightUp = -9999.;
+	float event_weight_lepEff_mutightDown = -9999.;
+	float event_weight_lepEff_eltightUp = -9999.;
+	float event_weight_lepEff_eltightDown = -9999.;
 	float event_weight_FR_TT = -9999.;
 	float event_weight_FR_QCD = -9999.;
 	float event_weight_FR_el_QCD_mu_TT = -9999.;

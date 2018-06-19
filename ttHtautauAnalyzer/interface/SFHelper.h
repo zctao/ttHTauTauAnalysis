@@ -78,13 +78,13 @@ class SFHelper
 	//float Get_EleChargeMisIDProb(float,float,int,int tauCharge=0);
 	float Get_EleChargeMisIDProb(const miniLepton&, int tauCharge=0);
 
-	float Get_LeptonIDSF(float,float,bool,bool,bool);
-	float Get_LeptonIDSF(const miniLepton&);
-	float Get_LeptonSF_loose(float,float,bool,bool);
-	float Get_LeptonSF_tight_vs_loose(float,float,bool,bool);
-	float Get_LeptonSF_loose(const miniLepton&);
-	float Get_LeptonSF_tight_vs_loose(const miniLepton&);
-	float Get_LeptonIDSF_weight(const std::vector<miniLepton>&);
+	float Get_LeptonIDSF(float,float,bool,bool,bool, TString);
+	float Get_LeptonIDSF(const miniLepton&, TString);
+	float Get_LeptonSF_loose(float,float,bool,bool,TString);
+	float Get_LeptonSF_tight_vs_loose(float,float,bool,bool,TString);
+	float Get_LeptonSF_loose(const miniLepton&,TString);
+	float Get_LeptonSF_tight_vs_loose(const miniLepton&,TString);
+	float Get_LeptonIDSF_weight(const std::vector<miniLepton>&, TString syst="NA");
 
 	float Get_TauIDSF(float,float,bool,TString syst="NA");
 	float Get_TauIDSF(const miniTau&, TString syst="NA");

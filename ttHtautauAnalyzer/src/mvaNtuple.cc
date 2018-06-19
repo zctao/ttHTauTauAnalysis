@@ -72,6 +72,14 @@ void mvaNtuple::setup_branches(TTree* tree)
 		//tree->Branch("event_weight_FRm_ecDown",&event_weight_FRm_ecDown);
 		tree->Branch("event_weight_triggerUp", &event_weight_triggerUp);
 		tree->Branch("event_weight_triggerDown", &event_weight_triggerDown);
+		tree->Branch("event_weight_lepEff_mulooseUp",&event_weight_lepEff_mulooseUp);
+		tree->Branch("event_weight_lepEff_mulooseDown",&event_weight_lepEff_mulooseDown);
+		tree->Branch("event_weight_lepEff_ellooseUp",&event_weight_lepEff_ellooseUp);
+		tree->Branch("event_weight_lepEff_ellooseDown",&event_weight_lepEff_ellooseDown);
+		tree->Branch("event_weight_lepEff_mutightUp",&event_weight_lepEff_mutightUp);
+		tree->Branch("event_weight_lepEff_mutightDown",&event_weight_lepEff_mutightDown);
+		tree->Branch("event_weight_lepEff_eltightUp",&event_weight_lepEff_eltightUp);
+		tree->Branch("event_weight_lepEff_eltightDown",&event_weight_lepEff_eltightDown);	
 		tree->Branch("event_weight_FR_TT", &event_weight_FR_TT);
 		tree->Branch("event_weight_FR_QCD", &event_weight_FR_QCD);
 		tree->Branch("event_weight_FR_el_QCD_mu_TT", &event_weight_FR_el_QCD_mu_TT);
