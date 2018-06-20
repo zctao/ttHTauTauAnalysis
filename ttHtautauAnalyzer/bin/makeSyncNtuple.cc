@@ -85,6 +85,7 @@ int main(int argc, char** argv)
 	if (makeObjectNtuple) {
 		cout << "Object ntuple ... " << endl;
 		synctree_obj = makeSyncTree(cdir+"output_sync.root","syncTree", treename);
+		//synctree_obj = makeSyncTree(cdir+infile.c_str(),"syncTree", treename);
 		
 		// event count
 		cout << "number of events with at least 1 preselected muons : " << "\t"
@@ -255,6 +256,8 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 {
 	using namespace std;
 
+	bool isdata = false;
+	
 	// open file and read tree
 	cout << "Opening input file : " << input_file << endl;
 	TFile* f_in = TFile::Open(input_file);
@@ -271,8 +274,8 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 
 	//////////////////////////////////////////////
 	// Set up SFHelper
-	SFHelper sf_helper(anatype, seltype, "ttHJetToNonbb", false, debug);
-
+	SFHelper sf_helper(anatype, seltype, "ttHJetToNonbb", isdata, debug);
+	
 	//////////////////////////////////////////////
 	// trigger Helper
 	TriggerHelper trig_helper(Analysis_types::Analyze_inclusive, false);
@@ -284,7 +287,7 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 
 	//////////////////////////////////////////////
 	// event selector
-	EventSelector evt_selector(debug, true);
+	EventSelector evt_selector(debug, true, !isdata);
 	
 	//////////////////////////////////////////////
 	
@@ -298,8 +301,8 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 	    auto leptons = evNtuple.buildLeptons('F');  // fakeable
 		auto leptons_tight = evNtuple.buildLeptons('T'); // tight
 
-		auto taus_fakeable = evNtuple.buildTaus(true, anatype); // fakeable
-		auto taus_tight = evNtuple.buildTaus(false, anatype);  // tight
+		auto taus_fakeable = evNtuple.buildTaus(true,anatype,"NA",isdata); // fakeable
+		auto taus_tight = evNtuple.buildTaus(false,anatype,"NA",isdata);  // tight
 
 		//auto jets = evNtuple.buildJets();
 		// Jet cleaning based on analysis type
@@ -339,7 +342,6 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 				if (abs(lep.pdgId())==13) nfkaeableMu++;
 			}
 
-			bool isdata = false;
 			if (not evt_selector.pass_hlt_and_filters(anatype, &trig_helper,
 													  evNtuple.triggerBits,
 													  nfakeableEle, nfkaeableMu,
@@ -601,13 +603,6 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		syncntuple.MHT = mht;
 		syncntuple.metLD = metld;
 
-		// weights
-		syncntuple.MC_weight = evNtuple.MC_weight;
-
-		syncntuple.PU_weight = sf_helper.Get_PUWeight(evNtuple.npuTrue);
-
-		syncntuple.bTagSF_weight = sf_helper.Get_EvtCSVWeight(jets,"NA");
-
 		// FR_weight
 		if (seltype==Application_Fake_1l2tau or seltype==Application_Fake_2lss1tau or
 			seltype==Application_Fake_3l1tau or seltype==Application_Fake_2l2tau or
@@ -620,21 +615,30 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 		else if (seltype==Control_FlipAR_ttW) {
 			syncntuple.FR_weight = sf_helper.Get_ChargeFlipWeight(leptons);
 		}
-		
-		// leptonSF_weight
-		// UPDATE NEEDED: loose vs reco
-		syncntuple.leptonSF_weight = sf_helper.Get_LeptonIDSF_weight(leptons);
-		
-		// tauSF_weight
-		syncntuple.tauSF_weight = sf_helper.Get_TauIDSF_weight(*taus);
+
+		if (not isdata) {
+			// weights
+			syncntuple.MC_weight = evNtuple.MC_weight;
 			
-		// triggerSF
-		bool hlt1LTriggered =
+			syncntuple.PU_weight = sf_helper.Get_PUWeight(evNtuple.npuTrue);
+			
+			syncntuple.bTagSF_weight = sf_helper.Get_EvtCSVWeight(jets,"NA");
+			
+			// leptonSF_weight
+			// UPDATE NEEDED: loose vs reco
+			syncntuple.leptonSF_weight = sf_helper.Get_LeptonIDSF_weight(leptons);
+		
+			// tauSF_weight
+			syncntuple.tauSF_weight = sf_helper.Get_TauIDSF_weight(*taus);
+			
+			// triggerSF
+			bool hlt1LTriggered =
 				trig_helper.pass_single_lep_triggers(evNtuple.triggerBits);
-		bool hltXTriggered =
-			trig_helper.pass_leptau_cross_triggers(evNtuple.triggerBits);
-		syncntuple.triggerSF_weight =
-			sf_helper.Get_HLTSF(leptons, *taus, hlt1LTriggered, hltXTriggered);
+			bool hltXTriggered =
+				trig_helper.pass_leptau_cross_triggers(evNtuple.triggerBits);
+			syncntuple.triggerSF_weight =
+				sf_helper.Get_HLTSF(leptons, *taus, hlt1LTriggered, hltXTriggered);
+		}
 		
 		if (anatype==Analyze_NA or seltype==Selection_NA or
 			anatype==Analyze_2lss or anatype==Analyze_3l) {
