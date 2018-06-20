@@ -23,7 +23,7 @@ def getEventList(flist):
 eventList = args.events if args.events is not None else getEventList(args.event_list)
 print eventList
 
-infile = TFile(args.input, 'read')
+infile = TFile.Open(args.input, 'read')
 intree = infile.Get(args.treename)
 
 outfile = TFile(args.output, 'recreate')
