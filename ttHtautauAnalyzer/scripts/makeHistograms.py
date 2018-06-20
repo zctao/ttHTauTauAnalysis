@@ -44,7 +44,7 @@ def getNtupleFileName(sample,selection,channel=None,correction=None,eosprefix=''
     
 def getHistogramfromTrees(trees, sample_label, variable, xmin, xmax, nbins,
                           selection, weight_name='event_weight', transform=False,
-                          isPhotonConvs=False):
+                          isPhotonConvs=False, applySF=False):
 
     if len(trees)<1:
         print "getHistogramfromTrees: No input trees!"
@@ -64,7 +64,10 @@ def getHistogramfromTrees(trees, sample_label, variable, xmin, xmax, nbins,
     h.Sumw2()
     
     eventIDlist = []
-
+    eventListAux = []
+    nEntries = 0
+    sumweight = 0.
+    
     singletree = len(trees)==1
     
     for tree in trees:
@@ -82,6 +85,7 @@ def getHistogramfromTrees(trees, sample_label, variable, xmin, xmax, nbins,
                 if eventID in eventIDlist:
                     continue
                 eventIDlist.append(eventID)
+                nEntries += 1
 
             ##########
             # gen matching
@@ -117,9 +121,24 @@ def getHistogramfromTrees(trees, sample_label, variable, xmin, xmax, nbins,
                 value = transform_mva(value)
             
             evtweight = ev.GetLeaf(weight_name).GetValue()
+            if applySF:  # special case e.g. MC sample in fake AR
+                assert('data' not in sample_label)
+                evtweight *= (ev.pu_weight * ev.mc_weight * ev.btag_sf *
+                              ev.lepid_sf * ev.tauid_sf * ev.hlt_sf)
+            
+            sumweight += evtweight
 
+            #eventListAux.append((ev.run, ev.lumi, ev.nEvent, evtweight))
+            
             h.Fill(value, evtweight)
 
+    #eventListAux.sort()
+    #print "event list with weight: "
+    #for id in eventListAux:
+    #    print id
+    #print "sumweight =", sumweight
+    #print "nEntries =", nEntries
+            
     return h
 
 def transform_mva(mva):
@@ -130,7 +149,8 @@ def getHistogramFromMCNtuple(variable, sample, selection, luminosity, xmin, xmax
                              nbins, eosPrefix='', sample_suffix='',
                              evtweight='event_weight', treename='mva',
                              makeBinPositive=False, transform=False,
-                             datasetlist_dict=None, isPhotonConvs=False):
+                             datasetlist_dict=None, isPhotonConvs=False,
+                             applySF=False):
     # sample_suffix = _gentau, _faketau, _htt, _hww, _hzz, _<systematics>, ...
 
     jec=None
@@ -158,7 +178,8 @@ def getHistogramFromMCNtuple(variable, sample, selection, luminosity, xmin, xmax
     label = sample.lower()+sample_suffix
     hist = getHistogramfromTrees([tree],label, variable, xmin, xmax, nbins, selection,
                                  weight_name=evtweight, transform=transform,
-                                 isPhotonConvs=isPhotonConvs)
+                                 isPhotonConvs=isPhotonConvs,
+                                 applySF=applySF)
 
     # scale
     lumi = luminosity*1000  # convert from 1/fb to 1/pb
@@ -255,6 +276,11 @@ def getHistSuffixandWeightNames_mc(sample, selection, addSyst, matchGenTau=False
     if '2lss' in selection or '2l2tau' in selection:
         systlist += ['triggerUp','triggerDown']
 
+    systlist += ['lepEff_mulooseUp','lepEff_mulooseDown',
+                 #'lepEff_ellooseUp','lepEff_ellooseDown',
+                 'lepEff_mutightUp','lepEff_mutightDown',
+                 'lepEff_eltightUp','lepEff_eltightDown']
+
     for btsys in dc.BTagSysts:
         systlist.append('btag_'+btsys)
     for thu in dc.ThSysts:
@@ -267,7 +293,68 @@ def getHistSuffixandWeightNames_mc(sample, selection, addSyst, matchGenTau=False
 
     return hnamelist, wnamelist 
 
-        
+def getHistogramPromptContamination(variable, anatype, luminosity, xmin,
+                                    xmax, nbins, eosPrefix='',
+                                    evtweight='event_weight', treename='mva',
+                                    transform=False, datasetlist_dict=None,
+                                    verbosity=0):
+    seltype = 'application_fake_'+anatype
+
+    samples = []
+    channels = ['TTW','TTWW','TTZ','EWK','Rares','TT','tH','VH']
+    for ch in channels:
+        for s in dc.SamplesInChannel2017[ch]:
+            samples.append(s)
+
+    if verbosity>2 and evtweight=='event_weight':
+        print "prompt contamination in fake background:"
+
+    histograms_MCfakeAR = []
+    for sample in samples:
+        h_fakeAR = getHistogramFromMCNtuple(variable, sample, seltype, luminosity,
+                                            xmin, xmax, nbins, eosPrefix=eosPrefix,
+                                            evtweight=evtweight, treename=treename,
+                                            transform=transform,
+                                            sample_suffix='_fakeAR',
+                                            datasetlist_dict=datasetlist_dict,
+                                            isPhotonConvs=False, applySF=True)
+        if verbosity>3:
+            print sample, ":", h_fakeAR.Integral()
+
+        histograms_MCfakeAR.append(h_fakeAR)
+
+        h_fakeAR_conv = getHistogramFromMCNtuple(variable, sample, seltype, luminosity,
+                                            xmin, xmax, nbins, eosPrefix=eosPrefix,
+                                            evtweight=evtweight, treename=treename,
+                                            transform=transform,
+                                            sample_suffix='_fakeAR',
+                                            datasetlist_dict=datasetlist_dict,
+                                            isPhotonConvs=True, applySF=True)
+
+        if verbosity>3:
+            print sample, "(conversion):", h_fakeAR_conv.Integral()
+
+        histograms_MCfakeAR.append(h_fakeAR_conv)
+
+    assert(len(histograms_MCfakeAR)>0)
+
+    h_fakes_prompt = histograms_MCfakeAR[0].Clone(variable+"_fakes_prompt")
+    h_fakes_prompt.SetDirectory(0)
+    
+    first=True  
+    for hist in histograms_MCfakeAR:
+        if first:
+            first = False
+            continue
+
+        h_fakes_prompt.Add(hist)
+
+    if verbosity>2 and evtweight=='event_weight':
+        print "fakes_prompt :", h_fakes_prompt.Integral()
+
+    return h_fakes_prompt  
+
+
 if __name__ == "__main__":
 
     Selections=['signal_1l2tau', 'signal_2lss1tau', 'signal_3l1tau', 'signal_2l2tau',
@@ -292,7 +379,7 @@ if __name__ == "__main__":
                         help="Auxiliary file for closure systematic uncertainty")
     parser.add_argument('-s','--systematics', action='store_true',
                         help="Include systematics")
-    parser.add_argument('--sys_coname', type=str, default='_CMS_ttHl17_',
+    parser.add_argument('--sys_coname', type=str, default='_CMS_ttHl_',
                         help="Common string in histogram names for systematics")
     parser.add_argument('-v', '--verbose', action='count', #action='store_true',
                         help='Verbosity')
@@ -352,6 +439,12 @@ if __name__ == "__main__":
                                                 treename=args.treename,
                                                 makeBinPositive=args.posbins,
                                                 transform=args.transform)
+                
+                if 'fakes_data' in h.GetName():
+                    anatype = args.selection.split('_')[-1]
+                    h_fakes_prompt = getHistogramPromptContamination(var, anatype, args.luminosity, args.xmin, args.xmax, args.nbins, eosPrefix=eosDirectoryString, evtweight=wname, treename=args.treename,transform=args.transform, datasetlist_dict=datalist_dict, verbosity=args.verbose)
+                    h.Add(h_fakes_prompt, -1.)
+                     
                 histograms_var.append(h)
 
                 if args.verbose>=1 and wname=='event_weight':#histname=='x_'+channel:

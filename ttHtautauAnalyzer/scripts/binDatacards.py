@@ -19,7 +19,7 @@ parser.add_argument('-w','--scalebywidth', action='store_true',
                     help="Scale histograms by bin width")
 parser.add_argument('--nosystematics', action='store_true',
                     help="Only include nominal ones")
-parser.add_argument('--sysname', type=str, default='_CMS_ttHl17_',
+parser.add_argument('--sysname', type=str, default='_CMS_ttHl_',
                     help="label for systematics")
 parser.add_argument('-v','--verbose', action='store_true')
 
@@ -59,7 +59,8 @@ def getBinEdges(anatype):
     elif anatype=='3l1tau':
         binEdges = [0.0, 0.28, 0.35, 0.40, 0.47, 0.53, 1.0]
     elif anatype=='2l2tau':
-        binEdges = [0.0, 0.35, 0.41, 0.47, 1.0]
+        #binEdges = [0.0, 0.35, 0.41, 0.47, 1.0]
+        binEdges = dc.getUniformBinEdges(4, 0.0, 1.0)
     else:
         print "Unknow analysis type!"
 
