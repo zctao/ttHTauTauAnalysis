@@ -470,8 +470,8 @@ void Set_SR_weights(Analysis_types anatype, SFHelper& sfhelper,
 		// lepton ID
 		mvantuple.event_weight_lepEff_mulooseUp = mvantuple.event_weight / lepid_sf * sfhelper.Get_LeptonIDSF_weight(leptons, "lepEff_mulooseUp");
 		mvantuple.event_weight_lepEff_mulooseDown = mvantuple.event_weight / lepid_sf * sfhelper.Get_LeptonIDSF_weight(leptons, "lepEff_mulooseDown");
-		//mvantuple.event_weight_lepEff_ellooseUp = mvantuple.event_weight / lepid_sf * sfhelper.Get_LeptonIDSF_weight(leptons, "lepEff_ellooseUp");
-		//mvantuple.event_weight_lepEff_ellooseDown = mvantuple.event_weight / lepid_sf * sfhelper.Get_LeptonIDSF_weight(leptons, "lepEff_ellooseDown");
+		mvantuple.event_weight_lepEff_ellooseUp = mvantuple.event_weight / lepid_sf * sfhelper.Get_LeptonIDSF_weight(leptons, "lepEff_ellooseUp");
+		mvantuple.event_weight_lepEff_ellooseDown = mvantuple.event_weight / lepid_sf * sfhelper.Get_LeptonIDSF_weight(leptons, "lepEff_ellooseDown");
 		mvantuple.event_weight_lepEff_mutightUp = mvantuple.event_weight / lepid_sf * sfhelper.Get_LeptonIDSF_weight(leptons, "lepEff_mutightUp");
 		mvantuple.event_weight_lepEff_mutightDown = mvantuple.event_weight / lepid_sf * sfhelper.Get_LeptonIDSF_weight(leptons, "lepEff_mutightDown");
 		mvantuple.event_weight_lepEff_eltightUp = mvantuple.event_weight / lepid_sf * sfhelper.Get_LeptonIDSF_weight(leptons, "lepEff_eltightUp");

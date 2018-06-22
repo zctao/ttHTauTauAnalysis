@@ -189,6 +189,8 @@ class SFHelper
 	TH2F *h_recoToLoose_leptonSF_gsf;
 	TFile* file_recoToLoose_leptonSF_gsf_low;
 	TH2F *h_recoToLoose_leptonSF_gsf_low;
+	TFile* file_recoToLoose_leptonSF_el;
+	TH2D *h_recoToLoose_leptonSF_el;
 	
 	TFile* file_looseToTight_leptonSF_mu_2lss;
 	TFile* file_looseToTight_leptonSF_el_2lss;

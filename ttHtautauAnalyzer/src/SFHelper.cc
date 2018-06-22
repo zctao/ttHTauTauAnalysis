@@ -272,6 +272,10 @@ void SFHelper::Set_up_LeptonSF_Lut()
 	file_recoToLoose_leptonSF_gsf_low = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/lepton_sf/egammaEffi.txt_EGM2D_runBCDEF_passingRECO_lowEt.root").c_str(),"read");
 	h_recoToLoose_leptonSF_gsf_low = (TH2F*)(file_recoToLoose_leptonSF_gsf_low->Get("EGamma_SF2D"));
 
+	// loose vs reco efficiency sf
+	file_recoToLoose_leptonSF_el = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/lepton_sf/el_reco_loose_SF.root").c_str(),"read");
+	h_recoToLoose_leptonSF_el = (TH2D*)(file_recoToLoose_leptonSF_el->Get("EGamma_SF2D"));
+	
 	/*
 	// out of date
 	// loose vs reco
@@ -858,6 +862,7 @@ float SFHelper::Get_LeptonSF_loose(float lepPt, float lepEta,
 		
 		sf *= read2DHist(h_recoToLoose_leptonSF_mu4, lepPt, fabs(lepEta));
 
+		// FIXME
 		if (syst=="lepEff_mulooseUp") sf *= 1+0.02;
 		if (syst=="lepEff_mulooseDown") sf *= 1-0.02;
 	}
@@ -868,9 +873,12 @@ float SFHelper::Get_LeptonSF_loose(float lepPt, float lepEta,
 		else {
 			sf *= read2DHist(h_recoToLoose_leptonSF_gsf_low, lepEta, lepPt);
 		}
-		////////////////////////
-		// UPDATE NEEDED for electron
-		////////////////////////
+
+		sf *= read2DHist(h_recoToLoose_leptonSF_el, lepEta, lepPt);
+
+		// FIXME
+		if (syst=="lepEff_ellooseUp") sf *= 1+0.03;
+		if (syst=="lepEff_ellooseDown") sf *= 1-0.03;
 	}
 	
 	return sf;
