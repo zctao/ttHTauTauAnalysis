@@ -121,7 +121,19 @@ for sample in args.samples:
                 seltypes.append('control_fakeAR_WZ')
 
         if args.selection is not None: # if selection types are explicitly set
-            seltypes =[args.selection+'_'+anatype]
+            seltypes = [args.selection+'_'+anatype]
+
+            if atype == 'control_ttW':
+                if args.selection in ['application_fake', 'control_fakeAR']:
+                    seltypes = ['control_fakeAR_ttW','control_flipAR_ttW']
+                else:
+                    seltypes = ['control_ttW']
+
+            if atype == 'control_ttZ':
+                if args.selection in ['application_fake', 'control_fakeAR']:
+                    seltypes = ['control_fakeAR_ttZ']
+                else:
+                    seltypes = ['control_ttZ']
 
         for seltype in seltypes:
 
