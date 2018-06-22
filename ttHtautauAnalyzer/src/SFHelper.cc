@@ -238,7 +238,8 @@ void SFHelper::Set_up_FakeRate_Lut(TString tauIDWP/*"dR03mvaTight"*/)
 
 void SFHelper::Set_up_ChargeMisID_Lut()
 {
-	file_eleMisCharge = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/ElectronChargeMisIdRates_2017.root").c_str(), "read");
+	//file_eleMisCharge = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/ElectronChargeMisIdRates_2017.root").c_str(), "read");
+	file_eleMisCharge = new TFile((std::string(getenv("CMSSW_BASE")) + "/src/ttHTauTauAnalysis/ttHtautauAnalyzer/dataFiles/ElectronChargeMisIdRates_2017_2018Jun22.root").c_str(), "read");
 	h_chargeMisId = (TH2D*) file_eleMisCharge->Get("eChargeMisIdRates");
 }
 

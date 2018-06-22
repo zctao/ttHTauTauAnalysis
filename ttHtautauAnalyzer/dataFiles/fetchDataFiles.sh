@@ -62,7 +62,7 @@ wget  https://github.com/gpetruc/cmgtools-lite/blob/94X_dev_ttH/TTHAnalysis/data
 #scp ztao@lxplus.cern.ch:/afs/cern.ch/user/v/veelken/public/ttHAnalysis/jetToTauFakeRate/FR_tau_2017_v1.root .
 
 # electron charge mis-id rate
-#scp ztao@lxplus.cern.ch:/afs/cern.ch/work/s/ssawant/public/ttHAnalysis/eChargeMisId/ElectronChargeMisIdRates_2017.root .
+#scp ztao@lxplus.cern.ch:/afs/cern.ch/work/s/ssawant/public/ttHAnalysis/eChargeMisId/ElectronChargeMisIdRates_2017_2018Jun22.root .
 
 ### scale factors
 dir_sf=trigger_sf
