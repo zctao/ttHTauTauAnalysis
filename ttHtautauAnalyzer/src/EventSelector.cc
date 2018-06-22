@@ -230,6 +230,9 @@ bool EventSelector::pass_full_event_selection(
 			return false;
 
 		pass = pass_2lss1tau_selection(seltype, fakeableLeps, selectedTaus);
+		
+		// patch to cut on first fakeable tau ID (for the sake of sync)
+		pass = pass and fakeableTaus[0].passTightSel();
 	}
 	else if (anatype == Analyze_3l1tau) {
 		if (not pass_3l1tau_inclusive_selection(looseLeps, fakeableLeps, fakeableTaus,
@@ -238,6 +241,9 @@ bool EventSelector::pass_full_event_selection(
 			return false;
 
 		pass = pass_3l1tau_selection(seltype, fakeableLeps, selectedTaus);
+
+		// patch to cut on first fakeable tau ID (for the sake of sync)
+		pass = pass and fakeableTaus[0].passTightSel();
 	}
 	else if (anatype == Analyze_2l2tau) {
 		if (not pass_2l2tau_inclusive_selection(looseLeps, fakeableLeps, fakeableTaus,
