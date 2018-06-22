@@ -132,6 +132,10 @@ def getHistogramfromTrees(trees, sample_label, variable, xmin, xmax, nbins,
             sumweight += evtweight
 
             #eventListAux.append((ev.run, ev.lumi, ev.nEvent, evtweight))
+
+            # handle under and overflow bins
+            value = max(xmin, value)
+            value = min(xmax-1e-5, value)
             
             h.Fill(value, evtweight)
 
