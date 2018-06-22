@@ -44,7 +44,7 @@ def getNtupleFileName(sample,selection,channel=None,correction=None,eosprefix=''
     
 def getHistogramfromTrees(trees, sample_label, variable, xmin, xmax, nbins,
                           selection, weight_name='event_weight', transform=False,
-                          isPhotonConvs=False, applySF=False):
+                          isPhotonConvs=False, applySF=False, invertGenMatch=False):
 
     if len(trees)<1:
         print "getHistogramfromTrees: No input trees!"
@@ -98,6 +98,9 @@ def getHistogramfromTrees(trees, sample_label, variable, xmin, xmax, nbins,
                 else: # 2lss1tau or 3l1tau
                     genmatched = ev.isGenMatchedLep
 
+                if invertGenMatch:  # for fakes_mc
+                    genmatched = not genmatched
+                    
                 if not genmatched:
                     continue
                 
@@ -150,7 +153,7 @@ def getHistogramFromMCNtuple(variable, sample, selection, luminosity, xmin, xmax
                              evtweight='event_weight', treename='mva',
                              makeBinPositive=False, transform=False,
                              datasetlist_dict=None, isPhotonConvs=False,
-                             applySF=False):
+                             applySF=False, invertGenMatch=False):
     # sample_suffix = _gentau, _faketau, _htt, _hww, _hzz, _<systematics>, ...
 
     jec=None
@@ -179,7 +182,7 @@ def getHistogramFromMCNtuple(variable, sample, selection, luminosity, xmin, xmax
     hist = getHistogramfromTrees([tree],label, variable, xmin, xmax, nbins, selection,
                                  weight_name=evtweight, transform=transform,
                                  isPhotonConvs=isPhotonConvs,
-                                 applySF=applySF)
+                                 applySF=applySF, invertGenMatch=invertGenMatch)
 
     # scale
     lumi = luminosity*1000  # convert from 1/fb to 1/pb
@@ -277,7 +280,7 @@ def getHistSuffixandWeightNames_mc(sample, selection, addSyst, matchGenTau=False
         systlist += ['triggerUp','triggerDown']
 
     systlist += ['lepEff_mulooseUp','lepEff_mulooseDown',
-                 #'lepEff_ellooseUp','lepEff_ellooseDown',
+                 'lepEff_ellooseUp','lepEff_ellooseDown',
                  'lepEff_mutightUp','lepEff_mutightDown',
                  'lepEff_eltightUp','lepEff_eltightDown']
 
@@ -297,8 +300,10 @@ def getHistogramPromptContamination(variable, anatype, luminosity, xmin,
                                     xmax, nbins, eosPrefix='',
                                     evtweight='event_weight', treename='mva',
                                     transform=False, datasetlist_dict=None,
-                                    verbosity=0):
+                                    verbosity=0, control=False):
     seltype = 'application_fake_'+anatype
+    if control:
+        seltype = 'control_fakeAR_'+anatype
 
     samples = []
     channels = ['TTW','TTWW','TTZ','EWK','Rares','TT','tH','VH']
@@ -442,7 +447,7 @@ if __name__ == "__main__":
                 
                 if 'fakes_data' in h.GetName():
                     anatype = args.selection.split('_')[-1]
-                    h_fakes_prompt = getHistogramPromptContamination(var, anatype, args.luminosity, args.xmin, args.xmax, args.nbins, eosPrefix=eosDirectoryString, evtweight=wname, treename=args.treename,transform=args.transform, datasetlist_dict=datalist_dict, verbosity=args.verbose)
+                    h_fakes_prompt = getHistogramPromptContamination(var, anatype, args.luminosity, args.xmin, args.xmax, args.nbins, eosPrefix=eosDirectoryString, evtweight=wname, treename=args.treename,transform=args.transform, datasetlist_dict=datalist_dict, verbosity=args.verbose, control="control" in args.selection)
                     h.Add(h_fakes_prompt, -1.)
                      
                 histograms_var.append(h)
@@ -488,7 +493,8 @@ if __name__ == "__main__":
                                                  makeBinPositive=args.posbins,
                                                  transform=args.transform,
                                                  datasetlist_dict=datalist_dict,
-                                                 isPhotonConvs='conv' in channel.lower())
+                                                 isPhotonConvs='conv' in channel.lower(),
+                                                 invertGenMatch='fakes_mc' in channel.lower())
                     histograms_sample.append(h)
                     #print h.Integral()
 
