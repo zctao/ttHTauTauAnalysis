@@ -94,7 +94,7 @@ class SFHelper
 	float Get_TauIDSF_weight(const std::vector<miniTau>&, TString syst="NA");
 	
 	// utilities
-	float read2DHist(TH2*, float, float);
+	float read2DHist(TH2*, float, float, int errVar=0);
 	float evalTGraph(TGraphAsymmErrors*, float);
 	float readTGraph(TGraphAsymmErrors*, float);
 	float readTF(TF1*, float);

@@ -852,34 +852,31 @@ float SFHelper::Get_LeptonSF_loose(float lepPt, float lepEta,
 								   bool isEle, bool isMu, TString syst)
 {
 	float sf =1.;
+
+	int shift = 0;
+	if (syst=="lepEff_mulooseUp" or syst=="lepEff_ellooseUp") shift = 1;
+	if (syst=="lepEff_mulooseDown" or syst=="lepEff_ellooseDown") shift = -1;
+	
 	if (isMu) {
 		sf *= evalTGraph(g_recoToLoose_leptonSF_mu1, lepEta);
 		
 		if (lepPt > 30)
-			sf *= read2DHist(h_recoToLoose_leptonSF_mu2, lepPt, fabs(lepEta));
+			sf *= read2DHist(h_recoToLoose_leptonSF_mu2, lepPt, fabs(lepEta), shift);
 		else {
-			sf *= (lepPt>=15 and lepPt<30 and fabs(lepEta)>=2.1 and fabs(lepEta)<2.4) ? 1 : read2DHist(h_recoToLoose_leptonSF_mu3, lepPt, fabs(lepEta));
+			sf *= (lepPt>=15 and lepPt<30 and fabs(lepEta)>=2.1 and fabs(lepEta)<2.4) ? 1 : read2DHist(h_recoToLoose_leptonSF_mu3, lepPt, fabs(lepEta), shift);
 		}
 		
-		sf *= read2DHist(h_recoToLoose_leptonSF_mu4, lepPt, fabs(lepEta));
-
-		// FIXME
-		if (syst=="lepEff_mulooseUp") sf *= 1+0.02;
-		if (syst=="lepEff_mulooseDown") sf *= 1-0.02;
+		sf *= read2DHist(h_recoToLoose_leptonSF_mu4, lepPt, fabs(lepEta), shift);
 	}
 	else if (isEle) {
 		if (lepPt > 20) {
-			sf *= read2DHist(h_recoToLoose_leptonSF_gsf, lepEta, lepPt);
+			sf *= read2DHist(h_recoToLoose_leptonSF_gsf, lepEta, lepPt, shift);
 		}
 		else {
-			sf *= read2DHist(h_recoToLoose_leptonSF_gsf_low, lepEta, lepPt);
+			sf *= read2DHist(h_recoToLoose_leptonSF_gsf_low, lepEta, lepPt, shift);
 		}
 
-		sf *= read2DHist(h_recoToLoose_leptonSF_el, lepEta, lepPt);
-
-		// FIXME
-		if (syst=="lepEff_ellooseUp") sf *= 1+0.03;
-		if (syst=="lepEff_ellooseDown") sf *= 1-0.03;
+		sf *= read2DHist(h_recoToLoose_leptonSF_el, lepEta, lepPt, shift);
 	}
 	
 	return sf;
@@ -1532,7 +1529,7 @@ float SFHelper::Get_EleChargeMisIDProb(const miniLepton& lepton, int tauCharge)
 	return read2DHist(h_chargeMisId, lepton.pt(), std::abs(lepton.eta()));
 }
 
-float SFHelper::read2DHist(TH2* h2d, float x, float y)
+float SFHelper::read2DHist(TH2* h2d, float x, float y, int errVar)
 {
 	TAxis* xaxis = h2d->GetXaxis();
 	int nbinx = xaxis->GetNbins();
@@ -1552,8 +1549,9 @@ float SFHelper::read2DHist(TH2* h2d, float x, float y)
 		std::cerr << "WARNING: histogram " << h2d->GetName()
 				  << " returns non-positive value for x=" << x << " y=" << y
 				  << std::endl;  
-	
-	//result += errVar * h2d->GetBinError(xbin, ybin);
+
+	assert(abs(errVar)<=1);
+	result += errVar * h2d->GetBinError(xbin, ybin);
 
 	return result;
 }
