@@ -857,8 +857,9 @@ float SFHelper::Get_LeptonSF_loose(float lepPt, float lepEta,
 		
 		if (lepPt > 30)
 			sf *= read2DHist(h_recoToLoose_leptonSF_mu2, lepPt, fabs(lepEta));
-		else
-			sf *= read2DHist(h_recoToLoose_leptonSF_mu3, lepPt, fabs(lepEta));
+		else {
+			sf *= (lepPt>=15 and lepPt<30 and fabs(lepEta)>=2.1 and fabs(lepEta)<2.4) ? 1 : read2DHist(h_recoToLoose_leptonSF_mu3, lepPt, fabs(lepEta));
+		}
 		
 		sf *= read2DHist(h_recoToLoose_leptonSF_mu4, lepPt, fabs(lepEta));
 
@@ -1547,6 +1548,11 @@ float SFHelper::read2DHist(TH2* h2d, float x, float y)
 	
 	float result = h2d->GetBinContent(xbin, ybin);
 
+	if (result <= 0.)
+		std::cerr << "WARNING: histogram " << h2d->GetName()
+				  << " returns non-positive value for x=" << x << " y=" << y
+				  << std::endl;  
+	
 	//result += errVar * h2d->GetBinError(xbin, ybin);
 
 	return result;
