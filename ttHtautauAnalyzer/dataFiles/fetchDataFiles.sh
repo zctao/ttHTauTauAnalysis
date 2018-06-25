@@ -59,7 +59,7 @@ wget  https://github.com/gpetruc/cmgtools-lite/blob/94X_dev_ttH/TTHAnalysis/data
 #wget https://github.com/HEP-KBFI/tth-htt/blob/master/data/FR_lep_ttH_mva090_2017_CERN_2018May29.root?raw=true -O FR_lep_ttH_mva090_2017_CERN_2018May29.root
 #OUTDATED scp ztao@lxplus.cern.ch:/afs/cern.ch/user/g/gpetrucc/public_html/drop/plots/ttH/94X/ttH/lepMVA/v1.0.1/fr-comb/ttH_fr-v1_0_1.root .
 # tau fake rate
-#scp ztao@lxplus.cern.ch:/afs/cern.ch/user/v/veelken/public/ttHAnalysis/jetToTauFakeRate/FR_tau_2017_v1.root .
+#scp ztao@lxplus.cern.ch:/afs/cern.ch/user/v/veelken/public/ttHAnalysis/jetToTauFakeRate/FR_tau_2017_v2.root .
 
 # electron charge mis-id rate
 #scp ztao@lxplus.cern.ch:/afs/cern.ch/work/s/ssawant/public/ttHAnalysis/eChargeMisId/ElectronChargeMisIdRates_2017_2018Jun22.root .
@@ -76,6 +76,7 @@ mkdir -p $dir_sf
 ## electron
 #wget https://twiki.cern.ch/twiki/pub/CMS/Egamma2017DataRecommendations/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root
 #wget https://twiki.cern.ch/twiki/pub/CMS/Egamma2017DataRecommendations/egammaEffi.txt_EGM2D_runBCDEF_passingRECO_lowEt.root
+
 
 ## 1l2tau
 # single lepton trigger and lepton leg of the cross triggers
