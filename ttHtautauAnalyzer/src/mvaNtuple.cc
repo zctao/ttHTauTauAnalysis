@@ -106,6 +106,8 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("lep_eta", &lep0_eta);
 			tree->Branch("lep_phi", &lep0_phi);
 			tree->Branch("lep_E", &lep0_E);
+			tree->Branch("lep_pdgId", &lep0_pdgId);
+			tree->Branch("lep_isTight", &lep0_isTight);
 		}
 		else if (anatype_ == Analyze_2lss1tau or anatype_ == Analyze_2l2tau or
 				 anatype_ == Analyze_3l1tau or anatype_ == Analyze_2lss or
@@ -114,16 +116,22 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("lep1_eta", &lep0_eta);
 			tree->Branch("lep1_phi", &lep0_phi);
 			tree->Branch("lep1_E", &lep0_E);
+			tree->Branch("lep1_pdgId", &lep0_pdgId);
+			tree->Branch("lep1_isTight", &lep0_isTight);
 			tree->Branch("lep2_conePt", &lep1_conept);
 			tree->Branch("lep2_eta", &lep1_eta);
 			tree->Branch("lep2_phi", &lep1_phi);
 			tree->Branch("lep2_E", &lep1_E);
+			tree->Branch("lep2_pdgId", &lep1_pdgId);
+			tree->Branch("lep2_isTight", &lep1_isTight);
 				
 			if (anatype_ == Analyze_3l1tau or anatype_ == Analyze_3l) {
 				tree->Branch("lep3_conePt", &lep2_conept);
 				tree->Branch("lep3_eta", &lep2_eta);
 				tree->Branch("lep3_phi", &lep2_phi);
 				tree->Branch("lep3_E", &lep2_E);
+				tree->Branch("lep3_pdgId", &lep2_pdgId);
+				tree->Branch("lep3_isTight", &lep2_isTight);
 			}
 
 			tree->Branch("mll", &mll);
@@ -137,16 +145,19 @@ void mvaNtuple::setup_branches(TTree* tree)
 			tree->Branch("tau1_eta", &tau0_eta);
 			tree->Branch("tau1_phi", &tau0_phi);
 			tree->Branch("tau1_E", &tau0_E);
+			tree->Branch("tau1_isTight", &tau0_isTight);
 			tree->Branch("tau2_pt", &tau1_pt);
 			tree->Branch("tau2_eta", &tau1_eta);
 			tree->Branch("tau2_phi", &tau1_phi);
 			tree->Branch("tau2_E", &tau1_E);
+			tree->Branch("tau2_isTight", &tau1_isTight);
 		}
 		else if (anatype_ == Analyze_2lss1tau or anatype_ == Analyze_3l1tau) {
 			tree->Branch("tau_pt", &tau0_pt);
 			tree->Branch("tau_eta", &tau0_eta);
 			tree->Branch("tau_phi", &tau0_phi);
 			tree->Branch("tau_E", &tau0_E);
+			tree->Branch("tau_isTight", &tau0_isTight);
 		}	
 	}
 	
@@ -383,17 +394,23 @@ void mvaNtuple::assign_four_momentum(const std::vector<miniLepton>& leptons,
 	lep0_eta = leptons[0].eta();
 	lep0_phi = leptons[0].phi();
 	lep0_E = leptons[0].p4().E();
+	lep0_pdgId = leptons[0].pdgId();
+	lep0_isTight = leptons[0].passTightSel();
 	if (leptons.size() > 1) {
 		lep1_conept = leptons[1].conept();
 		lep1_eta = leptons[1].eta();
 		lep1_phi = leptons[1].phi();
 		lep1_E = leptons[1].p4().E();
+		lep1_pdgId = leptons[1].pdgId();
+		lep1_isTight = leptons[1].passTightSel();
 	}
 	if (leptons.size() > 3) {
 		lep2_conept = leptons[2].conept();
 		lep2_eta = leptons[2].eta();
 		lep2_phi = leptons[2].phi();
 		lep2_E = leptons[2].p4().E();
+		lep2_pdgId = leptons[2].pdgId();
+		lep2_isTight = leptons[2].passTightSel();
 	}
 
 	if (taus.size()>0) {
@@ -401,12 +418,14 @@ void mvaNtuple::assign_four_momentum(const std::vector<miniLepton>& leptons,
 		tau0_eta = taus[0].eta();
 		tau0_phi = taus[0].phi();
 		tau0_E = taus[0].p4().E();
+		tau0_isTight = taus[0].passTightSel();
 	}
 	if (taus.size()>1) {
 		tau1_pt = taus[1].pt();
 		tau1_eta = taus[1].eta();
 		tau1_phi = taus[1].phi();
 		tau1_E = taus[1].p4().E();
+		tau1_isTight = taus[1].passTightSel();
 	}
 }
 

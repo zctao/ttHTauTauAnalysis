@@ -136,6 +136,16 @@ class mvaNtuple
 	float tau1_phi = -9999.;
 	float tau0_E = -9999.;
 	float tau1_E = -9999.;
+
+	// pdgID and ID flags
+	int lep0_pdgId = -9999;
+	int lep0_isTight = -9999;
+	int lep1_pdgId = -9999;
+	int lep1_isTight = -9999;
+	int lep2_pdgId = -9999;
+	int lep2_isTight = -9999;
+	int tau0_isTight = -9999;
+	int tau1_isTight = -9999;
 	
 	// Other MVA input variables
 	float mindr_lep0_jet = -9999.;
