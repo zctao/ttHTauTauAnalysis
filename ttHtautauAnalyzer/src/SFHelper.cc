@@ -1316,6 +1316,9 @@ float SFHelper::Get_FakeRate_tau(float tauPt, float tauEta, TString syst)
 			ratio = readTF(f_fakerate_tau_mvaM_etaH_ratio_shapeDown, tauPt);
 		}
 	}
+	else if (syst=="FR_TT") {
+		ratio = 1.;  // Fake rate measured in TT MC
+	}
 	else {		
 		if (std::abs(tauEta) < 1.479) {
 			ratio = readTF(f_fakerate_tau_mvaM_etaL_ratio, tauPt);
