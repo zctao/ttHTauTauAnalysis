@@ -211,7 +211,23 @@ def getUniformBinEdges(nbins, xlow=0., xup=1.):
         binEdges.append( xlow + i*float(xup-xlow)/nbins )
 
     return array.array('d',binEdges)
-    
+
+
+def getBinEdges(anatype):
+    binEdges=[]
+    if anatype=='1l2tau':
+        binEdges = getUniformBinEdges(7, 0.0, 1.0)
+    elif anatype=='2lss1tau':
+        binEdges = [0.0, 0.14, 0.18, 0.22, 0.28, 0.32, 0.35, 0.38, 0.43, 0.47, 0.53, 1.0]         
+    elif anatype=='3l1tau':
+        binEdges = [0.0, 0.28, 0.35, 0.40, 0.47, 0.53, 1.0]
+    elif anatype=='2l2tau':
+        #binEdges = [0.0, 0.35, 0.41, 0.47, 1.0]
+        binEdges = getUniformBinEdges(4, 0.0, 1.0)
+    else:
+        print "Unknow analysis type!"
+
+    return array.array('d', binEdges)
     
 def read2DHist(x, y, h2d):
     

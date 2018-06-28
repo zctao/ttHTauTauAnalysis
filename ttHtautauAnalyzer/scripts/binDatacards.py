@@ -2,7 +2,6 @@
 from ROOT import TFile, TH1D, gROOT
 gROOT.SetBatch(True)
 import ttHTauTauAnalysis.ttHtautauAnalyzer.datacards as dc
-import array
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -50,22 +49,6 @@ for key in infile.GetListOfKeys():
                 
             break
 
-def getBinEdges(anatype):
-    binEdges=[]
-    if anatype=='1l2tau':
-        binEdges = dc.getUniformBinEdges(7, 0.0, 1.0)
-    elif anatype=='2lss1tau':
-        binEdges = [0.0, 0.14, 0.18, 0.22, 0.28, 0.32, 0.35, 0.38, 0.43, 0.47, 0.53, 1.0]         
-    elif anatype=='3l1tau':
-        binEdges = [0.0, 0.28, 0.35, 0.40, 0.47, 0.53, 1.0]
-    elif anatype=='2l2tau':
-        #binEdges = [0.0, 0.35, 0.41, 0.47, 1.0]
-        binEdges = dc.getUniformBinEdges(4, 0.0, 1.0)
-    else:
-        print "Unknow analysis type!"
-
-    return array.array('d', binEdges)
-
 def updateHistName(hname):
     newname = hname
     
@@ -88,7 +71,7 @@ histogramsRebinned=[]
 for hist in histogramsToRebin:
     print hist.GetName()
 
-    xbins = getBinEdges(args.analysis)
+    xbins = dc.getBinEdges(args.analysis)
     ngroup = len(xbins)-1
     hname = hist.GetName()
 
