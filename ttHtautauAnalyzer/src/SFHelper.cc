@@ -1256,6 +1256,8 @@ float SFHelper::Get_FakeRate_lep(float lepConePt, float lepEta,
 		fakerate = read2DHist(h_fakerate_el_QCD, lepConePt, std::abs(lepEta));
 	}
 	else if ((syst=="FR_TT" or syst=="FR_el_QCD_mu_TT") and isMuon) {
+		// FR_TT_mu is not measured below 15 GeV. Temporary workaround
+		lepConePt = std::max(lepConePt, 15.f);
 		fakerate = read2DHist(h_fakerate_mu_TT, lepConePt, std::abs(lepEta));
 	}
 	else if ((syst=="FR_QCD" or syst=="FR_el_TT_mu_QCD") and isMuon) {
