@@ -523,6 +523,10 @@ float SFHelper::Get_HLTSF_2l(const std::vector<miniLepton>& leptons, TString sys
 		}
 	}
 
+	// add 2% uncertainty
+	if (syst=="triggerUp") hltsf *= 1.02;
+	if (syst=="triggerDown") hltsf *= 0.98;
+	
 	return hltsf;
 }
 
