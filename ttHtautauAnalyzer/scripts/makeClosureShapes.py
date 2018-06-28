@@ -6,8 +6,8 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('analysis', choices=['2lss1tau','3l1tau'])
-parser.add_argument('samples', nargs='+', choices=['TTToDiLep','TTToSemiLep','TTToHad'])
-parser.add_argument('-l','--luminosity', type=float, default=41.5,
+parser.add_argument('samples', nargs='+', choices=['TTToDiLep','TTToSemiLep'])
+parser.add_argument('-l','--luminosity', type=float, default=41.53,
                     help="Integrated luminosity in fb^-1")
 parser.add_argument('--variable', type=str, default="mvaOutput",
                     help="Variable to make the histograms")
