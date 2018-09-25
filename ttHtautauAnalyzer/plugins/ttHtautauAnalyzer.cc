@@ -402,10 +402,9 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	}
 	else { // correct simulated jet energy
 		edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
-		iSetup.get<JetCorrectionsRecord>().get("AK4PF",JetCorParColl);
+		iSetup.get<JetCorrectionsRecord>().get("AK4PFchs",JetCorParColl);
 		const JetCorrectorParameters & JetCorPar = (*JetCorParColl)["Uncertainty"];
 		JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(JetCorPar);
-		
 		jet_raw = getCorrectedJets(*jets, jecUnc, JECType_);
 
 		delete jecUnc;
@@ -458,6 +457,11 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	float MHT = getMHT(lep_fakeable, tau_loose, jet_selected);
 	float metLD = 0.00397 * MET + 0.00265 * MHT;
 
+	if (debug_) {
+		std::cout << "MET: " << MET << std::endl;
+		std::cout << "MHT: " << MHT << std::endl;
+	}
+
 	/////////////////////////////////////////
 	// Event selection
 	/////////////////////////////////////////
@@ -471,27 +475,6 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		pass_event_sel =
 			evt_selector_ -> pass_ttH_ltau_inclusive_selection(
 			    *lep_selected, minitau_loose, jet_selected.size(), h_CutFlow_);
-	}
-	// Following seletions are deprecated
-	else if (anaType_==Analyze_2lss1tau) {
-		pass_event_sel = evt_selector_ -> pass_2l1tau_inclusive_selection(
-		    lep_loose, *lep_selected, lep_tight, minitau_loose,
-			jet_selected.size(), n_btags_loose, n_btags_medium, metLD, h_CutFlow_);
-	}
-	else if (anaType_==Analyze_1l2tau) {		
-		pass_event_sel = evt_selector_ -> pass_1l2tau_inclusive_selection(
-		    lep_loose, lep_fakeable, lep_tight, minitau_loose,
-			jet_selected.size(), n_btags_loose, n_btags_medium, h_CutFlow_);
-	}
-	else if (anaType_==Analyze_3l1tau) {
-		pass_event_sel = evt_selector_ -> pass_3l1tau_inclusive_selection(
-		    lep_loose, *lep_selected, minitau_loose, jet_selected.size(),
-			n_btags_loose, n_btags_medium, metLD, h_CutFlow_);
-	}
-	else if (anaType_==Analyze_2l2tau) {
-		pass_event_sel = evt_selector_ -> pass_2l2tau_inclusive_selection(
-		    lep_loose, lep_fakeable, minitau_loose, jet_selected.size(),
-			n_btags_loose, n_btags_medium, metLD, h_CutFlow_);
 	}
 
 	if (not (pass_event_sel or event_selection_off_))
