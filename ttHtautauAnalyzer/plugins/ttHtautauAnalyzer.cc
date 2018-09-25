@@ -395,12 +395,17 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	/////////////////////////////////////////
 	// Jets
 	if (debug_) std::cout << "jets" << std::endl;
-	
+
 	std::vector<pat::Jet> jet_raw;	
+	jet_raw = *jets;
+	
+	// JESUp/Down and JERUp/Down are now dealt with separately
+	// The incoming jets are expected to be already corrected
+	/*
 	if (isdata_) {
 		jet_raw = *jets;
 	}
-	else { // correct simulated jet energy
+	else { // uncertainties for corrected simulated jet energy
 		edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
 		iSetup.get<JetCorrectionsRecord>().get("AK4PFchs",JetCorParColl);
 		const JetCorrectorParameters & JetCorPar = (*JetCorParColl)["Uncertainty"];
@@ -409,6 +414,7 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 
 		delete jecUnc;
 	}
+	*/
 
 	// QGLikelihood
 	//addJetQGLikelihood(jet_raw, *qgHandle.product());
@@ -446,13 +452,36 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		std::cout << "n_btags_loose : " << n_btags_loose << std::endl;
 		std::cout << "n_btags_medium : " << n_btags_medium << std::endl;
 	}
-
+	
 	/////////////////////////////////////////
 	// MET
 	if (debug_) std::cout << "mets" << std::endl;
 	
 	pat::MET pfMET = mets->front();
-	float MET = pfMET.pt();
+
+	// propagate Jet correction to MET
+	pat::MET::METCorrectionLevel metCorLevel = pat::MET::METCorrectionLevel::Type1;
+	if (doJERsmear_) metCorLevel = pat::MET::METCorrectionLevel::Type1Smear;
+	float MET = pfMET.corPt(metCorLevel);
+	if (JECType_=="JESUp")
+		MET = pfMET.shiftedPt(pat::MET::METUncertainty::JetEnUp, metCorLevel);
+	else if (JECType_=="JESDown")
+		MET = pfMET.shiftedPt(pat::MET::METUncertainty::JetEnDown, metCorLevel);
+	else if (JECType_=="JERUp")
+		MET = pfMET.shiftedPt(pat::MET::METUncertainty::JetResUp, metCorLevel);
+	else if (JECType_=="JERDown")
+		MET = pfMET.shiftedPt(pat::MET::METUncertainty::JetResDown, metCorLevel);
+
+	/*
+	std::cout << "met" << std::endl;
+	std::cout << "type1 : " << pfMET.pt() << " " << pfMET.corPt(pat::MET::METCorrectionLevel::Type1) << std::endl;
+	std::cout << "type1smear : " << pfMET.corPt(pat::MET::METCorrectionLevel::Type1Smear) << std::endl;
+	std::cout << "jer up : " << pfMET.shiftedPt(pat::MET::METUncertainty::JetResUp, pat::MET::METCorrectionLevel::Type1Smear) << std::endl;
+	std::cout << "jer down : " << pfMET.shiftedPt(pat::MET::METUncertainty::JetResDown, pat::MET::METCorrectionLevel::Type1Smear) << std::endl;
+	std::cout << "jes up : " << pfMET.shiftedPt(pat::MET::METUncertainty::JetEnUp, pat::MET::METCorrectionLevel::Type1) << " " << pfMET.shiftedPt(pat::MET::METUncertainty::JetEnUp, pat::MET::METCorrectionLevel::Type1Smear) << std::endl;
+	std::cout << "jes down : " << pfMET.shiftedPt(pat::MET::METUncertainty::JetEnDown, pat::MET::METCorrectionLevel::Type1) << " " << pfMET.shiftedPt(pat::MET::METUncertainty::JetEnDown, pat::MET::METCorrectionLevel::Type1Smear) << std::endl;
+	*/
+	
 	// MHT
 	float MHT = getMHT(lep_fakeable, tau_loose, jet_selected);
 	float metLD = 0.00397 * MET + 0.00265 * MHT;
