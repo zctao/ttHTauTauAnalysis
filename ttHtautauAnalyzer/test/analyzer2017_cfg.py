@@ -32,17 +32,17 @@ options.register('SampleName','',  #'ttH'
                  "Sample name")
 
 # Tau energy scale systematics is dealt with later
-#options.register('TauESType', 'NA',
-#                 VarParsing.VarParsing.multiplicity.singleton,
-#                 VarParsing.VarParsing.varType.string,
-#                 "Tau energy scale: NA, tauESUp, tauESDown")
+options.register('TauESType', 'NA',
+                 VarParsing.VarParsing.multiplicity.singleton,
+                 VarParsing.VarParsing.varType.string,
+                 "Tau energy scale: NA, tauESUp, tauESDown")
 
 options.register('JECType', 'NA',
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
                  "JEC type: NA, JESUp, JESDown, JERUp, JERDown")
 
-options.register("doJetSmearing", False,
+options.register("doJetSmearing", True,
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.bool,
                  "apply jet energy smearing for MC or not")
@@ -261,7 +261,7 @@ process.ttHtaus.mets = metTag #cms.InputTag("slimmedMETs","","ttH")
 #process.ttHtaus.rho = cms.InputTag("fixedGridRhoFastjetAll")
 process.ttHtaus.turn_off_event_sel = cms.bool(options.TurnOffEvtSel)
 process.ttHtaus.sample_name = cms.string(options.SampleName)
-#process.ttHtaus.TauESType = cms.string(options.TauESType)
+process.ttHtaus.TauESType = cms.string(options.TauESType)
 process.ttHtaus.JECType = cms.string(options.JECType)
 process.ttHtaus.using_collision_data = cms.bool(options.isData)
 process.ttHtaus.analysis_type = cms.string(options.AnalysisType)
@@ -279,7 +279,12 @@ process.ttHtaus.csv_tight_wp = cms.double(0.8001)
 
 
 ### Output
-out_file = 'output_' + options.SampleName + '.root'
+out_file = 'output_' + options.SampleName
+if options.JECType != 'NA':
+    out_file += '_'+options.JECType
+if options.TauESType != 'NA':
+    out_file += '_'+options.TauESType
+out_file += '.root'
 
 process.TFileService = cms.Service("TFileService",
                                    fileName = cms.string(out_file)
