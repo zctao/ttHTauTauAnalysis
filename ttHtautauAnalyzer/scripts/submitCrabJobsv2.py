@@ -23,8 +23,11 @@ parser.add_argument('--dbs', choices=['global','phys01','phys02','phys03'],
                     default='global',
                     help="Alias of the URL of the DBS reader instance where the input dataset is published ")
 parser.add_argument('--systematics', nargs='+',
-                    choices=['nominal','jesup','jesdown','tesup','tesdown'],
+                    choices=['nominal','jesup','jesdown','jerup','jerdown',
+                             'tesup','tesdown'],
                     default=['nominal'], help="Energy correction")
+parser.add_argument('--jetsmearoff', action='store_true',
+                    help="True off jet smearing")
 parser.add_argument('-o','--outdir', type=str,
                     default='/store/user/ztao/ttHtaus_94X', help="Output directory")
 parser.add_argument('-d','--dryrun', action='store_true',
@@ -35,11 +38,13 @@ parser.add_argument('-a','--automatic', action='store_true',
                     help="Automatic data splitting")
 parser.add_argument('-b','--batch_lpc', action='store_true',
                     help="Submit batch job on CMS LPC")
+parser.add_argument('--crab_dir', type=str, default='crab',
+                    help="Directory to store crab config files")
 
 args = parser.parse_args()
 
-def getParametersetString(sample, energy_correction ,isdata):
-    pset = "['SampleName=','isData=False','AnalysisType=inclusive','doCutFlow=True','JECType=NA','TauESType=NA']"
+def getParametersetString(sample, energy_correction ,isdata, jetsmearoff):
+    pset = "['SampleName=','isData=False','AnalysisType=inclusive','doCutFlow=True','JECType=NA','TauESType=NA','doJetSmearing=True']"
     
     # sample name
     sname = sample
@@ -51,15 +56,23 @@ def getParametersetString(sample, energy_correction ,isdata):
     if isdata:
         pset=pset.replace("isData=False","isData=True")
 
-    # JEC, tauEC
+    # JEC, JER, tauEC
     if energy_correction == 'jesup':
         pset = pset.replace("JECType=NA","JECType=JESUp")
     elif energy_correction == 'jesdown':
         pset = pset.replace("JECType=NA","JECType=JESDown")
+    elif energy_correction == 'jerup':
+        pset = pset.replace("JECType=NA","JECType=JERUp")
+    elif energy_correction == 'jerdown':
+        pset = pset.replace("JECType=NA","JECType=JERDown")
     elif energy_correction == 'tesup':
         pset = pset.replace("TauESType=NA","TauESType=tauESUp")
     elif energy_correction == 'tesdown':
         pset = pset.replace("TauESType=NA","TauESType=tauESDown")
+
+    if jetsmearoff:
+        pset = pset.replace("doJetSmearing=True","doJetSmearing=False")
+        assert(energy_correction not in ['jerup','jerdown'])
 
     return pset
 
@@ -106,12 +119,13 @@ for sample in samples:
     for ec in args.systematics:
         
         jobname = args.prefix + sample + '_incl'
-        if ec in ['jesup','jesdown','tesup','tesdown']:
+        if ec in ['jesup','jesdown','jerup','jerdown','tesup','tesdown']:
             if isData:
                 continue
             jobname += '_'+ec
 
-        parameterset = getParametersetString(sample, ec ,isData)
+        parameterset = getParametersetString(sample, ec ,isData,
+                                             args.jetsmearoff)
             
         vd = locals()
         vd['name'] = jobname
@@ -134,8 +148,9 @@ for sample in samples:
             vd['splitting'] = 'Automatic'
 
         # write crab config files
-        open('crab/crabConfig_'+vd['name']+'.py','wt').write(template % vd)
+        crab_dir = args.crab_dir.rstrip('/')
+        open(crab_dir+'/crabConfig_'+vd['name']+'.py','wt').write(template % vd)
 
         # submit crab jobs
         if not args.dryrun:
-            os.system('crab submit -c crab/crabConfig_'+vd['name']+'.py')
+            os.system('crab submit -c '+crab_dir+'/crabConfig_'+vd['name']+'.py')
