@@ -31,17 +31,18 @@ options.register('SampleName','',  #'ttH'
                  VarParsing.VarParsing.varType.string,
                  "Sample name")
 
-options.register('TauESType', 'NA',
-                 VarParsing.VarParsing.multiplicity.singleton,
-                 VarParsing.VarParsing.varType.string,
-                 "Tau energy scale: NA, tauESUp, tauESDown")
+# Tau energy scale systematics is dealt with later
+#options.register('TauESType', 'NA',
+#                 VarParsing.VarParsing.multiplicity.singleton,
+#                 VarParsing.VarParsing.varType.string,
+#                 "Tau energy scale: NA, tauESUp, tauESDown")
 
 options.register('JECType', 'NA',
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
                  "JEC type: NA, JESUp, JESDown, JERUp, JERDown")
 
-options.register("doJERSmearing", False,
+options.register("doJetSmearing", False,
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.bool,
                  "apply jet energy smearing for MC or not")
@@ -66,11 +67,6 @@ options.register('SelectionRegion', 'NA',
                  VarParsing.VarParsing.varType.string,
                  "Which selection region to apply: NA, inclusive_1l2tau, inclusive_2lss1tau, inclusive_3l1tau, inclusive_2l2tau")
 
-#options.register('doSystematics', True,
-#                 VarParsing.VarParsing.multiplicity.singleton,
-#                 VarParsing.VarParsing.varType.bool,
-#                 "Include systematics or not")
-
 options.register('doCutFlow', False,
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.bool,
@@ -83,8 +79,8 @@ options.register('doSync', False,
 
 ###
 options.maxEvents = -1
-options.inputFiles='file:/uscms/home/ztao/nobackup/datasample/ttH_94X/ttHJetToNonbb.root'
-#/store/mc/RunIIFall17MiniAOD/ttHJetToNonbb_M125_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/20000/0CF65340-0200-E811-ABB7-0025905C53F0.root
+options.inputFiles='/store/mc/RunIIFall17MiniAOD/ttHJetToNonbb_M125_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/20000/0CF65340-0200-E811-ABB7-0025905C53F0.root'
+#'file:/uscms/home/ztao/nobackup/datasample/ttH_94X/ttHJetToNonbb.root'
 
 # get and parse the command line arguments
 options.parseArguments()
@@ -108,7 +104,7 @@ process.maxEvents = cms.untracked.PSet(
 )
 
 ############################
-### Filters for running on data
+### Vertex filter
 #if options.isData:
 if True:
     # primary vertex filter
@@ -125,45 +121,23 @@ process.source = cms.Source("PoolSource",
 	fileNames = cms.untracked.vstring(options.inputFiles)
 )
 
+#####
+# No need to apply JEC separately anymore.
+# Use the updated jet collections from MET corrector
+#####
 ### JEC
-from PhysicsTools.PatAlgos.tools.jetTools import updateJetCollection
+#from PhysicsTools.PatAlgos.tools.jetTools import updateJetCollection
 
-JECLevel = cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute'])
-if options.isData:
-    JECLevel.append('L2L3Residual')
-
-updateJetCollection(
-    process,
-    jetSource = cms.InputTag('slimmedJets'),
-    labelName = 'UpdatedJEC',
-    jetCorrections = ('AK4PFchs', JECLevel, 'None')
-)
-
-## Quark-gluon likelihood
-# add the database object
-qgDatabaseVersion = 'cmssw8020_v2'
-
-from CondCore.CondDB.CondDB_cfi import *
-#CondDB.connect = cms.string('frontier://FrontierProd/CMS_COND_PAT_000')
-CondDB.connect = cms.string('sqlite:qg/QGL_'+qgDatabaseVersion+'.db')
-process.QGPoolDBESSource = cms.ESSource("PoolDBESSource", CondDB,
-                                toGet = cms.VPSet(),
-)
-
-for type in ['AK4PFchs','AK4PFchs_antib']:
-    process.QGPoolDBESSource.toGet.extend(cms.VPSet(cms.PSet(
-        record = cms.string('QGLikelihoodRcd'),
-        tag    = cms.string('QGLikelihoodObject_'+qgDatabaseVersion+'_'+type),
-        label  = cms.untracked.string('QGL_'+type)
-    )))
-
-process.es_prefer_QGL = cms.ESPrefer("PoolDBESSource","QGPoolDBESSource")
-  
-# load QGTagger
-process.load('RecoJets.JetProducers.QGTagger_cfi')
-process.QGTagger.srcJets = cms.InputTag("updatedPatJetsUpdatedJEC")
-process.QGTagger.srcVertexCollection=cms.InputTag("offlineSlimmedPrimaryVertices")
-process.QGTagger.jetsLabel = cms.string('QGL_AK4PFchs')
+#JECLevel = cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute'])
+#if options.isData:
+#    JECLevel.append('L2L3Residual')
+#
+#updateJetCollection(
+#    process,
+#    jetSource = cms.InputTag('slimmedJets'),
+#    labelName = 'UpdatedJEC',
+#    jetCorrections = ('AK4PFchs', JECLevel, 'None')
+#)
 
 ### Electron scale and smearing + MVA IDs
 from RecoEgamma.EgammaTools.EgammaPostRecoTools import setupEgammaPostRecoSeq
@@ -189,11 +163,76 @@ na = TauIDEmbedder(process, cms,
 )
 na.runTauID()
 
+# ##################################################
 ### MET correction 
 from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
 runMetCorAndUncFromMiniAOD(process,
                            isData=options.isData,
+                           reapplyJEC=True
                            )
+
+# check the event content
+process.content = cms.EDAnalyzer("EventContentAnalyzer")
+
+### Determine jet and met collections to be used later
+if options.doSync:
+    options.doJetSmearing = False
+
+# nominal
+jetTag=cms.InputTag("patJetsReapplyJEC","","ttH")
+metTag=cms.InputTag("slimmedMETs","","ttH")
+if options.doJetSmearing: 
+    jetTag = cms.InputTag("patSmearedJets","","ttH")
+    #metTag = cms.InputTag("slimmedMETsSmeared","","ttH")
+
+if options.JECType == 'JERUp':
+    assert(options.doJetSmearing)
+    jetTag = cms.InputTag("shiftedPatSmearedJetResUp","","ttH")
+    #jetTag = cms.InputTag("shiftedPatJetResUp","","ttH")
+elif options.JECType == 'JERDown':
+    assert(options.doJetSmearing)
+    jetTag = cms.InputTag("shiftedPatSmearedJetResDown","","ttH")
+    #jetTag = cms.InputTag("shiftedPatJetResDown","","ttH")
+elif options.JECType == 'JESUp':
+    if not options.doJetSmearing:
+        jetTag = cms.InputTag("shiftedPatJetEnUp","","ttH")
+    else:
+        # FIXME
+        #jetTag = cms.InputTag("shiftedPatSmearedJetEnUp","","ttH")
+        jetTag = cms.InputTag("shiftedPatJetEnUp","","ttH")
+elif options.JECType == 'JESDown':
+    if not options.doJetSmearing:
+        jetTag = cms.InputTag("shiftedPatJetEnDown","","ttH")
+    else:
+        # FIXME
+        #jetTag = cms.InputTag("shiftedPatSmearedJetEnDown","","ttH")
+        jetTag = cms.InputTag("shiftedPatJetEnDown","","ttH")
+        
+# ##################################################
+## Quark-gluon likelihood
+# add the database object
+qgDatabaseVersion = 'cmssw8020_v2'
+
+from CondCore.CondDB.CondDB_cfi import *
+CondDB.connect = cms.string('sqlite:qg/QGL_'+qgDatabaseVersion+'.db')
+process.QGPoolDBESSource = cms.ESSource("PoolDBESSource", CondDB,
+                                toGet = cms.VPSet(),
+)
+
+for type in ['AK4PFchs','AK4PFchs_antib']:
+    process.QGPoolDBESSource.toGet.extend(cms.VPSet(cms.PSet(
+        record = cms.string('QGLikelihoodRcd'),
+        tag    = cms.string('QGLikelihoodObject_'+qgDatabaseVersion+'_'+type),
+        label  = cms.untracked.string('QGL_'+type)
+    )))
+
+process.es_prefer_QGL = cms.ESPrefer("PoolDBESSource","QGPoolDBESSource")
+  
+# load QGTagger
+process.load('RecoJets.JetProducers.QGTagger_cfi')
+process.QGTagger.srcJets = jetTag #cms.InputTag("updatedPatJetsUpdatedJEC")
+process.QGTagger.srcVertexCollection=cms.InputTag("offlineSlimmedPrimaryVertices")
+process.QGTagger.jetsLabel = cms.string('QGL_AK4PFchs')
 
 ### load the analysis
 # LeptonID producer from ttH Multi-lepton group
@@ -207,8 +246,7 @@ process.ttHLeptons.rhoParam = "fixedGridRhoFastjetAll"
 #process.ttHLeptons.electrons = cms.InputTag("slimmedElectrons","","ttH")
 process.ttHLeptons.taus = cms.InputTag("NewTauIDsEmbedded")
 #
-process.ttHLeptons.jets = cms.InputTag("updatedPatJetsUpdatedJEC")
-#process.ttHLeptons.JECTag = cms.string("patJetCorrFactorsUpdatedJEC")
+process.ttHLeptons.jets = jetTag #cms.InputTag("updatedPatJetsUpdatedJEC")
 process.ttHLeptons.LooseCSVWP = cms.double(0.1522)  # DeepCSV WP
 process.ttHLeptons.MediumCSVWP = cms.double(0.4941) # DeepCSV WP
 process.ttHLeptons.mvaValuesMap = cms.InputTag("electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17NoIsoV1Values")
@@ -218,13 +256,12 @@ process.ttHLeptons.mvaCategoriesMap = cms.InputTag("electronMVAValueMapProducer:
 process.ttHtaus.electrons = cms.InputTag("ttHLeptons")
 process.ttHtaus.muons = cms.InputTag("ttHLeptons")
 process.ttHtaus.taus = cms.InputTag("ttHLeptons")
-process.ttHtaus.jets = cms.InputTag("updatedPatJetsUpdatedJEC")
-process.ttHtaus.mets = cms.InputTag("slimmedMETs","","ttH")
+process.ttHtaus.jets = jetTag #cms.InputTag("updatedPatJetsUpdatedJEC")
+process.ttHtaus.mets = metTag #cms.InputTag("slimmedMETs","","ttH")
 #process.ttHtaus.rho = cms.InputTag("fixedGridRhoFastjetAll")
-#process.ttHtaus.do_systematics = cms.bool(options.doSystematics)
 process.ttHtaus.turn_off_event_sel = cms.bool(options.TurnOffEvtSel)
 process.ttHtaus.sample_name = cms.string(options.SampleName)
-process.ttHtaus.TauESType = cms.string(options.TauESType)
+#process.ttHtaus.TauESType = cms.string(options.TauESType)
 process.ttHtaus.JECType = cms.string(options.JECType)
 process.ttHtaus.using_collision_data = cms.bool(options.isData)
 process.ttHtaus.analysis_type = cms.string(options.AnalysisType)
@@ -233,7 +270,7 @@ process.ttHtaus.turn_off_HLT_cut = cms.bool(options.TurnOffHLTCut)
 process.ttHtaus.debug_mode = cms.bool(options.Debug)
 process.ttHtaus.do_sync = cms.bool(options.doSync)
 process.ttHtaus.doCutFlow = cms.bool(options.doCutFlow)
-process.ttHtaus.doJERsmear = cms.bool(options.doJERSmearing)
+process.ttHtaus.doJERsmear = cms.bool(options.doJetSmearing)
 process.ttHtaus.verbosity = cms.int32(1)
 # DeepCSV WPs 
 process.ttHtaus.csv_loose_wp = cms.double(0.1522)
@@ -262,11 +299,12 @@ process.Timing = cms.Service("Timing",
 #Path
 process.p = cms.Path(
     process.primaryVertexFilter *
-    process.patJetCorrFactorsUpdatedJEC * process.updatedPatJetsUpdatedJEC *     
+    #process.patJetCorrFactorsUpdatedJEC * process.updatedPatJetsUpdatedJEC * 
     #process.egmGsfElectronIDSequence *
     process.egammaPostRecoSeq *
     process.rerunMvaIsolationSequence * process.NewTauIDsEmbedded * # *getattr(process, "NewTauIDsEmbedded")
     process.fullPatMetSequence *
+    #process.content *
     process.ttHLeptons *
     process.QGTagger *
     process.ttHtaus
