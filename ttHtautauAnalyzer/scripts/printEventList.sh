@@ -9,6 +9,6 @@ root -b $inname <<EOF
 $directory->cd();
 $treename->SetScanField(0);
 .> $outname
-$treename->Scan("run:ls:nEvent");
+$treename->Scan("run:ls:nEvent","","colsize=32");
 .>
 EOF
