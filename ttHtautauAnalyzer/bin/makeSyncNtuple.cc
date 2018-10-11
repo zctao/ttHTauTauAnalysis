@@ -773,7 +773,6 @@ TTree* makeSyncTree(const TString input_file, const TString treename,
 			syncntuple.mT_lep2 = mvantuple.mT_met_lep1;	
 			syncntuple.mindr_lep1_jet = mvantuple.mindr_lep0_jet;
 			syncntuple.max_dr_lep_tau = mvantuple.max_dr_lep_tau;
-			syncntuple.nBJetLoose = mvantuple.nbtags_loose;
 			syncntuple.dr_taus = mvantuple.dr_taus;
 			syncntuple.avg_dr_jet = mvantuple.avg_dr_jet;
 			syncntuple.lep1_conept = mvantuple.lep0_conept;
