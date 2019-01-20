@@ -6,9 +6,9 @@ import ttHTauTauAnalysis.ttHtautauAnalyzer.datacards as dc
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("title", type=str, help="plot title")
-parser.add_argument("infile", type=str, help="Input file name")
 parser.add_argument("variable", type=str, help="Variable to plot")
+parser.add_argument("infile", type=str, help="Input file name")
+parser.add_argument("-t","--title", type=str, help="plot title")
 parser.add_argument("-o", "--outname", type=str, default="plot.pdf",
                     help="Output plot name")
 parser.add_argument("-c","--channels", nargs='+', choices=dc.Channels)

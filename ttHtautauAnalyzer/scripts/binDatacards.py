@@ -82,12 +82,17 @@ for hist in histogramsToRebin:
     hist_rebinned = hist.Rebin(ngroup, hname, xbins)
     
     if args.positvebins:
-        dc.makeBinContentsPositive(hist_rebinned, verbosity=args.verbose)    
+        dc.makeBinContentsPositive(hist_rebinned, verbosity=args.verbose)
 
+    # crop all uncertainties to 100% to avoid negative variations
+    for bin in xrange(1, hist_rebinned.GetNbinsX()+1):
+        if hist_rebinned.GetBinError(bin) > hist_rebinned.GetBinContent(bin):
+            hist_rebinned.SetBinError(bin, hist_rebinned.GetBinContent(bin))
+    
     if args.scalebywidth:
         hist_rebinned.Scale(1.,'width')
         # set y axis label?
-        
+
     histogramsRebinned.append(hist_rebinned)
 
 # write to file

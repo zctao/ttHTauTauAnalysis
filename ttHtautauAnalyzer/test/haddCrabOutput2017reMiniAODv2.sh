@@ -8,10 +8,10 @@ samplelist=${1:-'../dataFiles/DatasetList_2017reMiniAODv2.csv'}
 eosrootdir='/store/user/ztao/ttHtaus_94X/'
 
 # version
-version='may2018v2'
+version='jun2018'
 
 # crab job prefix
-prefix='crab_2018mayv2_'
+prefix='crab_2018jun_'
 
 # timestamp
 timestamp=`date +%Y%m%d`
@@ -24,11 +24,13 @@ touch $nlist
 analysis='incl'
 
 #MC
-samples=''
-#samples='ttHJetToNonbb TTW TTW_psw TTZ TTZ_psw WZ WZTo3LNu TTGJets TTZ_M1to10 ZZ ZZ_ext WW WWTo2L2Nuds WZZ WWZ WWW ZZZ tZq TTTT TTWW ggHZZ4l WWds' #
-#samples='ttHToNonbb TTToDiLep TTToDiLep_psw TTToSemiLep TTToSemiLep_psw TTToHad TTToHad_ps DYJets_M50 DYJets_M50_ext DYJets_M10to50 ST_sLep ST_sLep ST_tT ST_tTbar ST_tWT ST_tWT ST_tWTbar ST_tWTbar'
-# TGJets WG ZG WJets
+samples='ttHJetToNonbb TTW TTW_psw TTZ WZ WZTo3LNu TTGJets TTZ_M1to10 ZZ ZZ_ext WW WWTo2L2Nuds WZZ WWZ WWW ZZZ tZq TTTT TTWW ggHZZ4l WWds' #
+#samples='ttHToNonbb TTToDiLep TTToDiLep_psw TTToSemiLep TTToSemiLep_psw TTToHad TTToHad_ps DYJets_M50 DYJets_M50_ext DYJets_M10to50 ST_sLep ST_sLep_psw ST_tT ST_tTbar ST_tWT ST_tWT_psw ST_tWTbar ST_tWTbar_psw'
+# private sample from Marco
 # ST_tWll WpWpJJ VHToNonbb tHW tHq
+# not yet available
+# TGJets WG ZG WJets
+
 
 #corrections='jesup jesdown tesup tesdown'
 corrections=''
