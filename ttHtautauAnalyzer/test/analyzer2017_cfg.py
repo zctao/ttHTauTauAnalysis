@@ -31,45 +31,10 @@ options.register('SampleName','',  #'ttH'
                  VarParsing.VarParsing.varType.string,
                  "Sample name")
 
-options.register('TauESType', 'NA',
-                 VarParsing.VarParsing.multiplicity.singleton,
-                 VarParsing.VarParsing.varType.string,
-                 "Tau energy scale: NA, tauESUp, tauESDown")
-
-options.register('JECType', 'NA',
-                 VarParsing.VarParsing.multiplicity.singleton,
-                 VarParsing.VarParsing.varType.string,
-                 "JEC type: NA, JESUp, JESDown, JERUp, JERDown")
-
-options.register("doJERSmearing", False,
-                 VarParsing.VarParsing.multiplicity.singleton,
-                 VarParsing.VarParsing.varType.bool,
-                 "apply jet energy smearing for MC or not")
-
 options.register('TurnOffEvtSel', False, 
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.bool,
                  "Turn off event selection")
-
-options.register('TurnOffHLTCut', True,
-                 VarParsing.VarParsing.multiplicity.singleton,
-                 VarParsing.VarParsing.varType.bool,
-                 "Turn off HLT path check in event selection")
-
-options.register('AnalysisType', 'NA',
-                 VarParsing.VarParsing.multiplicity.singleton,
-                 VarParsing.VarParsing.varType.string,
-                 "Analysis type currently supported: inclusive, 1l2tau, 2lss1tau, 3l1tau, 2l2tau")
-
-options.register('SelectionRegion', 'NA',
-                 VarParsing.VarParsing.multiplicity.singleton,
-                 VarParsing.VarParsing.varType.string,
-                 "Which selection region to apply: NA, inclusive_1l2tau, inclusive_2lss1tau, inclusive_3l1tau, inclusive_2l2tau")
-
-#options.register('doSystematics', True,
-#                 VarParsing.VarParsing.multiplicity.singleton,
-#                 VarParsing.VarParsing.varType.bool,
-#                 "Include systematics or not")
 
 options.register('doCutFlow', False,
                  VarParsing.VarParsing.multiplicity.singleton,
@@ -224,16 +189,10 @@ process.ttHtaus.mets = cms.InputTag("slimmedMETs","","ttH")
 #process.ttHtaus.do_systematics = cms.bool(options.doSystematics)
 process.ttHtaus.turn_off_event_sel = cms.bool(options.TurnOffEvtSel)
 process.ttHtaus.sample_name = cms.string(options.SampleName)
-process.ttHtaus.TauESType = cms.string(options.TauESType)
-process.ttHtaus.JECType = cms.string(options.JECType)
 process.ttHtaus.using_collision_data = cms.bool(options.isData)
-process.ttHtaus.analysis_type = cms.string(options.AnalysisType)
-process.ttHtaus.selection_region = cms.string(options.SelectionRegion)
-process.ttHtaus.turn_off_HLT_cut = cms.bool(options.TurnOffHLTCut)
 process.ttHtaus.debug_mode = cms.bool(options.Debug)
 process.ttHtaus.do_sync = cms.bool(options.doSync)
 process.ttHtaus.doCutFlow = cms.bool(options.doCutFlow)
-process.ttHtaus.doJERsmear = cms.bool(options.doJERSmearing)
 process.ttHtaus.verbosity = cms.int32(1)
 # DeepCSV WPs 
 process.ttHtaus.csv_loose_wp = cms.double(0.1522)

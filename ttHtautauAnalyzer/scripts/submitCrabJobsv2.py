@@ -22,9 +22,9 @@ parser.add_argument('-c','--config', type=str, default='analyzer2017_cfg.py',
 parser.add_argument('--dbs', choices=['global','phys01','phys02','phys03'],
                     default='global',
                     help="Alias of the URL of the DBS reader instance where the input dataset is published ")
-parser.add_argument('--systematics', nargs='+',
-                    choices=['nominal','jesup','jesdown','tesup','tesdown'],
-                    default=['nominal'], help="Energy correction")
+#parser.add_argument('--systematics', nargs='+',
+#                    choices=['nominal','jesup','jesdown','tesup','tesdown'],
+#                    default=['nominal'], help="Energy correction")
 parser.add_argument('-o','--outdir', type=str,
                     default='/store/user/ztao/ttHtaus_94X', help="Output directory")
 parser.add_argument('-d','--dryrun', action='store_true',
@@ -39,7 +39,7 @@ parser.add_argument('-b','--batch_lpc', action='store_true',
 args = parser.parse_args()
 
 def getParametersetString(sample, energy_correction ,isdata):
-    pset = "['SampleName=','isData=False','AnalysisType=inclusive','doCutFlow=True','JECType=NA','TauESType=NA']"
+    pset = "['SampleName=','isData=False','doCutFlow=True']"
     
     # sample name
     sname = sample
@@ -50,16 +50,6 @@ def getParametersetString(sample, energy_correction ,isdata):
     # is collision data
     if isdata:
         pset=pset.replace("isData=False","isData=True")
-
-    # JEC, tauEC
-    if energy_correction == 'jesup':
-        pset = pset.replace("JECType=NA","JECType=JESUp")
-    elif energy_correction == 'jesdown':
-        pset = pset.replace("JECType=NA","JECType=JESDown")
-    elif energy_correction == 'tesup':
-        pset = pset.replace("TauESType=NA","TauESType=tauESUp")
-    elif energy_correction == 'tesdown':
-        pset = pset.replace("TauESType=NA","TauESType=tauESDown")
 
     return pset
 

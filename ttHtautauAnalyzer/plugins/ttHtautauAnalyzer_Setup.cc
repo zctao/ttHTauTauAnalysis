@@ -3,6 +3,9 @@
 
 #include "ttHTauTauAnalysis/ttHtautauAnalyzer/plugins/ttHtautauAnalyzer.h"
 
+/* Deprecated 
+ttHtautauAnalyzer now selects an inclusive sample covering all regions
+
 void ttHtautauAnalyzer::Set_up_AnaType(const std::string& anatype)
 {
 	std::cout << anatype << std::endl;
@@ -18,6 +21,7 @@ void ttHtautauAnalyzer::Set_up_SelType(const std::string& seltype)
 
 	assert(SelTypeMap.count(seltype)>0);
 }
+*/
 
 void ttHtautauAnalyzer::Set_up_histograms()
 {

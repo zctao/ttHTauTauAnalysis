@@ -38,7 +38,7 @@ xrdcp -s root://cmsxrootd.fnal.gov/$inputfile input.root
 
 cp -r $cmssw/src/ttHTauTauAnalysis/ttHtautauAnalyzer/test/qg/ .
 
-cmsRun $cmssw/src/ttHTauTauAnalysis/ttHtautauAnalyzer/test/analyzer2017_cfg.py SampleName=$sample doCutFlow=True isData=False AnalysisType=inclusive inputFiles=file:input.root
+cmsRun $cmssw/src/ttHTauTauAnalysis/ttHtautauAnalyzer/test/analyzer2017_cfg.py SampleName=$sample doCutFlow=True isData=False inputFiles=file:input.root
 
 echo "*******************************************"
 # output file default name: output_$sample.root

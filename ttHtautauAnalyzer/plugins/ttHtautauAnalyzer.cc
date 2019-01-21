@@ -33,10 +33,7 @@
 // constructors and destructor
 //
 ttHtautauAnalyzer::ttHtautauAnalyzer(const edm::ParameterSet& iConfig):
-	// Analysis type
-	config_analysis_type_ (iConfig.getParameter<string>("analysis_type")),
-	// Selection type
-	selection_region_ (iConfig.getParameter<string>("selection_region")),
+	// Loose selection for more statistics
 	looseSelection_ (iConfig.getParameter<bool>("looseSelection")),
 	// Sample
 	sample_name_ (iConfig.getParameter<string>("sample_name")),
@@ -50,23 +47,15 @@ ttHtautauAnalyzer::ttHtautauAnalyzer(const edm::ParameterSet& iConfig):
 	doCutflow_ (iConfig.getParameter<bool>("doCutFlow")),
 	// triggers
 	dumpHLT_ (iConfig.getParameter<bool>("print_HLT_event_path")),
-	//hltcut_off_ (iConfig.getParameter<bool>("turn_off_HLT_cut")),
 	hltTag_ (iConfig.getParameter<string>("HLT_config_tag")),
 	filterTag_ (iConfig.getParameter<string>("filter_config_tag")),
-	// tauES
-	TESType_ (iConfig.getParameter<std::string>("TauESType")),
+	// tau energy scale uncerainty
 	tauES_unc_ (iConfig.getParameter<double>("TauESUnc")),
-	// JEC
-	JECType_ (iConfig.getParameter<std::string>("JECType")),
-	doJERsmear_ (iConfig.getParameter<bool>("doJERsmear")),
 	// CSV WP
 	csv_loose_wp_ (iConfig.getParameter<double>("csv_loose_wp")),
 	csv_medium_wp_ (iConfig.getParameter<double>("csv_medium_wp")),
 	csv_tight_wp_ (iConfig.getParameter<double>("csv_tight_wp"))
 {
-
-	Set_up_AnaType(config_analysis_type_);
-	Set_up_SelType(selection_region_);
 	
 	// register data access
 	geninfo_token_ = consumes<GenEventInfoProduct>(edm::InputTag("generator"));
@@ -90,7 +79,6 @@ ttHtautauAnalyzer::ttHtautauAnalyzer(const edm::ParameterSet& iConfig):
 	ptD_token_ = consumes<edm::ValueMap<float>>(edm::InputTag("QGTagger", "ptD"));
 	mult_token_ = consumes<edm::ValueMap<int>>(edm::InputTag("QGTagger", "mult"));
 	
-
 	//badMuons_token_ = consumes<edm::View<reco::Muon>>(iConfig.getParameter<edm::InputTag>("badmu"));
 	//clonedMuons_token_ = consumes<edm::View<reco::Muon>>(iConfig.getParameter<edm::InputTag>("clonemu"));
 
@@ -102,10 +90,7 @@ ttHtautauAnalyzer::ttHtautauAnalyzer(const edm::ParameterSet& iConfig):
 	Set_up_histograms();
 	// trees
 	Set_up_tree();
-	// scale factor helper
-	//sf_helper_ = new SFHelper(anaType_, selType_, isdata_);
 	// event selection
-	//evt_selector_ = new EventSelector(anaType_, selType_, debug_);
 	evt_selector_ = new EventSelector(debug_, not isdata_);
 }
 
@@ -117,7 +102,6 @@ ttHtautauAnalyzer::~ttHtautauAnalyzer()
 	// (e.g. close files, deallocate resources etc.)
 
 	delete trig_helper_;
-	//delete sf_helper_;
 	delete evt_selector_;
 }
 
@@ -357,12 +341,9 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	/////////////////////////////////////////
 	// Taus
 	if (debug_) std::cout << "taus" << std::endl;
-	
-	// tauES
-	std::vector<pat::Tau> tau_corrected = getCorrectedTaus(*taus, tauES_unc_, TESType_);
-	
+
 	// loose
-	std::vector<pat::Tau> tau_loose = getPreselTaus(tau_corrected);
+	std::vector<pat::Tau> tau_loose = getPreselTaus(*taus);
 	// remove overlap with muons and electrons
 	tau_loose = removeOverlapdR(tau_loose, mu_preselected, 0.3);
 	tau_loose = removeOverlapdR(tau_loose, ele_preselected, 0.3);
@@ -395,18 +376,16 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	/////////////////////////////////////////
 	// Jets
 	if (debug_) std::cout << "jets" << std::endl;
-	
-	std::vector<pat::Jet> jet_raw;	
-	if (isdata_) {
-		jet_raw = *jets;
-	}
-	else { // correct simulated jet energy
-		edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
-		iSetup.get<JetCorrectionsRecord>().get("AK4PF",JetCorParColl);
+
+    std::vector<pat::Jet> jet_raw = *jets;
+    
+	if (not isdata_) { // correction factors for simulated jet energy
+
+        edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
+		iSetup.get<JetCorrectionsRecord>().get("AK4PFchs",JetCorParColl);
 		const JetCorrectorParameters & JetCorPar = (*JetCorParColl)["Uncertainty"];
 		JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(JetCorPar);
-		
-		jet_raw = getCorrectedJets(*jets, jecUnc, JECType_);
+	    addJetCorrections(jet_raw, jecUnc);
 
 		delete jecUnc;
 	}
@@ -461,42 +440,16 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	/////////////////////////////////////////
 	// Event selection
 	/////////////////////////////////////////
+    
+	std::vector<miniLepton> *lep_selected = looseSelection_ ? &lep_loose : &lep_fakeable;
 
-	bool pass_event_sel = false;
+    // An inclusive selection that should cover all the region of interests
+    // for event categories with hadronic taus
+    bool pass_event_sel = evt_selector_ -> pass_ttH_ltau_inclusive_selection(
+        *lep_selected, minitau_loose, jet_selected.size(), h_CutFlow_);
 
-	std::vector<miniLepton> *lep_selected =
-			looseSelection_ ? &lep_loose : &lep_fakeable;
-	
-	if (anaType_==Analyze_inclusive) {	
-		pass_event_sel =
-			evt_selector_ -> pass_ttH_ltau_inclusive_selection(
-			    *lep_selected, minitau_loose, jet_selected.size(), h_CutFlow_);
-	}
-	// Following seletions are deprecated
-	else if (anaType_==Analyze_2lss1tau) {
-		pass_event_sel = evt_selector_ -> pass_2l1tau_inclusive_selection(
-		    lep_loose, *lep_selected, lep_tight, minitau_loose,
-			jet_selected.size(), n_btags_loose, n_btags_medium, metLD, h_CutFlow_);
-	}
-	else if (anaType_==Analyze_1l2tau) {		
-		pass_event_sel = evt_selector_ -> pass_1l2tau_inclusive_selection(
-		    lep_loose, lep_fakeable, lep_tight, minitau_loose,
-			jet_selected.size(), n_btags_loose, n_btags_medium, h_CutFlow_);
-	}
-	else if (anaType_==Analyze_3l1tau) {
-		pass_event_sel = evt_selector_ -> pass_3l1tau_inclusive_selection(
-		    lep_loose, *lep_selected, minitau_loose, jet_selected.size(),
-			n_btags_loose, n_btags_medium, metLD, h_CutFlow_);
-	}
-	else if (anaType_==Analyze_2l2tau) {
-		pass_event_sel = evt_selector_ -> pass_2l2tau_inclusive_selection(
-		    lep_loose, lep_fakeable, minitau_loose, jet_selected.size(),
-			n_btags_loose, n_btags_medium, metLD, h_CutFlow_);
-	}
-
-	if (not (pass_event_sel or event_selection_off_))
-		return;
-
+    if (not (pass_event_sel or event_selection_off_)) return;
+    
 	/////////////////////////////////////////
 	// Write ntuple
 	/////////////////////////////////////////

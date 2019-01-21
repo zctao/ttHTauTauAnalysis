@@ -142,8 +142,8 @@ bool EventSelector::pass_hlt_and_filters(Analysis_types anatype,
 // ttH l+tau inclusive
 /////////////////////////////////
 bool EventSelector::pass_ttH_ltau_inclusive_selection(
-	const std::vector<miniLepton>& fakeableLeps,
-	const std::vector<miniTau>& fakeableTaus,
+	const std::vector<miniLepton>& leptons,
+	const std::vector<miniTau>& taus,
 	int njets, TH1* h_cutflow)
 {
 	if (verbose_) std::cout << "start inclusive event selection" << std::endl;
@@ -154,13 +154,13 @@ bool EventSelector::pass_ttH_ltau_inclusive_selection(
 	/////////////////////////////////
 	// lepton and tau number
 	if (verbose_) {
-		std::cout << "nFakeableLeps = " << fakeableLeps.size() << std::endl;
-		std::cout << "nFakeableTaus = " << fakeableTaus.size() << std::endl;
+		std::cout << "nLeptons = " << leptons.size() << std::endl;
+		std::cout << "nTaus = " << taus.size() << std::endl;
 	}
 
 	// nlep >=2 or (nlep==1 and ntau>=2)
-	bool passLepTauNum = (fakeableLeps.size() == 1 and fakeableTaus.size() >= 2)
-		or fakeableLeps.size() >= 2;
+	bool passLepTauNum = (leptons.size() == 1 and taus.size() >= 2)
+		or leptons.size() >= 2;
 
 	if (passLepTauNum) {
 		if (h_cutflow) fill_cutflow(h_cutflow, ibin++, "nlep>1||(nlep==1&&ntau>1)");

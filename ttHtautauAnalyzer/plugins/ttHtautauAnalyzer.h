@@ -129,9 +129,8 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	bool isTightJet(const pat::Jet&) const;
 	std::vector<pat::Tau> getPreselTaus(const std::vector<pat::Tau>&);
 	std::vector<pat::Tau> getSelectedTaus(const std::vector<pat::Tau>&);
-	std::vector<pat::Tau> getCorrectedTaus(const std::vector<pat::Tau>&, double, const std::string&);
 	std::vector<pat::Jet> getSelectedJets(const std::vector<pat::Jet>&);
-	std::vector<pat::Jet> getCorrectedJets(const std::vector<pat::Jet>&, JetCorrectionUncertainty*, const std::string&);
+	void addJetCorrections(std::vector<pat::Jet>&, JetCorrectionUncertainty*);
 	float getJetCSV(const pat::Jet&);
 	float getJetDeepCvsB(const pat::Jet&);
 	float getJetDeepCvsL(const pat::Jet&);
@@ -163,40 +162,9 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	
 	// Event selection
 	EventSelector* evt_selector_;
-	bool pass_event_sel_2lss1tau(const std::vector<miniLepton>&,
-								 const std::vector<miniLepton>&,
-								 const std::vector<miniLepton>&,
-								 const std::vector<pat::Tau>&,
-								 const int, const int, const int, const float);
-	bool pass_event_sel_1l2tau(const std::vector<miniLepton>&,
-							   const std::vector<miniLepton>&,
-							   const std::vector<miniLepton>&,
-							   const std::vector<pat::Tau>&,
-							   const std::vector<pat::Tau>&,
-							   const int, const int, const int);
-	bool pass_event_sel_3l1tau(const std::vector<miniLepton>&,
-							   const std::vector<miniLepton>&,
-							   const std::vector<miniLepton>&,
-							   const std::vector<pat::Tau>&,
-							   const int, const int, const int, const float);
 	void fill_CutFlow(int, const char*);
 
 	// Write ntuple
-	/*
-	void write_ntuple_bTagSF(const std::vector<pat::Jet>&);
-	void write_ntuple_leptonSF(const std::vector<miniLepton>&);
-	void write_ntuple_tauSF(const std::vector<pat::Tau>&);
-	void write_ntuple_tauSF(const std::vector<miniTau>&);
-	void write_ntuple_triggerSF(int category = -1);
-	void write_ntuple_triggerSF(const miniLepton&, const std::vector<pat::Tau>&,
-								bool, bool);
-	void write_ntuple_triggerSF(const miniLepton&, const std::vector<miniTau>&,
-								bool, bool);
-	void write_ntuple_frweight(const std::vector<miniLepton>&,
-							   const std::vector<pat::Tau>&);
-	void write_ntuple_frweight(const std::vector<miniLepton>&,
-							   const std::vector<miniTau>&);
-	*/
 	void write_ntuple_muons(const std::vector<pat::Muon>&);
 	void write_ntuple_electrons(const std::vector<pat::Electron>&);
 	void write_ntuple_taus(const std::vector<pat::Tau>&);
@@ -212,14 +180,8 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	void SortByConept(std::vector<pat::Muon>&);
 	void SortByConept(std::vector<miniLepton>&);
 	
-	/// member variables
-	// Analysis type
-	std::string config_analysis_type_;
-	Analysis_types anaType_;	
-	
-	// event selection region
-	std::string selection_region_;
-    Selection_types selType_;
+	/// member variables	
+    
 	bool looseSelection_;
 	
 	// sample
@@ -247,22 +209,14 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	HLTConfigProvider hlt_config_;
 	HLTConfigProvider filter_config_;
 	
-	// tauES
-	std::string TESType_;  // "tauESUp" or "tauESDown" or  "NA"
+	// tauES uncertainty
 	double tauES_unc_;
-	
-	// JEC
-	std::string JECType_;
-	bool doJERsmear_;
 	
 	double genWeightSum_;
 	double genWeightxPUSum_;
 	
 	TTree* eventTree_;
 	eventNtuple evNtuple_;
-	
-	// helper class
-	//SFHelper* sf_helper_;
 	
 	// tokens
 	edm::EDGetTokenT<GenEventInfoProduct> geninfo_token_;

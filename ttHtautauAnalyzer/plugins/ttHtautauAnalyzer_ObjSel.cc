@@ -195,33 +195,12 @@ std::vector<pat::Tau> ttHtautauAnalyzer::getSelectedTaus(const std::vector<pat::
 	return seltaus;
 }
 
-std::vector<pat::Tau> ttHtautauAnalyzer::getCorrectedTaus(
-    const std::vector<pat::Tau>& input_taus, double tauES_Unc,
-	const std::string& TESType)
-{
-	float shift = 0.;
-	
-	if (TESType=="tauESUp")
-		shift = 1.;
-	else if (TESType=="tauESDown")
-		shift = -1.;
-	else
-		return input_taus;
-	
-	std::vector<pat::Tau> output_taus = input_taus;
-	
-	for (auto & tau : output_taus) {
-		auto corrP4 = tau.p4();
-		corrP4 *= 1 + shift*tauES_Unc;
-		tau.setP4(corrP4);
-	}
-
-	return output_taus;
-}
-
 // better to move this to leptonID package
 bool ttHtautauAnalyzer::isLooseID(const pat::Tau& tau) const
 {
+    // 18 GeV pT cut is somewhat arbitrary. (Should be 20 GeV)
+    // It accounts for the upward tau energy scale variation (should be <10%)
+    // for systematic study
 	bool passKinematic = tau.pt() > 18. and std::abs(tau.eta()) < 2.3;
 
 	// tauID("byVLooseIsolationMVArun2017v2DBoldDMdR0p3wLT2017")
@@ -240,15 +219,9 @@ bool ttHtautauAnalyzer::isTightID(const pat::Tau& tau) const
 	else {
 		if (not isLooseID(tau)) return false;
 	}
-	
-	if (anaType_==Analyze_1l2tau or anaType_==Analyze_2l2tau) {
-		// tauID("byMediumIsolationMVArun2017v2DBoldDMdR0p3wLT2017")
-		return tau.tauID("byMediumIsolationMVArun2017v2DBoldDMdR0p3wLT2017")>0.5;
-	}
-	else {
-		// tauID("byLooseIsolationMVArun2017v2DBoldDMdR0p3wLT2017")
-		return tau.userFloat("idSelection") > 0.5;
-	}
+
+    // tauID("byLooseIsolationMVArun2017v2DBoldDMdR0p3wLT2017")
+    return tau.userFloat("idSelection") > 0.5;
 }
 
 void ttHtautauAnalyzer::addIDFlagsTau(std::vector<pat::Tau>& taus)
@@ -312,29 +285,18 @@ std::vector<pat::Jet> ttHtautauAnalyzer::getSelectedJets(const std::vector<pat::
 	return seljets;
 }
 
-std::vector<pat::Jet> ttHtautauAnalyzer::getCorrectedJets(
-    const std::vector<pat::Jet>& input_jets, JetCorrectionUncertainty* jecUnc,
-	const std::string& JECType)
-{
-	float shift = 0.;
-	
-	if (JECType=="JESUp")
-		shift = 1.;
-	else if (JECType=="JESDown")
-		shift = -1.;
-	
-	std::vector<pat::Jet> output_jets = input_jets;
-	
-	for (auto & jet : output_jets) {
-		jecUnc->setJetEta(jet.eta());
+void ttHtautauAnalyzer::addJetCorrections(
+    std::vector<pat::Jet>& input_jets, JetCorrectionUncertainty* jecUnc)
+{	
+	for (auto & jet : input_jets) {
+        // JES
+        jecUnc->setJetEta(jet.eta());
 		jecUnc->setJetPt(jet.pt()); // here you must use the CORRECTED jet pt
 		float unc = jecUnc->getUncertainty(true);
-	    float jes = 1 + shift*unc;
-		jet.scaleEnergy(jes);
 		jet.addUserFloat("jesUnc",unc);
+
+        // TODO: JER
 	}
-	
-	return output_jets;
 }
 
 float ttHtautauAnalyzer::getJetCSV(const pat::Jet& jet)
