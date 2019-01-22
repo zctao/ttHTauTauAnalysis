@@ -39,12 +39,14 @@ class eventNtuple
 	std::vector<TLorentzVector> buildFourVectorTaus(bool loose=false) const;
 	std::vector<TLorentzVector> buildFourVectorTauDaugsCharged(bool loose=false) const;
 	std::vector<TLorentzVector> buildFourVectorTauDaugsNeutral(bool loose=false) const;
-	std::vector<miniJet> buildJets(const TString& jec="NA", float minPt=25.) const;
+	std::vector<miniJet> buildJets(const TString& jec="NA", bool doSmear=false,
+                                   float minPt=25.) const;
 	std::vector<miniJet> buildCleanedJets(float,Analysis_types,Selection_types,
 										  std::vector<miniLepton> const * const,
 										  std::vector<miniTau> const * const,
 										  const TString& jec="NA",
-										  float minPt=25.) const;
+                                          bool doSmear=false,
+                                          float minPt=25.) const;
 	std::tuple<int, int> count_btags(const std::vector<miniJet>&) const ;
 	std::vector<TLorentzVector> buildFourVectorJets() const;
 	std::vector<TLorentzVector> buildFourVectorBtagJets() const;
@@ -279,6 +281,9 @@ class eventNtuple
 	std::vector<float> *jet_ptD = 0;
 	std::vector<int>   *jet_mult = 0;
 	std::vector<float> *jet_jesUnc = 0;
+    std::vector<float> *jet_smearFactor = 0;
+    std::vector<float> *jet_smearFactor_up = 0;
+    std::vector<float> *jet_smearFactor_down = 0;
 
 	// met
 	float PFMET = -9999.;

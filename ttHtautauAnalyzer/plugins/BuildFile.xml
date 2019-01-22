@@ -17,6 +17,7 @@
 <use name = "HLTrigger/HLTcore" />
 <use name = "CondFormats/BTauObjects" />
 <use name = "JetMETCorrections/Objects" />
+<use name = "JetMETCorrections/Modules" />
 <use name = "CondFormats/JetMETObjects" />
 <use name = "ttHTauTauAnalysis/ttHtautauAnalyzer" />
 <use name = "root" />

@@ -280,7 +280,8 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorTauDaugsNeutral(bool loo
 	return tauDaugsNeutralP4;
 }
 
-std::vector<miniJet> eventNtuple::buildJets(const TString& jec ,float minPt) const
+std::vector<miniJet> eventNtuple::buildJets(const TString& jec, bool doSmear,
+                                            float minPt) const
 {
 	std::vector<miniJet> jets;
 
@@ -288,18 +289,30 @@ std::vector<miniJet> eventNtuple::buildJets(const TString& jec ,float minPt) con
 		
 		TLorentzVector jp4;
 		jp4.SetPtEtaPhiE(jet_pt->at(j),jet_eta->at(j),jet_phi->at(j),jet_E->at(j));
+
+        if (doSmear) {
+          float smearfactor = jet_smearFactor->at(j);
+          jp4 *= smearfactor;
+        }
 		
 		// JEC uncertainties
-		float shift = 0.;
-		if (jec.EqualTo("jesup", TString::ECaseCompare::kIgnoreCase))
-			shift = 1.;
-		else if (jec.EqualTo("jesdown", TString::ECaseCompare::kIgnoreCase))
-			shift = -1.;
+        float scalefactor = 1.;
+        
+        if (jec.EqualTo("jesup", TString::ECaseCompare::kIgnoreCase))
+          scalefactor = 1. + jet_jesUnc->at(j);
+        else if (jec.EqualTo("jesdown", TString::ECaseCompare::kIgnoreCase))
+          scalefactor = 1. - jet_jesUnc->at(j);
+        else if (jec.EqualTo("jerup", TString::ECaseCompare::kIgnoreCase)) {
+          assert(doSmear);
+          scalefactor = jet_smearFactor_up->at(j) / jet_smearFactor->at(j);
+        }
+        else if (jec.EqualTo("jerdown", TString::ECaseCompare::kIgnoreCase)) {
+          assert(doSmear);
+          scalefactor = jet_smearFactor_down->at(j) / jet_smearFactor->at(j);
+        }
 
-		if (shift != 0.) {
-			float unc = jet_jesUnc->at(j);
-			jp4 *= 1.+shift*unc;
-		}
+        if (scalefactor != 1.)
+          jp4 *= scalefactor;
 		
 		if (jp4.Pt() < minPt) continue;
 		
@@ -314,14 +327,14 @@ std::vector<miniJet> eventNtuple::buildCleanedJets(
 	float cleaningdR, Analysis_types anatype, Selection_types seltype,
 	std::vector<miniLepton> const * const fakeableLeps,
 	std::vector<miniTau> const * const fakeableTaus,
-	const TString& jec ,float minPt) const
+	const TString& jec, bool doSmear, float minPt) const
 {
 	// Remove overlap jets by dR w.r.t. the first N leptons and first M taus
 	// in pT descending order based on analysis type: (N)l(M)tau
 	int NLeps = Types_enum::getNnominalLeptons(anatype);
 	int MTaus = Types_enum::getNnominalTaus(anatype, seltype);
 	
-	std::vector<miniJet> jets_raw = buildJets(jec,minPt);
+	std::vector<miniJet> jets_raw = buildJets(jec,minPt,doSmear);
 	
 	std::vector<miniJet> jets_clean;
 	for (const auto & jet : jets_raw) {
@@ -424,6 +437,8 @@ std::vector<TLorentzVector> eventNtuple::buildFourVectorBtagJets() const
 
 TLorentzVector eventNtuple::buildFourVectorMET(const TString& correction)
 {
+  // FIXME 
+  
 	TLorentzVector met;
 	
 	if (correction.EqualTo("jesup", TString::ECaseCompare::kIgnoreCase))
@@ -717,6 +732,9 @@ void eventNtuple::initialize()
 	jet_ptD->clear();
 	jet_mult->clear();
 	jet_jesUnc->clear();
+    jet_smearFactor->clear();
+    jet_smearFactor_up->clear();
+    jet_smearFactor_down->clear();
 
 	// met
 	//std::cout << "eventNtuple::initialize(): met" << std::endl;
@@ -941,6 +959,9 @@ void eventNtuple::setup_branches(TTree* tree)
 	tree->Branch("jet_ptD",          &jet_ptD);
 	tree->Branch("jet_mult",         &jet_mult);
 	tree->Branch("jet_jesUnc",       &jet_jesUnc);
+    tree->Branch("jet_smearFactor",  &jet_smearFactor);
+    tree->Branch("jet_smearFactor_up", &jet_smearFactor_up);
+    tree->Branch("jet_smearFactor_down", &jet_smearFactor_down);
 
 	tree->Branch("PFMET", &PFMET);
 	tree->Branch("PFMETphi", &PFMETphi);
@@ -1161,6 +1182,9 @@ void eventNtuple::set_branch_address(TTree* tree)
 	tree->SetBranchAddress("jet_ptD",          &jet_ptD);
 	tree->SetBranchAddress("jet_mult",         &jet_mult);
 	tree->SetBranchAddress("jet_jesUnc",       &jet_jesUnc);
+    tree->SetBranchAddress("jet_smearFactor",  &jet_smearFactor);
+    tree->SetBranchAddress("jet_smearFactor_up", &jet_smearFactor_up);
+    tree->SetBranchAddress("jet_smearFactor_down", &jet_smearFactor_down);
 
 	tree->SetBranchAddress("PFMET", &PFMET);
 	tree->SetBranchAddress("PFMETphi", &PFMETphi);

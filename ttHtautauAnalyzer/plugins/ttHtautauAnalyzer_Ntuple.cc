@@ -204,6 +204,11 @@ void ttHtautauAnalyzer::write_ntuple_jets(const std::vector<pat::Jet>& jets)
 		evNtuple_.jet_mult->push_back(jet.userInt("mult"));
 		if (jet.hasUserFloat("jesUnc"))
 			evNtuple_.jet_jesUnc->push_back(jet.userFloat("jesUnc"));
+        if (jet.hasUserFloat("jerSmearFactor")) {
+          evNtuple_.jet_smearFactor->push_back(jet.userFloat("jerSmearFactor"));
+          evNtuple_.jet_smearFactor_up->push_back(jet.userFloat("jerSmearFactor_up"));
+          evNtuple_.jet_smearFactor_down->push_back(jet.userFloat("jerSmearFactor_down"));
+        }
 	}
 }
 

@@ -6,6 +6,8 @@
 #include <stdexcept>
 #include <map>
 #include <iostream>
+#include <random>
+#include <cmath>
 
 /// user include files
 #include "FWCore/Framework/interface/Frameworkfwd.h"
@@ -62,6 +64,7 @@
 #include "HLTrigger/HLTcore/interface/HLTConfigProvider.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "JetMETCorrections/Objects/interface/JetCorrectionsRecord.h"
+#include "JetMETCorrections/Modules/interface/JetResolution.h"
 #include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
 #include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
 
@@ -130,7 +133,12 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	std::vector<pat::Tau> getPreselTaus(const std::vector<pat::Tau>&);
 	std::vector<pat::Tau> getSelectedTaus(const std::vector<pat::Tau>&);
 	std::vector<pat::Jet> getSelectedJets(const std::vector<pat::Jet>&);
-	void addJetCorrections(std::vector<pat::Jet>&, JetCorrectionUncertainty*);
+	void addJetCorrections(std::vector<pat::Jet>&, JetCorrectionUncertainty*,
+                           JME::JetResolution*, JME::JetResolutionScaleFactor*,
+                           double, const std::vector<reco::GenJet>&,
+                           std::mt19937&);
+    float getJERSmearFactor(double, double, const pat::Jet*, const reco::GenJet*,
+                            std::mt19937&, bool debug=false);
 	float getJetCSV(const pat::Jet&);
 	float getJetDeepCvsB(const pat::Jet&);
 	float getJetDeepCvsL(const pat::Jet&);
@@ -146,6 +154,7 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	const reco::GenParticle* getMatchedGenParticle(const pat::Electron&, const std::vector<reco::GenParticle>&);
 	const reco::GenParticle* getMatchedGenParticle(const pat::Muon&, const std::vector<reco::GenParticle>&);
 	const reco::GenParticle* getMatchedGenParticle(const pat::Tau&, const std::vector<reco::GenParticle>&);
+    const reco::GenJet* getMatchedGenJet(const pat::Jet&, const std::vector<reco::GenJet>&, double, double dR_max=0.2, double dPtMaxFactor=3.);
 	template <typename T> int getMCMatchType(const T&, const std::vector<reco::GenParticle>&);
 	bool isGenPhotonMatched(const pat::Electron&, const std::vector<reco::GenParticle>&, bool);
 	bool isGenPhotonMatched(const pat::Muon&, const std::vector<reco::GenParticle>&, bool); // dummy

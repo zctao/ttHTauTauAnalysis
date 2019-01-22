@@ -286,17 +286,76 @@ std::vector<pat::Jet> ttHtautauAnalyzer::getSelectedJets(const std::vector<pat::
 }
 
 void ttHtautauAnalyzer::addJetCorrections(
-    std::vector<pat::Jet>& input_jets, JetCorrectionUncertainty* jecUnc)
-{	
-	for (auto & jet : input_jets) {
-        // JES
-        jecUnc->setJetEta(jet.eta());
-		jecUnc->setJetPt(jet.pt()); // here you must use the CORRECTED jet pt
-		float unc = jecUnc->getUncertainty(true);
-		jet.addUserFloat("jesUnc",unc);
+    std::vector<pat::Jet>& input_jets, JetCorrectionUncertainty* jecUnc,
+    JME::JetResolution* jetRes, JME::JetResolutionScaleFactor* jetRes_sf,
+    double rho, const std::vector<reco::GenJet>& genJets,
+    std::mt19937& random_generator)
+{
+  for (auto & jet : input_jets) {
+    // JES
+    if (jecUnc) {
+      jecUnc->setJetEta(jet.eta());
+      jecUnc->setJetPt(jet.pt()); // here you must use the CORRECTED jet pt
+      float unc = jecUnc->getUncertainty(true);
+      jet.addUserFloat("jesUnc",unc);
+    }
+    
+    // JER
+    if (jetRes and jetRes_sf) {
+      double jet_res = jetRes->getResolution({{JME::Binning::JetPt, jet.pt()},
+            {JME::Binning::JetEta, jet.eta()}, {JME::Binning::Rho, rho}});
+      double jer_sf = jetRes_sf->getScaleFactor({{JME::Binning::JetEta, jet.eta()}});
+      double jer_sf_up = jetRes_sf->getScaleFactor({{JME::Binning::JetEta, jet.eta()}}, Variation::UP);
+      double jer_sf_down = jetRes_sf->getScaleFactor({{JME::Binning::JetEta, jet.eta()}}, Variation::DOWN);
+      
+      // Matched gen jet
+      const reco::GenJet* genjet = getMatchedGenJet(jet, genJets, jet_res);
+      
+      // Smearing factors
+      float smearFactor = getJERSmearFactor(jer_sf, jet_res, &jet, genjet,
+                                            random_generator);
+      float smearFactor_up = getJERSmearFactor(jer_sf_up, jet_res, &jet, genjet,
+                                               random_generator);
+      float smearFactor_down = getJERSmearFactor(jer_sf_down, jet_res, &jet,
+                                               genjet, random_generator);
+      jet.addUserFloat("jerSmearFactor", smearFactor);
+      jet.addUserFloat("jerSmearFactor_up", smearFactor_up);
+      jet.addUserFloat("jerSmearFactor_down", smearFactor_down);
+    }
+  }
+}
 
-        // TODO: JER
-	}
+float ttHtautauAnalyzer::getJERSmearFactor(double jerSF, double jetRes,
+                                           const pat::Jet* jet,
+                                           const reco::GenJet* genjet,
+                                           std::mt19937& random_generator,
+                                           bool debug)
+// https://github.com/cms-sw/cmssw/blob/master/PhysicsTools/PatUtils/interface/SmearedJetProducerT.h#L247
+{
+  float factor = 1.;
+  
+  if (genjet) {
+    //std::cout << "Found gen jet! jerSF = " << jerSF << std::endl;
+    // Scaling method if there is a good gen jet matched to the reco jet
+    float dPtOverPt = std::abs(jet->pt() - genjet->pt()) / jet->pt(); 
+    factor = 1. + (jerSF - 1.) * dPtOverPt;
+  }
+  else {
+    // Stochastic smearing if no matched gen jet
+    if (jerSF >= 1.) {
+      //std::cout << "Stochastic smearing. jerSF = " << jerSF << std::endl;
+      double sigma = jetRes * std::sqrt(jerSF * jerSF - 1.);
+      std::normal_distribution<> d(0, sigma);
+      factor = 1. + d(random_generator);
+    }
+    else if (debug) {
+      std::cout << "jerSF < 1 and no matched gen jet found. ";
+      std::cout << "Cannot smear the jet. ";
+      std::cout << "jet eta = " << jet->eta() << " jerSF = " << jerSF << std::endl;
+    }
+  }
+
+  return max(factor, 0.f);
 }
 
 float ttHtautauAnalyzer::getJetCSV(const pat::Jet& jet)
@@ -558,6 +617,38 @@ const reco::GenParticle* ttHtautauAnalyzer::getMatchedGenParticle(const pat::Tau
 	}
 
 	return out;
+}
+
+// Gen Jet matcihing for JER purpose
+// https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetResolution#Smearing_procedures
+const reco::GenJet* ttHtautauAnalyzer::getMatchedGenJet
+(const pat::Jet& jet, const std::vector<reco::GenJet>& genJets, double jetRes,
+ double dR_max, double dPtMaxFactor)
+{
+  // dR_max = 0.4/2 by default for AK4 jets
+  
+  const reco::GenJet* matchedGenJet = nullptr;
+
+  double dR_min = std::numeric_limits<double>::infinity();
+  
+  for (const auto & genjet : genJets) {
+    double dR = reco::deltaR(jet, genjet);
+
+    // pick the cloest genJet by dR
+    if (dR > dR_min) continue;
+
+    if (dR < dR_max) { // matched by dR
+      // check if matched in Pt
+      double dPt = std::abs(jet.pt() - genjet.pt());
+      if (dPt > dPtMaxFactor * jet.pt() * jetRes) continue;
+
+      // update using current best match
+      dR_min = dR;
+      matchedGenJet = &genjet;
+    }
+  }
+
+  return matchedGenJet;
 }
 
 template <typename T>

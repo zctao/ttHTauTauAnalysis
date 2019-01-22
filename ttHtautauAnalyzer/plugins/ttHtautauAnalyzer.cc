@@ -137,8 +137,8 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	iEvent.getByToken(pu_token_,PU_info);
 	Handle<reco::BeamSpot> BS;
 	iEvent.getByToken(bs_token_,BS);
-	//Handle<double> srcRho;
-	//iEvent.getByToken(rho_token_,srcRho);
+	Handle<double> Rho;
+	iEvent.getByToken(rho_token_,Rho);
 	Handle<pat::ElectronCollection> electrons;
 	iEvent.getByToken(electrons_token_,electrons);
 	Handle<pat::MuonCollection> muons;
@@ -381,11 +381,27 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
     
 	if (not isdata_) { // correction factors for simulated jet energy
 
+        // JES
         edm::ESHandle<JetCorrectorParametersCollection> JetCorParColl;
 		iSetup.get<JetCorrectionsRecord>().get("AK4PFchs",JetCorParColl);
 		const JetCorrectorParameters & JetCorPar = (*JetCorParColl)["Uncertainty"];
 		JetCorrectionUncertainty *jecUnc = new JetCorrectionUncertainty(JetCorPar);
-	    addJetCorrections(jet_raw, jecUnc);
+
+        // JER
+        JME::JetResolution resolution = JME::JetResolution::get(iSetup, "AK4PFchs_pt");
+        JME::JetResolutionScaleFactor res_sf = JME::JetResolutionScaleFactor::get(iSetup, "AK4PFchs");
+
+        // random number generator for smearing
+        std::mt19937 random_generator;
+        unsigned int runNum_uint = static_cast<unsigned int>(iEvent.id().run());
+        unsigned int lumiNum_uint = static_cast<unsigned int>(iEvent.id().luminosityBlock());
+        unsigned int evNum_uint = static_cast<unsigned int>(iEvent.id().event());
+        unsigned int jet0eta = uint32_t(jet_raw.empty() ? 0 : jet_raw[0].eta()/0.01);
+        std::uint32_t seed = jet0eta + 1 + (lumiNum_uint<<10) + (runNum_uint<<20) + evNum_uint;
+        random_generator.seed(seed);
+        
+	    addJetCorrections(jet_raw, jecUnc, &resolution, &res_sf, *Rho, *genJets,
+                          random_generator);
 
 		delete jecUnc;
 	}

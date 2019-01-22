@@ -58,7 +58,7 @@ int main(int argc, char** argv)
 		("anatype", po::value<string>(&analysis_type), "analysis type")
 		("seltype", po::value<string>(&selection_type), "selection type")
 		("version,v", po::value<string>(&version)->default_value("2017"), "analysis version")
-		("correction,c", po::value<string>(&enCorr)->default_value("NA"), "Energy correction for tau and jets: NA, JESUp, JESDown, TESUp, TESDown")
+		("correction,c", po::value<string>(&enCorr)->default_value("NA"), "Energy correction for tau and jets: NA, JESUp, JESDown, JERUp, JERDown, TESUp, TESDown")
 		("xsection,x", po::value<float>(&xsection)->default_value(-99.),"cross section of the sample")
 		("treename", po::value<string>(&intree)->default_value("ttHtaus/eventTree"))
 		("isdata,d", po::value<bool>(&isdata)->default_value(false))
@@ -90,8 +90,9 @@ int main(int argc, char** argv)
 		boost::algorithm::contains(selection_type,"_ttZ") or
 		boost::algorithm::contains(selection_type,"_WZ");
 	
-	assert(enCorr=="NA" or enCorr=="JESUp" or enCorr=="JESDown" or enCorr=="TESUp" or
-		   enCorr=="TESDown");
+	assert(enCorr=="NA" or enCorr=="JESUp" or enCorr=="JESDown" or
+           enCorr=="JERUp" or enCorr=="JERDown" or
+           enCorr=="TESUp" or enCorr=="TESDown");
 	
 	//////////////////////////////////////////////
 	// open file and read tree
@@ -167,12 +168,13 @@ int main(int argc, char** argv)
 		// Jet cleaning based on analysis type
 		auto jets = evNtuple.buildCleanedJets(0.4, anaType, selType,
 											  &leptons_fakeable, &taus_fakeable,
-											  enCorr.c_str());
+											  enCorr.c_str(), true);
 
 		int nbtags_loose, nbtags_medium;
 		std::tie(nbtags_loose, nbtags_medium) = evNtuple.count_btags(jets);
 		assert(nbtags_loose >= nbtags_medium);
 
+        // FIXME: propagate jet or tau energy correction to MET
 		auto metp4 = evNtuple.buildFourVectorMET();
 		float met = metp4.Pt();
 		float mht = evNtuple.computeMHT(leptons_fakeable, taus_fakeable, jets);
