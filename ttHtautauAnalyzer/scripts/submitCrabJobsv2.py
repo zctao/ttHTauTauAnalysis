@@ -38,7 +38,7 @@ parser.add_argument('-b','--batch_lpc', action='store_true',
 
 args = parser.parse_args()
 
-def getParametersetString(sample, energy_correction ,isdata):
+def getParametersetString(sample, isdata):
     pset = "['SampleName=','isData=False','doCutFlow=True']"
     
     # sample name
@@ -92,40 +92,34 @@ if args.batch_lpc:
 for sample in samples:
     print sample
     isData = 'data' in sample
-    
-    for ec in args.systematics:
         
-        jobname = args.prefix + sample + '_incl'
-        if ec in ['jesup','jesdown','tesup','tesdown']:
-            if isData:
-                continue
-            jobname += '_'+ec
+    jobname = args.prefix + sample + '_incl'
 
-        parameterset = getParametersetString(sample, ec ,isData)
+    parameterset = getParametersetString(sample, isData)
             
-        vd = locals()
-        vd['name'] = jobname
-        vd['dataset'] = "'"+dataset_dict[sample]['dataset']+"'"
-        vd['configfile'] = args.config
-        vd['cfgparams'] = parameterset
-        vd['DBS'] = args.dbs
-        vd['unit'] = dataset_dict[sample]['unitPerJob']
-        vd['outdir'] = args.outdir
-        if isData:
-            vd['lumimask'] = "config.Data.lumiMask = "+"'"+args.lumimask+"'"
-            vd['runrange'] = 'config.Data.runRange = '+ "'"+dataset_dict[sample]['runRange']+"'"
-            vd['splitting'] = 'LumiBased'
-        else:
-            vd['lumimask'] = ''
-            vd['runrange'] = ''
-            vd['splitting'] = 'EventAwareLumiBased'
+    vd = locals()
+    vd['name'] = jobname
+    vd['dataset'] = "'"+dataset_dict[sample]['dataset']+"'"
+    vd['configfile'] = args.config
+    vd['cfgparams'] = parameterset
+    vd['DBS'] = args.dbs
+    vd['unit'] = dataset_dict[sample]['unitPerJob']
+    vd['outdir'] = args.outdir
+    if isData:
+        vd['lumimask'] = "config.Data.lumiMask = "+"'"+args.lumimask+"'"
+        vd['runrange'] = 'config.Data.runRange = '+ "'"+dataset_dict[sample]['runRange']+"'"
+        vd['splitting'] = 'LumiBased'
+    else:
+        vd['lumimask'] = ''
+        vd['runrange'] = ''
+        vd['splitting'] = 'EventAwareLumiBased'
+        
+    if args.automatic:
+        vd['splitting'] = 'Automatic'
 
-        if args.automatic:
-            vd['splitting'] = 'Automatic'
+    # write crab config files
+    open('crab/crabConfig_'+vd['name']+'.py','wt').write(template % vd)
 
-        # write crab config files
-        open('crab/crabConfig_'+vd['name']+'.py','wt').write(template % vd)
-
-        # submit crab jobs
-        if not args.dryrun:
-            os.system('crab submit -c crab/crabConfig_'+vd['name']+'.py')
+    # submit crab jobs
+    if not args.dryrun:
+        os.system('crab submit -c crab/crabConfig_'+vd['name']+'.py')
