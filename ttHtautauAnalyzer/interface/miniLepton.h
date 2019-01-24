@@ -1,10 +1,11 @@
 #ifndef miniLepton_h
 #define miniLepton_h
 
-#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
+//#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
 #include "DataFormats/PatCandidates/interface/Electron.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
-#endif
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+//#endif
 
 #include "TLorentzVector.h"
 
@@ -12,10 +13,10 @@ class miniLepton
 {
  public:
 	// constructor and destructor
-#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
+//#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
 	miniLepton(const pat::Electron&);
 	miniLepton(const pat::Muon&);
-#endif
+//#endif
 	miniLepton(const TLorentzVector&, float, int pdgid=-9999, int charge=-9999, 
 			   bool isloose=false, bool isfakeable=false, bool istight=false,
 			   bool tightcharge=false, int mcmatchtype=-9999,
@@ -35,6 +36,7 @@ class miniLepton
 	void set_pdgId(int id) {pdgid_ = id;}
 	void set_MCMatchType(int imctype) {mcmatchtype_ = imctype;}
 	void set_isGenPhotonMatched(bool ismatched) {isgenphotonmatched_ = ismatched;}
+    void set_matchedGenParticle(const reco::GenParticle& matchedgen) {matchedGenParticle_ = &matchedgen;}
 
 	// TODO: check value was set before returning
 	float pt() const {return pt_;}
@@ -52,7 +54,9 @@ class miniLepton
 	bool isGenPhotonMatched() const {return isgenphotonmatched_;}
 	bool isGenMatched() const;
 	TLorentzVector p4() const;
-
+    
+    const reco::GenParticle* matchedGenParticle() const {return matchedGenParticle_;}
+    
 	void dump() const;
 		
  private:
@@ -70,6 +74,8 @@ class miniLepton
 	bool  istight_;
 	int   mcmatchtype_;
 	bool  isgenphotonmatched_;
+    
+    const reco::GenParticle* matchedGenParticle_;
 };
 
 #endif

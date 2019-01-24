@@ -1,9 +1,10 @@
 #ifndef miniTau_h
 #define miniTau_h
 
-#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
+//#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
 #include "DataFormats/PatCandidates/interface/Tau.h"
-#endif
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+//#endif
 
 #include "TLorentzVector.h"
 
@@ -13,9 +14,9 @@ class miniTau
 {
  public:
 	// constructor and destructor
-#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
+//#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
 	miniTau(const pat::Tau&, bool addDaughters = false);
-#endif
+//#endif
 
 	miniTau(const TLorentzVector&, int, int, bool, bool, int mcmatchtype=-9999);
 	miniTau(const TLorentzVector&, int, int, bool, bool, 
@@ -40,6 +41,7 @@ class miniTau
 	void set_tauIDWPindex(int iWP) {tauIDMVAWP_ = iWP;}
 	void set_tauIDWPindex(bool, bool, bool, bool, bool);
 	void set_IsTight(bool istight) {istight_ = istight;}
+    void set_matchedGenParticle(const reco::GenParticle& matchedgen) {matchedGenParticle_ = &matchedgen;}
 
 	// TODO: check value was set before returning
 	float pt() const {return pt_;}
@@ -60,6 +62,8 @@ class miniTau
 	TLorentzVector neutralDaughtersP4() const;
 	TLorentzVector leadtrackP4() const;
 
+    const reco::GenParticle* matchedGenParticle() const {return matchedGenParticle_;}
+    
 	void dump() const;
 
 	std::vector<TLorentzVector> get_signalChargedHadrCands() const {return signalChargedHadrCands_;}
@@ -85,6 +89,8 @@ class miniTau
 	std::vector<TLorentzVector> signalChargedHadrCands_;
 	std::vector<TLorentzVector> signalGammaCands_;
 	std::vector<TLorentzVector> signalNeutrHadrCands_;
+
+    const reco::GenParticle* matchedGenParticle_;
 };
 
 #endif

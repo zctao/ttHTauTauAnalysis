@@ -16,6 +16,7 @@ ttHtaus = cms.EDAnalyzer('ttHtautauAnalyzer',
                          do_sync = cms.bool(False),
                          turn_off_event_sel = cms.bool(False),
                          doCutFlow = cms.bool(True),
+                         store_gen_objects = cms.bool(False),
                          # triggers
                          print_HLT_event_path = cms.bool(False),
                          HLT_config_tag = cms.string('HLT'),

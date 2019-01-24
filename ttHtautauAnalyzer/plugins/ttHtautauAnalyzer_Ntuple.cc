@@ -234,6 +234,75 @@ void ttHtautauAnalyzer::write_ntuple_met(const pat::MET& met)
 	evNtuple_.PFMETphi_tesdown = met.shiftedPhi(pat::MET::METUncertainty::TauEnDown);
 }
 
+void ttHtautauAnalyzer::write_ntuple_gen_objects
+(const std::vector<const reco::GenParticle*>& matchedGenMuons,
+ const std::vector<const reco::GenParticle*>& matchedGenElectrons,
+ const std::vector<const reco::GenParticle*>& matchedGenTaus,
+ const std::vector<reco::GenJet>& genJets)
+{
+  if (isdata_) return;
+
+  for (const auto & genmu : matchedGenMuons) {
+    float genmupt = genmu ? genmu->pt() : -9999.;
+    float genmueta = genmu ? genmu->eta() : -9999.;
+    float genmuphi = genmu ? genmu->phi() : -9999.;
+    float genmuE = genmu ? genmu->energy() : -9999.;
+    int genmustatus = genmu ? genmu->status() : -9999;
+    int genmupdgid = genmu ? genmu->pdgId() : -9999;
+    
+    evNtuple_.matchedGenMuons_pt->push_back(genmupt);
+    evNtuple_.matchedGenMuons_eta->push_back(genmueta);
+    evNtuple_.matchedGenMuons_phi->push_back(genmuphi);
+    evNtuple_.matchedGenMuons_E->push_back(genmuE);
+    evNtuple_.matchedGenMuons_status->push_back(genmustatus);
+    evNtuple_.matchedGenMuons_pdgid->push_back(genmupdgid);
+  }
+
+  for (const auto & genele : matchedGenElectrons) {
+    float genelept = genele ? genele->pt() : -9999.;
+    float geneleeta = genele ? genele->eta() : -9999.;
+    float genelephi = genele ? genele->phi() : -9999.;
+    float geneleE = genele ? genele->energy() : -9999.;
+    int genelestatus = genele ? genele->status() : -9999;
+    int genelepdgid = genele ? genele->pdgId() : -9999;
+    
+    evNtuple_.matchedGenElectrons_pt->push_back(genelept);
+    evNtuple_.matchedGenElectrons_eta->push_back(geneleeta);
+    evNtuple_.matchedGenElectrons_phi->push_back(genelephi);
+    evNtuple_.matchedGenElectrons_E->push_back(geneleE);
+    evNtuple_.matchedGenElectrons_status->push_back(genelestatus);
+    evNtuple_.matchedGenElectrons_pdgid->push_back(genelepdgid);
+  }
+
+  for (const auto & gentau : matchedGenTaus) {
+    float gentaupt = gentau ? gentau->pt() : -9999.;
+    float gentaueta = gentau ? gentau->eta() : -9999.;
+    float gentauphi = gentau ? gentau->phi() : -9999.;
+    float gentauE = gentau ? gentau->energy() : -9999.;
+    int gentaustatus = gentau ? gentau->status() : -9999;
+    int gentaupdgid = gentau ? gentau->pdgId() : -9999;
+    
+    evNtuple_.matchedGenTaus_pt->push_back(gentaupt);
+    evNtuple_.matchedGenTaus_eta->push_back(gentaueta);
+    evNtuple_.matchedGenTaus_phi->push_back(gentauphi);
+    evNtuple_.matchedGenTaus_E->push_back(gentauE);
+    evNtuple_.matchedGenTaus_status->push_back(gentaustatus);
+    evNtuple_.matchedGenTaus_pdgid->push_back(gentaupdgid);
+  }
+  
+  for (const auto & genjet : genJets) {
+    // Only store gen jets with pt > 10 GeV and |eta| < 2,5
+    if (genjet.pt()>10. and std::abs(genjet.eta())<2.5) {
+      evNtuple_.genjet_pt->push_back(genjet.pt());
+      evNtuple_.genjet_eta->push_back(genjet.eta());
+      evNtuple_.genjet_phi->push_back(genjet.phi());
+      evNtuple_.genjet_E->push_back(genjet.energy());
+      
+      // TODO: get gen jet mother hadron flavor?
+    }
+  }
+}
+
 /*
 void ttHtautauAnalyzer::write_ntuple_bTagSF(const std::vector<pat::Jet>& jets)
 {

@@ -304,7 +304,33 @@ class eventNtuple
 	float PFMETphi_tesup = -9999.;
 	float PFMET_tesdown = -9999.;
 	float PFMETphi_tesdown = -9999.;
-	
+
+    // Gen Objects
+    std::vector<float> *matchedGenMuons_pt = 0;
+    std::vector<float> *matchedGenMuons_eta = 0;
+    std::vector<float> *matchedGenMuons_phi = 0;
+    std::vector<float> *matchedGenMuons_E = 0;
+    std::vector<int> *matchedGenMuons_status = 0;
+    std::vector<int> *matchedGenMuons_pdgid = 0;
+
+    std::vector<float> *matchedGenElectrons_pt = 0;
+    std::vector<float> *matchedGenElectrons_eta = 0;
+    std::vector<float> *matchedGenElectrons_phi = 0;
+    std::vector<float> *matchedGenElectrons_E = 0;
+    std::vector<int> *matchedGenElectrons_status = 0;
+    std::vector<int> *matchedGenElectrons_pdgid = 0;
+
+    std::vector<float> *matchedGenTaus_pt = 0;
+    std::vector<float> *matchedGenTaus_eta = 0;
+    std::vector<float> *matchedGenTaus_phi = 0;
+    std::vector<float> *matchedGenTaus_E = 0;
+    std::vector<int> *matchedGenTaus_status = 0;
+    std::vector<int> *matchedGenTaus_pdgid = 0;
+
+    std::vector<float> *genjet_pt = 0;
+    std::vector<float> *genjet_eta = 0;
+    std::vector<float> *genjet_phi = 0;
+    std::vector<float> *genjet_E = 0;
 };
 
 template <typename T> std::vector<TLorentzVector>

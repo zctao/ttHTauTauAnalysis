@@ -1,6 +1,6 @@
 #include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/miniTau.h"
 
-#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
+//#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
 miniTau::miniTau(const pat::Tau& tau, bool addDaughters)
 {
 	pt_ = tau.pt();
@@ -35,7 +35,7 @@ miniTau::miniTau(const pat::Tau& tau, bool addDaughters)
 		assert(0);
 	}
 }
-#endif
+//#endif
 
 miniTau::miniTau(const TLorentzVector& t, int charge, int decaymode,
 				 bool isloose, bool istight, int mcmatchtype)

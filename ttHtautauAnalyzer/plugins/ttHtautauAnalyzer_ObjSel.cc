@@ -64,8 +64,7 @@ template std::vector<pat::Muon> ttHtautauAnalyzer::getSelectedLeptons(const std:
 template std::vector<pat::Electron> ttHtautauAnalyzer::getSelectedLeptons(const std::vector<pat::Electron>&, const std::string&);
 
 // add ID related flags/variables
-template <typename T> void ttHtautauAnalyzer::addIDFlags(std::vector<T>& leptons,
-														 edm::Handle<reco::GenParticleCollection> MC_particles)
+template <typename T> void ttHtautauAnalyzer::addIDFlags(std::vector<T>& leptons)
 {
 	for (auto & lep : leptons) {
 		lep.addUserInt("isLoose", isLooseID(lep));
@@ -73,20 +72,38 @@ template <typename T> void ttHtautauAnalyzer::addIDFlags(std::vector<T>& leptons
 		lep.addUserInt("isTight", isTightID(lep));
 		lep.addUserInt("isTightCharge", isTightCharge(lep));
 		lep.addUserFloat("conePt", ConePt(lep));
-		// MC matching
-		if (not isdata_) {
-			lep.addUserInt("MCMatchType", getMCMatchType(lep, *MC_particles));
-			lep.addUserInt("isGenPhotonMatched",
-						   isGenPhotonMatched(lep, *MC_particles, false));
-			lep.addUserInt("isPromptGenPhotonMatched",
-						   isGenPhotonMatched(lep, *MC_particles, true));
-		}
 	}
 }
-template void ttHtautauAnalyzer::addIDFlags(std::vector<pat::Electron>&,
-											edm::Handle<reco::GenParticleCollection>);
-template void ttHtautauAnalyzer::addIDFlags(std::vector<pat::Muon>&,
-											edm::Handle<reco::GenParticleCollection>);
+template void ttHtautauAnalyzer::addIDFlags(std::vector<pat::Electron>&);
+template void ttHtautauAnalyzer::addIDFlags(std::vector<pat::Muon>&);
+
+// get matched gen particle and add mc match information
+template <typename T>
+std::vector<const reco::GenParticle*> ttHtautauAnalyzer::getGenLepMatchInfo
+(std::vector<T>& leptons, edm::Handle<reco::GenParticleCollection> MC_particles)
+{
+  std::vector<const reco::GenParticle*> matched_collection;
+
+  if (isdata_)
+    return matched_collection;
+
+  for (auto & lep : leptons) {
+    // get matched gen particle
+    auto matchedLep = getMatchedGenParticle(lep, *MC_particles);
+    lep.addUserInt("MCMatchType", getMCMatchType(lep, matchedLep));
+    lep.addUserInt("isGenPhotonMatched",
+                   isGenPhotonMatched(lep, *MC_particles, false));
+    lep.addUserInt("isPromptGenPhotonMatched",
+                   isGenPhotonMatched(lep, *MC_particles, true));
+
+    matched_collection.push_back(matchedLep);
+  }
+
+  return matched_collection;
+}
+
+template std::vector<const reco::GenParticle*> ttHtautauAnalyzer::getGenLepMatchInfo(std::vector<pat::Electron>&, edm::Handle<reco::GenParticleCollection>);
+template std::vector<const reco::GenParticle*> ttHtautauAnalyzer::getGenLepMatchInfo(std::vector<pat::Muon>&, edm::Handle<reco::GenParticleCollection>);
 
 ///////////////////
 // muons
@@ -230,6 +247,25 @@ void ttHtautauAnalyzer::addIDFlagsTau(std::vector<pat::Tau>& taus)
 		tau.addUserInt("isLoose", isLooseID(tau));
 		tau.addUserInt("isTight", isTightID(tau));
 	}
+}
+
+std::vector<const reco::GenParticle*> ttHtautauAnalyzer::getGenTauMatchInfo
+(std::vector<pat::Tau>& taus, edm::Handle<reco::GenParticleCollection> MC_particles)
+{
+  std::vector<const reco::GenParticle*> matched_collection;
+
+  if (isdata_)
+    return matched_collection;
+
+  for (auto & tau : taus) {
+    // get matched gen particle
+    auto matchedTau = getMatchedGenParticle(tau, *MC_particles);
+    tau.addUserInt("MCMatchType", getMCMatchType(tau, matchedTau));
+
+    matched_collection.push_back(matchedTau);
+  }
+
+  return matched_collection;
 }
 
 ///////////////////
@@ -652,10 +688,8 @@ const reco::GenJet* ttHtautauAnalyzer::getMatchedGenJet
 }
 
 template <typename T>
-int ttHtautauAnalyzer::getMCMatchType(const T& reco_particle, const std::vector<reco::GenParticle>& gen_particles)
+int ttHtautauAnalyzer::getMCMatchType(const T& reco_particle, const reco::GenParticle* matchedGen)
 {
-	auto matchedGen = getMatchedGenParticle(reco_particle, gen_particles);
-
 	if (not matchedGen) return -1;
 
 	auto genStatus = matchedGen->statusFlags();
@@ -673,13 +707,13 @@ int ttHtautauAnalyzer::getMCMatchType(const T& reco_particle, const std::vector<
 	else if (abs(matchedGen->pdgId()) == 15 and genStatus.isPrompt()) {
 		mtype = 5;
 	}
-
+    
 	return mtype;
 }
 
-template int ttHtautauAnalyzer::getMCMatchType<pat::Electron>(const pat::Electron&, const std::vector<reco::GenParticle>&);
-template int ttHtautauAnalyzer::getMCMatchType<pat::Muon>(const pat::Muon&, const std::vector<reco::GenParticle>&);
-template int ttHtautauAnalyzer::getMCMatchType<pat::Tau>(const pat::Tau&, const std::vector<reco::GenParticle>&);
+template int ttHtautauAnalyzer::getMCMatchType<pat::Electron>(const pat::Electron&, const reco::GenParticle*);
+template int ttHtautauAnalyzer::getMCMatchType<pat::Muon>(const pat::Muon&, const reco::GenParticle*);
+template int ttHtautauAnalyzer::getMCMatchType<pat::Tau>(const pat::Tau&, const reco::GenParticle*);
 
 int ttHtautauAnalyzer::HiggsDaughterPdgId(const std::vector<reco::GenParticle>& genParticles)
 {

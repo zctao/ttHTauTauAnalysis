@@ -8,6 +8,7 @@
 <use name = "DataFormats/PatCandidates" />
 <use name = "DataFormats/RecoCandidate" />
 <use name = "DataFormats/VertexReco" />
+<use name = "DataFormats/JetReco" />
 <use name = "RecoTauTag/TauTagTools" />
 <use name = "PhysicsTools/Utilities" />
 <use name = "CommonTools/UtilAlgos" />

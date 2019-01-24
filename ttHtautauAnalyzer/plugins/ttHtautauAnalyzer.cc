@@ -40,6 +40,7 @@ ttHtautauAnalyzer::ttHtautauAnalyzer(const edm::ParameterSet& iConfig):
 	// Generic parameters
 	verbosity_ (iConfig.getParameter<int>("verbosity")),
 	isdata_ (iConfig.getParameter<bool>("using_collision_data")),
+    store_gen_objects_ (iConfig.getParameter<bool>("store_gen_objects")),
 	debug_ (iConfig.getParameter<bool>("debug_mode")),
 	//doSystematics_ (iConfig.getParameter<bool>("do_systematics")),
 	doSync_ (iConfig.getParameter<bool>("do_sync")),
@@ -258,8 +259,10 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		getSelectedLeptons(*muons, std::string("isLoose"));
 	//SortByPt(mu_preselected);  // sort by pt
 	// add ID flags to preselected muons
-	addIDFlags(mu_preselected, MC_particles);
+	addIDFlags(mu_preselected);
 	SortByConept(mu_preselected);  // sort by conept
+    // MC matching if not data
+    auto matchedGenMuons = getGenLepMatchInfo(mu_preselected, MC_particles);
 
 	unsigned int n_muon_fakeable = 0;
 	unsigned int n_muon_tight = 0;
@@ -297,8 +300,10 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	ele_preselected = removeOverlapdR(ele_preselected, mu_preselected, 0.05);
 	//SortByPt(ele_preselected);   // sort by pt
 	// add ID flags to preselected electrons
-	addIDFlags(ele_preselected, MC_particles);
+	addIDFlags(ele_preselected);
 	SortByConept(ele_preselected);  // sort by conept
+    // MC matching if not data
+    auto matchedGenElectrons = getGenLepMatchInfo(ele_preselected, MC_particles);
 
 	unsigned int n_ele_fakeable = 0;
 	unsigned int n_ele_tight = 0;
@@ -350,12 +355,9 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	addIDFlagsTau(tau_loose);
 	// sort by pt
 	SortByPt(tau_loose);
-	// add mc match type if not data
-	if (not isdata_) {
-		for (auto & tau : tau_loose)
-			tau.addUserInt("MCMatchType", getMCMatchType(tau, *MC_particles));
-	}
-
+	// MC matching if not data
+    auto matchedGenTaus = getGenTauMatchInfo(tau_loose, MC_particles);
+    
 	std::vector<miniTau> minitau_loose;
 	std::vector<miniTau> minitau_tight;
 	for (const auto & tau : tau_loose) {
@@ -544,6 +546,12 @@ ttHtautauAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	evNtuple_.MHT = MHT;
 	evNtuple_.metLD = metLD;
 
+    /// matched gen objects and gen jets
+    if (not isdata_ and store_gen_objects_) {
+      write_ntuple_gen_objects(matchedGenMuons, matchedGenElectrons,
+                               matchedGenTaus, *genJets);
+    }
+    
 	////
 	eventTree_ -> Fill();
 	////

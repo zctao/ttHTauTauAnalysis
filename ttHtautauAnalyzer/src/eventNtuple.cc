@@ -756,6 +756,33 @@ void eventNtuple::initialize()
 	PFMETphi_tesup = -9999.;
 	PFMET_tesdown = -9999.;
 	PFMETphi_tesdown = -9999.;
+
+    // gen objects
+    matchedGenMuons_pt->clear();
+    matchedGenMuons_eta->clear();
+    matchedGenMuons_phi->clear();
+    matchedGenMuons_E->clear();
+    matchedGenMuons_status->clear();
+    matchedGenMuons_pdgid->clear();
+
+    matchedGenElectrons_pt->clear();
+    matchedGenElectrons_eta->clear();
+    matchedGenElectrons_phi->clear();
+    matchedGenElectrons_E->clear();
+    matchedGenElectrons_status->clear();
+    matchedGenElectrons_pdgid->clear();
+
+    matchedGenTaus_pt->clear();
+    matchedGenTaus_eta->clear();
+    matchedGenTaus_phi->clear();
+    matchedGenTaus_E->clear();
+    matchedGenTaus_status->clear();
+    matchedGenTaus_pdgid->clear();
+
+    genjet_pt->clear();
+    genjet_eta->clear();
+    genjet_phi->clear();
+    genjet_E->clear();
 }
 
 void eventNtuple::setup_branches(TTree* tree)
@@ -980,6 +1007,32 @@ void eventNtuple::setup_branches(TTree* tree)
 	tree->Branch("PFMETphi_tesup", &PFMETphi_tesup);
 	tree->Branch("PFMET_tesdown", &PFMET_tesdown);
 	tree->Branch("PFMETphi_tesdown", &PFMETphi_tesdown);
+
+    tree->Branch("matchedGenMuons_pt",     &matchedGenMuons_pt);
+    tree->Branch("matchedGenMuons_eta",    &matchedGenMuons_eta);
+    tree->Branch("matchedGenMuons_phi",    &matchedGenMuons_phi);
+    tree->Branch("matchedGenMuons_E",      &matchedGenMuons_E);
+    tree->Branch("matchedGenMuons_status", &matchedGenMuons_status);
+    tree->Branch("matchedGenMuons_pdgid",  &matchedGenMuons_pdgid);
+
+    tree->Branch("matchedGenElectrons_pt",     &matchedGenElectrons_pt);
+    tree->Branch("matchedGenElectrons_eta",    &matchedGenElectrons_eta);
+    tree->Branch("matchedGenElectrons_phi",    &matchedGenElectrons_phi);
+    tree->Branch("matchedGenElectrons_E",      &matchedGenElectrons_E);
+    tree->Branch("matchedGenElectrons_status", &matchedGenElectrons_status);
+    tree->Branch("matchedGenElectrons_pdgid",  &matchedGenElectrons_pdgid);
+
+    tree->Branch("matchedGenTaus_pt",     &matchedGenTaus_pt);
+    tree->Branch("matchedGenTaus_eta",    &matchedGenTaus_eta);
+    tree->Branch("matchedGenTaus_phi",    &matchedGenTaus_phi);
+    tree->Branch("matchedGenTaus_E",      &matchedGenTaus_E);
+    tree->Branch("matchedGenTaus_status", &matchedGenTaus_status);
+    tree->Branch("matchedGenTaus_pdgid",  &matchedGenTaus_pdgid);
+
+    tree->Branch("genjet_pt",  &genjet_pt);
+    tree->Branch("genjet_eta", &genjet_eta);
+    tree->Branch("genjet_phi", &genjet_phi);
+    tree->Branch("genjet_E",   &genjet_E);
 }
 
 void eventNtuple::set_branch_address(TTree* tree)
@@ -1203,6 +1256,32 @@ void eventNtuple::set_branch_address(TTree* tree)
 	tree->SetBranchAddress("PFMETphi_tesup", &PFMETphi_tesup);
 	tree->SetBranchAddress("PFMET_tesdown", &PFMET_tesdown);
 	tree->SetBranchAddress("PFMETphi_tesdown", &PFMETphi_tesdown);
+
+    tree->SetBranchAddress("matchedGenMuons_pt",     &matchedGenMuons_pt);
+    tree->SetBranchAddress("matchedGenMuons_eta",    &matchedGenMuons_eta);
+    tree->SetBranchAddress("matchedGenMuons_phi",    &matchedGenMuons_phi);
+    tree->SetBranchAddress("matchedGenMuons_E",      &matchedGenMuons_E);
+    tree->SetBranchAddress("matchedGenMuons_status", &matchedGenMuons_status);
+    tree->SetBranchAddress("matchedGenMuons_pdgid",  &matchedGenMuons_pdgid);
+
+    tree->SetBranchAddress("matchedGenElectrons_pt",     &matchedGenElectrons_pt);
+    tree->SetBranchAddress("matchedGenElectrons_eta",    &matchedGenElectrons_eta);
+    tree->SetBranchAddress("matchedGenElectrons_phi",    &matchedGenElectrons_phi);
+    tree->SetBranchAddress("matchedGenElectrons_E",      &matchedGenElectrons_E);
+    tree->SetBranchAddress("matchedGenElectrons_status", &matchedGenElectrons_status);
+    tree->SetBranchAddress("matchedGenElectrons_pdgid",  &matchedGenElectrons_pdgid);
+
+    tree->SetBranchAddress("matchedGenTaus_pt",     &matchedGenTaus_pt);
+    tree->SetBranchAddress("matchedGenTaus_eta",    &matchedGenTaus_eta);
+    tree->SetBranchAddress("matchedGenTaus_phi",    &matchedGenTaus_phi);
+    tree->SetBranchAddress("matchedGenTaus_E",      &matchedGenTaus_E);
+    tree->SetBranchAddress("matchedGenTaus_status", &matchedGenTaus_status);
+    tree->SetBranchAddress("matchedGenTaus_pdgid",  &matchedGenTaus_pdgid);
+
+    tree->SetBranchAddress("genjet_pt",  &genjet_pt);
+    tree->SetBranchAddress("genjet_eta", &genjet_eta);
+    tree->SetBranchAddress("genjet_phi", &genjet_phi);
+    tree->SetBranchAddress("genjet_E",   &genjet_E);
 }
 
 #endif

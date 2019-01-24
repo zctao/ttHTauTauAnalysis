@@ -54,6 +54,7 @@
 #include "DataFormats/Candidate/interface/VertexCompositePtrCandidateFwd.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/PatCandidates/interface/PackedGenParticle.h"
+#include "DataFormats/JetReco/interface/GenJet.h"
 #include "DataFormats/Candidate/interface/Candidate.h"
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "DataFormats/Common/interface/MergeableCounter.h"
@@ -116,9 +117,12 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	template <typename T> float ConePt(const T&);
 	template <typename T> std::vector<T> getSelectedLeptons(const std::vector<T>&,
 															const std::string&);
-	template <typename T> void addIDFlags(std::vector<T>&,
-										  edm::Handle<reco::GenParticleCollection>);
+	template <typename T> void addIDFlags(std::vector<T>&);
 	void addIDFlagsTau(std::vector<pat::Tau>&);
+
+    template <typename T> std::vector<const reco::GenParticle*> getGenLepMatchInfo(std::vector<T>&, edm::Handle<reco::GenParticleCollection>);
+    std::vector<const reco::GenParticle*> getGenTauMatchInfo(std::vector<pat::Tau>&, edm::Handle<reco::GenParticleCollection>);
+    
 	bool isLooseID(const pat::Muon&) const;
 	bool isLooseID(const pat::Electron&) const;
 	bool isLooseID(const pat::Tau&) const;
@@ -155,7 +159,7 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	const reco::GenParticle* getMatchedGenParticle(const pat::Muon&, const std::vector<reco::GenParticle>&);
 	const reco::GenParticle* getMatchedGenParticle(const pat::Tau&, const std::vector<reco::GenParticle>&);
     const reco::GenJet* getMatchedGenJet(const pat::Jet&, const std::vector<reco::GenJet>&, double, double dR_max=0.2, double dPtMaxFactor=3.);
-	template <typename T> int getMCMatchType(const T&, const std::vector<reco::GenParticle>&);
+	template <typename T> int getMCMatchType(const T&, const reco::GenParticle*);
 	bool isGenPhotonMatched(const pat::Electron&, const std::vector<reco::GenParticle>&, bool);
 	bool isGenPhotonMatched(const pat::Muon&, const std::vector<reco::GenParticle>&, bool); // dummy
 	
@@ -179,6 +183,10 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	void write_ntuple_taus(const std::vector<pat::Tau>&);
 	void write_ntuple_jets(const std::vector<pat::Jet>&);
 	void write_ntuple_met(const pat::MET&);
+    void write_ntuple_gen_objects(const std::vector<const reco::GenParticle*>&,
+                                  const std::vector<const reco::GenParticle*>&,
+                                  const std::vector<const reco::GenParticle*>&,
+                                  const std::vector<reco::GenJet>&);
 	
 	//Utilities
 	template <typename T1, typename T2>
@@ -200,6 +208,7 @@ class ttHtautauAnalyzer : public edm::EDAnalyzer
 	// generic parameters
 	int verbosity_;
 	bool isdata_;
+    bool store_gen_objects_;
 	bool debug_;
 	//bool doSystematics_;
 	bool doSync_;

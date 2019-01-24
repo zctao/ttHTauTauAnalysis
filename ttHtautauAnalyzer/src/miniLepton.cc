@@ -1,6 +1,6 @@
 #include "ttHTauTauAnalysis/ttHtautauAnalyzer/interface/miniLepton.h"
 
-#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
+//#if !defined(__ACLIC__) && !defined(__ROOTCLING__)
 miniLepton::miniLepton(const pat::Electron& ele)
 {
 	pt_ = ele.pt();
@@ -65,7 +65,7 @@ miniLepton::miniLepton(const pat::Muon& mu)
 	isgenphotonmatched_ = false;
 }
 	
-#endif
+//#endif
 
 miniLepton::miniLepton(const TLorentzVector& l, float conept, int pdgid,
 					   int charge, bool isloose, bool isfakeable, bool istight,
