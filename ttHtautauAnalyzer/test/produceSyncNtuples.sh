@@ -1,12 +1,15 @@
 #!/bin/bash
 
-date=${1:-30apr2018}
+outdir=${1:-/uscms/home/ztao/nobackup/ttHTT_syncNtuple/94X/30apr2018/}
+inputfile=${2:-file:/uscms/home/ztao/nobackup/datasample/ttH_94X/ttHJetToNonbb.root}
 
-outdir=/uscms/home/ztao/nobackup/ttHTT_syncNtuple/94X/$date/
+#date=${1:-30apr2018}
+#outdir=/uscms/home/ztao/nobackup/ttHTT_syncNtuple/94X/$date/
+
 mkdir -p $outdir
 
 echo 'producing sync ntuple with event selection turned off'
-cmsRun analyzer2017_cfg.py doSync=True TurnOffEvtSel=True
+cmsRun analyzer2017_cfg.py doSync=True TurnOffEvtSel=True inputFiles=$inputfile
 mv output_.root $outdir"output_sync.root"
 
 makeSyncNtuple -d $outdir -o syncNtuple_object.root --makeObjectNtuple true

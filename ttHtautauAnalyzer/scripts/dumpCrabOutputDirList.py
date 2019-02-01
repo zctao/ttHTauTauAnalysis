@@ -21,17 +21,16 @@ def getLatestTimeStamp(timestamplist):
             outstr = ts
 
     return outstr
-    
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Dump the list eos directories of crab job outputs given samples names and analysis type')
 
-    parser.add_argument('type', type=str,
+    parser.add_argument('atype', type=str,
                         choices=['1l2tau','2lss1tau','3l1tau','gen','incl'],
                         help='analysis type')
     parser.add_argument('samples', nargs='+', type=str,
                         help="sample names. NOTE: They will be hadd'ed all together into ONE root file. Normally they should be the same type of samples e.g. TTW and TTW_ext")
-    parser.add_argument('-l','--list', type=str, default='SampleList.txt',
+    parser.add_argument('-l','--samplelist', type=str, default='SampleList.txt',
                         help="Sample list")
     parser.add_argument('-o','--output', type=str, default='list.txt',
                         help="Output name")
@@ -50,10 +49,10 @@ if __name__ == "__main__":
     
     for sample in args.samples:
 
-        fullsamplename = getSampleFullname(sample, args.list)
+        fullsamplename = getSampleFullname(sample, args.samplelist)
 
         
-        directory = args.rootdir+fullsamplename+'/'+args.prefix+sample+'_'+args.type+'/'
+        directory = args.rootdir+fullsamplename+'/'+args.prefix+sample+'_'+args.atype+'/'
         # time stamp
         if args.timestamp!='':
             directory += args.timestamp+'/'

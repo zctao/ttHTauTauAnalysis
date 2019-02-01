@@ -46,8 +46,7 @@ def getSampleFullname(sample, datalist):
             dataset = datalist_dict[sample]['dataset']
             return dataset.split('/')[1]
         else:
-            print 'WARNING: Invalid sample name!'
-            return None
+            raise ValueError("Invalid sample name "+sample)
     else:
         with open(datalist) as f:
             for line in f:

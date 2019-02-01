@@ -70,9 +70,38 @@ It'd also be necessary to remove old MVA weights in RecoEgamma/PhotonIdentificat
 
 ## Usage
 
-Produce sync ntuples:
+* General structures:
 
-	./ttHtautauAnalyzer/test/produceSyncNtuples.sh
+For 2017 analysis
+
+    cmsRun analyzer2017_cfg.py
+
+Runs ttHtautauAnalyzer implemented in plugins/ and produces an event ntuple with the ntuple format defined in interface/eventNtuple.h.
+It applies a loose selection on the input sample (pass\_ttH\_ltau\_inclusive\_selection() implemented in src/EventSelector.cc), hopefully covering all event categories for the interest of this analysis.
+
+The inclusive event ntuple needs to be further processed by binaries to make synchronization ntuples:
+
+    makeSyncNtuple
+
+or to make ntuples for training MVA or for producing datacards:
+
+    makeMVANtuple
+
+The ntuple formats are defined in interface/syncNtuple.h and interface/mvaNtuple.h respectively.
+
+Event selections for a region of interest (e.g. signal region selection for 2lss1tau category) are applied in either of the binaries. The type of the event selections can be specified by the command line arguments.
+
+Scale factors, event weights, systematics, etc. are also handled during this step.
+
+* Produce sync ntuples:
+
+In the test/ directory
+
+	./produceSyncNtuples.sh <output directory> <input root file>
+
+* CRAB jobs
+
+All the following scripts assume CRAB work area: ~/nobackup/crab/
 
 Submit CRAB jobs to produce event ntuples:
 	   
@@ -80,11 +109,30 @@ Submit CRAB jobs to produce event ntuples:
 	
 	submitCrabJobsv2.py -h for help
 
+Check CRAB job status:
+
+    checkCrabJobStatus.sh <job_prefix>
+
+It generates a list of incomplete jobs, named task\_to\_resubmit.txt by default.
+
+    checkCrabJobStatusFromFile.sh <list of jobs>
+
+Same as the above, except it only loops over the jobs in the list. It generates an updated list of incomplete jobs, named task\_to\_resubmit\_updated.txt by default.
+
+Resubmit CRAB jobs:
+
+    reSubmitCrab.sh <list of jobs>
+
+Resubmit CRAB jobs in the list. By default it reads task\_to\_resubmit.txt, unless specified otherwise.
+
 Collect and hadd CRAB outputs on EOS:
 
-	haddCrabOutputs.sh <analysis_type> <samplelist> <eostopdir> <version> <prefix> <ntuplelist> <output_name> <list of samples to be added>
+    haddCrabOutputs.py <datasetList.csv> <crab_job_label> <samples>
 
-It would also generate something like 'ntuplelist.log' file to store the location of the output ntuples. Examples of using haddCrabOutputs.sh script are in ttHtautauAnalyzer/test/: haddCrabOutput2017reMiniAODv2.sh
+	haddCrabOutputs.py -h to show other optional arguments
+
+
+* Make mvaNtuples:
 
 Make flat mvaNtuple from event ntuple: UPDATE ME
 

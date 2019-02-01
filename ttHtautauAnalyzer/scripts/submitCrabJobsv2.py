@@ -15,6 +15,8 @@ chgroup.add_argument('--samples',nargs='+', type=str,
 chgroup.add_argument('--sample_list', type=str,
                      help="File that stores a list of samples to run crab jobs on")
 
+parser.add_argument('--analysis_label', choices=['incl','gen'], default='incl',
+                    help="incl for ntuple production. gen for genParticle analysis")
 parser.add_argument('--prefix', type=str, default='',
                     help="Prefix of crab job name.")
 parser.add_argument('-c','--config', type=str, default='analyzer2017_cfg.py',
@@ -93,7 +95,7 @@ for sample in samples:
     print sample
     isData = 'data' in sample
         
-    jobname = args.prefix + sample + '_incl'
+    jobname = args.prefix + sample + '_'+args.analysis_label
 
     parameterset = getParametersetString(sample, isData)
             
