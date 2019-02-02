@@ -5,7 +5,7 @@ from timeit import default_timer as timer
 from ttHTauTauAnalysis.ttHtautauAnalyzer.crab_utils import getDatasetDict
 
 parser = argparse.ArgumentParser(description='produce MVA ntuples using makeMVANtuple.cc')
-
+parser.add_argument('label', type=str, help="Crab job label for the input event ntuples. E.g. 2019jan")
 parser.add_argument('samples', nargs='+', help="sample names")
 parser.add_argument('--datasetlist', type=str,
                     default="../dataFiles/DatasetList_2017reMiniAODv2.csv")
@@ -23,21 +23,24 @@ parser.add_argument('-r','--redirector',type=str,
                     help="redirector for xrootd")
 parser.add_argument('-t','--topeosdir', type=str,
                     default="/store/user/ztao/ttHtaus_94X/")
-parser.add_argument('--version', type=str, default="may2018",
-                    help="Event ntuple version")
-parser.add_argument('-o','--outdir', type=str, default="./", help="Output directory")
+
+parser.add_argument('-o','--outdir', type=str, help="Output directory")
 #parser.add_argument('-s','--doSystematics', action='store_true',
 #                    help="include event weights for systematic uncertainties")
 parser.add_argument('-m','--genmatching', action='store_true',
                     help="Require gen matching in event selections")
 parser.add_argument('-c','--corrections', nargs='+',
-                    choices=['NA','JESUp','JESDown','TESUp','TESDown'],
+                    choices=['NA','JESUp','JESDown','JERUp','JERDown',
+                             'TESUp','TESDown'],
                     default=['NA'], help="Jet/Tau energy correction")
 parser.add_argument('--transfer_inputs', action='store_true',
                     help="Copy input files locally from EOS")
 parser.add_argument('-l', '--log', type=str, help="Log name")
 parser.add_argument('--dryrun', action='store_true',
                     help="Print the command instead of actually executing it")
+# TODO
+parser.add_argument('--condor', action='store_true',
+                    help="Generate .jdl and .sh files for submitting the jobs to LPC condor")
 
 args = parser.parse_args()
 
@@ -45,7 +48,7 @@ datasets = { 'data_e':'SingleElectron','data_mu':'SingleMuon','data_dieg':'Doubl
              'data_dimu':'DoubleMuon','data_mueg':'MuonEG'}
 samplelist_dict = getDatasetDict(args.datasetlist)
 
-logfile = 'mvaNtupleList_'+args.version+'.log'
+logfile = 'mvaNtupleList_'+args.label+'.log'
 if args.log is not None:
     logfile = args.log
 
@@ -75,7 +78,7 @@ for sample in args.samples:
     else:
         filename += sample+'_incl.root'
 
-    ntuplename += args.version+'/'+filename
+    ntuplename += args.label+'/'+filename
 
     print sample, ntuplename
 
@@ -146,6 +149,9 @@ for sample in args.samples:
             
             print seltype
 
+            if args.outdir is None:
+                args.outdir = args.label
+            
             if args.dryrun:
                 print 'mkdir -p '+args.outdir
             else:
@@ -174,7 +180,7 @@ for sample in args.samples:
                     cross_section='-99.'
 
                 for ec in args.corrections:
-                    if ec.lower() in ['jesup','jesdown','tesup','tesdown']:
+                    if ec.lower() in ['jesup','jesdown','jerup','jerdown','tesup','tesdown']:
                         outname_ec = outname.replace('.root','_'+ec.lower()+'.root')
                         argument_ec = argument.replace(outname, outname_ec)
                         if args.dryrun:
