@@ -161,7 +161,7 @@ Make datacards using flat mvaNtuples:
 
     makeHistograms.py <selection_type> <variable_name> <xmin> <xmax> --channels <list_of_channels> --luminosity <lumi> --version <mvaNtuple_label>
 
-    makeDatacards.py -h to show other optional arguments
+    makeHistograms.py -h to show other optional arguments
 
 To make datacards <selection_type> would be signal_<analysis_category>.
 And <variable_name> would be the "mvaOutput" in the mva ntuple, with xmin = 0 and xmax = 1.
