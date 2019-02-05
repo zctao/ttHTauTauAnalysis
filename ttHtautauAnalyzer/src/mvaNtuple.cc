@@ -97,70 +97,80 @@ void mvaNtuple::setup_branches(TTree* tree)
 	tree->Branch("metLD", &metLD);
 
 	tree->Branch("mvaOutput", &mva_output);
-	
-	// set branch for kinematic variables
-	if (version_=="2017") {
-		// electrons and muons
-		if (anatype_ == Analyze_1l2tau) {
-			tree->Branch("lep_conePt", &lep0_conept);
-			tree->Branch("lep_eta", &lep0_eta);
-			tree->Branch("lep_phi", &lep0_phi);
-			tree->Branch("lep_E", &lep0_E);
-			tree->Branch("lep_pdgId", &lep0_pdgId);
-			tree->Branch("lep_isTight", &lep0_isTight);
-		}
-		else if (anatype_ == Analyze_2lss1tau or anatype_ == Analyze_2l2tau or
-				 anatype_ == Analyze_3l1tau or anatype_ == Analyze_2lss or
-				 anatype_ == Analyze_3l) {
-			tree->Branch("lep1_conePt", &lep0_conept);
-			tree->Branch("lep1_eta", &lep0_eta);
-			tree->Branch("lep1_phi", &lep0_phi);
-			tree->Branch("lep1_E", &lep0_E);
-			tree->Branch("lep1_pdgId", &lep0_pdgId);
-			tree->Branch("lep1_isTight", &lep0_isTight);
-			tree->Branch("lep2_conePt", &lep1_conept);
-			tree->Branch("lep2_eta", &lep1_eta);
-			tree->Branch("lep2_phi", &lep1_phi);
-			tree->Branch("lep2_E", &lep1_E);
-			tree->Branch("lep2_pdgId", &lep1_pdgId);
-			tree->Branch("lep2_isTight", &lep1_isTight);
-				
-			if (anatype_ == Analyze_3l1tau or anatype_ == Analyze_3l) {
-				tree->Branch("lep3_conePt", &lep2_conept);
-				tree->Branch("lep3_eta", &lep2_eta);
-				tree->Branch("lep3_phi", &lep2_phi);
-				tree->Branch("lep3_E", &lep2_E);
-				tree->Branch("lep3_pdgId", &lep2_pdgId);
-				tree->Branch("lep3_isTight", &lep2_isTight);
-			}
 
-			tree->Branch("mll", &mll);
-		}
-		else
-			std::cerr << "WARNING! Unknown analysis type" << std::endl;
-		
-		// taus
-		if (anatype_ == Analyze_1l2tau or anatype_ == Analyze_2l2tau) {
-			tree->Branch("tau1_pt", &tau0_pt);
-			tree->Branch("tau1_eta", &tau0_eta);
-			tree->Branch("tau1_phi", &tau0_phi);
-			tree->Branch("tau1_E", &tau0_E);
-			tree->Branch("tau1_isTight", &tau0_isTight);
-			tree->Branch("tau2_pt", &tau1_pt);
-			tree->Branch("tau2_eta", &tau1_eta);
-			tree->Branch("tau2_phi", &tau1_phi);
-			tree->Branch("tau2_E", &tau1_E);
-			tree->Branch("tau2_isTight", &tau1_isTight);
-		}
-		else if (anatype_ == Analyze_2lss1tau or anatype_ == Analyze_3l1tau) {
-			tree->Branch("tau_pt", &tau0_pt);
-			tree->Branch("tau_eta", &tau0_eta);
-			tree->Branch("tau_phi", &tau0_phi);
-			tree->Branch("tau_E", &tau0_E);
-			tree->Branch("tau_isTight", &tau0_isTight);
-		}	
-	}
-	
+    // kinematics and ID flags
+    // electrons and muons
+    tree->Branch("lep1_pt", &lep0_pt);
+    tree->Branch("lep1_conePt", &lep0_conept);
+    tree->Branch("lep1_eta", &lep0_eta);
+    tree->Branch("lep1_phi", &lep0_phi);
+    tree->Branch("lep1_E", &lep0_E);
+    tree->Branch("lep1_charge", &lep0_charge);
+    tree->Branch("lep1_pdgId", &lep0_pdgId);
+    tree->Branch("lep1_isTight", &lep0_isTight);
+    tree->Branch("lep2_pt", &lep1_pt);
+    tree->Branch("lep2_conePt", &lep1_conept);
+    tree->Branch("lep2_eta", &lep1_eta);
+    tree->Branch("lep2_phi", &lep1_phi);
+    tree->Branch("lep2_E", &lep1_E);
+    tree->Branch("lep2_charge", &lep1_charge);
+    tree->Branch("lep2_pdgId", &lep1_pdgId);
+    tree->Branch("lep2_isTight", &lep1_isTight);
+    tree->Branch("lep3_pt", &lep2_pt);
+    tree->Branch("lep3_conePt", &lep2_conept);
+    tree->Branch("lep3_eta", &lep2_eta);
+    tree->Branch("lep3_phi", &lep2_phi);
+    tree->Branch("lep3_E", &lep2_E);
+    tree->Branch("lep3_charge", &lep2_charge);
+    tree->Branch("lep3_pdgId", &lep2_pdgId);
+    tree->Branch("lep3_isTight", &lep2_isTight);
+
+    tree->Branch("mll", &mll);
+
+    // taus
+    tree->Branch("tau1_pt", &tau0_pt);
+    tree->Branch("tau1_eta", &tau0_eta);
+    tree->Branch("tau1_phi", &tau0_phi);
+    tree->Branch("tau1_E", &tau0_E);
+    tree->Branch("tau1_charge", &tau0_charge);
+    tree->Branch("tau1_isTight", &tau0_isTight);
+    tree->Branch("tau2_pt", &tau1_pt);
+    tree->Branch("tau2_eta", &tau1_eta);
+    tree->Branch("tau2_phi", &tau1_phi);
+    tree->Branch("tau2_E", &tau1_E);
+    tree->Branch("tau2_charge", &tau1_charge);
+    tree->Branch("tau2_isTight", &tau1_isTight);
+    // tau decays
+    tree->Branch("tau1_decaymode", &tau0_decaymode);
+    tree->Branch("tau2_decaymode", &tau1_decaymode);
+    tree->Branch("tau1_ldgtrkpt", &tau0_ldgtrkpt);
+    tree->Branch("tau2_ldgtrkpt", &tau1_ldgtrkpt);
+    tree->Branch("tau1_ldgtrkE", &tau0_ldgtrkE);
+    tree->Branch("tau2_ldgtrkE", &tau1_ldgtrkE);
+    tree->Branch("tau1_chargedE", &tau0_chargedE);
+    tree->Branch("tau2_chargedE", &tau1_chargedE);
+    tree->Branch("tau1_neutralE", &tau0_neutralE);
+    tree->Branch("tau2_neutralE", &tau1_neutralE);
+
+    // jets
+    tree->Branch("jet1_pt", &jet0_pt);
+    tree->Branch("jet2_pt", &jet1_pt);
+    tree->Branch("jet3_pt", &jet2_pt);
+    tree->Branch("jet4_pt", &jet3_pt);
+    tree->Branch("jet1_eta", &jet0_eta);
+    tree->Branch("jet2_eta", &jet1_eta);
+    tree->Branch("jet3_eta", &jet2_eta);
+    tree->Branch("jet4_eta", &jet3_eta);
+    tree->Branch("jet1_phi", &jet0_phi);
+    tree->Branch("jet2_phi", &jet1_phi);
+    tree->Branch("jet3_phi", &jet2_phi);
+    tree->Branch("jet4_phi", &jet3_phi);
+    tree->Branch("jet1_E", &jet0_E);
+    tree->Branch("jet2_E", &jet1_E);
+    tree->Branch("jet3_E", &jet2_E);
+    tree->Branch("jet4_E", &jet3_E);
+
+    // MVA variables
 	if (anatype_ == Analyze_2lss1tau) {
 		if (version_=="2016") { // 2016 analysis variables
 			tree->Branch("mindr_lep0_jet", &mindr_lep0_jet);
@@ -386,29 +396,36 @@ void mvaNtuple::setup_branches(TTree* tree)
 	}
 }
 
-void mvaNtuple::assign_four_momentum(const std::vector<miniLepton>& leptons,
-									 const std::vector<miniTau>& taus)
+void mvaNtuple::get_object_kinematics(const std::vector<miniLepton>& leptons,
+                                      const std::vector<miniTau>& taus,
+                                      const std::vector<TLorentzVector>& jets)
 {
 	assert(leptons.size()>0);
 	lep0_conept = leptons[0].conept();
+    lep0_pt = leptons[0].pt();
 	lep0_eta = leptons[0].eta();
 	lep0_phi = leptons[0].phi();
 	lep0_E = leptons[0].p4().E();
+    lep0_charge = leptons[0].charge();
 	lep0_pdgId = leptons[0].pdgId();
 	lep0_isTight = leptons[0].passTightSel();
 	if (leptons.size() > 1) {
 		lep1_conept = leptons[1].conept();
+        lep1_pt = leptons[1].pt();
 		lep1_eta = leptons[1].eta();
 		lep1_phi = leptons[1].phi();
 		lep1_E = leptons[1].p4().E();
+        lep1_charge = leptons[1].charge();
 		lep1_pdgId = leptons[1].pdgId();
 		lep1_isTight = leptons[1].passTightSel();
 	}
-	if (leptons.size() > 3) {
+	if (leptons.size() > 2) {
 		lep2_conept = leptons[2].conept();
+        lep2_pt = leptons[2].pt();
 		lep2_eta = leptons[2].eta();
 		lep2_phi = leptons[2].phi();
 		lep2_E = leptons[2].p4().E();
+        lep2_charge = leptons[2].charge();
 		lep2_pdgId = leptons[2].pdgId();
 		lep2_isTight = leptons[2].passTightSel();
 	}
@@ -418,6 +435,7 @@ void mvaNtuple::assign_four_momentum(const std::vector<miniLepton>& leptons,
 		tau0_eta = taus[0].eta();
 		tau0_phi = taus[0].phi();
 		tau0_E = taus[0].p4().E();
+        tau0_charge = taus[0].charge();
 		tau0_isTight = taus[0].passTightSel();
 	}
 	if (taus.size()>1) {
@@ -425,8 +443,34 @@ void mvaNtuple::assign_four_momentum(const std::vector<miniLepton>& leptons,
 		tau1_eta = taus[1].eta();
 		tau1_phi = taus[1].phi();
 		tau1_E = taus[1].p4().E();
+        tau1_charge = taus[1].charge();
 		tau1_isTight = taus[1].passTightSel();
 	}
+
+    if (jets.size()>0) {
+      jet0_pt = jets[0].Pt();
+      jet0_eta = jets[0].Eta();
+      jet0_phi = jets[0].Phi();
+      jet0_E = jets[0].E();
+    }
+    if (jets.size()>1) {
+      jet1_pt = jets[1].Pt();
+      jet1_eta = jets[1].Eta();
+      jet1_phi = jets[1].Phi();
+      jet1_E = jets[1].E();
+    }
+    if (jets.size()>2) {
+      jet2_pt = jets[2].Pt();
+      jet2_eta = jets[2].Eta();
+      jet2_phi = jets[2].Phi();
+      jet2_E = jets[2].E();
+    }
+    if (jets.size()>3) {
+      jet3_pt = jets[3].Pt();
+      jet3_eta = jets[3].Eta();
+      jet3_phi = jets[3].Phi();
+      jet3_E = jets[3].E();
+    }
 }
 
 int mvaNtuple::count_leptons(const std::vector<miniLepton>& leptons, int pdgid)
@@ -514,13 +558,18 @@ void mvaNtuple::compute_mva_variables(const std::vector<miniLepton>& leptons,
 	mht = MHT;
 	metLD = 0.00397 * MET + 0.00265 * MHT;
 
-	assign_four_momentum(leptons, taus);
+    get_object_kinematics(leptons, taus, jets);
 	mll = compute_mll(leptons);
+
+    // tau decay variables
+    compute_tauDecay_variables(taus);
 	
 	// common variables in all categories
 	avg_dr_jet = compute_average_dr(jets);
 
-	if (control_) return;
+    // For TTW, TTZ, WZ control regions, some variables below are not well defined
+    // FIXME?
+	if (control_) return; 
 	
 	switch(anatype_){
 	case Analyze_1l2tau:
@@ -545,16 +594,6 @@ void mvaNtuple::compute_mva_variables(const std::vector<miniLepton>& leptons,
 			dr_lep_tau_lead = leptons[0].p4().DeltaR(taus[0].p4());
 			dr_lep_tau_sublead = leptons[0].p4().DeltaR(taus[1].p4());
 			dr_lep_tau_ss = (leptons[0].charge()==taus[0].charge()) ? dr_lep_tau_lead : dr_lep_tau_sublead;
-
-			//tau0_tightWP = taus[0].passTightSel();
-			//tau1_tightWP = taus[1].passTightSel();
-			//tau0_ldgtrkpt = taus[0].leadtrackP4().Pt();
-			//tau1_ldgtrkpt = taus[1].leadtrackP4().Pt();
-			//tau0_ldgtrkE = taus[0].leadtrackP4().Energy();
-			//tau1_ldgtrkE = taus[1].leadtrackP4().Energy();
-
-			//compute_tauDecay_variables(taus);
-
 		}
 		else if (version_=="test") {
 			compute_tauDecay_variables(taus, true);
@@ -667,6 +706,26 @@ void mvaNtuple::compute_mva_variables(const std::vector<miniLepton>& leptons,
 
 void mvaNtuple::compute_tauDecay_variables(const std::vector<miniTau>& taus,bool test)
 {
+  if (taus.size()>0) {
+    tau0_decaymode = taus[0].decaymode();
+    tau0_ldgtrkpt = taus[0].leadtrackP4().Pt();
+    tau0_ldgtrkE = taus[0].leadtrackP4().Energy();
+    tau0_chargedE = taus[0].chargedDaughtersP4().Energy();
+    tau0_neutralE = taus[0].neutralDaughtersP4().Energy();
+    // TODO: same sign (as the reco tau) charged daughters
+    // tau0_chargedE_ss = taus[0].sameSignChargedDaughtersP4().Energy();
+  }
+  if (taus.size()>1) {
+    tau1_decaymode = taus[1].decaymode();
+    tau1_ldgtrkpt = taus[1].leadtrackP4().Pt();
+    tau1_ldgtrkE = taus[1].leadtrackP4().Energy();
+    tau1_chargedE = taus[1].chargedDaughtersP4().Energy();
+    tau1_neutralE = taus[1].neutralDaughtersP4().Energy();
+    // TODO: same sign (as the reco tau) charged daughters
+    // tau1_chargedE_ss = taus[1].sameSignChargedDaughtersP4().Energy();
+  }
+  
+  /*
 	assert(taus.size()>1);
 	//assert(taus[0].charge()!=taus[1].charge());
 	int ip, im;
@@ -693,7 +752,8 @@ void mvaNtuple::compute_tauDecay_variables(const std::vector<miniTau>& taus,bool
 	taum_ldgtrkE = taus[im].leadtrackP4().Energy();
 	taup_upsilon = compute_upsilon(taus[ip]);
 	taum_upsilon = compute_upsilon(taus[im]);
-	
+  */
+  /*
 	if (test) {
 		// LorentzVectors of tau decay products
 		TLorentzVector pp1, pp2, pp3;
@@ -706,7 +766,7 @@ void mvaNtuple::compute_tauDecay_variables(const std::vector<miniTau>& taus,bool
 		
 		assert(taup_chargedHadrons.size()>0);
 		assert(taum_chargedHadrons.size()>0);
-		/*
+		
 		if (taup_decaymode == 0) { // 1prong
 			pp1 = taup_chargedHadrons[0];
 		}
@@ -734,8 +794,8 @@ void mvaNtuple::compute_tauDecay_variables(const std::vector<miniTau>& taus,bool
 			pm2 = taum_chargedHadrons[1];
 			pm3 = taum_chargedHadrons[2];
 		}
-		*/
-
+		
+        
 		pp1_pp1 = pp1*pp1; //std::cout << pp1_pp1 << std::endl;
 		pp1_pp2 = pp1*pp2; //std::cout << pp1_pp2 << std::endl;
 		pp1_pp3 = pp1*pp3; //std::cout << pp1_pp3 << std::endl;
@@ -757,7 +817,7 @@ void mvaNtuple::compute_tauDecay_variables(const std::vector<miniTau>& taus,bool
 		pm2_pm2 = pm2*pm2; //std::cout << pm2_pm2 << std::endl;
 		pm2_pm3 = pm2*pm3; //std::cout << pm2_pm3 << std::endl;
 		pm3_pm3 = pm3*pm3; //std::cout << pm3_pm3 << std::endl;
-	}
+	}*/
 }
 
 float mvaNtuple::compute_average_dr(const std::vector<TLorentzVector>& lvs)

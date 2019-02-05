@@ -213,6 +213,7 @@ int main(int argc, char** argv)
 
 		const std::vector<miniTau> *taus = &taus_tight;
 		if (anaType==Analyze_1l2tau or anaType==Analyze_2l2tau)
+            // since taus are included in the fake background estimation
 			taus = &taus_fakeable;
 		
 		mvantuple.compute_all_variables(*leptons, *taus, jets,

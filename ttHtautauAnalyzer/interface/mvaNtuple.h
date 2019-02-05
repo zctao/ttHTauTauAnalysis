@@ -68,9 +68,10 @@ class mvaNtuple
 	void compute_tauDecay_variables(const std::vector<miniTau>&, bool test=false);
 	void compute_HTT_input_variables(const miniJet&, const miniJet&, const miniJet&);
 	void compute_HTT(const std::vector<miniJet>&);
-	
-	void assign_four_momentum(const std::vector<miniLepton>&,
-							  const std::vector<miniTau>&);
+    
+    void get_object_kinematics(const std::vector<miniLepton>&,
+                               const std::vector<miniTau>&,
+                               const std::vector<TLorentzVector>&);
 	int count_electrons(const std::vector<miniLepton>&);
 	int count_muons(const std::vector<miniLepton>&);
 	
@@ -115,6 +116,9 @@ class mvaNtuple
 
 	// kinematic variables
 	float mll = -9999.;  // dilepton mass
+    float lep0_pt = -9999.;
+    float lep1_pt = -9999.;
+    float lep2_pt = -9999.;
 	float lep0_conept = -9999.;
 	float lep1_conept = -9999.;
 	float lep2_conept = -9999.;
@@ -128,6 +132,9 @@ class mvaNtuple
 	float lep0_E = -9999.;
 	float lep1_E = -9999.;
 	float lep2_E = -9999.;
+    int   lep0_charge = -9999;
+    int   lep1_charge = -9999;
+    int   lep2_charge = -9999;
 	float tau0_pt = -9999.;
 	float tau1_pt = -9999.;
 	float tau0_eta = -9999.;
@@ -136,6 +143,25 @@ class mvaNtuple
 	float tau1_phi = -9999.;
 	float tau0_E = -9999.;
 	float tau1_E = -9999.;
+    int   tau0_charge = -9999;
+    int   tau1_charge = -9999;
+
+    float jet0_pt = -9999.;
+    float jet1_pt = -9999.;
+    float jet2_pt = -9999.;
+    float jet3_pt = -9999.;
+    float jet0_eta = -9999.;
+    float jet1_eta = -9999.;
+    float jet2_eta = -9999.;
+    float jet3_eta = -9999.;
+    float jet0_phi = -9999.;
+    float jet1_phi = -9999.;
+    float jet2_phi = -9999.;
+    float jet3_phi = -9999.;
+    float jet0_E = -9999.;
+    float jet1_E = -9999.;
+    float jet2_E = -9999.;
+    float jet3_E = -9999.;
 
 	// pdgID and ID flags
 	int lep0_pdgId = -9999;
@@ -191,7 +217,11 @@ class mvaNtuple
 	float tau1_ldgtrkpt = -9999.;
 	float tau0_ldgtrkE = -9999.;
 	float tau1_ldgtrkE = -9999.;
-
+    float tau0_chargedE = -9999.;
+    float tau1_chargedE = -9999.;
+    float tau0_neutralE = -9999.;
+    float tau1_neutralE = -9999.;
+    
 	int taup_decaymode = -9999;
 	int taum_decaymode = -9999;
 	float taup_E = -9999.;
