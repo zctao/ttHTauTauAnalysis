@@ -6,6 +6,7 @@
 target=$1
 inlist=$2
 
+rm tmp 2> /dev/null
 touch tmp
 
 while read line;
