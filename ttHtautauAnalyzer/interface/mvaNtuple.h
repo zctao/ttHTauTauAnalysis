@@ -221,6 +221,8 @@ class mvaNtuple
     float tau1_chargedE = -9999.;
     float tau0_neutralE = -9999.;
     float tau1_neutralE = -9999.;
+    float tau0_chargedE_ss = -9999.;
+    float tau1_chargedE_ss = -9999.;
     
 	int taup_decaymode = -9999;
 	int taum_decaymode = -9999;

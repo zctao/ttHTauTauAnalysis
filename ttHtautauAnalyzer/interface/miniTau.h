@@ -38,6 +38,7 @@ class miniTau
 	void set_signalChargedHadrCands(std::vector<TLorentzVector>& ch) {signalChargedHadrCands_ = ch;}
 	void set_signalGammaCands(std::vector<TLorentzVector>& ga) {signalGammaCands_ = ga;}
 	void set_signalNeutrHadrCands(std::vector<TLorentzVector>& nh) {signalNeutrHadrCands_ = nh;}
+    void set_signalChargedHadrCands_charge(std::vector<int>& charges) {signalChargedHadrCands_charge_ = charges;}
 	void set_tauIDWPindex(int iWP) {tauIDMVAWP_ = iWP;}
 	void set_tauIDWPindex(bool, bool, bool, bool, bool);
 	void set_IsTight(bool istight) {istight_ = istight;}
@@ -59,6 +60,7 @@ class miniTau
 	bool isGenMatched() const;
 	TLorentzVector p4() const;
 	TLorentzVector chargedDaughtersP4() const;
+    TLorentzVector sameSignChargedDaughtersP4() const;
 	TLorentzVector neutralDaughtersP4() const;
 	TLorentzVector leadtrackP4() const;
 
@@ -89,6 +91,8 @@ class miniTau
 	std::vector<TLorentzVector> signalChargedHadrCands_;
 	std::vector<TLorentzVector> signalGammaCands_;
 	std::vector<TLorentzVector> signalNeutrHadrCands_;
+
+    std::vector<int> signalChargedHadrCands_charge_;
 
     const reco::GenParticle* matchedGenParticle_;
 };

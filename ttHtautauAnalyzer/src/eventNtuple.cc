@@ -151,7 +151,8 @@ std::vector<miniTau> eventNtuple::buildTaus(bool loose, std::string tightWPDef,
 		
 		// Tau decay products
 		// charged hadron
-		std::vector<TLorentzVector> chP4;		
+		std::vector<TLorentzVector> chP4;
+        std::vector<int> charges;
 		for (unsigned int ch = 0; ch<(tau_signalChargedHadrCands_pt->at(t)).size();++ch) {
 			TLorentzVector chargedhadr;
 			chargedhadr.SetPtEtaPhiE((tau_signalChargedHadrCands_pt->at(t))[ch],
@@ -159,8 +160,11 @@ std::vector<miniTau> eventNtuple::buildTaus(bool loose, std::string tightWPDef,
 									 (tau_signalChargedHadrCands_phi->at(t))[ch],
 									 (tau_signalChargedHadrCands_E->at(t))[ch]);
 			chP4.push_back(chargedhadr);
+
+            charges.push_back((tau_signalChargedHadrCands_charge->at(t))[ch]);
 		}			
 		tau.set_signalChargedHadrCands(chP4);
+        tau.set_signalChargedHadrCands_charge(charges);
 
 		// gamma (pi0)
 		std::vector<TLorentzVector> gmP4;

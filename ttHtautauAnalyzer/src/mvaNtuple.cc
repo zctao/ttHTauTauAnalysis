@@ -151,6 +151,8 @@ void mvaNtuple::setup_branches(TTree* tree)
     tree->Branch("tau2_chargedE", &tau1_chargedE);
     tree->Branch("tau1_neutralE", &tau0_neutralE);
     tree->Branch("tau2_neutralE", &tau1_neutralE);
+    tree->Branch("tau1_chargedE_ss", &tau0_chargedE_ss);
+    tree->Branch("tau2_chargedE_ss", &tau1_chargedE_ss);
 
     // jets
     tree->Branch("jet1_pt", &jet0_pt);
@@ -712,8 +714,7 @@ void mvaNtuple::compute_tauDecay_variables(const std::vector<miniTau>& taus,bool
     tau0_ldgtrkE = taus[0].leadtrackP4().Energy();
     tau0_chargedE = taus[0].chargedDaughtersP4().Energy();
     tau0_neutralE = taus[0].neutralDaughtersP4().Energy();
-    // TODO: same sign (as the reco tau) charged daughters
-    // tau0_chargedE_ss = taus[0].sameSignChargedDaughtersP4().Energy();
+    tau0_chargedE_ss = taus[0].sameSignChargedDaughtersP4().Energy();
   }
   if (taus.size()>1) {
     tau1_decaymode = taus[1].decaymode();
@@ -721,8 +722,7 @@ void mvaNtuple::compute_tauDecay_variables(const std::vector<miniTau>& taus,bool
     tau1_ldgtrkE = taus[1].leadtrackP4().Energy();
     tau1_chargedE = taus[1].chargedDaughtersP4().Energy();
     tau1_neutralE = taus[1].neutralDaughtersP4().Energy();
-    // TODO: same sign (as the reco tau) charged daughters
-    // tau1_chargedE_ss = taus[1].sameSignChargedDaughtersP4().Energy();
+    tau1_chargedE_ss = taus[1].sameSignChargedDaughtersP4().Energy();
   }
   
   /*

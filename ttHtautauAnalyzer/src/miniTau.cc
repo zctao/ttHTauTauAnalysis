@@ -125,6 +125,20 @@ TLorentzVector miniTau::chargedDaughtersP4() const
 	return ChargedP4;
 }
 
+
+TLorentzVector miniTau::sameSignChargedDaughtersP4() const
+{
+  // Sum up only the charged daughters with the same sign as the tau
+  TLorentzVector ssChargedP4;
+
+  assert(signalChargedHadrCands_.size()==signalChargedHadrCands_charge_.size());
+  for (unsigned int ich = 0; ich < signalChargedHadrCands_.size(); ++ich) {
+    if (charge_ * signalChargedHadrCands_charge_[ich] > 0) // ss
+      ssChargedP4 += signalChargedHadrCands_[ich];
+  }
+
+  return ssChargedP4;
+}
 TLorentzVector miniTau::neutralDaughtersP4() const
 {
 	TLorentzVector NeutralP4;
