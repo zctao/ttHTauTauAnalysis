@@ -95,7 +95,7 @@ for sample in samples:
     print sample
     isData = 'data' in sample
         
-    jobname = args.prefix + sample + '_'+args.analysis_label
+    jobname = args.prefix + '_' + sample + '_'+args.analysis_label
 
     parameterset = getParametersetString(sample, isData)
             

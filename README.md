@@ -155,6 +155,19 @@ For each category, by default event selections "signal" and "control" are applie
 
 can be used to specify a particular selection type. E.g. --selection application_fake on TTbar samples for closure studies.
 
+The selection types are grouped in two categories: "datacard" and "control". For MC samples, "datacard" category includes only "signal" selection, "control" includes only "control" selections; For collision data samples, "datacard" category includes "signal" and "application_fake" selections, "control" includes "control" and "control_fakeAR" selcetions.
+The optional argument
+
+    --jobtypes <jtype>
+
+can be used to pick either or both of the categories. By default, both categories are included. NOTE: this option is overwritten by --selection <selection_type> if <selection_type> is provided (i.e. not None).
+
+To use LPC Condor to produce mva ntuples:
+
+    prepareCondorJobs.py <crab_job_label> <list of samples> --datasetlist <datasetlist.csv> --fname\_jdl <condor.jdl> --fname\_sh <makentuple.sh>
+
+This script has almost the same arguments as produceMVANtuplesv2.py. It generates one condor config file <condor.jdl>, and a bash script <makentuple.sh> that sets up the CMSSW work environment on the worker node and then runs produceMVANtuplesv2.py
+
 * Datacards:
 
 Make datacards using flat mvaNtuples:

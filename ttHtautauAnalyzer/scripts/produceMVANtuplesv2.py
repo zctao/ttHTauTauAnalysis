@@ -12,12 +12,14 @@ parser.add_argument('--datasetlist', type=str,
 parser.add_argument('--analysis', nargs='+',
                     choices=['1l2tau','2lss1tau','3l1tau','2l2tau','control_ttW',
                              'control_ttZ'],
+                    default=['1l2tau','2lss1tau','3l1tau','2l2tau','control_ttW',
+                             'control_ttZ'],
                     help="analysis type")
 parser.add_argument('--jobtypes', nargs='+', choices=['datacard','control'],
                     default=['datacard','control'],
                     help="For making datacards or for control regions")
-parser.add_argument('--selection', choices=['application_fake','signal','control',
-                                            'control_fakeAR'])
+parser.add_argument('--selection', choices=['application_fake','signal',
+                                            'control','control_fakeAR'])
 parser.add_argument('-r','--redirector',type=str,
                     default='root://cmsxrootd.fnal.gov/',
                     help="redirector for xrootd")
@@ -38,9 +40,6 @@ parser.add_argument('--transfer_inputs', action='store_true',
 parser.add_argument('-l', '--log', type=str, help="Log name")
 parser.add_argument('--dryrun', action='store_true',
                     help="Print the command instead of actually executing it")
-# TODO
-parser.add_argument('--condor', action='store_true',
-                    help="Generate .jdl and .sh files for submitting the jobs to LPC condor")
 
 args = parser.parse_args()
 
@@ -53,10 +52,6 @@ if args.log is not None:
     logfile = args.log
 
 mvantupleList = open(logfile,'w')
-
-anatypes=['1l2tau','2lss1tau','3l1tau','2l2tau','control_ttW','control_ttZ'] # WZ
-if args.analysis is not None:  # if analysis types are explicitly set
-    anatypes = args.analysis
 
 genmatch_str = ' -m true' if args.genmatching else ' -m false'
     
@@ -92,7 +87,7 @@ for sample in args.samples:
             os.system('xrdcp -s '+ntuplename+' .')
         ntuplename = filename
         
-    for atype in anatypes:
+    for atype in args.analysis:
         print atype
         
         anatype = atype
