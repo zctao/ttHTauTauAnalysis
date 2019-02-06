@@ -164,7 +164,7 @@ can be used to pick either or both of the categories. By default, both categorie
 
 To use LPC Condor to produce mva ntuples:
 
-    prepareCondorJobs.py <crab_job_label> <list of samples> --datasetlist <datasetlist.csv> --fname\_jdl <condor.jdl> --fname\_sh <makentuple.sh>
+    prepareCondorJobs.py <crab_job_label> <list of samples> --datasetlist <datasetlist.csv> --fname_jdl <condor.jdl> --fname_sh <makentuple.sh>
 
 This script has almost the same arguments as produceMVANtuplesv2.py. It generates one condor config file <condor.jdl>, and a bash script <makentuple.sh> that sets up the CMSSW work environment on the worker node and then runs produceMVANtuplesv2.py
 
