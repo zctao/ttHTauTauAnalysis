@@ -44,7 +44,7 @@ std::vector<miniLepton> eventNtuple::buildLeptons(char WP) const
 					   ele_charge->at(l), true, ele_isfakeablesel->at(l),
 					   ele_ismvasel->at(l), ele_istightcharge->at(l));
 		if (ele_mcMatchType->size()>0) lep.set_MCMatchType(ele_mcMatchType->at(l));
-		if (ele_isPromptGenPhotonMatched)
+		if (ele_isPromptGenPhotonMatched->size()>0)
 			lep.set_isGenPhotonMatched(ele_isPromptGenPhotonMatched->at(l));
 		//if (ele_isGenPhotonMatched)
 		//	lep.set_isGenPhotonMatched(ele_isGenPhotonMatched->at(l));
@@ -290,7 +290,7 @@ std::vector<miniJet> eventNtuple::buildJets(const TString& jec, bool doSmear,
 	std::vector<miniJet> jets;
 
 	for (unsigned int j = 0; j < jet_pt->size(); ++j) {
-		
+
 		TLorentzVector jp4;
 		jp4.SetPtEtaPhiE(jet_pt->at(j),jet_eta->at(j),jet_phi->at(j),jet_E->at(j));
 
@@ -298,7 +298,7 @@ std::vector<miniJet> eventNtuple::buildJets(const TString& jec, bool doSmear,
           float smearfactor = jet_smearFactor->at(j);
           jp4 *= smearfactor;
         }
-		
+
 		// JEC uncertainties
         float scalefactor = 1.;
         
@@ -338,7 +338,7 @@ std::vector<miniJet> eventNtuple::buildCleanedJets(
 	int NLeps = Types_enum::getNnominalLeptons(anatype);
 	int MTaus = Types_enum::getNnominalTaus(anatype, seltype);
 	
-	std::vector<miniJet> jets_raw = buildJets(jec,minPt,doSmear);
+	std::vector<miniJet> jets_raw = buildJets(jec,doSmear,minPt);
 	
 	std::vector<miniJet> jets_clean;
 	for (const auto & jet : jets_raw) {

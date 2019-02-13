@@ -146,7 +146,7 @@ int main(int argc, char** argv)
 	
 	// loop over events
 	int nEntries = tree_in->GetEntries();
-	//std::cout << "nEntries : " << nEntries << std::endl;
+	std::cout << "nEntries : " << nEntries << std::endl;
 
 	for (int i = 0; i < nEntries; ++i) {
 		tree_in->GetEntry(i);
@@ -166,9 +166,10 @@ int main(int argc, char** argv)
 
 		//auto jets = evNtuple.buildJets();
 		// Jet cleaning based on analysis type
+        bool dosmear = not isdata;
 		auto jets = evNtuple.buildCleanedJets(0.4, anaType, selType,
 											  &leptons_fakeable, &taus_fakeable,
-											  enCorr.c_str(), true);
+											  enCorr.c_str(), dosmear);
 
 		int nbtags_loose, nbtags_medium;
 		std::tie(nbtags_loose, nbtags_medium) = evNtuple.count_btags(jets);
