@@ -67,11 +67,11 @@ for sample in args.samples:
         assert(sample in samplelist_dict)
         ntuplename += samplelist_dict[sample]['dataset'].split('/')[1]+'/'
 
-    filename = 'ntuple_'
-    if 'data' in sample:
-        filename += 'data_incl.root'
-    else:
-        filename += sample+'_incl.root'
+    filename = 'ntuple_'+sample+'_incl.root'
+    #if 'data' in sample:
+    #    filename += 'data_incl.root'
+    #else:
+    #    filename += sample+'_incl.root'
 
     ntuplename += args.label+'/'+filename
 
