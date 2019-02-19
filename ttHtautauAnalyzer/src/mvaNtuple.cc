@@ -108,6 +108,7 @@ void mvaNtuple::setup_branches(TTree* tree)
     tree->Branch("lep1_charge", &lep0_charge);
     tree->Branch("lep1_pdgId", &lep0_pdgId);
     tree->Branch("lep1_isTight", &lep0_isTight);
+    tree->Branch("lep1_isGenMatched", &lep0_isGenMatched);
     tree->Branch("lep2_pt", &lep1_pt);
     tree->Branch("lep2_conePt", &lep1_conept);
     tree->Branch("lep2_eta", &lep1_eta);
@@ -116,6 +117,7 @@ void mvaNtuple::setup_branches(TTree* tree)
     tree->Branch("lep2_charge", &lep1_charge);
     tree->Branch("lep2_pdgId", &lep1_pdgId);
     tree->Branch("lep2_isTight", &lep1_isTight);
+    tree->Branch("lep2_isGenMatched", &lep1_isGenMatched);
     tree->Branch("lep3_pt", &lep2_pt);
     tree->Branch("lep3_conePt", &lep2_conept);
     tree->Branch("lep3_eta", &lep2_eta);
@@ -124,6 +126,7 @@ void mvaNtuple::setup_branches(TTree* tree)
     tree->Branch("lep3_charge", &lep2_charge);
     tree->Branch("lep3_pdgId", &lep2_pdgId);
     tree->Branch("lep3_isTight", &lep2_isTight);
+    tree->Branch("lep3_isGenMatched", &lep2_isGenMatched);
 
     tree->Branch("mll", &mll);
 
@@ -134,12 +137,14 @@ void mvaNtuple::setup_branches(TTree* tree)
     tree->Branch("tau1_E", &tau0_E);
     tree->Branch("tau1_charge", &tau0_charge);
     tree->Branch("tau1_isTight", &tau0_isTight);
+    tree->Branch("tau1_isGenMatched", &tau0_isGenMatched);
     tree->Branch("tau2_pt", &tau1_pt);
     tree->Branch("tau2_eta", &tau1_eta);
     tree->Branch("tau2_phi", &tau1_phi);
     tree->Branch("tau2_E", &tau1_E);
     tree->Branch("tau2_charge", &tau1_charge);
     tree->Branch("tau2_isTight", &tau1_isTight);
+    tree->Branch("tau2_isGenMatched", &tau1_isGenMatched);
     // tau decays
     tree->Branch("tau1_decaymode", &tau0_decaymode);
     tree->Branch("tau2_decaymode", &tau1_decaymode);
@@ -411,6 +416,7 @@ void mvaNtuple::get_object_kinematics(const std::vector<miniLepton>& leptons,
     lep0_charge = leptons[0].charge();
 	lep0_pdgId = leptons[0].pdgId();
 	lep0_isTight = leptons[0].passTightSel();
+    lep0_isGenMatched = leptons[0].isGenMatched();
 	if (leptons.size() > 1) {
 		lep1_conept = leptons[1].conept();
         lep1_pt = leptons[1].pt();
@@ -420,6 +426,7 @@ void mvaNtuple::get_object_kinematics(const std::vector<miniLepton>& leptons,
         lep1_charge = leptons[1].charge();
 		lep1_pdgId = leptons[1].pdgId();
 		lep1_isTight = leptons[1].passTightSel();
+        lep1_isGenMatched = leptons[1].isGenMatched();
 	}
 	if (leptons.size() > 2) {
 		lep2_conept = leptons[2].conept();
@@ -430,6 +437,7 @@ void mvaNtuple::get_object_kinematics(const std::vector<miniLepton>& leptons,
         lep2_charge = leptons[2].charge();
 		lep2_pdgId = leptons[2].pdgId();
 		lep2_isTight = leptons[2].passTightSel();
+        lep2_isGenMatched = leptons[2].isGenMatched();
 	}
 
 	if (taus.size()>0) {
@@ -439,6 +447,7 @@ void mvaNtuple::get_object_kinematics(const std::vector<miniLepton>& leptons,
 		tau0_E = taus[0].p4().E();
         tau0_charge = taus[0].charge();
 		tau0_isTight = taus[0].passTightSel();
+        tau0_isGenMatched = taus[0].isGenMatched();
 	}
 	if (taus.size()>1) {
 		tau1_pt = taus[1].pt();
@@ -447,6 +456,7 @@ void mvaNtuple::get_object_kinematics(const std::vector<miniLepton>& leptons,
 		tau1_E = taus[1].p4().E();
         tau1_charge = taus[1].charge();
 		tau1_isTight = taus[1].passTightSel();
+        tau1_isGenMatched = taus[1].isGenMatched();
 	}
 
     if (jets.size()>0) {

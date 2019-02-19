@@ -315,6 +315,10 @@ void Set_FR_weights(Selection_types seltype, SFHelper& sfhelper,
 	
 	mvantuple.event_weight = sfhelper.Get_FR_weight(leptons, taus);
 
+    // Fake rate weight applied to only nonprompt (not genmatched) objects 
+    //mvantuple.event_weight_FR_nonprompt =
+    //  sfhelper.Get_FR_weight_nonprompt(leptons, taus);
+    
 	if (syst) {
 		mvantuple.event_weight_FRe_normUp =
 			sfhelper.Get_FR_weight(leptons,taus,"FRe_normUp");

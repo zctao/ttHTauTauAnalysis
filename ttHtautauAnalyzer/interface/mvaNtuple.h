@@ -172,7 +172,14 @@ class mvaNtuple
 	int lep2_isTight = -9999;
 	int tau0_isTight = -9999;
 	int tau1_isTight = -9999;
-	
+
+    // MC Match flags
+    int lep0_isGenMatched = - 9999;
+    int lep1_isGenMatched = - 9999;
+    int lep2_isGenMatched = - 9999;
+    int tau0_isGenMatched = - 9999;
+    int tau1_isGenMatched = - 9999;
+    
 	// Other MVA input variables
 	float mindr_lep0_jet = -9999.;
 	float mindr_lep1_jet = -9999.;
